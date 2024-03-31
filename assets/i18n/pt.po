@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-02-07 17:58-0500\n"
-"PO-Revision-Date: 2024-03-15 20:50-0300\n"
+"PO-Revision-Date: 2024-03-31 16:54-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt\n"
@@ -4403,67 +4403,67 @@ msgid "Each investigator begins the game with 3 fewer resources, and cannot gain
 msgstr "Cada investigador começa o jogo com 3 recursos a menos e não pode ganhar recursos durante seu primeiro turno."
 
 msgid "The High Priestess · II"
-msgstr "A Alta Sacerdotisa · II"
+msgstr "A Sacerdotisa · II"
 
 msgid "During the first [intellect] test each investigator performs each round, they get +1 [intellect]."
-msgstr "Durante o primeiro teste [intellect] que cada investigador realizar a cada rodada, ele obtém +1 [intellect]."
+msgstr "Durante o primeiro teste [intellect] que cada investigador realiza a cada rodada, ele recebe +1 [intellect]."
 
 msgid "During the first [intellect] test each investigator performs each round, they get -1 [intellect]."
-msgstr "Durante o primeiro teste [intellect] que cada investigador realizar a cada rodada, ele obtém -1 [intellect]."
+msgstr "Durante o primeiro teste [intellect] que cada investigador realiza a cada rodada, ele recebe -1 [intellect]."
 
 msgid "The Empress · III"
 msgstr "A Imperatriz · III"
 
 msgid "During the first [agility] test each investigator performs each round, they get +1 [agility]."
-msgstr "Durante o primeiro teste [agility] que cada investigador realizar a cada rodada, ele obtém +1 [agility]."
+msgstr "Durante o primeiro teste [agility] que cada investigador realiza a cada rodada, ele recebe +1 [agility]."
 
 msgid "During the first [agility] test each investigator performs each round, they get -1 [agility]."
-msgstr "Durante o primeiro teste [agility] que cada investigador realizar a cada rodada, ele obtém -1 [agility]."
+msgstr "Durante o primeiro teste [agility] que cada investigador realiza a cada rodada, ele recebe -1 [agility]."
 
 msgid "The Emperor · IV"
 msgstr "O Imperador · IV"
 
 msgid "During the first [combat] test each investigator performs each round, they get +1 [combat]."
-msgstr "Durante o primeiro teste [combat] que cada investigador realizar a cada rodada, ele obtém +1 [combat]."
+msgstr "Durante o primeiro teste [combat] que cada investigador realiza a cada rodada, ele recebe +1 [combat]."
 
 msgid "During the first [combat] test each investigator performs each round, they get -1 [combat]."
-msgstr "Durante o primeiro teste [combat] que cada investigador realizar a cada rodada, ele obtém -1 [combat]."
+msgstr "Durante o primeiro teste [combat] que cada investigador realiza a cada rodada, ele recebe -1 [combat]."
 
 msgid "The Hierophant · V"
-msgstr "O Hierofante · V"
+msgstr "O Papa · V"
 
 msgid "During the first [willpower] test each investigator performs each round, they get +1 [willpower]."
-msgstr "Durante o primeiro teste [willpower] cada investigador realizar a cada rodada, ele obtém +1 [willpower]."
+msgstr "Durante o primeiro teste [willpower] cada investigador realiza a cada rodada, ele recebe +1 [willpower]."
 
 msgid "During the first [willpower] test each investigator performs each round, they get -1 [willpower]."
-msgstr "Durante o primeiro teste [willpower] cada investigador realizar a cada rodada, ele obtém -1 [willpower]."
+msgstr "Durante o primeiro teste [willpower] cada investigador realiza a cada rodada, ele recebe -1 [willpower]."
 
 msgid "The Lovers · VI"
-msgstr "Os Amantes · VI"
+msgstr "Os Enamorados · VI"
 
 msgid "When the game begins, each investigator searches their deck for an Ally asset, adds it to their hand, and shuffles their deck."
-msgstr "Quando o jogo começa, cada investigador procura em seu baralho por um ativoAliado, adiciona-o à sua mão e embaralha seu baralho."
+msgstr "Quando o jogo começa, cada investigador procura um Ativo de Aliado em seu baralho, adiciona-o à sua mão e embaralha seu baralho."
 
 msgid "When the game begins, each investigator searches their deck for an Ally asset, removes it from the game, and shuffles their deck."
-msgstr "Quando o jogo começa, cada investigador procura em seu baralho por um ativoAliado, remove-o do jogo e embaralha seu baralho."
+msgstr "Quando o jogo começa, cada investigador procura um Ativo de Aliado em seu baralho, remove ele do jogo e embaralha seu baralho."
 
 msgid "The Chariot · VII"
-msgstr "A Carruagem · VII"
+msgstr "O Carro · VII"
 
 msgid "Each investigator begins the game with 2 additional cards in their opening hand."
-msgstr "Cada investigador começa o jogo com 2 cartas adicionais em sua mãoinicial."
+msgstr "Cada investigador começa o jogo com 2 cartas adicionais em sua mão inicial."
 
 msgid "Each investigator begins the game with 2 fewer cards in their opening hand, and cannot draw cards during their first turn."
 msgstr "Cada investigador começa o jogo com 2 cartas a menos em sua mão inicial, e não pode comprar cartas durante seu primeiro turno."
 
 msgid "Strength · VIII"
-msgstr "Força · VIII"
+msgstr "A Força · VIII"
 
 msgid "When the game begins, each investigator may play an asset from their hand at -2 cost."
-msgstr "Quando o jogo começa, cada investigador pode jogar um recurso de sua mãocom custo -2."
+msgstr "Quando o jogo começa, cada investigador pode jogar uma carta de Ativo de sua mão com custo -2."
 
 msgid "During the first round of the game, each investigator cannot play assets."
-msgstr "Durante a primeira rodada do jogo, cada investigador não pode jogar ativos."
+msgstr "Durante a primeira rodada do jogo, cada investigador não pode jogar cartas de Ativos."
 
 msgid "The Hermit · IX"
 msgstr "O Eremita · IX"
@@ -4475,31 +4475,31 @@ msgid "Decrease each investigator's maximum hand size by 3."
 msgstr "Diminua o tamanho máximo da mão de cada investigador em 3."
 
 msgid "Wheel of Fortune · X"
-msgstr "Roda da Fortuna · X"
+msgstr "A Roda da Fortuna · X"
 
 msgid "Once each agenda, the first time any investigator reveals an [elder_sign] token, cancel it and treat it as a -5 token instead."
-msgstr "Uma vez que cada agenda, a primeira vez que qualquer investigador revela uma ficha [elder_sign], cancele-a e trate-a como uma ficha -5."
+msgstr "Uma vez em cada agenda, na primeira vez que qualquer investigador revelar uma ficha [elder_sign], cancele-a e trate-a como uma ficha -5."
 
 msgid "Justice · XI"
-msgstr "Justiça · XI"
+msgstr "A Justiça · XI"
 
 msgid "Cancel the first doom that would be placed on the final agenda of the game."
-msgstr "Cancelar a primeira perdição que seria colocada na agenda final do jogo."
+msgstr "Cancele a primeira ficha de Perdição que seria colocada na agenda final do jogo."
 
 msgid "The final agenda of the game enters play with 1 doom on it."
-msgstr "A agenda final do jogo entra em jogo com 1 perdição."
+msgstr "A agenda final do jogo entra em jogo com 1 ficha de Perdição."
 
 msgid "The Hanged Man · XII"
 msgstr "O Enforcado · XII"
 
 msgid "During setup, each investigator may take up to 2 additional mulligans."
-msgstr "Durante a preparação, cada investigador pode fazer até 2 mulligans adicionais."
+msgstr "Durante a preparação, cada investigador pode realizar até 2 mulligans adicionais."
 
 msgid "Each investigator cannot mulligan or replace weaknesses in their opening hand (resolve their revelation abilities when the game begins)."
-msgstr "Cada investigador não pode fazer mulligan ou substituir fraquezas em sua mãoinicial (resolva suas habilidades de revelação quando o jogo começar)."
+msgstr "Cada investigador não pode fazer mulligan ou substituir fraquezas em sua mão inicial (resolver suas habilidades de revelação quando o jogo começar)."
 
 msgid "Death · XIII"
-msgstr "Morte · XIII"
+msgstr "A Morte · XIII"
 
 msgid "Each investigator gets +1 health."
 msgstr "Cada investigador recebe +1 de vida."
