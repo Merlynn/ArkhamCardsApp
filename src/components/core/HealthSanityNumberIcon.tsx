@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { t } from 'ttag';
@@ -57,7 +56,8 @@ export default function HealthSanityIcon({ type, count, perInvestigator }: Props
       width: iconSize(fontScale) * (type === 'sanity' ? 1.4 : 0.8),
       height: iconSize(fontScale),
     };
-  }, [fontScale]);
+  }, [type, fontScale]);
+  const theCount = count ?? 0;
   return (
     <View style={{ flexDirection: 'row' }}>
       <View style={[styles.wrapper, style]} accessibilityLabel={label(type, count)}>
@@ -69,18 +69,48 @@ export default function HealthSanityIcon({ type, count, perInvestigator }: Props
           />
         </View>
         <View style={[styles.icon, type === 'health' ? styles.healthText : styles.sanityText, style]}>
-          <CardIcon
-            name={`${getNumber(count)}-fill`}
-            size={NUMBER_SIZE}
-            color="white"
-          />
+          { theCount > 10 ? (
+            <>
+              <CardIcon
+                name={`${getNumber(theCount % 10)}-fill`}
+                size={NUMBER_SIZE}
+                color="white"
+              />
+              <CardIcon
+                name={`${getNumber(Math.floor(theCount / 10))}-fill`}
+                size={NUMBER_SIZE}
+                color="white"
+              />
+            </>
+          ) : (
+            <CardIcon
+              name={`${getNumber(count)}-fill`}
+              size={NUMBER_SIZE}
+              color="white"
+            />
+          ) }
         </View>
         <View style={[styles.icon, type === 'health' ? styles.healthText : styles.sanityText, style]}>
-          <CardIcon
-            name={`${getNumber(count)}-outline`}
-            size={NUMBER_SIZE}
-            color={colors[type]}
-          />
+          { theCount > 10 ? (
+            <>
+              <CardIcon
+                name={`${getNumber(theCount % 10)}-outline`}
+                size={NUMBER_SIZE}
+                color={colors[type]}
+              />
+              <CardIcon
+                name={`${getNumber(Math.floor(theCount / 10))}-outline`}
+                size={NUMBER_SIZE}
+                color={colors[type]}
+              />
+            </>
+          ) : (
+            <CardIcon
+              name={`${getNumber(count)}-outline`}
+              size={NUMBER_SIZE}
+              color={colors[type]}
+            />
+          ) }
         </View>
       </View>
       { !!perInvestigator && (

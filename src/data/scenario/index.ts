@@ -1,17 +1,40 @@
 import { find, flatMap, forEach, sortBy } from 'lodash';
 
-import { CampaignCycleCode, GuideInput, NumberChoices, StandaloneId, Trauma } from '@actions/types';
-import { FullCampaign, Effect, Errata, Scenario, ChoiceIcon, ChaosToken, ChaosTokens, ScenarioChaosTokens, BorderColor, TabooSets, BinaryConditionalChoice, CampaignRule } from './types';
-import CampaignGuide, { CampaignLog, CampaignLogSection } from './CampaignGuide';
+import {
+  CampaignCycleCode,
+  GuideInput,
+  NumberChoices,
+  StandaloneId,
+  Trauma,
+} from '@actions/types';
+import {
+  FullCampaign,
+  Effect,
+  Errata,
+  Scenario,
+  ChoiceIcon,
+  ChaosToken,
+  ChaosTokens,
+  ScenarioChaosTokens,
+  BorderColor,
+  TabooSets,
+  BinaryConditionalChoice,
+  CampaignRule,
+} from './types';
+import CampaignGuide, {
+  CampaignLog,
+  CampaignLogSection,
+} from './CampaignGuide';
 import ScenarioGuide from './ScenarioGuide';
 import ScenarioStep from './ScenarioStep';
 import GuidedCampaignLog from './GuidedCampaignLog';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
 import Card from '@data/types/Card';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { Gender_Enum } from '@generated/graphql/apollo-schema';
-import { Binary } from 'typeorm';
+import { loadAsset } from '@lib/assetLoader';
+import { useAsset } from '@lib/useAsset';
 
 export interface ScenarioId {
   scenarioId: string;
@@ -24,7 +47,6 @@ interface BasicScenario {
   scenarioGuide: ScenarioGuide;
   latestCampaignLog: GuidedCampaignLog;
 }
-
 
 export interface PlayedScenario extends BasicScenario {
   type: 'started' | 'completed';
@@ -88,13 +110,26 @@ export interface DisplayChoice {
   conditionHidden?: boolean;
 }
 
-export function selectedDisplayChoiceText(choice: DisplayChoice, gender?: Gender_Enum) {
+export function selectedDisplayChoiceText(
+  choice: DisplayChoice,
+  gender?: Gender_Enum
+) {
   switch (gender) {
     case Gender_Enum.F: {
-      return choice.selected_feminine_text || choice.feminine_text || choice.selected_text || choice.text;
+      return (
+        choice.selected_feminine_text ||
+        choice.feminine_text ||
+        choice.selected_text ||
+        choice.text
+      );
     }
     case Gender_Enum.Nb: {
-      return choice.selected_nonbinary_text || choice.nonbinary_text || choice.selected_text || choice.text;
+      return (
+        choice.selected_nonbinary_text ||
+        choice.nonbinary_text ||
+        choice.selected_text ||
+        choice.text
+      );
     }
     case Gender_Enum.M:
     default:
@@ -124,183 +159,82 @@ export interface PersonalizedChoices {
 
 export type Choices = PersonalizedChoices | UniversalChoices;
 
-function loadAllChaosTokens(lang: string): ChaosTokens {
-  switch (lang) {
-    case 'es':
-      return require('../../../assets/generated/chaosOdds_es.json')
-    case 'ru':
-      return require('../../../assets/generated/chaosOdds_ru.json');
-    case 'fr':
-      return require('../../../assets/generated/chaosOdds_fr.json');
-    case 'de':
-      return require('../../../assets/generated/chaosOdds_de.json');
-    case 'it':
-      return require('../../../assets/generated/chaosOdds_it.json');
-    case 'pt':
-      return require('../../../assets/generated/chaosOdds_pt.json');
-    case 'pl':
-      return require('../../../assets/generated/chaosOdds_pl.json');
-    case 'zh':
-      return require('../../../assets/generated/chaosOdds_zh.json');
-    case 'ko':
-      return require('../../../assets/generated/chaosOdds_ko.json');
-    default:
-    case 'vi':
-    case 'en':
-      return require('../../../assets/generated/chaosOdds.json');
-  }
+async function loadAllChaosTokens(lang: string): Promise<ChaosTokens> {
+  const assetKey = lang === 'vi' || lang === 'en' ? 'chaos_odds' : `chaos_odds_${lang}`;
+  return await loadAsset<ChaosTokens>(assetKey);
 }
 
-export function loadChaosTokens(lang: string, code?: string, scenario?: string): ScenarioChaosTokens | undefined {
+export async function loadChaosTokens(
+  lang: string,
+  code?: string,
+  scenario?: string
+): Promise<ScenarioChaosTokens | undefined> {
   if (!code && !scenario) {
     return undefined;
   }
-  const allTokens = loadAllChaosTokens(lang);
-  return find(allTokens, t => !!(scenario && t.scenario === scenario)) || find(allTokens, t => !!(code && t.code === code));
+  const allTokens = await loadAllChaosTokens(lang);
+  return (
+    find(allTokens, (t) => !!(scenario && t.scenario === scenario)) ||
+    find(allTokens, (t) => !!(code && t.code === code))
+  );
 }
 
-export function loadTaboos(lang: string): TabooSets | undefined {
-  switch (lang) {
-    case 'es': return require('../../../assets/generated/taboos_es.json');
-    case 'de': return require('../../../assets/generated/taboos_de.json');
-    case 'ru': return require('../../../assets/generated/taboos_ru.json');
-    case 'fr': return require('../../../assets/generated/taboos_fr.json');
-    case 'it': return require('../../../assets/generated/taboos_it.json');
-    case 'zh': return require('../../../assets/generated/taboos_zh.json');
-    case 'ko': return require('../../../assets/generated/taboos_ko.json');
-    case 'pt': return require('../../../assets/generated/taboos_pt.json');
-    case 'pl': return require('../../../assets/generated/taboos_pl.json');
-    case 'vi':
-    case 'en':
-    default:
-      return undefined;
+export async function loadTaboos(lang: string): Promise<TabooSets | undefined> {
+  if (lang === 'vi' || lang === 'en' || lang === 'cs') {
+    return undefined;
   }
+  const assetKey = `taboos_${lang}`;
+  return await loadAsset<TabooSets>(assetKey);
 }
 
-
-function getScenarioNames(lang: string): { id: string; name: string}[] {
-  switch (lang) {
-    case 'es': return require('../../../assets/generated/scenarioNames_es.json');
-    case 'de': return require('../../../assets/generated/scenarioNames_de.json');
-    case 'ru': return require('../../../assets/generated/scenarioNames_ru.json');
-    case 'fr': return require('../../../assets/generated/scenarioNames_fr.json');
-    case 'it': return require('../../../assets/generated/scenarioNames_it.json');
-    case 'zh': return require('../../../assets/generated/scenarioNames_zh.json');
-    case 'ko': return require('../../../assets/generated/scenarioNames_ko.json');
-    case 'pt': return require('../../../assets/generated/scenarioNames_pt.json');
-    case 'pl': return require('../../../assets/generated/scenarioNames_pl.json');
-    case 'vi': return require('../../../assets/generated/scenarioNames_vi.json');
-    case 'en': return require('../../../assets/generated/scenarioNames.json');
-    default:
-      return [];
-  }
-}
+// async function getScenarioNames(lang: string): Promise<{ id: string; name: string }[]> {
+//   const assetKey = (lang === 'en' || lang === 'cs') ? 'scenario_names' : `scenario_names_${lang}`;
+//   return await loadAsset<{ id: string; name: string }[]>(assetKey);
+// }
 
 export function useScenarioNames(): { [id: string]: string | undefined } {
   const { lang } = useContext(LanguageContext);
+  const assetKey = useMemo(() => (lang === 'en' || lang === 'cs') ? 'scenario_names' : `scenario_names_${lang}`, [lang]);
+  const list = useAsset<{ id: string; name: string }[]>(assetKey);
   return useMemo(() => {
-    const list = getScenarioNames(lang);
+    if (!list) {
+      return {};
+    }
     const result: { [id: string]: string | undefined } = {};
     forEach(list, ({ id, name }) => {
       result[id] = name;
     });
     return result;
-  }, [lang]);
+  }, [list]);
 }
 
-
-function loadAll(lang: string): {
+async function loadAll(lang: string): Promise<{
   allLogEntries: CampaignLog[];
   allCampaigns: FullCampaign[];
   encounterSets: {
     [code: string]: string;
   };
   errata: Errata;
-} {
-  switch (lang) {
-    case 'es':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_es.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_es.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_es.json'),
-        errata: require('../../../assets/generated/campaignErrata_es.json'),
-      };
-    case 'ru':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_ru.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_ru.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_ru.json'),
-        errata: require('../../../assets/generated/campaignErrata_ru.json'),
-      };
-    case 'fr':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_fr.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_fr.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_fr.json'),
-        errata: require('../../../assets/generated/campaignErrata_fr.json'),
-      };
-    case 'de':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_de.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_de.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_de.json'),
-        errata: require('../../../assets/generated/campaignErrata_de.json'),
-      };
-    case 'it':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_it.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_it.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_it.json'),
-        errata: require('../../../assets/generated/campaignErrata_it.json'),
-      };
-    case 'pt':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_pt.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_pt.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_pt.json'),
-        errata: require('../../../assets/generated/campaignErrata_pt.json'),
-      };
-    case 'zh':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_zh.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_zh.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_zh.json'),
-        errata: require('../../../assets/generated/campaignErrata_zh.json'),
-      };
-    case 'pl':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_pl.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_pl.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_pl.json'),
-        errata: require('../../../assets/generated/campaignErrata_pl.json'),
-      };
-    case 'ko':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_ko.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_ko.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_ko.json'),
-        errata: require('../../../assets/generated/campaignErrata_ko.json'),
-      };
-    case 'vi':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs_vi.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns_vi.json'),
-        encounterSets: require('../../../assets/generated/encounterSets_vi.json'),
-        errata: require('../../../assets/generated/campaignErrata_vi.json'),
-      };
-    default:
-    case 'en':
-      return {
-        allLogEntries: require('../../../assets/generated/campaignLogs.json'),
-        allCampaigns: require('../../../assets/generated/allCampaigns.json'),
-        encounterSets: require('../../../assets/generated/encounterSets.json'),
-        errata: require('../../../assets/generated/campaignErrata.json'),
-      };
-  }
+}> {
+  const suffix = lang === 'en' ? '' : `_${lang}`;
+  const [allLogEntries, allCampaigns, encounterSets, errata] = await Promise.all([
+    loadAsset<CampaignLog[]>(`campaign_logs${suffix}`),
+    loadAsset<FullCampaign[]>(`all_campaigns${suffix}`),
+    loadAsset<{ [code: string]: string }>(`encounter_sets${suffix}`),
+    loadAsset<Errata>(`campaign_errata${suffix}`),
+  ]);
+  return {
+    allLogEntries,
+    allCampaigns,
+    encounterSets,
+    errata,
+  };
 }
 
-
-function load(lang: string, id: string): {
+async function load(
+  lang: string,
+  id: string
+): Promise<{
   allLogEntries: CampaignLog[];
   campaign: FullCampaign | undefined;
   sideCampaign: FullCampaign | undefined;
@@ -308,15 +242,21 @@ function load(lang: string, id: string): {
     [code: string]: string;
   };
   errata: Errata;
-} {
-  const result = loadAll(lang);
+}> {
+  const result = await loadAll(lang);
 
   return {
     allLogEntries: result.allLogEntries,
     encounterSets: result.encounterSets,
     errata: result.errata,
-    campaign: find(result.allCampaigns, campaign => campaign.campaign.id === id),
-    sideCampaign: find(result.allCampaigns, campaign => campaign.campaign.id === 'side'),
+    campaign: find(
+      result.allCampaigns,
+      (campaign) => campaign.campaign.id === id
+    ),
+    sideCampaign: find(
+      result.allCampaigns,
+      (campaign) => campaign.campaign.id === 'side'
+    ),
   };
 }
 
@@ -326,23 +266,22 @@ function combineCampaignLog(
 ): CampaignLog {
   const sections: CampaignLogSection[] = [];
   const usedSideSections: string[] = [];
-  campaignLog.sections.forEach(section => {
-    const sideSection = sideCampaign.sections.find(side => side.section === section.section);
+  campaignLog.sections.forEach((section) => {
+    const sideSection = sideCampaign.sections.find(
+      (side) => side.section === section.section
+    );
     if (sideSection) {
       usedSideSections.push(section.section);
       sections.push({
         section: section.section,
-        entries: [
-          ...section.entries,
-          ...sideSection.entries,
-        ],
+        entries: [...section.entries, ...sideSection.entries],
       });
     } else {
       sections.push(section);
     }
   });
   const usedSideSectionsSet = new Set(usedSideSections);
-  sideCampaign.sections.forEach(side => {
+  sideCampaign.sections.forEach((side) => {
     if (!usedSideSectionsSet.has(side.section)) {
       sections.push(side);
     }
@@ -353,20 +292,20 @@ function combineCampaignLog(
   };
 }
 
-export function getCampaignGuide(
+export async function getCampaignGuide(
   id: string,
   lang: string
-): CampaignGuide | undefined {
-  const {
-    allLogEntries,
-    campaign,
-    sideCampaign,
-    encounterSets,
-    errata,
-  } = load(lang, id);
+): Promise<CampaignGuide | undefined> {
+  const { allLogEntries, campaign, sideCampaign, encounterSets, errata } = await load(
+    lang,
+    id
+  );
 
-  const logEntries = find(allLogEntries, log => log.campaignId === id);
-  const sideLogEntries = find(allLogEntries, log => log.campaignId === 'side');
+  const logEntries = find(allLogEntries, (log) => log.campaignId === id);
+  const sideLogEntries = find(
+    allLogEntries,
+    (log) => log.campaignId === 'side'
+  );
 
   if (!campaign || !logEntries || !sideCampaign || !sideLogEntries) {
     return undefined;
@@ -376,7 +315,7 @@ export function getCampaignGuide(
     combineCampaignLog(logEntries, sideLogEntries),
     encounterSets,
     sideCampaign,
-    errata,
+    errata
   );
 }
 
@@ -409,15 +348,28 @@ interface StandaloneCampaignId {
   campaignId: string;
 }
 
-
-function findStandaloneScenario(id: StandaloneScenarioId, allCampaigns: FullCampaign[], allLogEntries: CampaignLog[]): undefined | {
-  logEntries: CampaignLog;
-  campaign: FullCampaign;
-  scenario: Scenario;
-} {
-  const campaign = find(allCampaigns, campaign => campaign.campaign.id === id.campaignId);
-  const logEntries = find(allLogEntries, log => log.campaignId === id.campaignId);
-  const scenario = campaign && find(campaign.scenarios, scenario => scenario.id === id.scenarioId);
+function findStandaloneScenario(
+  id: StandaloneScenarioId,
+  allCampaigns: FullCampaign[],
+  allLogEntries: CampaignLog[]
+):
+  | undefined
+  | {
+      logEntries: CampaignLog;
+      campaign: FullCampaign;
+      scenario: Scenario;
+    } {
+  const campaign = find(
+    allCampaigns,
+    (campaign) => campaign.campaign.id === id.campaignId
+  );
+  const logEntries = find(
+    allLogEntries,
+    (log) => log.campaignId === id.campaignId
+  );
+  const scenario =
+    campaign &&
+    find(campaign.scenarios, (scenario) => scenario.id === id.scenarioId);
   if (!campaign || !scenario || !logEntries) {
     return undefined;
   }
@@ -428,12 +380,24 @@ function findStandaloneScenario(id: StandaloneScenarioId, allCampaigns: FullCamp
   };
 }
 
-function findStandaloneCampaign(id: StandaloneCampaignId, allCampaigns: FullCampaign[], allLogEntries: CampaignLog[]): undefined | {
-  logEntries: CampaignLog;
-  campaign: FullCampaign;
-} {
-  const campaign = find(allCampaigns, campaign => campaign.campaign.id === id.campaignId);
-  const logEntries = find(allLogEntries, log => log.campaignId === id.campaignId);
+function findStandaloneCampaign(
+  id: StandaloneCampaignId,
+  allCampaigns: FullCampaign[],
+  allLogEntries: CampaignLog[]
+):
+  | undefined
+  | {
+      logEntries: CampaignLog;
+      campaign: FullCampaign;
+    } {
+  const campaign = find(
+    allCampaigns,
+    (campaign) => campaign.campaign.id === id.campaignId
+  );
+  const logEntries = find(
+    allLogEntries,
+    (log) => log.campaignId === id.campaignId
+  );
   if (!campaign || !logEntries) {
     return undefined;
   }
@@ -443,57 +407,73 @@ function findStandaloneCampaign(id: StandaloneCampaignId, allCampaigns: FullCamp
   };
 }
 
-export function getStandaloneScenarios(
-  lang: string
-): StandaloneInfo[] {
-  const {
-    allLogEntries,
-    allCampaigns,
-  } = loadAll(lang);
-  const standalones = require('../../../assets/generated/standaloneScenarios.json');
-  return sortBy(flatMap(standalones, (id: StandaloneScenarioId | StandaloneCampaignId) => {
-    switch (id.type) {
-      case 'scenario': {
-        const data = findStandaloneScenario(id, allCampaigns, allLogEntries);
-        if (!data) {
-          console.log(`Could not find ${JSON.stringify(id)}`);
-          return [];
-        }
-        let specialGroup = undefined;
-        if (data.campaign.campaign.id === 'side') {
-          if (data.scenario.custom) {
-            specialGroup = 'custom_side';
-          } else if (data.scenario.challenge) {
-            specialGroup = 'challenge';
+export function useStandaloneScenarios(): StandaloneInfo[] | undefined {
+  const { lang } = useContext(LanguageContext);
+  const [scenarios, setScenarios] = useState<StandaloneInfo[]>();
+  useEffect(() => {
+    let canceled = false;
+    (async() => {
+      const scenarios = await getStandaloneScenarios(lang);
+      if (!canceled) {
+        setScenarios(scenarios);
+      }
+    })();
+    return () => {
+      canceled = true;
+    };
+  }, [lang, setScenarios]);
+  return scenarios;
+}
+
+async function getStandaloneScenarios(lang: string): Promise<StandaloneInfo[]> {
+  const { allLogEntries, allCampaigns } = await loadAll(lang);
+  const standalones = await loadAsset('standalone_scenarios');
+  return sortBy(
+    flatMap(standalones, (id: StandaloneScenarioId | StandaloneCampaignId) => {
+      switch (id.type) {
+        case 'scenario': {
+          const data = findStandaloneScenario(id, allCampaigns, allLogEntries);
+          if (!data) {
+            console.log(`Could not find ${JSON.stringify(id)}`);
+            return [];
           }
+          let specialGroup = undefined;
+          if (data.campaign.campaign.id === 'side') {
+            if (data.scenario.custom) {
+              specialGroup = 'custom_side';
+            } else if (data.scenario.challenge) {
+              specialGroup = 'challenge';
+            }
+          }
+          return {
+            type: 'standalone',
+            id: { campaignId: id.campaignId, scenarioId: id.scenarioId },
+            name: data.scenario.scenario_name,
+            code: data.scenario.id,
+            campaign: data.campaign.campaign.id,
+            campaignPosition: data.campaign.campaign.position,
+            specialGroup,
+          };
         }
-        return {
-          type: 'standalone',
-          id: { campaignId: id.campaignId, scenarioId: id.scenarioId },
-          name: data.scenario.scenario_name,
-          code: data.scenario.id,
-          campaign: data.campaign.campaign.id,
-          campaignPosition: data.campaign.campaign.position,
-          specialGroup,
-        };
-      }
-      case 'campaign': {
-        const data = findStandaloneCampaign(id, allCampaigns, allLogEntries);
-        if (!data) {
-          console.log(`Could not find ${JSON.stringify(id)}`);
-          return [];
+        case 'campaign': {
+          const data = findStandaloneCampaign(id, allCampaigns, allLogEntries);
+          if (!data) {
+            console.log(`Could not find ${JSON.stringify(id)}`);
+            return [];
+          }
+          return {
+            type: 'campaign',
+            id: id.campaignId as CampaignCycleCode,
+            name: data.campaign.campaign.name,
+            code: data.campaign.campaign.id,
+            campaign: 'side',
+            campaignPosition: 0,
+          };
         }
-        return {
-          type: 'campaign',
-          id: (id.campaignId as CampaignCycleCode),
-          name: data.campaign.campaign.name,
-          code: data.campaign.campaign.id,
-          campaign: 'side',
-          campaignPosition: 0,
-        };
       }
-    }
-  }), scenario => scenario.name);
+    }),
+    (scenario) => scenario.name
+  );
 }
 
 export default {

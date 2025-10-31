@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import { map } from 'lodash';
 import { StyleSheet, Text, View } from 'react-native';
-import { Navigation } from 'react-native-navigation';
+
 import { t } from 'ttag';
 
 import ArkhamButton from '@components/core/ArkhamButton';
@@ -11,11 +11,11 @@ import TwoSidedCardComponent from './TwoSidedCardComponent';
 import SignatureCardsComponent from './SignatureCardsComponent';
 import space, { m, s } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
-import { useParallelInvestigators } from '@components/core/hooks';
+import { useParallelInvestigator } from '@components/core/hooks';
 import CardDetailSectionHeader from './CardDetailSectionHeader';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId?: string;
   card: Card;
   backCard?: Card;
   width: number;
@@ -27,9 +27,10 @@ interface Props {
   showInvestigatorCards?: (code: string) => void;
 }
 
-function InvestigatorInfoComponent({ componentId, card, width, simple, showInvestigatorCards }: Props) {
+function InvestigatorInfoComponent({ card, width, simple, showInvestigatorCards }: Props) {
+  const navigation = useNavigation();
   const { colors, typography } = useContext(StyleContext);
-  const [parallelInvestigators] = useParallelInvestigators(card.type_code === 'investigator' ? card.code : undefined);
+  const [parallelInvestigators] = useParallelInvestigator(card.type_code === 'investigator' ? card.code : undefined);
   const showInvestigatorCardsPressed = useCallback(() => {
     showInvestigatorCards && showInvestigatorCards(card.code);
   }, [card, showInvestigatorCards]);
@@ -37,6 +38,15 @@ function InvestigatorInfoComponent({ componentId, card, width, simple, showInves
   const showParallelInvestigatorCardsPressed = useCallback(() => {
     showInvestigatorCards && parallelInvestigator && showInvestigatorCards(parallelInvestigator.code);
   }, [showInvestigatorCards, parallelInvestigator]);
+
+  const showCreateDeck = useCallback(() => {
+    navigation.navigate('Deck.NewOptions', {
+      campaignId: undefined,
+      investigatorId: card.code,
+      onCreateDeck: undefined,
+      alternateInvestigatorId: undefined,
+    });
+  }, [navigation, card]);
 
   if (!card || card.type_code !== 'investigator' || card.encounter_code !== null) {
     return null;
@@ -49,7 +59,6 @@ function InvestigatorInfoComponent({ componentId, card, width, simple, showInves
           { map(parallelInvestigators, parallel => (
             <TwoSidedCardComponent
               key={parallel.code}
-              componentId={componentId}
               card={parallel}
               width={width}
               simple={!!simple}
@@ -64,7 +73,7 @@ function InvestigatorInfoComponent({ componentId, card, width, simple, showInves
           </Text>
         </View>
         <ArkhamButton
-          icon="deck"
+          icon="card"
           title={t`Show all available cards`}
           onPress={showInvestigatorCardsPressed}
         />
@@ -76,9 +85,13 @@ function InvestigatorInfoComponent({ componentId, card, width, simple, showInves
             onPress={showParallelInvestigatorCardsPressed}
           />
         ) }
+        <ArkhamButton
+          icon="deck"
+          title={t`Create new deck`}
+          onPress={showCreateDeck}
+        />
       </View>
       <SignatureCardsComponent
-        componentId={componentId}
         investigator={card}
         width={width}
         parallelInvestigator={parallelInvestigator}
@@ -87,21 +100,16 @@ function InvestigatorInfoComponent({ componentId, card, width, simple, showInves
   );
 }
 
-function SpoilersComponent({ componentId, card, width, toggleShowSpoilers }: Props) {
+function SpoilersComponent({ card, width, toggleShowSpoilers }: Props) {
+  const navigation = useNavigation();
   const { backgroundStyle, typography } = useContext(StyleContext);
   const toggleShowSpoilersPressed = useCallback(() => {
     toggleShowSpoilers && toggleShowSpoilers(card.code);
   }, [card, toggleShowSpoilers]);
 
   const editSpoilersPressed = useCallback(() => {
-    if (componentId) {
-      Navigation.push(componentId, {
-        component: {
-          name: 'My.Spoilers',
-        },
-      });
-    }
-  }, [componentId]);
+    navigation.navigate('My.Spoilers');
+  }, [navigation]);
   return (
     <View key={card.code} style={[styles.viewContainer, backgroundStyle, { width }]}>
       <Text style={[typography.text, space.paddingM]}>
@@ -118,7 +126,7 @@ function SpoilersComponent({ componentId, card, width, toggleShowSpoilers }: Pro
 }
 
 export default function CardDetailComponent({
-  componentId, card, backCard, width, showSpoilers, tabooSetId, simple, noImage,
+  card, backCard, width, showSpoilers, tabooSetId, simple, noImage,
   toggleShowSpoilers, showInvestigatorCards,
 }: Props) {
   const { backgroundStyle } = useContext(StyleContext);
@@ -127,7 +135,6 @@ export default function CardDetailComponent({
   if (shouldBlur) {
     return (
       <SpoilersComponent
-        componentId={componentId}
         card={card}
         width={width}
         showSpoilers={showSpoilers}
@@ -142,7 +149,6 @@ export default function CardDetailComponent({
     <View style={[styles.viewContainer, backgroundStyle]}>
       <View style={{ width }}>
         <TwoSidedCardComponent
-          componentId={componentId}
           card={card}
           backCard={backCard}
           width={width}
@@ -151,7 +157,6 @@ export default function CardDetailComponent({
         />
         { !simple && (
           <BondedCardsComponent
-            componentId={componentId}
             cards={bondedCards}
             width={width}
             tabooSetId={tabooSetId}
@@ -160,7 +165,6 @@ export default function CardDetailComponent({
       </View>
       { card.type_code === 'investigator' && !simple && (
         <InvestigatorInfoComponent
-          componentId={componentId}
           card={card}
           width={width}
           showSpoilers={showSpoilers}

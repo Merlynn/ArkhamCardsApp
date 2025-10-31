@@ -15,10 +15,10 @@ import StyleContext from '@styles/StyleContext';
 import space from '@styles/space';
 import { ActivityIndicator } from 'react-native';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 
 interface Props {
-  componentId: string;
-  investigator: Card;
+  investigator: CampaignInvestigator;
   deck: LatestDeckT;
   encounterCodes: string[];
   scenarioName?: string;
@@ -32,7 +32,6 @@ const SORT: QuerySort[] = [
 ];
 
 export default function StoryCardSelectorComponent({
-  componentId,
   investigator,
   deck,
   encounterCodes,
@@ -86,7 +85,7 @@ export default function StoryCardSelectorComponent({
     }
     const header = (
       <CardSectionHeader
-        investigator={investigator}
+        investigator={investigator.card}
         section={{ superTitle: scenarioName ? t`Story cards to add - ${scenarioName}` : t`Story cards to add` }}
       />
     );
@@ -98,14 +97,13 @@ export default function StoryCardSelectorComponent({
     });
     return (
       <CardSelectorComponent
-        componentId={componentId}
         slots={slots}
         counts={storyCounts}
         updateCount={updateCount}
         header={header}
       />
     );
-  }, [componentId, scenarioName, investigator, storyCards, storyCounts, updateCount]);
+  }, [scenarioName, investigator, storyCards, storyCounts, updateCount]);
 
   const deckStoryCardsSection = useMemo(() => {
     if (!deckStoryCards.length) {
@@ -114,7 +112,7 @@ export default function StoryCardSelectorComponent({
 
     const header = (
       <CardSectionHeader
-        investigator={investigator}
+        investigator={investigator.card}
         section={{ superTitle: t`Story Cards - Existing` }}
       />
     );
@@ -126,14 +124,13 @@ export default function StoryCardSelectorComponent({
     });
     return (
       <CardSelectorComponent
-        componentId={componentId}
         slots={slots}
         counts={storyCounts}
         updateCount={updateCount}
         header={header}
       />
     );
-  }, [deckStoryCards, componentId, investigator, storyCounts, updateCount]);
+  }, [deckStoryCards, investigator, storyCounts, updateCount]);
 
   if (loading) {
     return (

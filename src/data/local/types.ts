@@ -1,4 +1,4 @@
-import { CampaignCycleCode, Deck, ScenarioResult, StandaloneId, Trauma, Campaign, CampaignDifficulty, TraumaAndCardData, getCampaignId, CampaignId, WeaknessSet, InvestigatorData, CampaignGuideState, GuideInput, CampaignNotes, getDeckId, DeckId, SealedToken, ChaosBagResults, TarotReading, ChaosBagHistory } from '@actions/types';
+import { CampaignCycleCode, Deck, ScenarioResult, StandaloneId, Trauma, Campaign, CampaignDifficulty, TraumaAndCardData, getCampaignId, CampaignId, WeaknessSet, InvestigatorData, CampaignGuideState, GuideInput, CampaignNotes, getDeckId, DeckId, SealedToken, ChaosBagResults, TarotReading, ChaosBagHistory, OZ } from '@actions/types';
 import { find, findLast, uniq, map, concat, last, maxBy, sumBy, filter, trim } from 'lodash';
 
 import MiniCampaignT, { CampaignLink } from '@data/interfaces/MiniCampaignT';
@@ -40,9 +40,10 @@ export class MiniCampaignRedux implements MiniCampaignT {
     this.campaignDecks = campaignDecks;
 
     this.updatedAt = updatedAt;
+    const includeParallel = this.campaign.cycleCode === OZ;
     this.investigators = uniq(
       concat(
-        map(this.campaignDecks, d => d.investigator),
+        map(this.campaignDecks, d => includeParallel ? d.deck.meta?.alternate_front ?? d.investigator : d.investigator),
         this.campaign.nonDeckInvestigators || [],
       )
     );
@@ -232,9 +233,11 @@ export class MiniDeckRedux implements MiniDeckT {
   id: DeckId;
   name: string;
   investigator: string;
+  alternate_investigator?: string;
   date_update: string;
   campaign_id?: CampaignId;
   tags?: string[];
+
 
   constructor(deck: Deck, campaign: Campaign | undefined) {
     this.id = getDeckId(deck);
@@ -243,6 +246,7 @@ export class MiniDeckRedux implements MiniDeckT {
     this.date_update = deck.date_update;
     this.campaign_id = campaign ? getCampaignId(campaign) : undefined;
     this.tags = deck.tags === '{}' ? [] : filter(map((deck.tags || '').split(/[, ]/), t => trim(t)), x => !!x);
+    this.alternate_investigator = deck.meta?.alternate_front;
   }
 }
 

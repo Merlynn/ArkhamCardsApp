@@ -3,10 +3,8 @@ import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { map } from 'lodash';
-import { Navigation, OptionsModalPresentationStyle } from 'react-native-navigation';
-import { Platform } from 'react-native';
 
-import { CampaignId, Deck, DeckId, getDeckId } from '@actions/types';
+import { CampaignCycleCode, CampaignId, Deck, DeckId, getDeckId, OZ } from '@actions/types';
 import { addInvestigator } from '@components/campaign/actions';
 import { MyDecksSelectorProps } from '@components/campaign/MyDecksSelectorDialog';
 import Card from '@data/types/Card';
@@ -14,13 +12,16 @@ import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import { DeckActions } from '@data/remote/decks';
 import { UpdateCampaignActions } from '@data/remote/campaigns';
 import { AppState } from '@reducers';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
+import { useNavigation } from '@react-navigation/native';
 
 type AsyncDispatch = ThunkDispatch<AppState, unknown, Action>;
 
 type ChooseDeckType = (
   campaignId: CampaignId,
-  campaignInvestigators: Card[],
-  singleInvestigator?: Card,
+  cycleCode: CampaignCycleCode | undefined,
+  campaignInvestigators: CampaignInvestigator[],
+  singleInvestigator?: CampaignInvestigator,
   callback?: (code: string) => Promise<void>,
 ) => void;
 
@@ -31,6 +32,7 @@ export default function useChooseDeck(createDeckActions: DeckActions, updateActi
   AddInvestigatorType,
 ] {
   const { userId } = useContext(ArkhamCardsAuthContext);
+  const navigation = useNavigation();
   const dispatch: AsyncDispatch = useDispatch();
   const doAddInvestigator = useCallback(async(campaignId: CampaignId, code: string, deckId?: DeckId) => {
     await dispatch(addInvestigator(userId, createDeckActions, updateActions, campaignId, code, deckId));
@@ -38,14 +40,17 @@ export default function useChooseDeck(createDeckActions: DeckActions, updateActi
 
   const showChooseDeck = useCallback((
     campaignId: CampaignId,
-    campaignInvestigators: Card[],
-    singleInvestigator?: Card,
+    cycleCode: CampaignCycleCode | undefined,
+    campaignInvestigators: CampaignInvestigator[],
+    singleInvestigator?: CampaignInvestigator,
     callback?: (code: string) => Promise<void>
   ) => {
+    const includeParallel = cycleCode === OZ;
     const onDeckSelect = async(deck: Deck) => {
-      await doAddInvestigator(campaignId, deck.investigator_code, getDeckId(deck));
+      const investigatorCode = includeParallel ? deck.meta?.alternate_front ?? deck.investigator_code : singleInvestigator?.code ?? deck.investigator_code;
+      await doAddInvestigator(campaignId, investigatorCode, getDeckId(deck));
       if (callback) {
-        await callback(deck.investigator_code);
+        await callback(investigatorCode);
       }
     };
     const onInvestigatorSelect = async(card: Card) => {
@@ -58,6 +63,7 @@ export default function useChooseDeck(createDeckActions: DeckActions, updateActi
       campaignId: campaignId,
       singleInvestigator: singleInvestigator.code,
       onDeckSelect,
+      includeParallel,
     } : {
       campaignId: campaignId,
       selectedInvestigatorIds: map(
@@ -67,22 +73,9 @@ export default function useChooseDeck(createDeckActions: DeckActions, updateActi
       onDeckSelect,
       onInvestigatorSelect,
       simpleOptions: true,
+      includeParallel,
     };
-    Navigation.showModal({
-      stack: {
-        children: [{
-          component: {
-            name: 'Dialog.DeckSelector',
-            passProps,
-            options: {
-              modalPresentationStyle: Platform.OS === 'ios' ?
-                OptionsModalPresentationStyle.fullScreen :
-                OptionsModalPresentationStyle.overCurrentContext,
-            },
-          },
-        }],
-      },
-    });
-  }, [doAddInvestigator]);
+    navigation.navigate('Dialog.DeckSelector', passProps);
+  }, [doAddInvestigator, navigation]);
   return [showChooseDeck, doAddInvestigator];
 }

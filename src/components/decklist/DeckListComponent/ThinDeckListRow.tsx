@@ -33,7 +33,6 @@ import { xpString } from '@components/deck/hooks';
 interface Props {
   lang: string;
   deck: LatestDeckT;
-  investigator?: Card;
   onPress?: (deck: LatestDeckT, investigator: Card | undefined) => void;
   width: number;
   editDeckTags?: (deck: LatestDeckT, investigator: Card | undefined) => void;
@@ -99,7 +98,7 @@ function DeckListRowDetails({
       ) : (
         <>
           <View style={[styles.row, { alignItems: 'center' }, styles.flex]}>
-            <EncounterIcon color={colors.D20} size={20} encounter_code={deck.campaign.cycleCode || 'core'} />
+            <EncounterIcon color={colors.D20} size={20} encounter_code={deck.campaign.cycleCode || 'core'} pack />
             <Text
               style={[space.marginLeftXs, typography.text, { color: colors.D15 }, typography.italic, styles.flex]}
               numberOfLines={1}
@@ -134,13 +133,23 @@ function DeckListRowDetails({
 export default function ThinDeckListRow({
   lang,
   deck,
-  investigator,
   onPress,
   width,
   editDeckTags,
 }: Props) {
   const { colors, fontScale, typography } = useContext(StyleContext);
   const loadingAnimation = useCallback((props: any) => <Fade {...props} style={{ backgroundColor: colors.L20 }} />, [colors]);
+
+  const [cards] = useLatestDeckCards(deck, false);
+  const { listSeperator } = useContext(LanguageContext);
+  const parsedDeck = useMemo(() => {
+    if (deck && cards) {
+      return parseBasicDeck(deck.deck, cards, listSeperator, deck.previousDeck);
+    }
+    return undefined;
+  }, [deck, cards, listSeperator]);
+  const investigator = deck ? cards?.[deck.investigator] : undefined;
+
   const onDeckPressFunction = useCallback(() => {
     onPress && onPress(deck, investigator);
   }, [deck, investigator, onPress]);
@@ -155,14 +164,7 @@ export default function ThinDeckListRow({
     }
     return investigator.eliminated(deck.campaign?.trauma);
   }, [investigator, deck]);
-  const [cards] = useLatestDeckCards(deck);
-  const { listSeperator } = useContext(LanguageContext);
-  const parsedDeck = useMemo(() => {
-    if (deck && cards) {
-      return parseBasicDeck(deck.deck, cards, listSeperator, deck.previousDeck);
-    }
-    return undefined;
-  }, [deck, cards, listSeperator]);
+
   const tags = useMemo(() => {
     if (deck?.tags?.length) {
       return deck.tags;
@@ -200,17 +202,17 @@ export default function ThinDeckListRow({
                   </Text>
                   { investigator?.name ? (
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Text style={[typography.smallLabel, typography.italic, typography.white, styles.flex]}>
+                      <Text style={[typography.smallLabel, typography.italic, typography.white, styles.flex]} numberOfLines={1}>
                         { investigator?.name || '' }
                       </Text>
                       { !!parsedDeck && (
-                        <>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                           { parsedDeck.experience > 0 && (
                             <>
                               <View style={[space.marginLeftS, { marginRight: 1 }]}>
                                 <AppIcon name="xp-bold" size={18} color={COLORS.white} />
                               </View>
-                              <Text style={[typography.smallLabel, typography.boldItalic, typography.white]}>
+                              <Text style={[typography.smallLabel, typography.boldItalic, typography.white]} numberOfLines={1}>
                                 { xpString(parsedDeck.experience) }
                               </Text>
                             </>
@@ -218,21 +220,21 @@ export default function ThinDeckListRow({
                           <View style={[space.marginLeftS, { marginRight: 1 }]}>
                             <AppIcon name="card-outline-bold" size={18} color={COLORS.white} />
                           </View>
-                          <Text style={[typography.smallLabel, typography.boldItalic, typography.white]}>
+                          <Text style={[typography.smallLabel, typography.boldItalic, typography.white]} numberOfLines={1}>
                             { t`×${parsedDeck.totalCardCount}` }
                           </Text>
-                        </>
-                      ) }
-                      { !!deck.deck.problem && (
-                        <View style={space.marginLeftXs}>
-                          <CircleIcon
-                            size="small"
-                            background={investigator.faction_code === 'survivor' ? COLORS.white : colors.warn}
-                            color={investigator.faction_code === 'survivor' ? colors.warn : colors.D30}
-                            name="warning-bold"
-                          />
+                          { !!deck.deck.problem && (
+                            <View style={space.marginLeftXs}>
+                              <CircleIcon
+                                size="small"
+                                background={investigator.faction_code === 'survivor' ? COLORS.white : colors.warn}
+                                color={investigator.faction_code === 'survivor' ? colors.warn : colors.D30}
+                                name="warning-bold"
+                              />
+                            </View>
+                          )}
                         </View>
-                      )}
+                      ) }
                     </View>
                   ) : (
                     <Placeholder Animation={loadingAnimation}>

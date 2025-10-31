@@ -1,32 +1,31 @@
-import React, { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { Navigation, Options } from 'react-native-navigation';
+import React, { useCallback, useLayoutEffect } from 'react';
+
 import { t } from 'ttag';
 
 import { useAppDispatch } from '@app/store';
 import DrawChaosBagComponent from './DrawChaosBagComponent';
 import { updateCampaignChaosBag } from '@components/campaign/actions';
-import { NavigationProps } from '@components/nav/types';
 import { ChaosBag } from '@app_constants';
 import COLORS from '@styles/colors';
-import { EditChaosBagProps } from './EditChaosBagDialog';
-import { AppState, makeCampaignChaosBagSelector } from '@reducers';
-import { useNavigationButtonPressed } from '@components/core/hooks';
 import { CampaignCycleCode, CampaignId } from '@actions/types';
 import { showChaosBagOddsCalculator } from '../campaign/nav';
-import Card from '@data/types/Card';
 import { useSetCampaignChaosBag } from '@data/remote/campaigns';
 import { useChaosBagResults, useNonGuideChaosBag } from '@data/hooks';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
+import HeaderButton from '@components/core/HeaderButton';
 
 export interface CampaignDrawChaosBagProps {
   campaignId: CampaignId;
-  allInvestigators: Card[];
+  allInvestigators: CampaignInvestigator[];
   cycleCode: CampaignCycleCode,
 }
 
-type Props = NavigationProps & CampaignDrawChaosBagProps;
-
-function CampaignDrawChaosBagView({ componentId, campaignId, allInvestigators, cycleCode }: Props) {
+function CampaignDrawChaosBagView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Campaign.DrawChaosBag'>>();
+  const { campaignId, allInvestigators, cycleCode } = route.params;
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const chaosBag = useNonGuideChaosBag(campaignId);
   const setCampaignChaosBag = useSetCampaignChaosBag();
@@ -35,41 +34,31 @@ function CampaignDrawChaosBagView({ componentId, campaignId, allInvestigators, c
   }, [dispatch, setCampaignChaosBag, campaignId]);
 
   const showEditChaosBagDialog = useCallback(() => {
-    Navigation.push<EditChaosBagProps>(componentId, {
-      component: {
-        name: 'Dialog.EditChaosBag',
-        passProps: {
-          chaosBag,
-          updateChaosBag: updateChaosBag,
-          trackDeltas: true,
-          cycleCode,
-        },
-        options: {
-          topBar: {
-            title: {
-              text: t`Chaos Bag`,
-            },
-            backButton: {
-              title: t`Cancel`,
-            },
-          },
-        },
-      },
+    navigation.navigate('Dialog.EditChaosBag', {
+      chaosBag,
+      updateChaosBag: updateChaosBag,
+      trackDeltas: true,
+      cycleCode,
     });
-  }, [componentId, cycleCode, chaosBag, updateChaosBag]);
+  }, [navigation, cycleCode, chaosBag, updateChaosBag]);
 
 
   const showChaosBagOdds = useCallback(() => {
-    showChaosBagOddsCalculator(componentId, campaignId, allInvestigators);
-  }, [componentId, campaignId, allInvestigators]);
+    showChaosBagOddsCalculator(navigation, campaignId, allInvestigators);
+  }, [navigation, campaignId, allInvestigators]);
 
-  useNavigationButtonPressed(({ buttonId }) => {
-    if (buttonId === 'back' || buttonId === 'androidBack') {
-      Navigation.pop(componentId);
-    } else if (buttonId === 'edit') {
-      showEditChaosBagDialog();
-    }
-  }, componentId, [componentId, showEditChaosBagDialog]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton
+          text={t`Edit`}
+          color={COLORS.M}
+          accessibilityLabel={t`Edit Chaos Bag`}
+          onPress={showEditChaosBagDialog}
+        />
+      ),
+    })
+  }, [navigation, showEditChaosBagDialog]);
   const chaosBagResults = useChaosBagResults(campaignId);
   return (
     <DrawChaosBagComponent
@@ -82,19 +71,5 @@ function CampaignDrawChaosBagView({ componentId, campaignId, allInvestigators, c
     />
   );
 }
-
-CampaignDrawChaosBagView.options = (): Options => {
-  return {
-    topBar: {
-      rightButtons: [{
-        systemItem: 'save',
-        text: t`Edit`,
-        id: 'edit',
-        color: COLORS.M,
-        accessibilityLabel: t`Edit Chaos Bag`,
-      }],
-    },
-  };
-};
 
 export default CampaignDrawChaosBagView;

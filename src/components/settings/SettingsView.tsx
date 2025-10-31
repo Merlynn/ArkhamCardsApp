@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigation } from 'react-native-navigation';
+
 import { filter, map, partition, uniq } from 'lodash';
 import { msgid, ngettext, t, jt } from 'ttag';
 
@@ -22,7 +22,6 @@ import { requestFetchCards } from '@components/card/actions';
 import { prefetch } from '@lib/auth';
 import { AppState, getLangChoice, getPacksInCollection, getPackSpoilers, getAllPacks, getAudioLangPreference } from '@reducers';
 import StyleContext from '@styles/StyleContext';
-import { NavigationProps } from '@components/nav/types';
 import AccountSection from './AccountSection';
 import space, { s } from '@styles/space';
 import RoundedFactionBlock from '@components/core/RoundedFactionBlock';
@@ -36,6 +35,9 @@ import { useAlertDialog } from '@components/deck/dialogs';
 import { CURRENT_REDUX_VERSION } from '@reducers/settings';
 import { useRemoteSettingFlag, useSettingFlag, useSettingValue } from '@components/core/hooks';
 import { useRemoteSettings, useUpdateRemoteSetting } from '@data/remote/settings';
+import SettingsCardPoolPicker from './SettingsCardPoolPicker';
+import { useNavigation } from '@react-navigation/native';
+import withApolloGate from '@components/core/withApolloGate';
 
 function contactPressed() {
   Linking.openURL('mailto:arkhamcards@gmail.com');
@@ -51,11 +53,15 @@ function showDeKofi() {
   Linking.openURL('https://ko-fi.com/simplainer');
 }
 
-function showRuDonate() {
-  Linking.openURL('https://www.tinkoff.ru/cf/27GmNzxhhUk');
+export function showRuDonate() {
+  Linking.openURL('https://messenger.online.sberbank.ru/sl/rgONgm2VJesBMZNMh');
+}
+function showEnAudio() {
+  Linking.openURL('https://therestrictedcollection.podbean.com/');
 }
 
-export default function SettingsView({ componentId }: NavigationProps) {
+function SettingsView() {
+  const navigation = useNavigation();
   const { backgroundStyle, colors, typography } = useContext(StyleContext);
   const dispatch = useDispatch();
   const reduxMigrationCurrent = useSelector((state: AppState) => state.settings.version === CURRENT_REDUX_VERSION);
@@ -90,47 +96,29 @@ export default function SettingsView({ componentId }: NavigationProps) {
   const { lang } = useContext(LanguageContext);
   const langChoice = useSelector(getLangChoice);
 
-  const navButtonPressed = useCallback((screen: string, title: string) => {
-    Navigation.push(componentId, {
-      component: {
-        name: screen,
-        options: {
-          topBar: {
-            title: {
-              text: title,
-            },
-            backButton: {
-              title: t`Done`,
-            },
-          },
-        },
-      },
-    });
-  }, [componentId]);
-
   useEffect(() => {
     prefetch();
   }, []);
 
   const myCollectionPressed = useCallback(() => {
-    navButtonPressed('My.Collection', t`Edit Collection`);
-  }, [navButtonPressed]);
+    navigation.navigate('My.Collection', {});
+  }, [navigation]);
 
   const editSpoilersPressed = useCallback(() => {
-    navButtonPressed('My.Spoilers', t`Edit Spoilers`);
-  }, [navButtonPressed]);
+    navigation.navigate('My.Spoilers');
+  }, [navigation]);
 
   const diagnosticsPressed = useCallback(() => {
-    navButtonPressed('Settings.Diagnostics', t`Diagnostics`);
-  }, [navButtonPressed]);
+    navigation.navigate('Settings.Diagnostics')
+  }, [navigation]);
 
   const aboutPressed = useCallback(() => {
-    navButtonPressed('About', t`About Arkham Cards`);
-  }, [navButtonPressed]);
+    navigation.navigate('About');
+  }, [navigation]);
 
   const backupPressed = useCallback(() => {
-    navButtonPressed('Settings.Backup', t`Backup`);
-  }, [navButtonPressed]);
+    navigation.navigate('Settings.Backup', { safeMode: false });
+  }, [navigation]);
 
   const doSyncCards = useCallback(() => {
     dispatch(requestFetchCards(lang, langChoice));
@@ -158,8 +146,8 @@ export default function SettingsView({ componentId }: NavigationProps) {
   const audioLang = useSelector(getAudioLangPreference);
 
   const rulesPressed = useCallback(() => {
-    navButtonPressed('Rules', t`Rules`);
-  }, [navButtonPressed]);
+    navigation.navigate('Rules');
+  }, [navigation]);
   const [alertDialog, showAlert] = useAlertDialog(true);
   const patreonLink = <Text key="patreon" style={[typography.text, typography.underline, { color: colors.D20 }]} onPress={showPatreon}>{'Patreon'}</Text>;
   const mythosBustersLink = <Text key="mb" style={[typography.gameFont, typography.underline, { color: colors.D20 }]} onPress={showMythosBusters}>{t`Mythos Busters`}</Text>;
@@ -167,10 +155,7 @@ export default function SettingsView({ componentId }: NavigationProps) {
     <>
       <SafeAreaView style={[styles.container, backgroundStyle]}>
         <ScrollView style={[styles.list, { backgroundColor: colors.L10 }]} keyboardShouldPersistTaps="always">
-          <AccountSection
-            componentId={componentId}
-            showAlert={showAlert}
-          />
+          <AccountSection showAlert={showAlert} />
           <View style={[space.paddingSideS, space.paddingBottomS]}>
             <RoundedFactionBlock faction="neutral" header={<DeckSectionHeader faction="neutral" title={t`Cards`} />}>
               <View style={[space.paddingTopS, space.paddingBottomS]}>
@@ -189,7 +174,8 @@ export default function SettingsView({ componentId }: NavigationProps) {
                   onPress={editSpoilersPressed}
                   editable
                 />
-                <SettingsTabooPicker last />
+                <SettingsTabooPicker />
+                <SettingsCardPoolPicker last />
               </View>
               <DeckButton
                 icon="arkhamdb"
@@ -260,7 +246,11 @@ export default function SettingsView({ componentId }: NavigationProps) {
                   onValueChange={setSearchEnglish}
                 />
               ) }
-              <NarrationLanguagePicker first last />
+            </RoundedFactionBlock>
+            <RoundedFactionBlock faction="neutral" header={<DeckSectionHeader faction="neutral" title={t`Narration`} />}>
+              <View style={space.paddingTopS}>
+                <NarrationLanguagePicker first last />
+              </View>
               { audioLang === 'de' && (
                 <>
                   <View style={space.paddingS}>
@@ -286,7 +276,16 @@ export default function SettingsView({ componentId }: NavigationProps) {
                   </View>
                 </>
               ) }
-              { audioLang == 'en' && <DissonantVoicesLoginButton showAlert={showAlert} last /> }
+              { audioLang === 'en' && (
+                <>
+                  <DissonantVoicesLoginButton showAlert={showAlert} last />
+                  <View style={space.paddingS}>
+                    <Text style={typography.text}>
+                      Additional narration for fan-made campaigns has been provided by Head Librarian Chad <Text style={[typography.text, typography.underline, { color: colors.D20 }]} onPress={showEnAudio}>The Restricted Collection</Text> and Scarlett.
+                    </Text>
+                  </View>
+                </>
+              ) }
             </RoundedFactionBlock>
           </View>
           <SocialBlock />
@@ -334,6 +333,8 @@ export default function SettingsView({ componentId }: NavigationProps) {
     </>
   );
 }
+
+export default withApolloGate(SettingsView);
 
 const styles = StyleSheet.create({
   container: {

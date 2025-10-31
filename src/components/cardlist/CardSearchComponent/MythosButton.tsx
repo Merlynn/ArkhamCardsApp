@@ -23,7 +23,7 @@ interface Props extends Record<string, unknown> {
 }
 
 const WIDTH = SIZE * 2 + 12;
-const HEIGHT = SIZE;
+const HEIGHT = SIZE + 6;
 
 function MythosButton({ filterId }: Props) {
   const { colors } = useContext(StyleContext);
@@ -50,12 +50,12 @@ function MythosButton({ filterId }: Props) {
   const backgroundColor = colors.L10;
   const investigatorStyle = useAnimatedStyle(() => {
     return {
-      color: interpolateColor(toggleAnim.value, [0,0.25,0.75, 1], [dark, dark, light, light]),
+      color: interpolateColor(toggleAnim.value, [0, 0.25, 0.75, 1], [dark, dark, light, light]),
     };
   }, [dark, light]);
   const mythosStyle = useAnimatedStyle(() => {
     return {
-      color: interpolateColor(toggleAnim.value, [0,0.25,0.75, 1], [light, light, dark, dark]),
+      color: interpolateColor(toggleAnim.value, [0, 0.25, 0.75, 1], [light, light, dark, dark]),
     };
   }, [light, dark]);
   const movingCircleX = useAnimatedStyle(() => {
@@ -105,13 +105,16 @@ export default MythosButton;
 
 const styles = StyleSheet.create({
   container: {
-    width: MythosButton.WIDTH,
-    height: MythosButton.HEIGHT,
-    marginLeft: LEFT_MARGIN,
-    paddingLeft: 2,
-    paddingTop: 2,
+    width: WIDTH,
+    height: HEIGHT,
     position: 'relative',
+    marginLeft: 0,
+    marginTop: Platform.OS === 'android' ? 8 : 0,
+    marginRight: Platform.OS === 'android' ? 4 : 0,
     marginBottom: 8,
+    paddingTop: 2,
+    paddingLeft: 2,
+    overflow: 'visible',
   },
   iconWrapper: {
     width: SIZE,
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop:  0,
+    paddingTop: 0,
   },
   circle: {
     borderRadius: SIZE / 2,
@@ -143,5 +146,6 @@ const styles = StyleSheet.create({
     paddingTop: 1,
     paddingLeft: 1,
     paddingRight: 1,
+    overflow: 'visible',
   },
 });

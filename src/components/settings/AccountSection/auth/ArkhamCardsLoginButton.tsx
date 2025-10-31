@@ -5,13 +5,12 @@ import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { AppleButton, appleAuth, appleAuthAndroid } from '@invertase/react-native-apple-authentication';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import uuid from 'react-native-uuid';
 import { ThunkAction } from 'redux-thunk';
 import { Action } from 'redux';
 import { t } from 'ttag';
 
 import StyleContext from '@styles/StyleContext';
-import { AlertButton, ShowAlert, useDialog } from '@components/deck/dialogs';
+import { ShowAlert, useDialog } from '@components/deck/dialogs';
 import space, { s, xs } from '@styles/space';
 import { useFlag } from '@components/core/hooks';
 import DeckButton from '@components/deck/controls/DeckButton';
@@ -25,6 +24,7 @@ import LanguageContext from '@lib/i18n/LanguageContext';
 import { useAppDispatch } from '@app/store';
 import useDeleteAccountDialog from './useDeleteAccountDialog';
 import { getAppleRefreshToken, setAppleRefreshToken } from '@lib/auth';
+import { generateUuid } from '@lib/uuid';
 
 function arkhamCardsLogin(user: string): ThunkAction<void, AppState, unknown, Action<string>> {
   return (dispatch) => {
@@ -87,8 +87,8 @@ async function onAppleButtonPress() {
     return result;
   }
 
-  const rawNonce = uuid.v4();
-  const state = uuid.v4();
+  const rawNonce = generateUuid();
+  const state = generateUuid();
   appleAuthAndroid.configure({
     // The Service ID you registered with Apple
     clientId: 'com.arkhamcards',
@@ -415,7 +415,6 @@ function EmailSubmitForm({ mode, setMode, backPressed, loginSucceeded }: {
 
 interface Props {
   showAlert: ShowAlert;
-  handle: string;
 }
 
 export default function ArkhamCardsLoginButton({ showAlert }: Props) {
@@ -424,7 +423,7 @@ export default function ArkhamCardsLoginButton({ showAlert }: Props) {
   const dispatch = useAppDispatch();
   const { userId, loading, user } = useContext(ArkhamCardsAuthContext);
   const [emailLogin, toggleEmailLogin, setEmailLogin] = useFlag(false);
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const [mode, setMode] = useState<'login' | 'create' | undefined>();
   const apollo = useApolloClient();
   const doLogout = useCallback(async() => {

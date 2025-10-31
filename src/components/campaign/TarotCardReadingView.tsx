@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Text, ScrollView, View, Platform } from 'react-native';
 import { find, filter, map, shuffle, take, values, sumBy, findIndex, forEach, random } from 'lodash';
 import SnapCarousel from 'react-native-snap-carousel';
 import { c, t } from 'ttag';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import { useAppDispatch } from '@app/store';
-import { NavigationProps } from '@components/nav/types';
 import StyleContext from '@styles/StyleContext';
 import { Item, useDialog, usePickerDialog } from '@components/deck/dialogs';
 import space, { m, s } from '@styles/space';
@@ -15,15 +15,18 @@ import { useSettingValue, useToggles } from '@components/core/hooks';
 import TarotCardComponent from '@components/card/TarotCardComponent';
 import DeckButton from '@components/deck/controls/DeckButton';
 import Animated, { SlideInLeft, SlideOutRight } from 'react-native-reanimated';
-import { Navigation, OptionsTopBar, OptionsTopBarButton } from 'react-native-navigation';
+
 import ListToggleButton from '@components/deck/ListToggleButton';
 import { TAROT_CARD_RATIO } from '@styles/sizes';
 import AppIcon from '@icons/AppIcon';
 import EncounterIcon from '@icons/EncounterIcon';
 import { useScenarioNames } from '@data/scenario';
-import { useSetCampaignTarotReading } from '@data/remote/campaigns';
+import { useDismissOnCampaignDeleted, useSetCampaignTarotReading } from '@data/remote/campaigns';
 import { updateTarotReading } from './actions';
 import { CampaignId, TarotReading } from '@actions/types';
+import { BasicStackParamList } from '@navigation/types';
+import HeaderTitle from '@components/core/HeaderTitle';
+import { useCampaign } from '@data/hooks';
 
 export type TarotReadingType = 'chaos' | 'balance' | 'choice' | 'observed' | 'damned' | 'custom' | 'destiny';
 
@@ -73,36 +76,6 @@ function getTarotReadingInstruction(value: TarotReadingType): string | undefined
   }
 }
 
-function navigationOptions(
-  {
-    lightButton,
-  }: {
-    lightButton?: boolean;
-  }
-){
-  const rightButtons: OptionsTopBarButton[] = [{
-    id: 'grid',
-    component: {
-      name: 'ListToggleButton',
-      passProps: {
-        setting: 'card_grid',
-        lightButton,
-      },
-      width: ListToggleButton.WIDTH,
-      height: ListToggleButton.HEIGHT,
-    },
-    accessibilityLabel: t`Grid`,
-    enabled: true,
-  }];
-  const topBarOptions: OptionsTopBar = {
-    rightButtons,
-  };
-
-  return {
-    topBar: topBarOptions,
-  };
-}
-
 const SPECIAL_SCENARIOS: { [code: string]: string | undefined } = {
   marrakesh: 'dead_heat',
   buenos_aires: 'sanguine_shadows',
@@ -132,9 +105,7 @@ function TarotCardButton({
   scenarioName?: string;
   flipped: boolean;
   showTarotCard: (id: string) => void;
-  onFlip: (id: string) => void;
   inverted: boolean;
-  onInvert?: (id: string, inverted: boolean) => void;
 }) {
   const { colors } = useContext(StyleContext);
   const onPress = useCallback(() => {
@@ -240,19 +211,30 @@ export function useTarotCardReadingPicker({ value, onValueChange } : {
   });
 }
 
-function TarotCardReadingView({
-  componentId,
-  scenarios,
-  readingType,
-  id,
-  originalReading,
-}: NavigationProps & TarotCardReadingProps) {
+function TarotCardReadingView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Campaign.Tarot'>>();
+  const navigation = useNavigation();
+  const { id, originalReading, scenarios, readingType } = route.params;
   const [savedReading, setSavedReading] = useState(originalReading);
   const [saving, setSaving] = useState(false);
   const { backgroundStyle, colors, height, typography, width } = useContext(StyleContext);
-  useEffect(() => {
-    Navigation.mergeOptions(componentId, navigationOptions({ lightButton: false }));
-  }, [componentId]);
+  const campaign = useCampaign(id);
+  useDismissOnCampaignDeleted(navigation, campaign);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <HeaderTitle
+          title={t`Tarot Reading`}
+          subtitle={getTarotReadingLabel(readingType)}
+        />
+      ),
+      headerRight: () => (
+        <ListToggleButton setting="card_grid" lightButton={false} />
+      ),
+    });
+  }, [navigation, readingType]);
+
   const cardGrid = useSettingValue('card_grid');
 
   const [tarotCards, setTarotCards] = useState<TarotCard[]>([]);
@@ -380,9 +362,8 @@ function TarotCardReadingView({
     ) : (width - s * 8);
   }, [width, height]);
   const renderSwipeCard = useCallback(({ item }: {
+    // eslint-disable-next-line react/no-unused-prop-types
     item: TarotCard;
-    index: number;
-    dataIndex: number;
   }): React.ReactNode => {
     return (
       <View key={item.id} style={[
@@ -414,8 +395,8 @@ function TarotCardReadingView({
           itemWidth={dialogCardWidth}
           sliderWidth={width + s * 4}
           vertical={false}
-          //itemHeight={dialogCardWidth * TAROT_CARD_RATIO}
-          //sliderHeight={height * 0.7 + m * 2}
+          // itemHeight={dialogCardWidth * TAROT_CARD_RATIO}
+          // sliderHeight={height * 0.7 + m * 2}
           firstItem={jumpIndex}
           inactiveSlideOpacity={1}
           onScrollIndexChanged={setIndex}
@@ -424,7 +405,6 @@ function TarotCardReadingView({
           renderItem={renderSwipeCard}
           loop
           useScrollView
-          disableIntervalMomentum
           data={tarotCards}
         />
       </View>
@@ -596,12 +576,10 @@ function TarotCardReadingView({
                 <TarotCardButton
                   card={card}
                   flipped={!!flipped[card.id]}
-                  onFlip={toggleFlipped}
                   showTarotCard={showTarotCard}
                   inverted={!!reversed[card.id]}
                   scenario={scenario}
                   scenarioName={scenario ? scenarioNames[scenario] : undefined}
-                  onInvert={onInvert}
                   first={idx === 0}
                   last={idx === tarotCards.length - 1}
                 />

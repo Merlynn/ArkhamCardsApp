@@ -31,8 +31,8 @@ export default function EnemyStatLine({ enemy }: Props) {
   ];
 
   const damageLine = flatten([
-    (enemy.enemy_damage || 0) > 0 ? [`Damage: ${enemy.enemy_damage || 0}.`] : [],
-    (enemy.enemy_horror || 0) > 0 ? [`Horror: ${enemy.enemy_horror || 0}.`] : [],
+    (enemy.enemy_damage ?? 0) > 0 ? [`Damage: ${enemy.enemy_damage ?? 0}.`] : [],
+    (enemy.enemy_horror ?? 0) > 0 ? [`Horror: ${enemy.enemy_horror ?? 0}.`] : [],
   ]).join(' ');
   return (
     <>
@@ -66,10 +66,10 @@ export default function EnemyStatLine({ enemy }: Props) {
         </View>
       </View>
       <View style={styles.iconRow} accessibilityLabel={damageLine}>
-        { map(range(0, enemy.enemy_damage || 0), idx => (
+        { map(range(0, enemy.enemy_damage ?? 0), idx => (
           <HealthSanityIcon key={idx} type="health" />
         )) }
-        { map(range(0, enemy.enemy_horror || 0), idx => (
+        { map(range(0, enemy.enemy_horror ?? 0), idx => (
           <HealthSanityIcon key={idx} type="sanity" />
         )) }
       </View>
@@ -88,10 +88,6 @@ const styles = StyleSheet.create({
     paddingRight: s,
     marginRight: TINY_PHONE ? xs : xs,
   },
-  skillIcon: {
-    marginLeft: 2,
-    position: 'relative',
-  },
   icon: {
     marginLeft: 4,
     marginBottom: 4,
@@ -101,11 +97,5 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     marginBottom: s,
-  },
-  healthIcon: {
-    width: 24,
-  },
-  sanityIcon: {
-    width: 28,
   },
 });

@@ -12,7 +12,7 @@ import LanguageContext from '@lib/i18n/LanguageContext';
 type LEFT_ICON = 'plus-button' | 'check' | 'close' | 'undo' | 'shuffle' | 'deck' | 'edit';
 interface Props {
   color: 'dark' | 'light' | 'green' | 'red';
-  onPress: () => void;
+  onPress: undefined | (() => void);
   leftIcon?: LEFT_ICON;
   rightIcon?: 'right-arrow';
   title: string;
@@ -89,7 +89,6 @@ export default function ActionButton({ color, loading, onPress, title, leftIcon,
         { !hideText && (
           <Text numberOfLines={2} style={[
             leftIcon ? space.marginLeftS : undefined,
-            space.paddingTopXs,
             typography.cardName,
             { color: textColor, flexShrink: 1 },
             { textAlignVertical: 'center' },

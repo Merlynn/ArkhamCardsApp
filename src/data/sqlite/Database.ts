@@ -1,5 +1,23 @@
-import { findIndex, flatMap, forEach, map, pull, sortBy, sortedUniq } from 'lodash';
-import { createConnection, Brackets, Connection, Repository, EntitySubscriberInterface, SelectQueryBuilder, InsertResult, OrderByCondition, QueryRunner } from 'typeorm/browser';
+import {
+  findIndex,
+  flatMap,
+  forEach,
+  map,
+  pull,
+  sortBy,
+  sortedUniq,
+} from 'lodash';
+import {
+  createConnection,
+  Brackets,
+  Connection,
+  Repository,
+  EntitySubscriberInterface,
+  SelectQueryBuilder,
+  InsertResult,
+  OrderByCondition,
+} from 'typeorm/browser';
+import * as QuickSQLite from '@op-engineering/op-sqlite';
 
 import Card, { CardsMap, PartialCard } from '../types/Card';
 import EncounterSet from '../types/EncounterSet';
@@ -17,11 +35,92 @@ import { AlternateRequiredCodeMigration1660064759967 } from './migration/Alterna
 import { CardStatusMigration1662999387731 } from './migration/CardStatusMigration';
 import { GenderMigration1663271269593 } from './migration/GenderMigration';
 import { CardTagsMigraiton1663617607335 } from './migration/CardTagsMigration';
-import { ImageMigration1665529094145 } from './migration/ImageMigration'
+import { ImageMigration1665529094145 } from './migration/ImageMigration';
 import { ReprintQuantityMigration1671202311300 } from './migration/ReprintQuantityMigration';
 import { TabooTextMigration1693598075386 } from './migration/TabooTextMigration';
 import { SideDeckMigration1698073688677 } from './migration/SideDeckMigration';
+import { SpecialtyCardsMigration1726180741370 } from './migration/SpecialtyCardsMigration';
 
+const enhanceQueryResult = (result: QuickSQLite.QueryResult) => {
+  if (!result.rows) {
+    result.rows = [];
+  }
+  // @ts-ignore
+  result.rows.item = (index: number) => result.rows?.[index] ?? undefined;
+};
+
+/**
+ * DO NOT USE THIS! THIS IS MEANT FOR TYPEORM
+ * If you are looking for a convenience wrapper use `connect`
+ */
+export const typeORMDriver = {
+  openDatabase: (
+    options: {
+      name: string;
+      location?: string;
+    },
+    ok: (db: any) => void,
+    fail: (msg: string) => void
+  ): any => {
+    try {
+      const db = QuickSQLite.open({
+        name: options.name,
+        location: options.location,
+      });
+      const connection = {
+        executeSql: async(
+          sql: string,
+          params: any[] | undefined,
+          ok: (res: QuickSQLite.QueryResult) => void,
+          fail: (msg: string) => void
+        ) => {
+          try {
+            const response = await db.executeWithHostObjects(sql, params);
+            enhanceQueryResult(response);
+            ok(response);
+          } catch (e) {
+            fail(e);
+          }
+        },
+        transaction: (
+          fn: (tx: QuickSQLite.Transaction) => Promise<void>
+        ): Promise<void> => {
+          return db.transaction(fn);
+        },
+        close: (ok: () => void, fail: (argument0: unknown) => void) => {
+          try {
+            db.close();
+            ok();
+          } catch (e) {
+            fail(e);
+          }
+        },
+        attach: (
+          dbNameToAttach: string,
+          alias: string,
+          location: string | undefined,
+          callback: () => void
+        ) => {
+          db.attach({
+            secondaryDbFileName: dbNameToAttach,
+            alias,
+            location,
+          });
+          callback();
+        },
+        detach: (alias: string, callback: () => void) => {
+          db.detach(alias);
+          callback();
+        },
+      };
+
+      ok(connection);
+      return connection;
+    } catch (e) {
+      fail(e);
+    }
+  },
+};
 type DatabaseListener = () => void;
 
 export interface SqliteVersion {
@@ -39,10 +138,8 @@ async function createDatabaseConnection(recreate: boolean) {
     type: 'react-native',
     database: 'arkham4',
     location: 'default',
-    logging: [
-      'error',
-      'schema',
-    ],
+    logging: ['error', 'schema'],
+    driver: typeORMDriver,
     // maxQueryExecutionTime: 4000,
     migrations: [
       HealsDamageMigration1657382994910,
@@ -56,14 +153,9 @@ async function createDatabaseConnection(recreate: boolean) {
       ReprintQuantityMigration1671202311300,
       TabooTextMigration1693598075386,
       SideDeckMigration1698073688677,
+      SpecialtyCardsMigration1726180741370,
     ],
-    entities: [
-      Card,
-      EncounterSet,
-      FaqEntry,
-      TabooSet,
-      Rule,
-    ],
+    entities: [Card, EncounterSet, FaqEntry, TabooSet, Rule],
   });
   await connection.runMigrations();
   await connection.synchronize(recreate);
@@ -71,7 +163,7 @@ async function createDatabaseConnection(recreate: boolean) {
 }
 
 export default class Database {
-  static SCHEMA_VERSION: number = 48;
+  static SCHEMA_VERSION: number = 51;
   connectionP: Promise<Connection>;
 
   playerState?: PlayerCardState;
@@ -79,13 +171,14 @@ export default class Database {
   globalLoadedCards: {
     [tabooSetId: number]: CardsMap | undefined;
   } = {
-    [0]: {},
-  };
+      [0]: {},
+    };
 
   listeners: DatabaseListener[] = [];
 
   constructor(latestVersion?: number) {
-    const recreate = !latestVersion || latestVersion !== Database.SCHEMA_VERSION;
+    const recreate =
+      !latestVersion || latestVersion !== Database.SCHEMA_VERSION;
     this.connectionP = createDatabaseConnection(recreate);
   }
 
@@ -110,7 +203,7 @@ export default class Database {
       };
     }
     this.playerState = state;
-    forEach(this.listeners, listener => listener());
+    forEach(this.listeners, (listener) => listener());
   };
 
   async cards(): Promise<Repository<Card>> {
@@ -125,7 +218,8 @@ export default class Database {
 
   async cardsQuery(): Promise<SelectQueryBuilder<Card>> {
     const cards = await this.cards();
-    return cards.createQueryBuilder('c')
+    return cards
+      .createQueryBuilder('c')
       .leftJoinAndSelect('c.linked_card', 'linked_card');
   }
 
@@ -152,7 +246,10 @@ export default class Database {
   async removeSubscriber(subscriber: EntitySubscriberInterface) {
     const connection = await this.connectionP;
     // tslint:disable-next-line
-    const index = findIndex(connection.subscribers, sub => sub === subscriber);
+    const index = findIndex(
+      connection.subscribers,
+      (sub) => sub === subscriber
+    );
     if (index !== -1) {
       connection.subscribers.splice(index, 1);
     }
@@ -168,11 +265,11 @@ export default class Database {
   async sqliteVersion(): Promise<SqliteVersion> {
     try {
       const connection = await this.connectionP;
-      const queryRunner = connection.createQueryRunner();
-      const manager = connection.createEntityManager(queryRunner);
-      const result = await manager.query('select sqlite_version() as version');
+      const result = await connection.query(
+        'select sqlite_version() as version'
+      );
       const version = result[0].version;
-      if (typeof(version) === 'string') {
+      if (typeof version === 'string') {
         const splitV = version.split('.');
         if (splitV.length === 3) {
           return {
@@ -192,22 +289,7 @@ export default class Database {
     };
   }
 
-  async queryRunner(): Promise<QueryRunner> {
-    const connection = await this.connectionP;
-    const queryRunner = connection.createQueryRunner();
-    await queryRunner.connect();
-    return queryRunner;
-  }
-
-  async startTransaction(): Promise<QueryRunner> {
-    const queryRunner = await this.queryRunner();
-    await queryRunner.startTransaction();
-    return queryRunner;
-  }
-
-  async insertCards(
-    cards: Card[]
-  ): Promise<InsertResult> {
+  async insertCards(cards: Card[]): Promise<InsertResult> {
     const query = (await this.cards())
       .createQueryBuilder()
       .insert()
@@ -216,9 +298,7 @@ export default class Database {
     return await query.execute();
   }
 
-  async insertRules(
-    rules: Rule[]
-  ): Promise<InsertResult> {
+  async insertRules(rules: Rule[]): Promise<InsertResult> {
     const query = (await this.rules())
       .createQueryBuilder()
       .insert()
@@ -230,9 +310,10 @@ export default class Database {
   async getRulesPaged(
     page: number,
     pageSize: number,
-    query?: Brackets,
+    query?: Brackets
   ): Promise<Rule[]> {
-    let rulesQuery = (await this.rules()).createQueryBuilder('r')
+    let rulesQuery = (await this.rules())
+      .createQueryBuilder('r')
       .leftJoinAndSelect('r.rules', 'sub_rules')
       .leftJoinAndSelect('sub_rules.rules', 'sub_rules_2');
     if (query) {
@@ -249,41 +330,50 @@ export default class Database {
     field: string,
     query?: Brackets,
     tabooSetId?: number,
-    processValue?: (value: string) => string[],
+    processValue?: (value: string) => string[]
   ): Promise<string[]> {
     const cards = await this.cards();
-    let cardsQuery = cards.createQueryBuilder('c')
-      .select(`distinct c.${field} as value, linked_card.${field} as linked_value`)
+    let cardsQuery = cards
+      .createQueryBuilder('c')
+      .select(
+        `distinct c.${field} as value, linked_card.${field} as linked_value`
+      )
       .leftJoin('c.linked_card', 'linked_card');
     cardsQuery = cardsQuery.where(tabooSetQuery(tabooSetId));
     if (query) {
       cardsQuery = cardsQuery.andWhere(query);
     }
     const results = await cardsQuery.getRawMany();
-    return sortedUniq(sortBy(flatMap(results, (result) => {
-      const values: string[] = [];
-      if (result.value !== null) {
-        values.push(result.value);
-      }
-      if (result.linked_value !== null) {
-        values.push(result.linked_value);
-      }
-      if (processValue) {
-        return flatMap(values, processValue);
-      }
-      return values;
-    }), x => x));
+    return sortedUniq(
+      sortBy(
+        flatMap(results, (result) => {
+          const values: string[] = [];
+          if (result.value !== null) {
+            values.push(result.value);
+          }
+          if (result.linked_value !== null) {
+            values.push(result.linked_value);
+          }
+          if (processValue) {
+            return flatMap(values, processValue);
+          }
+          return values;
+        }),
+        (x) => x
+      )
+    );
   }
 
   async getPartialCards(
     sortIgnoreQuotes: boolean,
     query?: Brackets,
     tabooSetId?: number,
-    sorts?: SortType[],
+    sorts?: SortType[]
   ): Promise<PartialCard[]> {
     const cards = await this.cards();
     const primarySort = PartialCard.headerSort(sorts);
-    let cardsQuery = cards.createQueryBuilder('c')
+    let cardsQuery = cards
+      .createQueryBuilder('c')
       .select(PartialCard.selectStatement(sorts))
       .leftJoin('c.linked_card', 'linked_card');
     cardsQuery = cardsQuery.where(tabooSetQuery(tabooSetId));
@@ -297,7 +387,9 @@ export default class Database {
           cardsQuery = cardsQuery.andWhere(where('c.xp is not null'));
           break;
         case SORT_BY_ENCOUNTER_SET:
-          cardsQuery = cardsQuery.andWhere(where('c.encounter_code is not null'));
+          cardsQuery = cardsQuery.andWhere(
+            where('c.encounter_code is not null')
+          );
           break;
       }
     }
@@ -310,7 +402,10 @@ export default class Database {
       cardsQuery.orderBy(orderBy);
     }
     const result = await cardsQuery.getRawMany();
-    return flatMap(result, raw => PartialCard.fromRaw(raw, primarySort) || []);
+    return flatMap(
+      result,
+      (raw) => PartialCard.fromRaw(raw, primarySort) || []
+    );
   }
 
   async getCards(
@@ -322,30 +417,25 @@ export default class Database {
     return await cardsQuery.getMany();
   }
 
-  async getCardsByIds(
-    ids: string[]
-  ): Promise<Card[]> {
+  async getCardsByIds(ids: string[]): Promise<Card[]> {
     const cards = await this.cards();
-    return await cards.createQueryBuilder('c')
+    return await cards
+      .createQueryBuilder('c')
       .leftJoinAndSelect('c.linked_card', 'linked_card')
       .where(where(`c.id IN (:...cardIds)`, { cardIds: ids }))
       .getMany();
   }
 
-
   async getCard(
     query?: Brackets,
     tabooSetId?: number,
-    sort?: QuerySort[],
+    sort?: QuerySort[]
   ): Promise<Card | undefined> {
     const cardsQuery = await this.applyCardsQuery(query, tabooSetId, sort);
     return await cardsQuery.getOne();
   }
 
-  async getCardCount(
-    query?: Brackets,
-    tabooSetId?: number,
-  ): Promise<number> {
+  async getCardCount(query?: Brackets, tabooSetId?: number): Promise<number> {
     const cardsQuery = await this.applyCardsQuery(query, tabooSetId);
     return await cardsQuery.getCount();
   }
@@ -356,8 +446,15 @@ export default class Database {
     query?: Brackets,
     tabooSetId?: number
   ): Promise<SectionCount[]> {
-    const cardsQuery = await this.applyCardsQuery(query, tabooSetId, undefined, groupBy);
-    const results = await cardsQuery.select(`${groupBy}, count(*) as count`).getRawMany();
+    const cardsQuery = await this.applyCardsQuery(
+      query,
+      tabooSetId,
+      undefined,
+      groupBy
+    );
+    const results = await cardsQuery
+      .select(`${groupBy}, count(*) as count`)
+      .getRawMany();
     return map(results, extractor);
   }
 

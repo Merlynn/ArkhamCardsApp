@@ -16,13 +16,11 @@ import { ParsedDeckResults, useDeckEditState, useParsedDeck, xpString } from '@c
 import { useAdjustXpDialog } from '@components/deck/dialogs';
 import { DeckId } from '@actions/types';
 import { TINY_PHONE } from '@styles/sizes';
-
-const NOTCH_BOTTOM_PADDING = DeviceInfo.hasNotch() ? 20 : 0;
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const FOOTER_HEIGHT = (56 * (isBig ? 1.2 : 1));
 
 interface Props {
-  componentId: string;
   deckId: DeckId;
   onPress: () => void;
   control?: 'fab' | 'counts';
@@ -43,7 +41,7 @@ function fabPadding(control?: 'fab' | 'counts') {
 
 
 interface PreloadedProps {
-  componentId: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   parsedDeckObj: ParsedDeckResults;
   onPress: () => void;
   control?: 'fab' | 'counts';
@@ -103,13 +101,14 @@ export function PreLoadedDeckNavFooter({ parsedDeckObj, control, onPress, forceS
       </TouchableOpacity>
     );
   }, [deckEdits, theXpString, deck, showXpAdjustmentDialog, typography, colors]);
+  const insets = useSafeAreaInsets();
   if (mode === 'view' && !forceShow) {
     return null;
   }
   const modeText = mode === 'upgrade' ? t`Upgrading` : t`Editing`;
   return (
     <>
-      <View style={[styles.marginWrapper, { bottom: (yOffset || NOTCH_BOTTOM_PADDING) + s, paddingRight: fabPadding(control) }]}>
+      <View style={[styles.marginWrapper, { bottom: (yOffset ?? 0) + insets.bottom + s, paddingRight: fabPadding(control) }]}>
         <View style={[styles.content, shadow.large, { backgroundColor: colors.D10 }]}>
           { (control !== 'counts' || !TINY_PHONE) ? (
             <View>
@@ -141,14 +140,12 @@ export function PreLoadedDeckNavFooter({ parsedDeckObj, control, onPress, forceS
 }
 
 function DeckNavFooter({
-  componentId,
   deckId,
   ...props
 }: Props) {
-  const parsedDeckObj = useParsedDeck(deckId, componentId);
+  const parsedDeckObj = useParsedDeck(deckId);
   return (
     <PreLoadedDeckNavFooter
-      componentId={componentId}
       parsedDeckObj={parsedDeckObj}
       {...props}
     />

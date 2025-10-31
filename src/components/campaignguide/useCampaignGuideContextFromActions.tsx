@@ -19,8 +19,9 @@ import {
   CampaignId,
   DelayedDeckEdits,
   EmbarkData,
+  OZ,
 } from '@actions/types';
-import Card, { CardsMap } from '@data/types/Card';
+import { CardsMap } from '@data/types/Card';
 import useChooseDeck from './useChooseDeck';
 import CampaignStateHelper from '@data/scenario/CampaignStateHelper';
 import { CampaignGuideContextType } from './CampaignGuideContext';
@@ -30,6 +31,7 @@ import { DeckActions } from '@data/remote/decks';
 import { ProcessedCampaign } from '@data/scenario';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
 import { AppState } from '@reducers';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 
 const EMPTY_SPENT_XP = {};
 type AsyncDispatch = ThunkDispatch<AppState, unknown, Action>;
@@ -44,11 +46,14 @@ export default function useCampaignGuideContextFromActions(
   const campaignInvestigators = campaignData?.campaignInvestigators;
   const dispatch: AsyncDispatch = useDispatch();
   const [campaignChooseDeck, campaignAddInvestigator] = useChooseDeck(createDeckActions, updateCampaignActions);
-  const showChooseDeck = useCallback((singleInvestigator?: Card, callback?: (code: string) => Promise<void>) => {
+  const cycleCode = campaignData?.campaign?.cycleCode;
+  const includeParallel = cycleCode === OZ;
+
+  const showChooseDeck = useCallback((singleInvestigator?: CampaignInvestigator, callback?: (code: string) => Promise<void>) => {
     if (campaignInvestigators !== undefined) {
-      campaignChooseDeck(campaignId, campaignInvestigators, singleInvestigator, callback);
+      campaignChooseDeck(campaignId, cycleCode, campaignInvestigators, singleInvestigator, callback);
     }
-  }, [campaignId, campaignChooseDeck, campaignInvestigators]);
+  }, [campaignId, cycleCode, campaignChooseDeck, campaignInvestigators]);
   const remoteGuideActions = useGuideActions();
   const setBinaryAchievement = useCallback((achievementId: string, value: boolean) => {
     dispatch(guideActions.setBinaryAchievement(userId, remoteGuideActions, campaignId, achievementId, value));
@@ -69,7 +74,7 @@ export default function useCampaignGuideContextFromActions(
     campaignAddInvestigator(campaignId, investigator, deckId);
   }, [campaignAddInvestigator, campaignId]);
 
-  const removeInvestigator = useCallback((investigator: Card) => {
+  const removeInvestigator = useCallback((investigator: CampaignInvestigator) => {
     dispatch(campaignActions.removeInvestigator(userId, updateCampaignActions, campaignId, investigator.code));
   }, [dispatch, campaignId, userId, updateCampaignActions]);
 
@@ -103,14 +108,27 @@ export default function useCampaignGuideContextFromActions(
     ));
   }, [dispatch, campaignId, remoteGuideActions, userId]);
 
-  const setText = useCallback((stepId: string, value: string, scenarioId?: string) => {
+  const setText = useCallback((stepId: string, value: string, scenarioId: string | undefined, inputId: string | undefined) => {
     dispatch(guideActions.setScenarioText(
       userId,
       remoteGuideActions,
       campaignId,
       stepId,
       value,
-      scenarioId
+      scenarioId,
+      inputId
+    ));
+  }, [dispatch, campaignId, remoteGuideActions, userId]);
+
+  const updateText = useCallback((stepId: string, value: string, scenarioId: string | undefined, inputId: string | undefined) => {
+    dispatch(guideActions.updateScenarioText(
+      userId,
+      remoteGuideActions,
+      campaignId,
+      stepId,
+      value,
+      scenarioId,
+      inputId
     ));
   }, [dispatch, campaignId, remoteGuideActions, userId]);
 
@@ -208,12 +226,13 @@ export default function useCampaignGuideContextFromActions(
       [code: string]: LatestDeckT | undefined;
     } = {};
     forEach(latestDecks, deck => {
-      if (deck && deck.investigator) {
-        decksByInvestigator[deck.investigator] = deck;
+      const investigatorCode = includeParallel ? deck.deck.meta?.alternate_front ?? deck.investigator : deck.investigator;
+      if (deck && investigatorCode) {
+        decksByInvestigator[investigatorCode] = deck;
       }
     });
     return decksByInvestigator;
-  }, [latestDecks]);
+  }, [latestDecks, includeParallel]);
 
   const actions = useMemo(() => {
     return {
@@ -234,22 +253,28 @@ export default function useCampaignGuideContextFromActions(
       resetScenario,
       setInterScenarioData,
       undo,
+      updateText,
       setBinaryAchievement,
       setCountAchievement,
     };
   }, [addInvestigator, showChooseDeck, removeDeck, removeInvestigator, startScenario, startSideScenario, setCount, setDecision, setSupplies,
     setNumberChoices, setStringChoices, setChoice, setCampaignLink, setText, resetScenario, setInterScenarioData, undo,
-    setBinaryAchievement, setCountAchievement]);
-  const investigators = useMemo(() => {
+    setBinaryAchievement, setCountAchievement, updateText]);
+  const parallelCampaignInvestigators = campaignData?.parallelInvestigators;
+  const [investigators, parallelInvestigators] = useMemo(() => {
     if (!campaignInvestigators) {
-      return undefined;
+      return [undefined, undefined];
     }
+    const p: CardsMap = {};
+    forEach(parallelCampaignInvestigators, c => {
+      p[c.code] = c;
+    });
     const r: CardsMap = {};
     forEach(campaignInvestigators, c => {
-      r[c.code] = c;
+      r[c.code] = c.card;
     });
-    return r;
-  }, [campaignInvestigators]);
+    return [r, p];
+  }, [campaignInvestigators, parallelCampaignInvestigators]);
   const campaignStateHelper = useMemo(() => {
     if (!investigators || !campaignData) {
       return undefined;
@@ -261,9 +286,11 @@ export default function useCampaignGuideContextFromActions(
       investigators,
       actions,
       guideVersion === undefined ? -1 : guideVersion,
-      campaignData.linkedCampaignState
+      latestDecks,
+      parallelInvestigators,
+      campaignData.linkedCampaignState,
     );
-  }, [campaignData, investigators, actions]);
+  }, [campaignData, investigators, actions, latestDecks, parallelInvestigators]);
   const campaign = campaignData?.campaign;
   const campaignGuide = campaignData?.campaignGuide;
   const spentXp = useMemo(() => {

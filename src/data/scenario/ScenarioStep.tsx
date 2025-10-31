@@ -27,6 +27,7 @@ import {
   EffectsWithInput,
   EffectsStep,
   CampaignLogCardsEffect,
+  AddCardEffect,
 } from '@data/scenario/types';
 import { getSpecialEffectChoiceList } from './effectHelper';
 import { investigatorChoiceInputChoices, chooseOneInputChoices } from '@data/scenario/inputHelper';
@@ -34,8 +35,7 @@ import { BinaryResult, conditionResult, NumberResult, StringResult } from '@data
 import ScenarioGuide from '@data/scenario/ScenarioGuide';
 import GuidedCampaignLog from '@data/scenario/GuidedCampaignLog';
 import ScenarioStateHelper from '@data/scenario/ScenarioStateHelper';
-import { PlayingScenarioBranch, INTER_SCENARIO_CHANGES_STEP_ID, LEAD_INVESTIGATOR_STEP_ID, SELECTED_PARTNERS_CAMPAIGN_LOG_ID, EMBARK_RETURN_STEP_ID, EMBARK_STEP_ID, INVESTIGATOR_PARTNER_CAMPAIGN_LOG_ID_PREFIX, PROCEED_STEP_ID, PROCEED_ALT_STEP_ID, DUMMY_END_SCENARIO_STEP_ID, CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID, CHOOSE_RESOLUTION_STEP_ID } from '@data/scenario/fixedSteps';
-import { print } from 'graphql';
+import { PlayingScenarioBranch, INTER_SCENARIO_CHANGES_STEP_ID, LEAD_INVESTIGATOR_STEP_ID, SELECTED_PARTNERS_CAMPAIGN_LOG_ID, EMBARK_RETURN_STEP_ID, EMBARK_STEP_ID, INVESTIGATOR_PARTNER_CAMPAIGN_LOG_ID_PREFIX, PROCEED_STEP_ID, PROCEED_ALT_STEP_ID, DUMMY_END_SCENARIO_STEP_ID, CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID, CHOOSE_RESOLUTION_STEP_ID, CHANGE_LEAD_INVESTIGATOR_STEP_ID } from '@data/scenario/fixedSteps';
 
 export default class ScenarioStep {
   step: Step;
@@ -144,16 +144,31 @@ export default class ScenarioStep {
           }
           switch (specialEffect.type) {
             case 'add_weakness': {
-              forEach(choiceList, (choices, code) => {
+              forEach(choiceList, (choices: string[] | string[][], code) => {
                 result.push({
                   input: [code],
-                  effects: map(choices, card => {
-                    return {
-                      type: 'add_card',
-                      investigator: '$input_value',
-                      non_story: true,
-                      card,
-                    };
+                  effects: flatMap(choices, (card): AddCardEffect[] => {
+                    // Some old code had a problem where it would pass arrays of arrays here.
+                    // We have a bandaid to workaround this.
+                    if (Array.isArray(card)) {
+                      return map(card, c => ({
+                        type: 'add_card',
+                        investigator: '$input_value',
+                        non_story: true,
+                        card: c,
+                      }));
+                    }
+                    if (typeof card === 'string') {
+                      return [
+                        {
+                          type: 'add_card',
+                          investigator: '$input_value',
+                          non_story: true,
+                          card,
+                        },
+                      ];
+                    }
+                    return [];
                   }),
                 });
               });
@@ -658,11 +673,22 @@ export default class ScenarioStep {
       }
       case 'play_scenario': {
         const choice = scenarioState.choice(step.id);
-        const base_step_id = step.id.split('#')[0];
         if (choice === undefined) {
           return undefined;
         }
         switch (choice) {
+          case PlayingScenarioBranch.CHANGE_LEAD_INVESTIGATOR:
+            return this.maybeCreateEffectsStep(
+              step.id,
+              [
+                `${CHANGE_LEAD_INVESTIGATOR_STEP_ID}#${nextIteration}`,
+                `${CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID}#${nextIteration}`,
+                ...this.remainingStepIds,
+              ],
+              [],
+              scenarioState,
+              {}
+            );
           case PlayingScenarioBranch.RECORD_TRAUMA:
           case PlayingScenarioBranch.DRAW_WEAKNESS: {
             const fixedStep = choice === PlayingScenarioBranch.DRAW_WEAKNESS ?
@@ -672,7 +698,7 @@ export default class ScenarioStep {
               step.id,
               [
                 `${fixedStep}#${nextIteration}`,
-                `${base_step_id}#${nextIteration}`,
+                `${CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID}#${nextIteration}`,
                 ...this.remainingStepIds,
               ],
               [],
@@ -755,7 +781,7 @@ export default class ScenarioStep {
                     step.id,
                     [
                       ...choiceSteps,
-                      `${base_step_id}#${nextIteration}`,
+                      `${CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID}#${nextIteration}`,
                       ...this.remainingStepIds,
                     ],
                     [
@@ -773,7 +799,7 @@ export default class ScenarioStep {
               step.id,
               [
                 `$campaign_log#${nextIteration}`,
-                `${base_step_id}#${nextIteration}`,
+                `${CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID}#${nextIteration}`,
                 ...this.remainingStepIds,
               ],
               [],
@@ -832,7 +858,8 @@ export default class ScenarioStep {
         const effectsWithInput: EffectsWithInput[] = flatMap(
           keys(choiceList), investigator => {
             const count = choiceList[investigator];
-            if (!count || count[0] === -1 || count[0] === 0) {
+            // We skip all 0s
+            if (!count || !count[0]) {
               return [];
             }
             const effectWithInput: EffectsWithInput = {

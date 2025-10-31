@@ -15,7 +15,7 @@ interface Props {
 
 export function useOnboardingCarousel(slides: React.ReactNode[]): [React.ReactNode, () => void] {
   const { width } = useContext(StyleContext);
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const onDismiss = useCallback(() => {
     setVisibleRef.current?.(false);
   }, []);
@@ -37,6 +37,7 @@ export default function OnboardingCarousel({ width, slides, onEndReached }: Prop
   }): React.ReactElement => {
     return item;
   }, []);
+  // @ts-ignore
   const slidesWithDummy: React.ReactElement[] = useMemo(() => {
     if (slides.length) {
       return [
@@ -59,6 +60,7 @@ export default function OnboardingCarousel({ width, slides, onEndReached }: Prop
         defaultIndex={0}
         windowSize={3}
         inactiveSlideOpacity={1}
+        // @ts-ignore
         renderItem={renderItem}
         width={width}
         onSnapToItem={onScrollIndexChanged}

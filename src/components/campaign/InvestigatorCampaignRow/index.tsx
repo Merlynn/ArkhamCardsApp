@@ -26,24 +26,26 @@ import RoundedFooterButton from '@components/core/RoundedFooterButton';
 import { AppState, makeUploadingDeckSelector } from '@reducers';
 import { AnimatedCompactInvestigatorRow } from '@components/core/CompactInvestigatorRow';
 import CampaignGuide from '@data/scenario/CampaignGuide';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   campaign: MiniCampaignT;
-  investigator: Card;
+  investigator: CampaignInvestigator;
   spentXp: number;
   totalXp: number;
   unspentXp: number;
   campaignGuide?: CampaignGuide;
   traumaAndCardData: TraumaAndCardData;
   badge?: 'deck' | 'upgrade';
-  chooseDeckForInvestigator?: (investigator: Card) => void;
+  eliminated?: boolean;
+  chooseDeckForInvestigator?: (investigator: CampaignInvestigator) => void;
   deck?: LatestDeckT;
-  showXpDialog: (investigator: Card) => void;
-  removeInvestigator?: (investigator: Card) => void;
+  showXpDialog: (investigator: CampaignInvestigator) => void;
+  removeInvestigator?: (investigator: CampaignInvestigator) => void;
   // For legacy system
-  showDeckUpgrade?: (investigator: Card, deck: Deck) => void;
-  showTraumaDialog?: (investigator: Card, traumaData: TraumaAndCardData) => void;
+  showDeckUpgrade?: (investigator: CampaignInvestigator, deck: Deck) => void;
+  showTraumaDialog?: (investigator: CampaignInvestigator, traumaData: TraumaAndCardData) => void;
   miniButtons?: React.ReactNode;
 
   children?: React.ReactNode;
@@ -73,7 +75,6 @@ function StoryAssetRow({ code, onCardPress, last, campaignGuide, count }: { code
 }
 
 export default function InvestigatorCampaignRow({
-  componentId,
   campaign,
   campaignGuide,
   investigator,
@@ -85,21 +86,22 @@ export default function InvestigatorCampaignRow({
   children,
   miniButtons,
   badge,
+  eliminated,
   showXpDialog,
   chooseDeckForInvestigator,
   removeInvestigator,
   showDeckUpgrade,
   showTraumaDialog,
 }: Props) {
+  const navigation = useNavigation();
   const campaignShowDeckId = useSettingValue('campaign_show_deck_id');
   const uploadingSelector = useMemo(makeUploadingDeckSelector, []);
   const uploading = useSelector((state: AppState) => uploadingSelector(state, campaign.id, investigator.code));
   const { colors, width, typography } = useContext(StyleContext);
   const { userId } = useContext(ArkhamCardsAuthContext);
   const onCardPress = useCallback((card: Card) => {
-    showCard(componentId, card.code, card, colors, { showSpoilers: true });
-  }, [componentId, colors]);
-  const eliminated = useMemo(() => investigator.eliminated(traumaAndCardData), [investigator, traumaAndCardData]);
+    showCard(navigation, card.code, card, colors, { showSpoilers: true });
+  }, [navigation, colors]);
 
   const editXpPressed = useCallback(() => {
     showXpDialog(investigator);
@@ -127,8 +129,8 @@ export default function InvestigatorCampaignRow({
   }, [traumaAndCardData, investigator, showTraumaDialog]);
 
   const storyAssetSection = useMemo(() => {
-    const storyAssets = traumaAndCardData.storyAssets || [];
-    const addedCards = traumaAndCardData.addedCards || [];
+    const storyAssets = traumaAndCardData.storyAssets ?? [];
+    const addedCards = traumaAndCardData.addedCards ?? [];
     if (!storyAssets.length && !addedCards.length) {
       return null;
     }
@@ -168,16 +170,17 @@ export default function InvestigatorCampaignRow({
   const viewDeck = useCallback(() => {
     if (deck) {
       showDeckModal(
+        navigation,
+        colors,
         deck.id,
         deck.deck,
         campaign?.id,
-        colors,
-        investigator,
+        investigator.card,
         undefined,
         true
       );
     }
-  }, [campaign, investigator, deck, colors]);
+  }, [navigation, colors, campaign, investigator, deck]);
 
   const selectDeck = useCallback(() => {
     chooseDeckForInvestigator && chooseDeckForInvestigator(investigator);
@@ -255,12 +258,13 @@ export default function InvestigatorCampaignRow({
     <View style={space.marginBottomS}>
       <AnimatedCompactInvestigatorRow
         toggleOpen={toggleOpen}
-        investigator={investigator}
+        investigator={investigator.card}
         eliminated={eliminated}
         yithian={yithian}
         open={open}
         badge={badge || (upgradeBadge ? 'upgrade' : undefined)}
         width={width - s * 2}
+        showParallel={campaignGuide?.includeParallelInvestigators()}
         headerContent={!open && (
           <View style={styles.trauma}>
             <TraumaSummary trauma={traumaAndCardData} investigator={investigator} whiteText />

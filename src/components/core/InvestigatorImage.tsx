@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import FastImage from 'react-native-blasted-image';
+import { Image as FastImage } from 'expo-image';
 import { Sepia } from 'react-native-color-matrix-image-filters';
 import {
   Placeholder,
@@ -18,14 +18,15 @@ import AppIcon from '@icons/AppIcon';
 import COLORS from '@styles/colors';
 import EncounterIcon from '@icons/EncounterIcon';
 import space from '@styles/space';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
+  pressable?: boolean;
   card?: Card;
   image?: string;
   backCard?: Card;
-  componentId?: string;
   border?: boolean;
-  size?: 'large' | 'small' | 'tiny';
+  size?: 'large' | 'small' | 'tiny' | 'extra_tiny';
   killedOrInsane?: boolean;
   yithian?: boolean;
   imageLink?: boolean;
@@ -38,19 +39,21 @@ interface Props {
 }
 
 const IMAGE_SIZE = {
+  extra_tiny: 30,
   tiny: 40,
   small: 65,
   large: 110,
 };
 
 const ICON_SIZE = {
+  extra_tiny: 20,
   tiny: 26,
   small: 40,
   large: 65,
 };
 
 const INVESTIGATOR_VERTICAL_OFFSET: { [key: string]: number | undefined } = {
-  '09008': 1.5,
+  '09008': 1.7,
   '06001': 0.9,
   '03001': 0.95,
   '04001': 0.9,
@@ -71,6 +74,16 @@ const INVESTIGATOR_VERTICAL_OFFSET: { [key: string]: number | undefined } = {
   '03006': 0.95,
   '09018': 0.95,
   'zsti_00004': 1.5,
+  '10001': 0.95,
+  '10012': 0.95,
+  '11001': 0.9,
+  '11007': 0.9,
+  '11008': 0.9,
+  '11011': 0.95,
+  '11014': 0.95,
+  '11017': 0.95,
+  '08004': 0.95,
+  '07002': 0.90,
 };
 const INVESTIGATOR_HORIZONTAL_OFFSET: { [key: string]: number | undefined } = {
   'zbh_00001': 1.2,
@@ -80,7 +93,7 @@ const INVESTIGATOR_HORIZONTAL_OFFSET: { [key: string]: number | undefined } = {
   '04001': 1.4,
   '03001': 0.7,
   '60101': 1.3,
-  '07001': 1.9,
+  '07001': 1.85,
   '06001': 0.5,
   '02001': 1.2,
   '07002': 1.7,
@@ -99,7 +112,7 @@ const INVESTIGATOR_HORIZONTAL_OFFSET: { [key: string]: number | undefined } = {
   '09004': 0.8,
   '06003': 0.5,
   '03004': 0.2,
-  '09011': 1.7,
+  '09011': 1.8,
   '04004': 0.5,
   'zbh_00010': 0.6,
   '60401': 1.4,
@@ -116,23 +129,33 @@ const INVESTIGATOR_HORIZONTAL_OFFSET: { [key: string]: number | undefined } = {
   'zsti_00022': 0.5,
   '07005': 0.5,
   '01005': 0.8,
-  '09018': 0.7,
+  '09018': 0.9,
   '03006': 0.7,
   'zsti_00004': 1.4,
+  '10001': 1.6,
+  '10004': 1.5,
+  '10009': 1.3,
+  '09008': 0.5,
+  '09015': 1.4,
+  '11001': 1.4,
+  '11007': 1.8,
+  '11008': 1.8,
+  '11011': 1.8,
+  '11014': 1.7,
 };
 
-function getImpliedSize(size: 'large' | 'small' | 'tiny', fontScale: number) {
-  if (size === 'small' || size === 'tiny') {
+function getImpliedSize(size: 'large' | 'small' | 'tiny' | 'extra_tiny', fontScale: number) {
+  if (size === 'small' || size === 'tiny' || size === 'extra_tiny') {
     return size;
   }
   return toggleButtonMode(fontScale) ? 'small' : 'large';
 }
 
 function InvestigatorImage({
+  pressable,
   card,
   arkhamCardsImg,
   backCard,
-  componentId,
   border,
   size = 'large',
   killedOrInsane,
@@ -146,16 +169,16 @@ function InvestigatorImage({
   image,
 }: Props) {
   const { colors, fontScale, shadow } = useContext(StyleContext);
-
+  const navigation = useNavigation();
   const onPress = useCallback(() => {
-    if (componentId && card) {
+    if (pressable && card) {
       if (imageLink) {
-        showCardImage(componentId, card, colors);
+        showCardImage(navigation, card);
       } else {
-        showCard(componentId, card.code, card, colors, { showSpoilers: true, tabooSetId, backCode: backCard?.code });
+        showCard(navigation, card.code, card, colors, { showSpoilers: true, tabooSetId, backCode: backCard?.code });
       }
     }
-  }, [card, backCard, tabooSetId, componentId, imageLink, colors]);
+  }, [card, backCard, tabooSetId, imageLink, colors, navigation, pressable]);
 
   const impliedSize = useMemo(() => {
     return getImpliedSize(size, fontScale);
@@ -165,6 +188,7 @@ function InvestigatorImage({
   const imageStyle = useMemo(() => {
     if (card?.type_code === 'asset') {
       switch (impliedSize) {
+        case 'extra_tiny': return imageOffset === 'right' ? styles.extraTinyRightAsset : styles.extraTinyAsset;
         case 'tiny': return imageOffset === 'right' ? styles.tinyRightAsset : styles.tinyAsset;
         case 'small': return imageOffset === 'right' ? styles.smallRightAsset : styles.smallAsset;
         case 'large': return imageOffset === 'right' ? styles.largeRightAsset : styles.largeAsset;
@@ -172,12 +196,14 @@ function InvestigatorImage({
     }
     if (yithian) {
       switch (impliedSize) {
+        case 'extra_tiny': return styles.yithianExtraTiny
         case 'tiny': return styles.yithianTiny;
         case 'small': return styles.yithianSmall;
         case 'large': return styles.yithianLarge;
       }
     }
     switch (impliedSize) {
+      case 'extra_tiny': return styles.extraTiny;
       case 'tiny': return styles.tiny;
       case 'small': return styles.small;
       case 'large': return styles.large;
@@ -326,7 +352,7 @@ function InvestigatorImage({
     );
   }, [card, round, imgUri, killedOrInsane, badge, border, colors, impliedSize, styledImage, loadingAnimation, shadow, noShadow]);
 
-  if (componentId && card) {
+  if (pressable && card) {
     return (
       <TouchableOpacity onPress={onPress}>
         { imageNode }
@@ -343,6 +369,13 @@ InvestigatorImage.computeHeight = (size: 'large' | 'small' | 'tiny' = 'large', f
 export default InvestigatorImage;
 
 const styles = StyleSheet.create({
+  yithianExtraTiny: {
+    position: 'absolute',
+    top: -18,
+    left: -8,
+    width: (166 + 44) * 0.35,
+    height: (136 + 34) * 0.35,
+  },
   yithianTiny: {
     position: 'absolute',
     top: -18,
@@ -371,6 +404,13 @@ const styles = StyleSheet.create({
   relative: {
     position: 'relative',
   },
+  extraTiny: {
+    position: 'absolute',
+    top: -12,
+    left: -4,
+    width: (166 + 44) * 0.35,
+    height: (136 + 34) * 0.35,
+  },
   tiny: {
     position: 'absolute',
     top: -18,
@@ -391,6 +431,13 @@ const styles = StyleSheet.create({
     left: -20,
     width: (166 + 44) * 1.25,
     height: (136 + 34) * 1.25,
+  },
+  extraTinyAsset: {
+    position: 'absolute',
+    top: -5,
+    left: -6,
+    width: (136 + 34) * 0.3,
+    height: (166 + 44) * 0.3,
   },
   tinyAsset: {
     position: 'absolute',
@@ -414,6 +461,13 @@ const styles = StyleSheet.create({
     height: (166 + 44) * 1.25,
   },
 
+  extraTinyRightAsset: {
+    position: 'absolute',
+    top: -12,
+    left: -27,
+    width: (136 + 34) * 0.25,
+    height: (166 + 44) * 0.25,
+  },
   tinyRightAsset: {
     position: 'absolute',
     top: -12,

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Pressable } from 'react-native';
 import { SimpleGrid } from 'react-native-super-grid';
-import { filter, flatMap } from 'lodash';
+import { flatMap } from 'lodash';
 
 import { DisplayChoice } from '@data/scenario';
 import StyleContext from '@styles/StyleContext';
@@ -11,16 +11,15 @@ import ArkhamSwitch from '@components/core/ArkhamSwitch';
 import { TouchableShrink } from '@components/core/Touchables';
 import DeckButton from '@components/deck/controls/DeckButton';
 import ScenarioGuideContext from '@components/campaignguide/ScenarioGuideContext';
-import typography from '@styles/typography';
-import CardTextComponent from '@components/card/CardTextComponent';
 import EncounterIcon from '@icons/EncounterIcon';
+import { ArkhamSlimIcon } from '@icons/ArkhamIcon';
 
 interface Props {
   choices: DisplayChoice[];
   selectedIndex?: number;
   editable: boolean;
   onSelect: (index: number) => void;
-  compact?: boolean;
+  style?: 'compact' | 'glyphs';
   icon?: string;
 }
 
@@ -29,7 +28,7 @@ export default function ChooseOneListComponent({
   selectedIndex,
   editable,
   onSelect,
-  compact,
+  style,
   icon,
 }: Props) {
   const { processedScenario } = useContext(ScenarioGuideContext);
@@ -41,7 +40,7 @@ export default function ChooseOneListComponent({
         idx++;
       }
       if (!editable) {
-        if(choice.conditionHidden || currentIndex != selectedIndex) {
+        if(choice.conditionHidden || currentIndex !== selectedIndex) {
           return [];
         }
       } else {
@@ -49,22 +48,50 @@ export default function ChooseOneListComponent({
           return [];
         }
       }
-      if (compact && choice.conditionHidden) {
+      if (style && choice.conditionHidden) {
         return [];
       }
       return {
         choice,
         key: originalIndex,
-      disabled: !!choice.conditionHidden,
+        disabled: !!choice.conditionHidden,
         idx: currentIndex,
       };
     });
-  }, [choices, editable, selectedIndex]);
-  if (compact) {
+  }, [choices, style, editable, selectedIndex]);
+  const renderCompactItem = useCallback(({ item: { choice, key, idx } }: { item: { choice: DisplayChoice; key: number; idx: number; disabled: boolean } }) => {
+    return (
+      <CompactChoiceComponent
+        key={key}
+        icon={icon ?? processedScenario.id.scenarioId}
+        index={idx}
+        onSelect={onSelect}
+        choice={choice}
+        selected={selectedIndex === idx}
+        editable={editable}
+        last={!editable || choices.length <= 2 || idx === choices.length - 1}
+      />
+    );
+  }, [choices.length, editable, icon, onSelect, processedScenario.id.scenarioId, selectedIndex]);
+  const renderGlyphItem = useCallback(({ item: { choice, key, idx } }: { item: { choice: DisplayChoice; key: number; idx: number; disabled: boolean } }) => {
+    return (
+      <GlyphChoiceComponent
+        key={key}
+        index={idx}
+        onSelect={onSelect}
+        choice={choice}
+        selected={selectedIndex === idx}
+        editable={editable}
+        last={!editable || choices.length <= 2 || idx === choices.length - 1}
+      />
+    );
+  }, [choices.length, editable, onSelect, selectedIndex]);
+  if (style) {
     if (!editable) {
-      return (
-        <>
-          { flatMap(visibleChoices, ({ choice, key, idx }) => {
+      if (style === 'compact') {
+        return (
+          <>
+            { flatMap(visibleChoices, ({ choice, key, idx }) => {
               return (
                 <CompactChoiceComponent
                   key={key}
@@ -78,6 +105,25 @@ export default function ChooseOneListComponent({
                 />
               );
             }) }
+          </>
+        );
+      }
+      return (
+        <>
+          { flatMap(visibleChoices, ({ choice, key, idx }) => {
+            return (
+              <View key={key} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <GlyphChoiceComponent
+                  index={idx}
+                  onSelect={onSelect}
+                  choice={choice}
+                  selected={selectedIndex === idx}
+                  editable={editable}
+                  last={!editable || choices.length <= 2 || idx === choices.length - 1}
+                />
+              </View>
+            );
+          }) }
         </>
       );
     }
@@ -86,21 +132,9 @@ export default function ChooseOneListComponent({
         listKey="choice"
         style={{ padding: 0 }}
         itemDimension={60}
+        spacing={s}
         data={visibleChoices}
-        renderItem={({ item: { choice, key, idx } }) => {
-          return (
-            <CompactChoiceComponent
-              key={key}
-              icon={icon ?? processedScenario.id.scenarioId}
-              index={idx}
-              onSelect={onSelect}
-              choice={choice}
-              selected={selectedIndex === idx}
-              editable={editable}
-              last={!editable || choices.length <= 2 || idx === choices.length - 1}
-            />
-          );
-        }}
+        renderItem={style === 'compact' ? renderCompactItem : renderGlyphItem}
       />
     );
   }
@@ -154,7 +188,7 @@ function ChoiceComponent({
         { choice.description && <CampaignGuideTextComponent text={choice.description} /> }
       </>
     );
-  }, [choice]);
+  }, [choice, disabled]);
   const showBorder = !last && isTablet;
   return (
     <View style={[
@@ -191,7 +225,6 @@ function CompactChoiceComponent({
   selected,
   editable,
   onSelect,
-  last,
   icon,
 }: ChoiceComponentProps & { icon: string }) {
   const { colors, typography } = useContext(StyleContext);
@@ -202,7 +235,7 @@ function CompactChoiceComponent({
     return (
       <Text style={[typography.cardName, selected ? typography.inverted : undefined]}>{choice.text}</Text>
     );
-  }, [choice, selected]);
+  }, [choice, selected, typography]);
   if (!editable) {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -220,6 +253,40 @@ function CompactChoiceComponent({
       onPress={onPress}
       bigEncounterIcon
     />
+  );
+}
+
+
+function GlyphChoiceComponent({
+  choice,
+  index,
+  selected,
+  editable,
+  onSelect,
+}: ChoiceComponentProps) {
+  const { colors } = useContext(StyleContext);
+  const onPress = useCallback(() => {
+    onSelect(index);
+  }, [onSelect, index]);
+  const icon = (choice.text ?? '').replace('[', '').replace(']', '');
+  if (!editable) {
+    return (
+      <ArkhamSlimIcon name={icon} size={48} color={colors.D30} />
+    );
+  }
+
+  return (
+    <Pressable onPress={onPress}>
+      <View style={{
+        padding: xs,
+        borderWidth: 1,
+        borderRadius: 8,
+        backgroundColor: selected ? colors.L10 : 'transparent',
+        borderColor: selected ? colors.M : 'transparent', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <ArkhamSlimIcon name={icon} size={48} color={colors.D30} />
+      </View>
+    </Pressable>
   );
 }
 

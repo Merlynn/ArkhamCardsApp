@@ -19,6 +19,7 @@ import StyleContext from '@styles/StyleContext';
 import { ControlComponent, ControlType } from './ControlComponent';
 import { usePressCallback, useSettingValue } from '@components/core/hooks';
 import AppIcon from '@icons/AppIcon';
+import IconizedText from '@components/core/IconizedText';
 
 interface Props {
   card: Card;
@@ -88,6 +89,7 @@ function FactionIcon({ card }: { card: Card }) {
         encounter_code={card.pack_code}
         size={ICON_SIZE}
         color={colors.darkText}
+        pack
       />
     );
   }
@@ -133,7 +135,7 @@ function CardIcon({ card }: { card: Card }) {
   );
 }
 
-function CardSearchResult(props: Props) {
+export default function CardSearchResult(props: Props) {
   const {
     card,
     id,
@@ -238,15 +240,15 @@ function CardSearchResult(props: Props) {
     const custom = card.custom();
     return (
       <View style={styles.cardNameBlock}>
-        <View style={[styles.row, space.paddingTopXs, { backgroundColor: 'transparent' }]}>
+        <View style={[styles.row, { backgroundColor: 'transparent' }]}>
           <Text style={[
             typography.cardName,
             { color, flex: 1 },
             invalid ? { textDecorationLine: 'line-through' } : {},
           ]} numberOfLines={1} ellipsizeMode="tail">
-            { card.renderName }
+            <IconizedText text={card.renderName} iconSize={14} />
             { custom && '  ' }
-            { custom && <EncounterIcon encounter_code={card.pack_code} size={18} color={colors.L10} /> }
+            { custom && <EncounterIcon encounter_code={card.pack_code} size={18} color={colors.L10} pack /> }
           </Text>
         </View>
         { !!(skillIcons || dualFactionIcons || tabooBlock || card.advanced || card.renderSubname || description) && (
@@ -260,9 +262,9 @@ function CardSearchResult(props: Props) {
               </View>
             ) }
             { (!!card.renderSubname || !!description || custom) && (
-              <View style={[styles.row, styles.subname, space.marginRightS, space.paddingTopXs]}>
+              <View style={[styles.row, styles.subname, space.marginRightS]}>
                 <Text style={[typography.cardTraits, { flex: 1 }]} numberOfLines={1} ellipsizeMode="clip">
-                  { description || card.renderSubname }
+                  <IconizedText text={description ?? card.renderSubname ?? ''} iconSize={12} color={colors.D10} />
                 </Text>
               </View>
             ) }
@@ -326,9 +328,10 @@ function CardSearchResult(props: Props) {
         onPress={handleCardPress}
         disabled={!onPress && !onPressId}
       >
-        <View opacity={faded ? 0.5 : 1.0} style={[
+        <View style={[
           styles.cardTextRow,
           !noSidePadding ? space.paddingLeftS : undefined,
+          { opacity: faded ? 0.5 : 1.0 },
         ]}>
           <CardIcon card={card} />
           { cardName }
@@ -338,8 +341,6 @@ function CardSearchResult(props: Props) {
     </View>
   );
 }
-export default React.memo(CardSearchResult);
-
 
 const styles = StyleSheet.create({
   rowContainer: {

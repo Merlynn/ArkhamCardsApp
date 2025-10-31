@@ -1,5 +1,11 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
+  presets: [
+    ['babel-preset-expo', {
+      decorators: {
+        legacy: true,
+      },
+    }],
+  ],
   plugins: [
     [
       'module-resolver',
@@ -15,7 +21,7 @@ module.exports = {
         ],
         alias: {
           '@assets': './assets',
-          '@app': './src/app',
+          '@app': './src/application',
           '@actions': './src/actions',
           '@components': './src/components',
           '@app_constants': './src/app_constants.ts',
@@ -23,12 +29,11 @@ module.exports = {
           '@generated': './src/generated',
           '@icons': './src/icons',
           '@lib': './src/lib',
+          '@navigation': './src/navigation',
           '@reducers': './src/reducers',
           '@styles': './src/styles',
         },
       },
     ],
-    'react-native-reanimated/plugin',
-  ]
+  ],
 };
-

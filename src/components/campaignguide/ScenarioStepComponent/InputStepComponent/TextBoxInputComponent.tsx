@@ -13,11 +13,12 @@ interface Props {
   id: string;
   showUndo: boolean;
   prompt?: string;
+  inputId?: string;
 }
 
-export default function TextBoxInputComponent({ id, prompt, showUndo }: Props) {
+export default function TextBoxInputComponent({ id, prompt, showUndo, inputId }: Props) {
   const { scenarioState } = useContext(ScenarioGuideContext);
-  const { borderStyle, colors, typography } = useContext(StyleContext);
+  const { colors, typography } = useContext(StyleContext);
   const [text, setText] = useState('');
 
   const undo = useMemo(() => throttle(() => {
@@ -26,9 +27,9 @@ export default function TextBoxInputComponent({ id, prompt, showUndo }: Props) {
 
   const saveText = useCallback((text: string) => {
     if (text) {
-      scenarioState.setText(id, text);
+      scenarioState.setText(id, text, inputId);
     }
-  }, [id, scenarioState]);
+  }, [id, scenarioState, inputId]);
 
   const onSubmit = useCallback((
     { nativeEvent: { text } }: NativeSyntheticEvent<TextInputSubmitEditingEventData>
@@ -60,7 +61,7 @@ export default function TextBoxInputComponent({ id, prompt, showUndo }: Props) {
       editable
     >
       <TextInput
-        style={[styles.textInput, borderStyle, typography.dark, { backgroundColor: colors.L30 }]}
+        style={[styles.textInput, typography.dark, { backgroundColor: colors.L30 }]}
         onChangeText={setText}
         onSubmitEditing={onSubmit}
         returnKeyType="done"

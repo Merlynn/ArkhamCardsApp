@@ -30,7 +30,6 @@ import {
   SortType,
   CampaignGuideState,
   NEW_CHAOS_BAG_RESULTS,
-  SORT_BY_TYPE,
   EditDeckState,
   DeckId,
   getDeckId,
@@ -50,9 +49,11 @@ import {
   CardScreenType,
   DEFAULT_MYTHOS_SORT,
   FIXED_CHAOS_BAG_CAMPAIGN_ID,
+  ChecklistSlots,
+  CardPoolMode,
 } from '@actions/types';
 import Card, { CardsMap } from '@data/types/Card';
-import { ChaosBag, ENABLE_ARKHAM_CARDS_ACCOUNT, ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID, ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID_BETA, ENABLE_ARKHAM_CARDS_ACCOUNT_IOS, ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA, reprintPackToPack, specialPacks } from '@app_constants';
+import { ChaosBag, POOL_CURRENT_PACKS, POOL_INVESTIGATOR_CYCLE, reprintPackToPack, specialPacks } from '@app_constants';
 import MiniCampaignT from '@data/interfaces/MiniCampaignT';
 import { LatestDeckRedux, MiniCampaignRedux, MiniDeckRedux, MiniLinkedCampaignRedux } from '@data/local/types';
 import SingleCampaignT from '@data/interfaces/SingleCampaignT';
@@ -82,7 +83,6 @@ const legacyGuidesPersistConfig = {
   throttle: Platform.OS === 'android' ? 1000 : undefined,
   storage: AsyncStorage,
 };
-
 
 const guidesPersistConfig = {
   key: 'guides_2',
@@ -136,6 +136,7 @@ const signedInPersistConfig = {
   storage: AsyncStorage,
   blacklist: ['loading', 'error'],
 };
+
 const dissonantVoicesPersistConfig = {
   key: 'dissonantVoices',
   throttle: Platform.OS === 'android' ? 1000 : undefined,
@@ -208,7 +209,7 @@ export const getCampaigns = createSelector(
   (allCampaigns, allGuides, allDecks): MiniCampaignT[] => {
     return map(
       filter(
-        values(allCampaigns),
+        values(allCampaigns || {}),
         campaign => {
           return (!campaign.linkedCampaignUuid && !campaign.serverId && campaign.uuid !== FIXED_CHAOS_BAG_CAMPAIGN_ID.campaignId);
         }
@@ -354,6 +355,18 @@ export const getAllRealPacks = createSelector(
           cycle_code: 'fan',
           name: t`Against the Wendigo`,
           position: 13,
+        },
+        {
+          code: 'zau',
+          cycle_code: 'fan',
+          name: t`Ages Unwound`,
+          position: 14,
+        },
+        {
+          code: 'zwtws',
+          cycle_code: 'fan',
+          name: t`When the World Screamed`,
+          position: 15,
         },
       ], (p): Pack => {
         return {
@@ -785,6 +798,41 @@ export const makeTabooSetSelector = (): (state: AppState, tabooSetOverride?: num
     }
   );
 
+
+export const makeCardPoolSelector = (): (state: AppState) => { cardPoolMode: CardPoolMode; cardPoolPacks: string[] } =>
+  createSelector(
+    (state: AppState) => state.settings.cardPoolMode,
+    (state: AppState) => state.settings.cardPoolPacks,
+    (state: AppState) => state.packs.in_collection,
+    (mode: CardPoolMode | undefined, cardPoolPacks: string[] | undefined, inCollection: { [code: string]: boolean }): { cardPoolMode: CardPoolMode; cardPoolPacks: string[] } => {
+      const cardPoolMode = mode ?? 'legacy';
+      switch (cardPoolMode) {
+        case 'current': {
+          const corePack = filter(cardPoolPacks ?? [], p => p === 'core' || p === 'rcore')[0];
+          return {
+            cardPoolMode,
+            cardPoolPacks: [
+              corePack ?? (inCollection.rcore ? 'rcore' : 'core'),
+              ...POOL_CURRENT_PACKS,
+              POOL_INVESTIGATOR_CYCLE,
+            ],
+          };
+        }
+        case 'legacy':
+          return {
+            cardPoolMode,
+            cardPoolPacks: [],
+          };
+        case 'limited':
+        case 'custom':
+          return {
+            cardPoolMode,
+            cardPoolPacks: cardPoolPacks ?? [],
+          };
+      }
+    }
+  );
+
 export const makeCampaignForDeckSelector = () =>
   createSelector(
     (state: AppState) => getDeckToCampaignMap(state),
@@ -797,12 +845,12 @@ export const makeCampaignForDeckSelector = () =>
     }
   );
 
-const EMTPY_CHECKLIST: string[] = [];
+const EMTPY_CHECKLIST: ChecklistSlots = {};
 export const getDeckChecklist = createSelector(
-  (state: AppState) => state.deckEdits.checklist,
+  (state: AppState) => state.deckEdits.checklist_counts,
   (state: AppState, id: DeckId) => id,
-  (checklist: { [id: string]: string[] | undefined }, id: DeckId) => {
-    return (checklist || {})[id.uuid] || EMTPY_CHECKLIST;
+  (checklists: { [id: string]: ChecklistSlots | undefined } | undefined, id: DeckId) => {
+    return (checklists ?? {})[id.uuid] ?? EMTPY_CHECKLIST;
   }
 );
 
@@ -850,16 +898,6 @@ export const getCardFilterData = createSelector(
   (state: AppState, filterId: string) => filterId,
   (cardData, filterId): CardFilterData | undefined => {
     return cardData[filterId];
-  }
-);
-
-export const getEnableArkhamCardsAccount = createSelector(
-  (state: AppState) => state.settings.beta1,
-  (beta1: undefined | boolean): boolean => {
-    return ENABLE_ARKHAM_CARDS_ACCOUNT && (
-      (Platform.OS === 'ios' && (ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA || (ENABLE_ARKHAM_CARDS_ACCOUNT_IOS && !!beta1))) ||
-      (Platform.OS === 'android' && (ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID_BETA || (ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID && !!beta1)))
-    );
   }
 );
 

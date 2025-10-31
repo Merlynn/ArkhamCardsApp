@@ -1,4 +1,4 @@
-import React, { MutableRefObject, ReactNode, useCallback, useContext, useMemo } from 'react';
+import React, { RefObject, ReactNode, useCallback, useContext, useMemo } from 'react';
 import { Text, ScrollView, StyleSheet, View } from 'react-native';
 import { t } from 'ttag';
 
@@ -15,7 +15,7 @@ import {
 import COLORS from '@styles/colors';
 import DeckProgressComponent from '../DeckProgressComponent';
 import { BODY_OF_A_YITHIAN } from '@app_constants';
-import Card, { CardsMap } from '@data/types/Card';
+import Card, { CardsMap, InvestigatorChoice } from '@data/types/Card';
 import TabooSet from '@data/types/TabooSet';
 import space, { isBig, s } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
@@ -33,12 +33,10 @@ import { useAppDispatch } from '@app/store';
 import { MANDY_CODE } from '@data/deck/specialMetaSlots';
 
 interface Props {
-  componentId: string;
   suggestArkhamDbLogin: boolean;
   deck: Deck;
   deckId: DeckId;
-  investigatorFront?: Card;
-  investigatorBack?: Card;
+  investigator?: InvestigatorChoice;
   parsedDeck: ParsedDeck;
   hasPendingEdits?: boolean;
   cards: CardsMap;
@@ -75,20 +73,18 @@ interface Props {
   showDeckHistory: () => void;
   width: number;
   deckEdits?: EditDeckState;
-  deckEditsRef: MutableRefObject<EditDeckState | undefined>;
+  deckEditsRef: RefObject<EditDeckState | undefined>;
   mode: 'view' | 'edit' | 'upgrade';
 }
 
 export default function DeckViewTab(props: Props) {
   const {
-    componentId,
     suggestArkhamDbLogin,
     fromCampaign,
     tabooSetId,
     cards,
     deckId,
-    investigatorFront,
-    investigatorBack,
+    investigator,
     deck,
     parsedDeck,
     singleCardView,
@@ -120,7 +116,6 @@ export default function DeckViewTab(props: Props) {
   } = props;
   const { arkhamDb } = useContext(ArkhamCardsAuthContext);
   const { backgroundStyle, shadow, typography } = useContext(StyleContext);
-  const investigator = useMemo(() => cards[deck.investigator_code], [cards, deck.investigator_code]);
 
   const showDeckUpgrades = useMemo(() => {
     return !!(deck.previousDeckId && !deck.nextDeckId);
@@ -193,12 +188,12 @@ export default function DeckViewTab(props: Props) {
     );
   }, [
     investigator, deck, tabooSetId, tabooSet, showTaboo, tabooOpen, editable, deckEdits?.meta, parsedDeck?.changes,
-    setMeta, setParallel, setTabooSet, renderXpButton, xpLabel,
+    hideTabooPicker, setMeta, setParallel, setTabooSet, renderXpButton, xpLabel,
   ]);
 
   const investigatorBlock = useMemo(() => {
     const yithian = parsedDeck.slots && (parsedDeck.slots[BODY_OF_A_YITHIAN] || 0) > 0;
-    const investigatorCard = (yithian ? cards[BODY_OF_A_YITHIAN] : undefined) || investigatorFront;
+    const investigatorCard = (yithian ? cards[BODY_OF_A_YITHIAN] : undefined) || investigator?.front;
 
     if (!investigatorCard) {
       return null;
@@ -206,15 +201,14 @@ export default function DeckViewTab(props: Props) {
     return (
       <InvestigatorSummaryBlock
         investigator={investigatorCard}
-        investigatorBack={investigatorBack}
+        investigatorBack={investigator?.back}
         yithian={yithian}
-        componentId={componentId}
+        navEnabled
         tabooSetId={tabooSetId}
       />
     );
-  }, [componentId, parsedDeck.slots, cards, investigatorFront, investigatorBack, tabooSetId]);
+  }, [parsedDeck.slots, cards, investigator, tabooSetId]);
   const [parsedDeckComponent, bondedCardCount] = useParsedDeckComponent({
-    componentId,
     parsedDeck,
     visible,
     cards,
@@ -264,12 +258,12 @@ export default function DeckViewTab(props: Props) {
   return (
     <ScrollView contentContainerStyle={backgroundStyle}>
       { suggestArkhamDbLogin && (
-        <View opacity={0.95} style={[
+        <View style={[
           styles.banner,
           shadow.large,
           space.paddingVerticalXs,
           space.paddingSideS,
-          { backgroundColor: COLORS.red },
+          { backgroundColor: COLORS.red, opacity: 0.95 },
         ]}>
           <Text style={[space.paddingS, typography.small, typography.white]}>
             { arkhamDb ?
@@ -282,7 +276,6 @@ export default function DeckViewTab(props: Props) {
       <View style={space.marginSideS}>
         { parsedDeckComponent }
         <DeckProgressComponent
-          componentId={componentId}
           cards={cards}
           deckId={deckId}
           deck={deck}
@@ -296,7 +289,6 @@ export default function DeckViewTab(props: Props) {
         { !!campaignId && !parsedDeck.deck?.nextDeckId && (
           <DeckOverlapComponentForCampaign
             campaignId={campaignId}
-            componentId={componentId}
             parsedDeck={parsedDeck}
             live={!fromCampaign}
             cards={cards}

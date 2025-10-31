@@ -1,17 +1,12 @@
 import React from 'react';
 
-import { SortType, SORT_BY_TYPE, BROWSE_CARDS } from '@actions/types';
+import { BROWSE_CARDS } from '@actions/types';
 import CardSearchComponent from './CardSearchComponent';
 import withFetchCardsGate from '@components/card/withFetchCardsGate';
 
-interface Props extends Record<string, unknown>{
-  componentId: string;
-}
-
-function BrowseCardsView({ componentId }: Props) {
+function BrowseCardsView() {
   return (
     <CardSearchComponent
-      componentId={componentId}
       mythosToggle
       filterId={BROWSE_CARDS}
       screenType="browse"
@@ -19,7 +14,7 @@ function BrowseCardsView({ componentId }: Props) {
   );
 }
 
-export default withFetchCardsGate<Props>(
+export default withFetchCardsGate(
   BrowseCardsView,
-  { promptForUpdate: false }
+  { promptForUpdate: true }
 );

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Alert,
   PermissionsAndroid,
@@ -8,16 +8,14 @@ import {
   Platform,
 } from 'react-native';
 import { format } from 'date-fns';
-import { Navigation } from 'react-native-navigation';
+
 import { forEach, map, values } from 'lodash';
 import RNFS from 'react-native-fs';
-import DocumentPicker from 'react-native-document-picker';
+import { pick, keepLocalCopy, types, errorCodes, isErrorWithCode } from '@react-native-documents/picker'
 import { useDispatch, useSelector } from 'react-redux';
 import { t } from 'ttag';
 
-import { MergeBackupProps } from './MergeBackupView';
 import { BackupState, Campaign, LegacyBackupState, LegacyCampaign } from '@actions/types';
-import { NavigationProps } from '@components/nav/types';
 import { getBackupData } from '@reducers';
 import SettingsItem from './SettingsItem';
 import { ensureUuid } from './actions';
@@ -27,6 +25,7 @@ import StyleContext from '@styles/StyleContext';
 import { saveFile } from '@lib/files';
 import { isAndroidVersion } from '@components/DeckNavFooter/constants';
 import { AutomaticBackupFile, loadBackupFiles } from '@app/autoBackup';
+import { useNavigation } from '@react-navigation/native';
 
 export interface BackupProps {
   safeMode?: boolean;
@@ -68,8 +67,9 @@ async function hasFileSystemPermission(read: boolean) {
   }
 }
 
-function AutommaticBackupItem({ componentId, backup }: { backup: AutomaticBackupFile } & NavigationProps) {
-  const onPress = useCallback(async () => {
+function AutommaticBackupItem({ backup }: { backup: AutomaticBackupFile }) {
+  const navigation = useNavigation();
+  const onPress = useCallback(async() => {
     const json = JSON.parse(await safeReadFile(backup.file.path));
     const campaigns: Campaign[] = [];
     forEach(values(json.campaigns), campaign => {
@@ -89,23 +89,15 @@ function AutommaticBackupItem({ componentId, backup }: { backup: AutomaticBackup
       deckIds: json.deckIds,
       campaignIds: json.campaignIds,
     };
-    Navigation.push<MergeBackupProps>(componentId, {
-      component: {
-        name: 'Settings.MergeBackup',
-        passProps: {
-          backupData,
-        },
-      },
-    });
-  }, [backup]);
+    navigation.navigate('Settings.MergeBackup', { backupData })
+  }, [navigation, backup]);
   return <SettingsItem onPress={onPress} text={format(backup.date, 'yyyy-MM-dd')} />
 }
 
-export default function BackupView({ componentId, safeMode }: BackupProps & NavigationProps) {
+export default function BackupView({ safeMode }: BackupProps) {
   const { colors } = useContext(StyleContext);
   const dispatch = useDispatch();
   useEffect(() => {
-
     dispatch(ensureUuid());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -122,19 +114,19 @@ export default function BackupView({ componentId, safeMode }: BackupProps & Navi
     return () => {
       unmounted = true;
     };
-  }, [setAutoBackups]);
+  }, [safeMode, setAutoBackups]);
   const backupData = useSelector(getBackupData);
+  const navigation = useNavigation();
   const pickBackupFile = useCallback(async() => {
     if (!await hasFileSystemPermission(true)) {
       return;
     }
     try {
-      const res = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.allFiles],
+      const [file] = await pick({
+        type: [types.allFiles],
         mode: 'import',
-        copyTo: 'cachesDirectory',
       });
-      if (!res.name?.endsWith('.acb') && !res.name?.endsWith('.json') && !res.name?.endsWith('.null')) {
+      if (!file.name?.endsWith('.acb') && !file.name?.endsWith('.json') && !file.name?.endsWith('.null')) {
         Alert.alert(
           t`Unexpected file type`,
           t`This app expects an Arkham Cards backup file (.acb/.json)`,
@@ -148,8 +140,18 @@ export default function BackupView({ componentId, safeMode }: BackupProps & Navi
         );
         return;
       }
+      const [localCopy] = await keepLocalCopy({
+        files: [
+          {
+            uri: file.uri,
+            fileName: file.name ?? 'fallbackName',
+          },
+        ],
+        destination: 'cachesDirectory',
+      });
+
       // We got the file
-      const json = JSON.parse(await safeReadFile(res.uri));
+      const json = JSON.parse(await safeReadFile(localCopy.sourceUri));
       const campaigns: Campaign[] = [];
       forEach(values(json.campaigns), campaign => {
         campaigns.push(campaignFromJson(campaign));
@@ -168,20 +170,22 @@ export default function BackupView({ componentId, safeMode }: BackupProps & Navi
         deckIds: json.deckIds,
         campaignIds: json.campaignIds,
       };
-      Navigation.push<MergeBackupProps>(componentId, {
-        component: {
-          name: 'Settings.MergeBackup',
-          passProps: {
-            backupData,
-          },
-        },
-      });
+      navigation.navigate('Settings.MergeBackup', { backupData });
     } catch (err) {
-      if (!DocumentPicker.isCancel(err)) {
+      if (isErrorWithCode(err)) {
+        switch (err.code) {
+          case errorCodes.IN_PROGRESS:
+          case errorCodes.UNABLE_TO_OPEN_FILE_TYPE:
+            throw err;
+          case errorCodes.OPERATION_CANCELED:
+            // Do nothing
+            break;
+        }
+      } else {
         throw err;
       }
     }
-  }, [componentId]);
+  }, [navigation]);
 
   const importCampaignData = useCallback(() => {
     Alert.alert(
@@ -237,7 +241,7 @@ export default function BackupView({ componentId, safeMode }: BackupProps & Navi
         { !!autoBackups && (
           <>
             <CardSectionHeader section={{ title: t`Automatic Backup` }} />
-            { map(autoBackups, backup => <AutommaticBackupItem key={backup.date.toString()} componentId={componentId} backup={backup} />)}
+            { map(autoBackups, backup => <AutommaticBackupItem key={backup.date.toString()} backup={backup} />)}
           </>
         ) }
       </ScrollView>

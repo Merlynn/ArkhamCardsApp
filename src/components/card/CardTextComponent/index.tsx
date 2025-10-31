@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import SimpleMarkdown from 'simple-markdown';
-import { reduce } from 'lodash';
 import {
   MarkdownView,
   MarkdownRule,
@@ -12,7 +11,7 @@ import {
   RenderState,
   InlineNode,
 } from 'react-native-markdown-view';
-import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { Platform, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { Table, Cell, Row } from 'react-native-table-component';
 
 import { WithChildren, WithIconName, WithText, State } from './types';
@@ -435,7 +434,7 @@ export default function CardTextComponent({ text, style, onLinkPress, sizeScale 
   }, [usePingFang, context, sizeScale, onLinkPress]);
   const textStyle: TextStyle = useMemo(() => {
     return {
-      fontFamily: usePingFang ? 'PingFangTC' : 'Alegreya',
+      fontFamily: usePingFang ? 'PingFangTC' : Platform.OS === 'android' ? 'Alegreya-Regular' : 'Alegreya',
       fontStyle: 'normal',
       fontWeight: 'normal',
       fontSize: 16 * context.fontScale * sizeScale,
@@ -447,7 +446,7 @@ export default function CardTextComponent({ text, style, onLinkPress, sizeScale 
       alignSelf: 'flex-start',
       flexShrink: 1,
     };
-  }, [context, usePingFang, sizeScale]);
+  }, [context, usePingFang, sizeScale, style]);
   // Text that has hyperlinks uses a different style for the icons.
   return (
     <MarkdownView
@@ -493,6 +492,32 @@ export default function CardTextComponent({ text, style, onLinkPress, sizeScale 
           padding: 16,
           paddingTop: 8,
           paddingBottom: 8,
+        },
+        heading1: context.typography.bigGameFont,
+        heading2: {
+          ...context.typography.gameFont,
+          fontSize: 22,
+          lineHeight: 24,
+        },
+        heading3: {
+          ...context.typography.gameFont,
+          fontSize: 20,
+          lineHeight: 22,
+        },
+        heading4: {
+          ...context.typography.gameFont,
+          fontSize: 18,
+          lineHeight: 20,
+        },
+        heading5: {
+          ...context.typography.gameFont,
+          fontSize: 16,
+          lineHeight: 18,
+        },
+        heading6: {
+          ...context.typography.gameFont,
+          fontSize: 14,
+          lineHeight: 16,
         },
       }}
       fonts={{
@@ -570,6 +595,21 @@ export default function CardTextComponent({ text, style, onLinkPress, sizeScale 
             italic: 'Italic',
           },
         },
+        'Alegreya-Regular': {
+          fontWeights: {
+            300: 'Light',
+            400: 'Regular',
+            700: 'Bold',
+            800: 'ExtraBold',
+            900: 'Black',
+            normal: 'Regular',
+            bold: 'Bold',
+          },
+          fontStyles: {
+            normal: '',
+            italic: 'Italic',
+          },
+        },
         'Alegreya SC': {
           fontWeights: {
             300: 'Medium',
@@ -615,7 +655,7 @@ export default function CardTextComponent({ text, style, onLinkPress, sizeScale 
             italic: '',
           },
         },
-        Teutonic: {
+        Arkhamic: {
           fontWeights: {
             300: 'Regular',
             400: 'Regular',

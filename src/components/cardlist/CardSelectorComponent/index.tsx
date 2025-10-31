@@ -5,11 +5,11 @@ import { Slots } from '@actions/types';
 import Card from '@data/types/Card';
 import CardToggleRow from './CardToggleRow';
 import { showCard } from '@components/nav/helper';
-import StyleContext from '@styles/StyleContext';
 import { usePlayerCards } from '@components/core/hooks';
+import { useNavigation } from '@react-navigation/native';
+import StyleContext from '@styles/StyleContext';
 
 interface Props {
-  componentId: string;
   slots: Slots;
   fixedSlots?: Slots;
   counts: Slots;
@@ -22,9 +22,9 @@ interface Props {
 }
 
 
-export default function CardSelectorComponent({ componentId, slots, fixedSlots, counts, toggleCard, updateCount, filterCard, forceHeader, header, locked }: Props) {
+export default function CardSelectorComponent({ slots, fixedSlots, counts, toggleCard, updateCount, filterCard, forceHeader, header, locked }: Props) {
+  const navigation = useNavigation();
   const { colors } = useContext(StyleContext);
-
   const onChange = useCallback((card: Card, count: number) => {
     if (toggleCard) {
       toggleCard(card.code, count > 0);
@@ -34,10 +34,10 @@ export default function CardSelectorComponent({ componentId, slots, fixedSlots, 
   }, [updateCount, toggleCard]);
 
   const onCardPress = useCallback((card: Card) => {
-    showCard(componentId, card.code, card, colors, { showSpoilers: true });
-  }, [colors, componentId]);
+    showCard(navigation, card.code, card, colors, { showSpoilers: true });
+  }, [navigation, colors]);
   const initialCards = useMemo(() => uniq(concat(keys(slots), flatMap(counts, (count, code) => count > 0 ? code : []))), [slots, counts])
-  const [cards] = usePlayerCards(initialCards);
+  const [cards] = usePlayerCards(initialCards, false);
   const fixedCards = useMemo(() => {
     if (!cards) {
       return [];
@@ -58,7 +58,7 @@ export default function CardSelectorComponent({ componentId, slots, fixedSlots, 
         return (card && card.name) || '';
       }
     );
-  }, [cards, fixedSlots]);
+  }, [cards, fixedSlots, initialCards]);
   const matchingCards = useMemo(() => {
     if (!cards) {
       return [];
@@ -82,7 +82,7 @@ export default function CardSelectorComponent({ componentId, slots, fixedSlots, 
     );
   }, [slots, initialCards, counts, locked, cards, filterCard]);
 
-  if ((!matchingCards.length  && !fixedCards.length) || !cards) {
+  if ((!matchingCards.length && !fixedCards.length) || !cards) {
     if (forceHeader) {
       return (
         <>

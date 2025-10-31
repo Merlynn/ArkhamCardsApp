@@ -14,13 +14,12 @@ import useCardList from '../useCardList';
 import specialCards from '@data/deck/specialCards';
 
 interface Props {
-  componentId?: string;
   investigator: Card;
   parallelInvestigator?: Card;
   width: number;
 }
 
-export default function SignatureCardsComponent({ componentId, investigator, parallelInvestigator, width }: Props) {
+export default function SignatureCardsComponent({ investigator, parallelInvestigator, width }: Props) {
 
   const parallelCodes = useMemo(() => {
     return [
@@ -36,11 +35,11 @@ export default function SignatureCardsComponent({ componentId, investigator, par
       ...parallelCodes,
     ];
   }, [investigator, parallelCodes]);
-  const [requiredCards, requiredCardsLoading] = useCardList(requiredCodes, 'player');
+  const [requiredCards, requiredCardsLoading] = useCardList(requiredCodes, 'player', false);
   const alternateCodes = useMemo(() => {
     return uniq(flatMap(investigator.deck_requirements?.card || [], req => (req.alternates || [])));
   }, [investigator]);
-  const [alternateCards, alternateCardsLoading] = useCardList(alternateCodes, 'player');
+  const [alternateCards, alternateCardsLoading] = useCardList(alternateCodes, 'player', false);
   const bondedCards = useMemo(() => {
     return [
       ...(requiredCards || []),
@@ -61,7 +60,6 @@ export default function SignatureCardsComponent({ componentId, investigator, par
           { map(normalRequiredCards, card => (
             <SignatureCardItem
               key={card.code}
-              componentId={componentId}
               card={card}
               width={width}
             />
@@ -74,7 +72,6 @@ export default function SignatureCardsComponent({ componentId, investigator, par
           { map(parallelRequiredCards, card => (
             <SignatureCardItem
               key={card.code}
-              componentId={componentId}
               card={card}
               width={width}
             />
@@ -87,7 +84,6 @@ export default function SignatureCardsComponent({ componentId, investigator, par
           { map(altCards, card => (
             <SignatureCardItem
               key={card.code}
-              componentId={componentId}
               card={card}
               width={width}
             />
@@ -100,18 +96,13 @@ export default function SignatureCardsComponent({ componentId, investigator, par
           { map(advancedCards, card => (
             <SignatureCardItem
               key={card.code}
-              componentId={componentId}
               card={card}
               width={width}
             />
           )) }
         </>
       ) }
-      <BondedCardsComponent
-        componentId={componentId}
-        width={width}
-        cards={bondedCards}
-      />
+      <BondedCardsComponent width={width} cards={bondedCards} />
     </View>
   );
 }

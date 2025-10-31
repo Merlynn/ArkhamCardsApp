@@ -1,6 +1,6 @@
 import StyleContext from '@styles/StyleContext';
 import React, { useCallback, useContext, useReducer } from 'react';
-import { StyleSheet, View, InteractionManager } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { filter, map, findIndex } from 'lodash';
 
 import Ripple from '@lib/react-native-material-ripple';
@@ -16,7 +16,6 @@ interface Props {
   buttons: RenderButton[];
   selectedIndexes: number[];
   onPress: (indexes: number[]) => void;
-  componentId: string;
   interaction?: 'radio'
 }
 
@@ -69,7 +68,6 @@ export default function ArkhamButtonGroup({
   buttons,
   selectedIndexes,
   onPress,
-  componentId,
   interaction,
 }: Props) {
   const { colors, fontScale } = useContext(StyleContext);
@@ -107,7 +105,7 @@ export default function ArkhamButtonGroup({
   }, [localState]);
   useComponentDidAppear(() => {
     updateLocalSelectedIndexes({ type: 'sync', indexes: selectedIndexes });
-  }, componentId, [updateLocalSelectedIndexes, selectedIndexes]);
+  }, [updateLocalSelectedIndexes, selectedIndexes]);
   const onPressIndex = useCallback((idx: number) => {
     updateLocalSelectedIndexes({ type: 'toggle', idx, interaction });
   }, [interaction, updateLocalSelectedIndexes]);

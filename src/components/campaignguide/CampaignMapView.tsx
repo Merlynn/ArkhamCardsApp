@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useRef, useEffect, useMemo, useState } from 'react';
-import { LayoutChangeEvent, Platform, ScrollView, StyleSheet, Text, TextStyle, View } from 'react-native';
+import React, { useCallback, useContext, useRef, useEffect, useMemo, useState, useLayoutEffect } from 'react';
+import { Image, LayoutChangeEvent, Platform, ScrollView, StyleSheet, Text, TextStyle, View } from 'react-native';
 import { interpolate } from 'react-native-reanimated';
 import PanPinchView from 'react-native-pan-pinch-view';
 import PriorityQueue from 'priority-queue-typescript';
 import { filter, flatMap, values, find, sortBy, forEach, indexOf, map, sumBy, groupBy } from 'lodash';
 import { t, ngettext, msgid } from 'ttag';
-import FastImage from 'react-native-blasted-image';
+import { Image as ExpoImage } from 'expo-image';
 import {
   Defs,
   Svg,
@@ -13,16 +13,15 @@ import {
   Path,
 } from 'react-native-svg';
 
-import { NavigationProps } from '@components/nav/types';
 import { CampaignGuideInputProps } from './withCampaignGuideContext';
 import StyleContext from '@styles/StyleContext';
 import { DossierElement, Dossier, MapLabel, MapLocation, CampaignMap } from '@data/scenario/types';
 import { useDialog } from '@components/deck/dialogs';
 import space, { s, l } from '@styles/space';
-import { Navigation } from 'react-native-navigation';
+
 import AppIcon from '@icons/AppIcon';
 import CampaignGuideTextComponent from './CampaignGuideTextComponent';
-import { useBackButton, useNavigationButtonPressed, useSettingValue } from '@components/core/hooks';
+import { useBackButton, useSettingValue } from '@components/core/hooks';
 import { TouchableOpacity, TouchableQuickSize } from '@components/core/Touchables';
 
 import MapSvg from '../../../assets/map.svg';
@@ -35,7 +34,9 @@ import MapToggleButton from './MapToggleButton';
 import { MAX_WIDTH } from '@styles/sizes';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { VisibleCalendarEntry } from '@data/scenario/GuidedCampaignLog';
-import { trigger } from 'react-native-haptic-feedback';
+import { RouteProp, useNavigation, useRoute, usePreventRemove } from '@react-navigation/native';
+import { RootStackParamList } from '@navigation/types';
+import HeaderTitle from '@components/core/HeaderTitle';
 
 const PAPER_TEXTURE = require('../../../assets/paper.jpeg');
 
@@ -146,6 +147,7 @@ export interface CampaignMapProps extends CampaignGuideInputProps {
   visitedLocations: string[];
   unlockedLocations: string[];
   unlockedDossiers: string[];
+  subtitle: string | undefined;
 }
 
 const italicStyle = {
@@ -379,8 +381,11 @@ function PointOfInterest({
               ) }
             </View>
             <View
-              style={{ width: dotRadius * 2, height: dotRadius * 2 }}
-              opacity={visited && !currentLocation ? 0.5 : 1}
+              style={{
+                width: dotRadius * 2,
+                height: dotRadius * 2,
+                opacity: visited && !currentLocation ? 0.5 : 1,
+              }}
             >
               <AppIcon
                 color={statusColors[status]}
@@ -538,6 +543,7 @@ function DossierImage({
 }) {
   const width = Math.min(theWidth, 150);
   const { darkMode } = useContext(StyleContext);
+  console.log(uri);
   return (
     <View style={IMAGE_SPACING[alignment]}>
       <View style={{
@@ -545,10 +551,12 @@ function DossierImage({
         paddingBottom: 32,
         backgroundColor: darkMode ? COLORS.D10 : COLORS.white,
         transform: [{ rotate: alignment === 'left' ? '-4deg' : '4deg' }] }}>
-        <FastImage
-          source={{ uri: `https://img.arkhamcards.com${uri}` }}
-          style={{ width: width - 8 * 2, height: (width * ratio) - 8 * 2 }}
+        <ExpoImage
+          source={{
+            uri: `https://img2.arkhamcards.com${uri}`,
+          }}
           resizeMode="cover"
+          style={{ width: width - 8 * 2, height: (width * ratio) - 8 * 2 }}
         />
       </View>
     </View>
@@ -556,7 +564,7 @@ function DossierImage({
 }
 
 
-function DossierComponent({ dossier, showCity }: { dossier: Dossier; idx: number; showCity: (city: string) => void }) {
+function DossierComponent({ dossier, showCity }: { dossier: Dossier; showCity: (city: string) => void }) {
   const { colors, fontScale, typography } = useContext(StyleContext);
   return (
     <View style={[
@@ -608,6 +616,7 @@ function DossierEntryComponent({
     }
   }, [reference, showCity]);
   if (image) {
+    console.log(image.uri);
     return (
       <View style={{ flexDirection: IMAGE_DIRECTION[image?.alignment || 'right'] }}>
         { !!text && (
@@ -652,7 +661,6 @@ function LocationContent({
   visited,
   status,
   hasFast,
-  nextStatusReportTime,
   statusReports,
   currentTime,
   showCity,
@@ -669,7 +677,6 @@ function LocationContent({
   hasFast: boolean;
   statusReports: VisibleCalendarEntry[];
   currentTime: number;
-  nextStatusReportTime: number | undefined;
   showCity: (city: string) => void;
 }) {
   const { listSeperator } = useContext(LanguageContext);
@@ -697,7 +704,7 @@ function LocationContent({
       fast: false,
       transitOnly: true,
     });
-  }, [setCurrentLocation, location]);
+  }, [setCurrentLocation, travelDistance, location]);
 
   const atLocation = currentLocation?.id === location.id;
   const dossier = useMemo(() => {
@@ -731,7 +738,7 @@ function LocationContent({
       />
     );
 
-  }, [setCurrentLocation, makeCurrentTransit, travelDistance, listSeperator, nextStatusReportTime, currentTime, statusReports]);
+  }, [setCurrentLocation, makeCurrentTransit, travelDistance, listSeperator, currentTime, statusReports]);
   const travelSection = useMemo(() => {
     if (atLocation) {
       return (
@@ -812,7 +819,7 @@ function LocationContent({
   return (
     <>
       <View style={[space.paddingSideS, { flexDirection: 'column', position: 'relative' }]}>
-        <View style={{ position: 'absolute', top: 0, right: s }} opacity={0.15}>
+        <View style={{ position: 'absolute', top: 0, right: s, opacity: 0.15 }}>
           <EncounterIcon encounter_code={location.id} size={Math.min(width, MAX_WIDTH) / 3.2} color={colors.D20} />
         </View>
         <CardDetailSectionHeader title={t`Location`} />
@@ -839,7 +846,7 @@ function LocationContent({
               <CardDetailSectionHeader title={t`Information`} />
             </View>
             { map(dossier, (entry, idx) => (
-              <DossierComponent key={idx} dossier={entry} idx={idx} showCity={showCity} />
+              <DossierComponent key={idx} dossier={entry} showCity={showCity} />
             )) }
           </View>
         ) }
@@ -896,38 +903,37 @@ function visitMessage(alreadyVisited: boolean, status: 'locked' | 'side' | 'stan
 }
 
 
-export default function CampaignMapView(props: CampaignMapProps & NavigationProps) {
-  const { componentId, statusReports, currentTime, onSelect, campaignMap, visitedLocations, unlockedLocations, unlockedDossiers, hasFast } = props;
+export default function CampaignMapView() {
+  const route = useRoute<RouteProp<RootStackParamList, 'Campaign.Map'>>();
+  const { subtitle, statusReports, currentTime, onSelect, campaignMap, visitedLocations, unlockedLocations, unlockedDossiers, hasFast } = route.params;
+  const navigation = useNavigation();
   const [currentLocation, visited] = useMemo(() => {
     return [
-      find(campaignMap?.locations, location => location.id === (props.currentLocation || 'london')),
+      find(campaignMap?.locations, location => location.id === (route.params.currentLocation || 'london')),
       new Set(visitedLocations),
     ];
-  }, [campaignMap, props.currentLocation, visitedLocations]);
-  const nextStatusReportTime: number | undefined = useMemo(() => find(
-      sortBy(statusReports, report => report.time),
-      report => report.time > currentTime
-    )?.time,
-    [currentTime, statusReports]
-  );
+  }, [campaignMap, route.params.currentLocation, visitedLocations]);
 
   const { colors, backgroundStyle, typography, width, height } = useContext(StyleContext);
   const [selectedLocation, setSelectedLocation] = useState<MapLocation>();
-  const setDialogVisibleRef = useRef<(visible: boolean) => void>();
+  const setDialogVisibleRef = useRef<(visible: boolean) => void>(null);
   const hiding = useRef<boolean>(false);
+  const [preventRemoval, setPreventRemoval] = useState(true);
+
   const onDismiss = useCallback(() => {
     setDialogVisibleRef.current?.(false);
     hiding.current = true;
-    setTimeout(() => Navigation.dismissModal(componentId), 50);
+    setPreventRemoval(false); // Disable prevention before navigating
+    setTimeout(() => navigation.goBack(), 50);
     return true;
-  }, [componentId]);
+  }, [navigation]);
 
   const travelDistances = useMemo(() => {
-    if (props.currentLocation) {
-      return computeShortestPaths(props.currentLocation, campaignMap.locations);
+    if (route.params.currentLocation) {
+      return computeShortestPaths(route.params.currentLocation, campaignMap.locations);
     }
     return undefined;
-  }, [props.currentLocation, campaignMap.locations]);
+  }, [route.params.currentLocation, campaignMap.locations]);
 
   const moveToLocation = useCallback((info: TravelInfo) => {
     const {
@@ -939,11 +945,12 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
     }
   }, [onSelect, onDismiss]);
 
-  useNavigationButtonPressed(({ buttonId }) => {
-    if (buttonId === 'close') {
-      onDismiss();
-    }
-  }, componentId, [onDismiss]);
+  // Handle header back button press - intercept and do cleanup before navigating
+  usePreventRemove(preventRemoval, ({ }) => {
+    onDismiss(); // Do cleanup and navigate manually after delay
+  });
+
+  // Handle hardware back button
   useBackButton(onDismiss);
 
   const [theWidth, theHeight] = useMemo(() => {
@@ -986,7 +993,6 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
         travelDistance={travelDistances?.[selectedLocation.id]?.time || 1}
         setCurrentLocation={onSelect ? moveToLocation : undefined}
         hasFast={hasFast}
-        nextStatusReportTime={nextStatusReportTime}
         statusReports={statusReports}
         currentTime={currentTime}
         unlockedDossiers={unlockedDossiers}
@@ -1012,7 +1018,7 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
       showDialog();
     }
   }, [selectedLocation, showDialog]);
-  const pinchRef = useRef<any>();
+  const pinchRef = useRef<any>(null);
 
   useEffect(() => {
     if (currentLocation && pinchRef.current) {
@@ -1039,7 +1045,7 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
         groupBy(
           sortBy(
             sortBy(
-              filter(campaignMap.locations, location => location.id !== props.currentLocation),
+              filter(campaignMap.locations, location => location.id !== route.params.currentLocation),
               location => location.name
             ),
             location => travelDistances?.[location.id]?.time || 1
@@ -1067,8 +1073,8 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
         return `dist_${travelDistances?.[location.id]?.time || 1}`;
       }
     );
-  }, [campaignMap.locations, props.currentLocation, unlockedLocations, travelDistances, visited]);
-/*
+  }, [campaignMap.locations, route.params.currentLocation, unlockedLocations, travelDistances, visited]);
+  /*
   code to generate all the connections
   useEffect(() => {
     forEach(campaignMap.locations, currentLocation => {
@@ -1097,25 +1103,17 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
   }, []);
 */
 
-  useEffect(() => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        rightButtons: [
-          {
-            id: 'toggle',
-            component: {
-              name: 'MapToggleButton',
-              passProps: {},
-              width: MapToggleButton.WIDTH,
-              height: MapToggleButton.HEIGHT,
-            },
-            accessibilityLabel: t`Map`,
-            enabled: true,
-          },
-        ],
-      },
-    });
-  }, [componentId]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: t`Close`,
+      headerTitle: () => (
+        <HeaderTitle title={t`Map`} subtitle={subtitle} />
+      ),
+      headerRight: () => (
+        <MapToggleButton />
+      ),
+    })
+  }, [navigation, subtitle]);
   const [viewHeight, setViewHeight] = useState(height - 80);
   const onLayout = useCallback((event: LayoutChangeEvent) => {
     if (!hiding.current) {
@@ -1181,8 +1179,8 @@ export default function CampaignMapView(props: CampaignMapProps & NavigationProp
                 mapLabelStyles={labelStyles}
               />
             )) }
-            <View style={[styles.texture, { width: theWidth, height: theHeight }]} opacity={0.25}>
-              <FastImage
+            <View style={[styles.texture, { width: theWidth, height: theHeight, opacity: 0.25 }]}>
+              <Image
                 source={PAPER_TEXTURE}
                 style={{ width: theWidth, height: theHeight }}
                 resizeMode="cover"

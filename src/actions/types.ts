@@ -1,8 +1,17 @@
-import { ChaosBag, ChaosTokenType, FactionCodeType, SkillCodeType, SlotCodeType } from '@app_constants';
+import {
+  ChaosBag,
+  ChaosTokenType,
+  FactionCodeType,
+  SkillCodeType,
+  SlotCodeType,
+} from '@app_constants';
 import { CardFilterData, FilterState } from '@lib/filters';
-import Card from '@data/types/Card';
+import Card, { InvestigatorChoice } from '@data/types/Card';
 import { LEAD_INVESTIGATOR_STEP_ID } from '@data/scenario/fixedSteps';
-import { Campaign_Difficulty_Enum, Chaos_Bag_Tarot_Mode_Enum } from '@generated/graphql/apollo-schema';
+import {
+  Campaign_Difficulty_Enum,
+  Chaos_Bag_Tarot_Mode_Enum,
+} from '@generated/graphql/apollo-schema';
 import { CustomizationChoice } from '@data/types/CustomizationOption';
 
 export const SORT_BY_TYPE = 'type';
@@ -16,7 +25,7 @@ export const SORT_BY_PACK = 'pack';
 export const SORT_BY_TITLE = 'title';
 export const SORT_BY_ENCOUNTER_SET = 'encounter_set';
 export const SORT_BY_XP = 'xp';
-export const SORT_BY_CARD_ID = 'id'
+export const SORT_BY_CARD_ID = 'id';
 export const SORT_BY_SLOT = 'slot';
 
 export const BROWSE_CARDS = 'BROWSE_CARDS';
@@ -24,24 +33,41 @@ export const BROWSE_DECKS = 'BROWSE_DECKS';
 export const BROWSE_CAMPAIGNS = 'BROWSE_CAMPAIGNS';
 export const BROWSE_SETTINGS = 'BROWSE_SETTINGS';
 
-export type StartingTabType = typeof BROWSE_CARDS | typeof BROWSE_DECKS | typeof BROWSE_CAMPAIGNS | typeof BROWSE_SETTINGS;
+
+export type AttachableDefinition = {
+  code: string;
+  icon: string;
+  limit?: number;
+  name: string;
+  buttonLabel: string;
+  requiredCards?: Slots;
+  targetSize: number;
+  traits?: string[];
+  filter?: (card: Card) => boolean;
+};
+
+export type StartingTabType =
+  | typeof BROWSE_CARDS
+  | typeof BROWSE_DECKS
+  | typeof BROWSE_CAMPAIGNS
+  | typeof BROWSE_SETTINGS;
 export type SortType =
-  typeof SORT_BY_TYPE |
-  typeof SORT_BY_FACTION |
-  typeof SORT_BY_COST |
-  typeof SORT_BY_PACK |
-  typeof SORT_BY_TITLE |
-  typeof SORT_BY_XP |
-  typeof SORT_BY_CYCLE |
-  typeof SORT_BY_CARD_ID |
-  typeof SORT_BY_SLOT |
-  typeof SORT_BY_ENCOUNTER_SET;
+  | typeof SORT_BY_TYPE
+  | typeof SORT_BY_FACTION
+  | typeof SORT_BY_COST
+  | typeof SORT_BY_PACK
+  | typeof SORT_BY_TITLE
+  | typeof SORT_BY_XP
+  | typeof SORT_BY_CYCLE
+  | typeof SORT_BY_CARD_ID
+  | typeof SORT_BY_SLOT
+  | typeof SORT_BY_ENCOUNTER_SET;
 
 export type ExtendedSortType =
-  SortType |
-  typeof SORT_BY_TYPE_SLOT |
-  typeof SORT_BY_FACTION_PACK |
-  typeof SORT_BY_FACTION_XP ;
+  | SortType
+  | typeof SORT_BY_TYPE_SLOT
+  | typeof SORT_BY_FACTION_PACK
+  | typeof SORT_BY_FACTION_XP;
 
 export const DEFAULT_SORT: SortType[] = [SORT_BY_TYPE, SORT_BY_SLOT];
 export const DEFAULT_MYTHOS_SORT: SortType[] = [SORT_BY_ENCOUNTER_SET];
@@ -49,25 +75,28 @@ export const DEFAULT_MYTHOS_SORT: SortType[] = [SORT_BY_ENCOUNTER_SET];
 export interface Slots {
   [code: string]: number;
 }
+export interface ChecklistSlots {
+  [code: string]: number[] | undefined;
+}
+
 export const INVESTIGATOR_PROBLEM = 'investigator';
 export const TOO_MANY_COPIES = 'too_many_copies';
 export const INVALID_CARDS = 'invalid_cards';
+export const NON_POOL_CARDS = 'non_pool_cards';
 export const TOO_FEW_CARDS = 'too_few_cards';
 export const TOO_MANY_CARDS = 'too_many_cards';
 export const DECK_OPTIONS_LIMIT = 'deck_options_limit';
 
 export type DeckProblemType =
-  typeof INVESTIGATOR_PROBLEM |
-  typeof TOO_MANY_COPIES |
-  typeof INVALID_CARDS |
-  typeof TOO_FEW_CARDS |
-  typeof TOO_MANY_CARDS |
-  typeof DECK_OPTIONS_LIMIT;
+  | typeof INVESTIGATOR_PROBLEM
+  | typeof TOO_MANY_COPIES
+  | typeof INVALID_CARDS
+  | typeof NON_POOL_CARDS
+  | typeof TOO_FEW_CARDS
+  | typeof TOO_MANY_CARDS
+  | typeof DECK_OPTIONS_LIMIT;
 
-export type DeckInvestigatorProblemType =
-  'required' |
-  'limit' |
-  'atleast';
+export type DeckInvestigatorProblemType = 'required' | 'limit' | 'atleast';
 
 export interface DeckProblem {
   reason: DeckProblemType;
@@ -82,8 +111,14 @@ export interface DeckMeta {
   alternate_front?: string;
   alternate_back?: string;
   extra_deck?: string;
+  transform_into?: string;
+  card_pool?: string; // comma separated list of new style packs
+  // Other types:
+  // attachmens_{code}: id1,id2,id3 etc
   [key: string]: string | undefined;
 }
+
+export type CardPoolMode = 'legacy' | 'current' | 'limited' | 'custom';
 
 export interface LocalDeckId {
   id: undefined;
@@ -200,7 +235,7 @@ export type SkillCounts = {
 
 export type SlotCounts = {
   [slot in SlotCodeType]?: number;
-}
+};
 
 export interface SpecialDiscount {
   code: string;
@@ -259,9 +294,8 @@ export interface ParsedDeck {
   deck?: Deck;
   customizations: Customizations;
 
-  investigator: Card;
-  investigatorFront: Card;
-  investigatorBack: Card;
+  faction: FactionCodeType;
+  investigator: InvestigatorChoice;
   slots: Slots;
   deckSize: number;
   extraDeckSize: number | undefined;
@@ -274,6 +308,7 @@ export interface ParsedDeck {
   factionCounts: FactionCounts;
   costHistogram: number[];
   skillIconCounts: SkillCounts;
+  deckCards: Card[];
   slotCounts: SlotCounts;
   normalCards: SplitCards;
   specialCards: SplitCards;
@@ -451,6 +486,7 @@ export const TDE = 'tde';
 export const TDEA = 'tdea';
 export const TDEB = 'tdeb';
 export const TIC = 'tic';
+export const TDC = 'tdc';
 export const RTTIC = 'rttic';
 export const EOE = 'eoe';
 export const TSK = 'tskc';
@@ -460,40 +496,45 @@ export const FOF = 'fof';
 export const STANDALONE = 'standalone';
 export const DARK_MATTER = 'zdm';
 export const ALICE_IN_WONDERLAND = 'zaw';
+export const OZ = 'zoz';
+export const AGES_UNWOUND = 'zau';
 export const CROWN_OF_EGIL = 'zce';
 export const CALL_OF_THE_PLAGUEBEARER = 'zcp';
 export const CYCLOPEAN_FOUNDATIONS = 'zcf';
 export const HEART_OF_DARKNESS = 'zhod';
 
 export type CampaignCycleCode =
-  typeof CUSTOM |
-  typeof CORE |
-  typeof RTNOTZ |
-  typeof DWL |
-  typeof RTDWL |
-  typeof PTC |
-  typeof RTPTC |
-  typeof TFA |
-  typeof RTTFA |
-  typeof TCU |
-  typeof RTTCU |
-  typeof TDE |
-  typeof TDEA |
-  typeof TDEB |
-  typeof TIC |
-  typeof EOE |
-  typeof TSK |
-  typeof FHV |
-  typeof GOB |
-  typeof FOF |
-  typeof STANDALONE |
-  typeof DARK_MATTER |
-  typeof CYCLOPEAN_FOUNDATIONS |
-  typeof ALICE_IN_WONDERLAND |
-  typeof CROWN_OF_EGIL |
-  typeof HEART_OF_DARKNESS |
-  typeof CALL_OF_THE_PLAGUEBEARER |
-  typeof RTTIC;
+  | typeof CUSTOM
+  | typeof CORE
+  | typeof RTNOTZ
+  | typeof DWL
+  | typeof RTDWL
+  | typeof PTC
+  | typeof RTPTC
+  | typeof TFA
+  | typeof RTTFA
+  | typeof TCU
+  | typeof RTTCU
+  | typeof TDE
+  | typeof TDEA
+  | typeof TDEB
+  | typeof TIC
+  | typeof EOE
+  | typeof TSK
+  | typeof FHV
+  | typeof TDC
+  | typeof GOB
+  | typeof FOF
+  | typeof STANDALONE
+  | typeof DARK_MATTER
+  | typeof CYCLOPEAN_FOUNDATIONS
+  | typeof ALICE_IN_WONDERLAND
+  | typeof OZ
+  | typeof AGES_UNWOUND
+  | typeof CROWN_OF_EGIL
+  | typeof HEART_OF_DARKNESS
+  | typeof CALL_OF_THE_PLAGUEBEARER
+  | typeof RTTIC;
 
 export const ALL_CAMPAIGNS: CampaignCycleCode[] = [
   CORE,
@@ -513,11 +554,9 @@ export const ALL_CAMPAIGNS: CampaignCycleCode[] = [
   EOE,
   TSK,
   FHV,
+  TDC,
 ];
-export const STANDALONE_CAMPAGINS: CampaignCycleCode[] = [
-  GOB,
-  FOF,
-];
+export const STANDALONE_CAMPAGINS: CampaignCycleCode[] = [GOB, FOF];
 export const CUSTOM_CAMPAIGNS: CampaignCycleCode[] = [
   ALICE_IN_WONDERLAND,
   DARK_MATTER,
@@ -526,6 +565,8 @@ export const CUSTOM_CAMPAIGNS: CampaignCycleCode[] = [
   CYCLOPEAN_FOUNDATIONS,
   HEART_OF_DARKNESS,
   RTTIC,
+  OZ,
+  AGES_UNWOUND,
 ];
 
 export const GUIDED_CAMPAIGNS = new Set([
@@ -555,10 +596,16 @@ export const GUIDED_CAMPAIGNS = new Set([
   CYCLOPEAN_FOUNDATIONS,
   HEART_OF_DARKNESS,
   RTTIC,
+  OZ,
+  AGES_UNWOUND,
+  TDC,
 ]);
 
 export const INCOMPLETE_GUIDED_CAMPAIGNS = new Set<CampaignCycleCode>([]);
-export const NEW_GUIDED_CAMPAIGNS = new Set<CampaignCycleCode>([HEART_OF_DARKNESS, FHV]);
+export const NEW_GUIDED_CAMPAIGNS = new Set<CampaignCycleCode>([
+  OZ,
+  TDC,
+]);
 
 export interface CustomCampaignLog {
   sections?: string[];
@@ -636,20 +683,25 @@ export function getCampaignId(campaign: Campaign): CampaignId {
   };
 }
 
-export function getLastUpdated(campaign: { lastUpdated?: Date | string | number }): number {
+export function getLastUpdated(campaign: {
+  lastUpdated?: Date | string | number;
+}): number {
   if (!campaign.lastUpdated) {
     return 0;
   }
   if (typeof campaign.lastUpdated === 'string') {
-    return (new Date(Date.parse(campaign.lastUpdated)).getTime());
+    return new Date(Date.parse(campaign.lastUpdated)).getTime();
   }
   if (typeof campaign.lastUpdated === 'number') {
-    return (new Date(campaign.lastUpdated).getTime());
+    return new Date(campaign.lastUpdated).getTime();
   }
-  return (campaign.lastUpdated.getTime());
+  return campaign.lastUpdated.getTime();
 }
 
-export function getCampaignLastUpdated(campaign: Campaign, guide?: { lastUpdated?: Date | string | number }): Date {
+export function getCampaignLastUpdated(
+  campaign: Campaign,
+  guide?: { lastUpdated?: Date | string | number }
+): Date {
   if (campaign.guided && guide) {
     return new Date(Math.min(getLastUpdated(campaign), getLastUpdated(guide)));
   }
@@ -685,13 +737,28 @@ export interface SetFontScaleAction {
   fontScale: number;
 }
 
-
 export const SET_TABOO_SET = 'SET_TABOO_SET';
 export interface SetTabooSetAction {
   type: typeof SET_TABOO_SET;
   tabooId?: number;
   currentTabooId?: number;
   useCurrentTabooSet?: boolean;
+}
+
+export const SET_CARD_POOL_MODE = 'SET_CARD_POOL_MODE';
+export interface SetCardPoolModeAction {
+  type: typeof SET_CARD_POOL_MODE;
+  mode: CardPoolMode;
+}
+export const SET_CARD_POOL_PACKS = 'SET_CARD_POOL_PACKS';
+export interface SetCardPoolPacksAction {
+  type: typeof SET_CARD_POOL_PACKS;
+  packs: string[];
+}
+export const SET_CARD_POOL_PACKS_CALLBACK = 'SET_CARD_POOL_PACKS_CALLBACK';
+export interface SetCardPoolPacksCallbackAction {
+  type: typeof SET_CARD_POOL_PACKS_CALLBACK;
+  callback: (packs: string[]) => string[];
 }
 
 export const SET_CURRENT_TABOO_SET = 'SET_CURRENT_TABOO_SET';
@@ -702,8 +769,26 @@ export interface SetCurrentTabooSetAction {
 
 export const SET_MISC_SETTING = 'SET_MISC_SETTING';
 
-export type MiscRemoteSetting = 'single_card' | 'alphabetize' | 'colorblind' | 'sort_quotes' | 'ignore_collection' | 'custom_content' | 'campaign_show_deck_id';
-export type MiscLocalSetting = 'justify' | 'hide_campaign_decks' | 'hide_arkhamdb_decks' | 'android_one_ui_fix' | 'card_grid' | 'beta1' | 'draft_grid' | 'map_list' | 'draft_from_collection' | 'low_memory' | 'search_english';
+export type MiscRemoteSetting =
+  | 'single_card'
+  | 'alphabetize'
+  | 'colorblind'
+  | 'sort_quotes'
+  | 'ignore_collection'
+  | 'custom_content'
+  | 'campaign_show_deck_id';
+export type MiscLocalSetting =
+  | 'justify'
+  | 'hide_campaign_decks'
+  | 'hide_arkhamdb_decks'
+  | 'android_one_ui_fix'
+  | 'card_grid'
+  | 'beta1'
+  | 'draft_grid'
+  | 'map_list'
+  | 'draft_from_collection'
+  | 'low_memory'
+  | 'search_english';
 export type MiscSetting = MiscRemoteSetting | MiscLocalSetting;
 export interface SetMiscSettingAction {
   type: typeof SET_MISC_SETTING;
@@ -749,9 +834,10 @@ export interface CustomPacksAvailableAction {
 }
 
 export interface CardCache {
-  cardCount: number;
+  cardCount?: number;
   lastModified?: string;
   lastModifiedTranslation?: string;
+  lastAttemptedSync?: string;
 }
 
 export interface TabooCache {
@@ -947,23 +1033,49 @@ export interface UpdateDeckEditAction {
 
 export const UPDATE_DECK_EDIT_COUNTS = 'UPDATE_DECK_EDIT_COUNTS';
 
-interface UpdateDeckEditCountsSetAction {
+type BasicUpdateDeckEditCountsSetAction<T> = {
   type: typeof UPDATE_DECK_EDIT_COUNTS;
   id: DeckId;
   code: string;
   operation: 'set';
   value: number;
-  countType: 'slots' | 'ignoreDeckLimitSlots' | 'side' | 'extra' | 'xpAdjustment';
-}
-interface UpdateDeckEditCountsAdjustAction {
+} & T;
+
+type UpdateDeckEditCountsSetAction = BasicUpdateDeckEditCountsSetAction<{
+  countType:
+    | 'slots'
+    | 'ignoreDeckLimitSlots'
+    | 'side'
+    | 'extra'
+    | 'xpAdjustment';
+}> | BasicUpdateDeckEditCountsSetAction<{
+  countType: 'attachment';
+  attachment_code: string;
+}>;
+
+type BasicUpdateDeckEditCountsAdjustAction<T> = {
   type: typeof UPDATE_DECK_EDIT_COUNTS;
   id: DeckId;
   code: string;
   operation: 'inc' | 'dec';
   limit?: number;
-  countType: 'slots' | 'ignoreDeckLimitSlots' | 'side' | 'extra' | 'xpAdjustment';
-}
-export type UpdateDeckEditCountsAction = UpdateDeckEditCountsSetAction | UpdateDeckEditCountsAdjustAction;
+} & T;
+
+type UpdateDeckEditCountsAdjustAction = BasicUpdateDeckEditCountsAdjustAction<{
+  countType:
+    | 'slots'
+    | 'ignoreDeckLimitSlots'
+    | 'side'
+    | 'extra'
+    | 'xpAdjustment';
+}> | BasicUpdateDeckEditCountsAdjustAction<{
+  countType: 'attachment';
+  attachment_code: string;
+}>;
+
+export type UpdateDeckEditCountsAction =
+  | UpdateDeckEditCountsSetAction
+  | UpdateDeckEditCountsAdjustAction;
 
 export const FINISH_DECK_EDIT = 'FINISH_DECK_EDIT';
 export interface FinishDeckEditAction {
@@ -996,12 +1108,12 @@ export interface MyDecksErrorAction {
 export const SYNC_IN_COLLECTION = 'SYNC_IN_COLLECTION';
 export interface SyncInCollectionAction {
   type: typeof SYNC_IN_COLLECTION;
-  updates: { [key: string]: boolean }
+  updates: { [key: string]: boolean };
 }
 export const SYNC_PACK_SPOILER = 'SYNC_PACK_SPOILER';
 export interface SyncPackSpoilerAction {
   type: typeof SYNC_PACK_SPOILER;
-  updates: { [key: string]: boolean }
+  updates: { [key: string]: boolean };
 }
 
 export const SET_PACK_DRAFT = 'SET_PACK_DRAFT';
@@ -1182,6 +1294,12 @@ interface ArkhamDbLoginErrorAction {
   error: Error | string;
 }
 
+export const ARKHAMDB_LOGIN_WITH_ARKHAM_CARDS =
+  'ARKHAMDB_LOGIN_WITH_ARKHAMCARDS';
+interface ArkhamDbLoginWithArkhamCardsAction {
+  type: typeof ARKHAMDB_LOGIN_WITH_ARKHAM_CARDS;
+}
+
 export const ARKHAMDB_LOGOUT = 'ARKHAMDB_LOGOUT';
 interface ArkhamDbLogoutAction {
   type: typeof ARKHAMDB_LOGOUT;
@@ -1215,7 +1333,12 @@ export interface ToggleMythosAction {
   value: boolean;
 }
 
-export type CardScreenType = 'browse' | 'investigator' | 'deck' | 'checklist' | 'pack';
+export type CardScreenType =
+  | 'browse'
+  | 'investigator'
+  | 'deck'
+  | 'checklist'
+  | 'pack';
 
 export const UPDATE_CARD_SORT = 'UPDATE_CARD_SORT';
 export interface UpdateCardSortAction {
@@ -1302,6 +1425,7 @@ export interface GuideStringInput extends BasicInput {
   type: 'text';
   step: string;
   text: string;
+  inputId: string | undefined;
 }
 
 export interface GuideChoiceInput extends BasicInput {
@@ -1344,7 +1468,8 @@ export interface GuideStartSideScenarioInput extends StartSideScenarioInput {
   sideScenarioType: 'official';
 }
 
-export interface GuideStartCustomSideScenarioInput extends StartSideScenarioInput {
+export interface GuideStartCustomSideScenarioInput
+  extends StartSideScenarioInput {
   sideScenarioType: 'custom';
   name: string;
   xpCost: number;
@@ -1356,27 +1481,33 @@ export interface GuideCampaignLinkInput extends BasicInput {
   decision: string;
 }
 
-export const SYSTEM_BASED_GUIDE_INPUT_IDS = new Set([LEAD_INVESTIGATOR_STEP_ID]);
-export const SYSTEM_BASED_GUIDE_INPUT_TYPES = new Set(['campaign_link', 'inter_scenario']);
+export const SYSTEM_BASED_GUIDE_INPUT_IDS = new Set([
+  LEAD_INVESTIGATOR_STEP_ID,
+]);
+export const SYSTEM_BASED_GUIDE_INPUT_TYPES = new Set([
+  'campaign_link',
+  'inter_scenario',
+]);
 
 export type GuideInput =
-  GuideSuppliesInput |
-  GuideDecisionInput |
-  GuideNumberChoicesInput |
-  GuideStringChoicesInput |
-  GuideCountInput |
-  GuideChoiceInput |
-  GuideStringInput |
-  GuideStartScenarioInput |
-  GuideCampaignLinkInput |
-  GuideStartSideScenarioInput |
-  GuideStartCustomSideScenarioInput |
-  GuideInterScenarioInput;
+  | GuideSuppliesInput
+  | GuideDecisionInput
+  | GuideNumberChoicesInput
+  | GuideStringChoicesInput
+  | GuideCountInput
+  | GuideChoiceInput
+  | GuideStringInput
+  | GuideStartScenarioInput
+  | GuideCampaignLinkInput
+  | GuideStartSideScenarioInput
+  | GuideStartCustomSideScenarioInput
+  | GuideInterScenarioInput;
 
 export function guideInputToId(input: GuideInput) {
-  return `${input.scenario || ''}***${input.step || ''}***${input.type}`.replace(/[.$[\]#\\/]/g, '_');
+  return `${input.scenario || ''}***${input.step || ''}***${
+    input.type
+  }`.replace(/[.$[\]#\\/]/g, '_');
 }
-
 
 export function guideAchievementToId(input: GuideAchievement) {
   return `${input.id}***${input.type}`.replace(/[.$[\]#\\/]/g, '_');
@@ -1398,6 +1529,14 @@ export interface GuideSetInputAction {
   now: Date;
 }
 
+export const GUIDE_UPDATE_INPUT = 'GUIDE_UPDATE_INPUT';
+export interface GuideUpdeateInputAction {
+  type: typeof GUIDE_UPDATE_INPUT;
+  campaignId: CampaignId;
+  input: GuideInput;
+  now: Date;
+}
+
 export const GUIDE_UNDO_INPUT = 'GUIDE_UNDO_INPUT';
 export interface GuideUndoInputAction {
   type: typeof GUIDE_UNDO_INPUT;
@@ -1405,7 +1544,6 @@ export interface GuideUndoInputAction {
   scenarioId: string;
   now: Date;
 }
-
 
 export const GUIDE_UPDATE_ACHIEVEMENT = 'GUIDE_UPDATE_ACHIEVEMENT';
 export interface GuideUpdateAchievementAction {
@@ -1472,7 +1610,8 @@ export interface SetDeckChecklistCardAction {
   type: typeof SET_DECK_CHECKLIST_CARD;
   id: DeckId;
   card: string;
-  value: boolean;
+  value: number;
+  toggle: boolean;
 }
 
 export const REDUX_MIGRATION = 'REDUX_MIGRATION';
@@ -1497,99 +1636,101 @@ export type ReduxMigrationAction = ReduxMigrationV1Action;
 
 export type SettingsActions = SetCurrentTabooSetAction;
 export type FilterActions =
-  ClearFilterAction |
-  ToggleFilterAction |
-  UpdateFilterAction |
-  AddFilterSetAction |
-  RemoveFilterSetAction |
-  ToggleMythosAction |
-  UpdateCardSortAction;
+  | ClearFilterAction
+  | ToggleFilterAction
+  | UpdateFilterAction
+  | AddFilterSetAction
+  | RemoveFilterSetAction
+  | ToggleMythosAction
+  | UpdateCardSortAction;
 
 export type PacksActions =
-  PacksFetchStartAction |
-  PacksFetchErrorAction |
-  PacksCacheHitAction |
-  PacksAvailableAction |
-  CustomPacksAvailableAction |
-  SyncInCollectionAction |
-  SyncPackSpoilerAction |
-  SetPackDraftAction |
-  UpdatePromptDismissedAction;
+  | PacksFetchStartAction
+  | PacksFetchErrorAction
+  | PacksCacheHitAction
+  | PacksAvailableAction
+  | CustomPacksAvailableAction
+  | SyncInCollectionAction
+  | SyncPackSpoilerAction
+  | SetPackDraftAction
+  | UpdatePromptDismissedAction;
 
 export type SignInActions =
-  ArkhamCardsLoginAction |
-  ArkhamCardsLogoutAction |
-  ArkhamDbLoginAction |
-  ArkhamDbLoginStartedAction |
-  ArkhamDbLoginErrorAction |
-  ArkhamDbLogoutAction;
+  | ArkhamCardsLoginAction
+  | ArkhamCardsLogoutAction
+  | ArkhamDbLoginAction
+  | ArkhamDbLoginWithArkhamCardsAction
+  | ArkhamDbLoginStartedAction
+  | ArkhamDbLoginErrorAction
+  | ArkhamDbLogoutAction;
 
 export type DecksActions =
-  ArkhamDbLogoutAction |
-  RestoreComplexBackupAction |
-  MyDecksStartRefreshAction |
-  MyDecksCacheHitAction |
-  MyDecksErrorAction |
-  SetMyDecksAction |
-  NewDeckAvailableAction |
-  DeleteDeckAction |
-  UpdateDeckAction |
-  ClearDecksAction |
-  ReplaceLocalDeckAction |
-  EnsureUuidAction |
-  ReduxMigrationAction |
-  UploadDeckAction |
-  RemoveUploadDeckAction |
-  SetUploadedDecksAction |
-  SetCurrentDraftAction |
-  ClearCurrentDraftAction |
-  SetCurrentDraftSizeAction |
-  UpdateDeckEditAction |
-  SetPackDraftAction |
-  SyncInCollectionAction;
+  | ArkhamDbLogoutAction
+  | RestoreComplexBackupAction
+  | MyDecksStartRefreshAction
+  | MyDecksCacheHitAction
+  | MyDecksErrorAction
+  | SetMyDecksAction
+  | NewDeckAvailableAction
+  | DeleteDeckAction
+  | UpdateDeckAction
+  | ClearDecksAction
+  | ReplaceLocalDeckAction
+  | EnsureUuidAction
+  | ReduxMigrationAction
+  | UploadDeckAction
+  | RemoveUploadDeckAction
+  | SetUploadedDecksAction
+  | SetCurrentDraftAction
+  | ClearCurrentDraftAction
+  | SetCurrentDraftSizeAction
+  | UpdateDeckEditAction
+  | SetPackDraftAction
+  | SyncInCollectionAction;
 
 export type DeckEditsActions =
-  DeleteDeckAction |
-  ReplaceLocalDeckAction |
-  ResetDeckChecklistAction |
-  SetDeckChecklistCardAction |
-  DeleteDeckAction |
-  UpdateDeckAction |
-  StartDeckEditAction |
-  UpdateDeckEditAction |
-  FinishDeckEditAction |
-  UpdateDeckEditCountsAction |
-  SyncDeckAction;
+  | DeleteDeckAction
+  | ReplaceLocalDeckAction
+  | ResetDeckChecklistAction
+  | SetDeckChecklistCardAction
+  | DeleteDeckAction
+  | UpdateDeckAction
+  | StartDeckEditAction
+  | UpdateDeckEditAction
+  | FinishDeckEditAction
+  | UpdateDeckEditCountsAction
+  | SyncDeckAction;
 
 export type CampaignActions =
-  ArkhamDbLogoutAction |
-  RestoreComplexBackupAction |
-  ReplaceLocalDeckAction |
-  CleanBrokenCampaignsAction |
-  NewCampaignAction |
-  NewStandaloneCampaignAction |
-  NewLinkedCampaignAction |
-  UpdateCampaignAction |
-  UpdateCampaignXpAction |
-  UpdateCampaignTraumaAction |
-  DeleteCampaignAction |
-  UpdateChaosBagResultsAction |
-  CampaignAddInvestigatorAction |
-  CampaignRemoveInvestigatorAction |
-  SetCampaignNotesAction |
-  AdjustBlessCurseAction |
-  EnsureUuidAction |
-  ReduxMigrationAction;
+  | ArkhamDbLogoutAction
+  | RestoreComplexBackupAction
+  | ReplaceLocalDeckAction
+  | CleanBrokenCampaignsAction
+  | NewCampaignAction
+  | NewStandaloneCampaignAction
+  | NewLinkedCampaignAction
+  | UpdateCampaignAction
+  | UpdateCampaignXpAction
+  | UpdateCampaignTraumaAction
+  | DeleteCampaignAction
+  | UpdateChaosBagResultsAction
+  | CampaignAddInvestigatorAction
+  | CampaignRemoveInvestigatorAction
+  | SetCampaignNotesAction
+  | AdjustBlessCurseAction
+  | EnsureUuidAction
+  | ReduxMigrationAction;
 
 export type GuideActions =
-  DeleteCampaignAction |
-  RestoreComplexBackupAction |
-  ArkhamDbLogoutAction |
-  GuideSetInputAction |
-  GuideUndoInputAction |
-  GuideResetScenarioAction |
-  GuideUpdateAchievementAction |
-  ReduxMigrationAction;
+  | DeleteCampaignAction
+  | RestoreComplexBackupAction
+  | ArkhamDbLogoutAction
+  | GuideSetInputAction
+  | GuideUpdeateInputAction
+  | GuideUndoInputAction
+  | GuideResetScenarioAction
+  | GuideUpdateAchievementAction
+  | ReduxMigrationAction;
 
 export const DISSONANT_VOICES_LOGIN_STARTED = 'DISSONANT_VOICES_LOGIN_STARTED';
 interface DissonantVoicesLoginStartedAction {
@@ -1613,10 +1754,10 @@ interface DissonantVoicesLogoutAction {
 }
 
 export type DissonantVoicesActions =
-  DissonantVoicesLoginAction |
-  DissonantVoicesLoginStartedAction |
-  DissonantVoicesLoginErrorAction |
-  DissonantVoicesLogoutAction;
+  | DissonantVoicesLoginAction
+  | DissonantVoicesLoginStartedAction
+  | DissonantVoicesLoginErrorAction
+  | DissonantVoicesLogoutAction;
 
 export const TRACKED_QUERIES_ADD = 'TRACKED_QUERIES_ADD';
 export const TRACKED_QUERIES_REMOVE = 'TRACKED_QUERIES_REMOVE';
@@ -1638,4 +1779,6 @@ export interface TrackedQueriesRemoveAction {
   payload: string;
 }
 
-export type TrackedQueriesAction = TrackedQueriesAddAction | TrackedQueriesRemoveAction;
+export type TrackedQueriesAction =
+  | TrackedQueriesAddAction
+  | TrackedQueriesRemoveAction;

@@ -8,15 +8,16 @@ import Card, { CardsMap } from '@data/types/Card';
 import { drawWeakness } from '@lib/weaknessHelper';
 import InvestigatorButton from '@components/campaignguide/InvestigatorButton';
 import CampaignGuideContext from '@components/campaignguide/CampaignGuideContext';
-import GuidedCampaignLog from '@data/scenario/GuidedCampaignLog';
+import GuidedCampaignLog, { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 import ScenarioStateHelper from '@data/scenario/ScenarioStateHelper';
 import StyleContext from '@styles/StyleContext';
 import InputWrapper from '@components/campaignguide/prompts/InputWrapper';
-import space from '@styles/space';
+import space, { xs } from '@styles/space';
+import { ExtraStepPaddingProvider } from '@components/campaignguide/StepPaddingContext';
 
 interface OwnProps {
   id: string;
-  investigators: Card[];
+  investigators: CampaignInvestigator[];
   weaknessCards: CardsMap;
   traits: string[];
   standalone: boolean;
@@ -29,37 +30,41 @@ interface OwnProps {
 type Props = OwnProps;
 
 function DrawRandomWeaknessButton({ investigator, choice, choiceCard, drawRandomWeakness, index, disabled }: {
-  investigator: Card;
+  investigator: CampaignInvestigator;
   choice?: string;
   choiceCard?: Card;
   index: number;
   disabled: boolean;
-  drawRandomWeakness: (investigator: Card, index: number) => void;
+  drawRandomWeakness: (investigator: CampaignInvestigator, index: number) => void;
 }) {
-  const onPress = useCallback((investigator: Card) => {
+  const onPress = useCallback((investigator: CampaignInvestigator) => {
     drawRandomWeakness(investigator, index);
   }, [index, drawRandomWeakness]);
   return (
     <View style={space.paddingXs}>
-      <InvestigatorButton
-        investigator={investigator}
-        value={choice === undefined ?
-          t`Draw random weakness` :
-          (choiceCard?.name || 'Missing Card')
-        }
-        detail={!!choice ? choiceCard?.subname : undefined}
-        onPress={onPress}
-        disabled={disabled}
-        widget="shuffle"
-      />
+      <ExtraStepPaddingProvider padding={xs}>
+        <InvestigatorButton
+          investigator={investigator}
+          value={choice === undefined ?
+            t`Draw` :
+            (choiceCard?.name || 'Missing Card')
+          }
+          detail={!!choice ? choiceCard?.subname : undefined}
+          onPress={onPress}
+          disabled={disabled}
+          widget="shuffle"
+        />
+      </ExtraStepPaddingProvider>
     </View>
   );
 }
 
+type WeaknessChoice = { [index: string]: string };
+
 export default function DrawRandomWeaknessComponent({ id, investigators, weaknessCards, standalone, traits, realTraits, campaignLog, scenarioState, count }: Props) {
   const { campaignInvestigators, latestDecks, weaknessSet } = useContext(CampaignGuideContext);
   const { borderStyle } = useContext(StyleContext);
-  const [choices, setChoices] = useState<{ [code: string]: { [index: string]: string }}>({});
+  const [choices, setChoices] = useState<{ [code: string]: WeaknessChoice}>({});
   const effectiveWeaknessSet: WeaknessSet = useMemo(() => {
     return campaignLog.effectiveWeaknessSet(
       campaignInvestigators,
@@ -70,9 +75,9 @@ export default function DrawRandomWeaknessComponent({ id, investigators, weaknes
     );
   }, [weaknessCards, campaignLog, choices, campaignInvestigators, latestDecks, weaknessSet]);
 
-  const drawRandomWeakness = useCallback((investigator: Card, index: number) => {
+  const drawRandomWeakness = useCallback((investigator: CampaignInvestigator, index: number) => {
     const card = drawWeakness(
-      investigator,
+      investigator.card,
       effectiveWeaknessSet,
       weaknessCards,
       {
@@ -88,8 +93,8 @@ export default function DrawRandomWeaknessComponent({ id, investigators, weaknes
       setChoices({
         ...choices,
         [investigator.code]: {
-          ...(choices[investigator.code] || {}),
-          [index]: [card.code],
+          ...(choices[investigator.code] ?? {}),
+          [`${index}`]: card.code,
         },
       });
     }

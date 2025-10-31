@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import { keys, flatMap, forEach, map, filter, partition, uniq } from 'lodash';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { CardsStackParamList } from '@navigation/types';
 import {
   ScrollView,
   StyleSheet,
@@ -19,7 +21,6 @@ import NavButton from '@components/core/NavButton';
 import { getAllRealPacks } from '@reducers';
 import COLORS from '@styles/colors';
 import StyleContext from '@styles/StyleContext';
-import { NavigationProps } from '@components/nav/types';
 import useFilterFunctions, { FilterFunctionProps } from '../useFilterFunctions';
 import FixedSetChooserButton from '../FixedSetChooserButton';
 import { slotsTranslations } from '../CardAssetFilterView';
@@ -44,10 +45,19 @@ function listText(name: string, values: string[], listSeperator: string, transla
 function splitTraits(value: string): string[] {
   return filter(map(value.split('.'), t => t.trim()), t => !!t);
 }
-
-export type CardFilterProps = FilterFunctionProps;
-
-const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
+const CardFilterView = () => {
+  const route = useRoute<RouteProp<CardsStackParamList, 'SearchFilters'>>();
+  // Use route params with props as fallback
+  const filterId = route.params?.filterId || '';
+  const baseQuery = route.params?.baseQuery;
+  const modal = route.params?.modal;
+  const tabooSetId = route.params?.tabooSetId;
+  const props: FilterFunctionProps = {
+    filterId,
+    baseQuery,
+    modal,
+    tabooSetId,
+  };
   const { useCardTraits, listSeperator, lang } = useContext(LanguageContext);
   const {
     filters,
@@ -160,6 +170,7 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
       8: t`Edge of the Earth`,
       9: t`The Scarlet Keys`,
       10: t`The Feast of Hemlock Vale`,
+      11: t`The Drowned City`,
     };
     const specialPackNames = getSpecialPackNames();
     const selectedPacks = [
@@ -389,11 +400,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
   }, [listSeperator, shroud, shroudEnabled, clues, cluesEnabled, cluesFixed, hauntedEnabled, locationVictoryEnabled, locationVengeanceEnabled]);
   const { allFactions, hasXp, hasWeakness, hasCost, hasSkill, hasEnemy, hasLocation } = cardFilterData;
   const { backgroundStyle, width } = useContext(StyleContext);
-  const {
-    componentId,
-    baseQuery,
-    tabooSetId,
-  } = props;
   const localizedTraits = useMemo(() => {
     if (!useCardTraits) {
       return getLocalizedTraits();
@@ -407,6 +413,7 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
       { label: t`Fast`, setting: 'fast' },
       { label: `${nonUniqueStr}`, setting: 'nonUnique' },
       { label: `${uniqueStr} (✷)`, setting: 'unique' },
+      { label: t`Specialist`, setting: 'specialist' },
       { label: t`Seal`, setting: 'seal' },
       { label: t`Victory`, setting: 'victory' },
       { label: t`Exile`, setting: 'exile' },
@@ -427,7 +434,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
           selection={factions}
           multiClass={multiClass}
           onFilterChange={onFilterChange}
-          componentId={componentId}
         />
         { hasXp && (
           <XpChooser
@@ -438,7 +444,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
             onToggleChange={onToggleChange}
             exceptional={exceptional}
             nonExceptional={nonExceptional}
-            componentId={componentId}
           />
         ) }
         { hasXp && (
@@ -472,7 +477,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
         ) }
         <View>
           <FilterChooserButton
-            componentId={componentId}
             title={t`Types`}
             all={c('Types').t`All`}
             field="type_code"
@@ -490,6 +494,7 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
               agenda: t`Agenda`,
               story: t`Story`,
               enemy: t`Enemy`,
+              enemy_location: t`Enemy-Location`,
               treachery: t`Treachery`,
               location: t`Location`,
               investigator: c('card-type').t`Investigator`,
@@ -498,7 +503,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
           />
           { (subTypes.length > 0 || hasWeakness) && (
             <FilterChooserButton
-              componentId={componentId}
               title={t`SubTypes`}
               all={c('SubTypes').t`All`}
               field="subtype_code"
@@ -555,7 +559,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
           <FixedSetChooserButton
             title={t`Actions`}
             all={c('Actions').t`All`}
-            componentId={componentId}
             selection={actions}
             setting="actions"
             onFilterChange={onFilterChange}
@@ -574,7 +577,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
           <FilterChooserButton
             title={t`Traits`}
             all={c('Traits').t`All`}
-            componentId={componentId}
             field={useCardTraits ? 'traits' : 'real_traits'}
             fixedTranslations={localizedTraits}
             processValue={splitTraits}
@@ -603,7 +605,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
           />
         ) }
         <FilterChooserButton
-          componentId={componentId}
           title={t`Encounter Sets`}
           all={c('Encounter Sets').t`All`}
           field="encounter_name"
@@ -621,7 +622,6 @@ const CardFilterView = (props: FilterFunctionProps & NavigationProps) => {
         ) }
         { tabooButton }
         <FilterChooserButton
-          componentId={componentId}
           title={t`Illustrators`}
           all={c('Illustrators').t`All`}
           field="illustrator"

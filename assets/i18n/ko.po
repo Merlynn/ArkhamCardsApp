@@ -22,9 +22,6 @@ msgstr "${ action.name } (캠페인 A)"
 msgid "${ action.name } (Campaign B)"
 msgstr "${ action.name } (캠페인 B)"
 
-msgid "No assets that take up the ally slot are allowed by On Your Own."
-msgstr "'홀로서기' 카드의 효과로 조력자 슬롯을 차지하는 자산은 허용되지 않습니다."
-
 msgid "Too many off-class cards for Versatile"
 msgstr "'다재다능' 카드의 효과를 적용하더라도 다른 역할군 카드가 너무 많습니다."
 
@@ -198,7 +195,6 @@ msgstr ""
 msgid "Undo"
 msgstr "되돌리기"
 
-#. This is a deck upgrade action.
 msgid "Cancel"
 msgstr "취소"
 
@@ -271,9 +267,6 @@ msgstr "모든 카드가 앱 전체에 표시됩니다."
 
 msgid "Restore campaign data?"
 msgstr "캠페인 데이터를 복구하시겠습니까?"
-
-msgid "Nevermind"
-msgstr "신경끄기"
 
 msgid "Import data"
 msgstr "데이터 불러오기"
@@ -352,9 +345,6 @@ msgstr "오류: 카드 확인하기를 다시 시도하십시오"
 
 msgid "Card Collection"
 msgstr "보유 게임"
-
-msgid "Spoiler Settings"
-msgstr "스포일러 설정"
 
 msgid "Preferences"
 msgstr "설정"
@@ -787,7 +777,6 @@ msgstr "카드 변경 내역"
 msgid "Campaign"
 msgstr "캠페인"
 
-#. Actually compute the diffs.
 msgid "Upgrade History"
 msgstr "향상 기록"
 
@@ -1193,18 +1182,8 @@ msgstr "세팅에서 금기 목록을 선택하고 덱을 만들면, 금기 목�
 msgid "Check for updated cards?"
 msgstr "갱신된 카드가 있는지 확인하시겠습니까?"
 
-msgid ""
-"It has been more than a week since you checked for new cards.\n"
-"Check for new cards from ArkhamDB?"
-msgstr ""
-"새로운 카드를 확인한 후 1주일이 지났습니다.\n"
-"아컴디비에서 새로운 카드가 있는지 확인해보시겠습니까?"
-
 msgid "Ask me later"
 msgstr "나중에 알려주십시오"
-
-msgid "Check for updates"
-msgstr "갱신 내역을 확인합니다"
 
 msgid "Error loading cards, make sure your network is working."
 msgstr "카드를 불러오는데 오류가 발생했습니다. 인터넷 연결이 정상인지 확인해주십시오."
@@ -1298,18 +1277,6 @@ msgstr "캠페인 삭제"
 
 msgid "Campaign Log"
 msgstr "캠페인 기록지"
-
-msgid "Reset Scenario?"
-msgstr "캠페인을 초기화 하시겠습니까?"
-
-msgid ""
-"Are you sure you want to reset this scenario?\n"
-"\n"
-"All data you have entered will be lost."
-msgstr ""
-"이번 시나리오를 정말로 초기화 하시겠습니까?\n"
-"\n"
-"입력했던 모든 데이터는 사라집니다."
 
 msgid "Select Cards"
 msgstr "카드 선택"
@@ -1448,9 +1415,6 @@ msgstr "당신은 육체적 트라우마를 1 또는 정신적 트라우마를 1
 
 msgid "All weaknesses have been assigned."
 msgstr "모든 약점이 할당되어 있습니다."
-
-msgid "Draw random weakness"
-msgstr "무작위 약점 뽑기"
 
 msgid "Do you want to use the app to randomize weaknesses?"
 msgstr "앱을 이용해서 약점을 무작위로 선택하기를 원하십니까?"
@@ -1633,8 +1597,8 @@ msgid "Resolution"
 msgstr "결말"
 
 #, javascript-format
-msgid "${ investigator.firstName }’s Trauma"
-msgstr "${ investigator.firstName }의 트라우마"
+msgid "${ investigator.card.firstName }’s Trauma"
+msgstr "${ investigator.card.firstName }의 트라우마"
 
 msgid "Physical Trauma"
 msgstr "육체적 트라우마"
@@ -2149,10 +2113,6 @@ msgstr "변경사항을 저장하시겠습니까?"
 msgid "Add note"
 msgstr "노트 추가"
 
-#, javascript-format
-msgid "Remove ${ investigator.name }?"
-msgstr "${ investigator.name } 조사자를 제거하시겠습니까?"
-
 msgid "Remove"
 msgstr "제거"
 
@@ -2226,20 +2186,20 @@ msgid "Play this scenario"
 msgstr "이 시나리오 플레이"
 
 #, javascript-format
-msgid "${ investigator.name } earns ${ card.name } (Advanced)."
-msgstr "${ investigator.name } 조사자는 ${ card.name } (강화된) 카드를 획득합니다."
+msgid "${ investigator.card.name } earns ${ card.name } (Advanced)."
+msgstr "${ investigator.card.name } 조사자는 ${ card.name } (강화된) 카드를 획득합니다."
 
 #, javascript-format
-msgid "${ investigator.name } earns ${ card.name }."
-msgstr "${ investigator.name } 조사자는 ${ card.name } 카드를 획득합니다."
+msgid "${ investigator.card.name } earns ${ card.name }."
+msgstr "${ investigator.card.name } 조사자는 ${ card.name } 카드를 획득합니다."
 
 #, javascript-format
-msgid "${ investigator.name } removes ${ card.name } (Advanced)"
-msgstr "${ investigator.name } 조사자는 ${ card.name } (강화된) 카드를 제거합니다."
+msgid "${ investigator.card.name } removes ${ card.name } (Advanced)"
+msgstr "${ investigator.card.name } 조사자는 ${ card.name } (강화된) 카드를 제거합니다."
 
 #, javascript-format
-msgid "${ investigator.name } removes ${ card.name }"
-msgstr "${ investigator.name } 조사자는 ${ card.name } 카드를 제거합니다."
+msgid "${ investigator.card.name } removes ${ card.name }"
+msgstr "${ investigator.card.name } 조사자는 ${ card.name } 카드를 제거합니다."
 
 msgid "Challenge Scenario"
 msgstr "도전 시나리오"
@@ -2329,16 +2289,6 @@ msgstr ""
 "이 캠페인에서 해당 덱을 정말 제거하시겠습니까?\n"
 "\n"
 "덱은 여전히 아컴디비에 남아있게 됩니다."
-
-#, javascript-format
-msgid ""
-"Are you sure you want to remove ${ investigator.name } from this campaign?\n"
-"\n"
-"Campaign log data associated with them may be lost."
-msgstr ""
-"이 캠페인에서 ${ investigator.name } 조사자를 제거하시겠습니까?\n"
-"\n"
-"해당 조사자와 연관된 캠페인 기록 데이터는 사라집니다."
 
 msgid "Scenario or Interlude"
 msgstr "시나리오 또는 막간"
@@ -2665,9 +2615,6 @@ msgstr "검색 옵션"
 msgid "Search in:"
 msgstr "다음에서 검색:"
 
-msgid "Encounter Card Toggle"
-msgstr "조우 카드 토글"
-
 msgid "Show all available cards"
 msgstr "모든 사용 가능한 카드 보기"
 
@@ -2978,13 +2925,13 @@ msgid "Deck is invalid"
 msgstr "덱 구성 조건을 만족하지 않습니다"
 
 msgid "Show splash cards"
-msgstr "항목에 포함된 카드 보기"
+msgstr "수량 한정 카드 보기"
 
 msgid "Hide splash cards"
-msgstr "항목에 포함된 카드 숨기기"
+msgstr "수량 한정 카드 숨김"
 
 msgid "Limited Slots"
-msgstr "제한된 슬롯"
+msgstr "수량 한정 카드"
 
 #, javascript-format
 msgid "${ count } of ${ limitSlotCount }"
@@ -3565,34 +3512,34 @@ msgid "${ normalCardCount } / ${ deckSize } cards"
 msgstr "${ normalCardCount } / ${ deckSize } 카드"
 
 msgid "Ammo"
-msgstr "탄약"
+msgstr "탄약 - Ammo"
 
 msgid "Bounties"
-msgstr "현상금"
+msgstr "현상금 - Bounties"
 
 msgid "Charges"
-msgstr "충전"
+msgstr "충전 - Charges"
 
 msgid "Keys"
-msgstr "열쇠"
+msgstr "열쇠 - Keys"
 
 msgid "Locks"
-msgstr "자물쇠"
+msgstr "자물쇠 - Locks"
 
 msgid "Resources"
-msgstr "자원"
+msgstr "자원 - Resources"
 
 msgid "Secrets"
-msgstr "비밀"
+msgstr "비밀 - Secrets"
 
 msgid "Tickets"
-msgstr "티켓"
+msgstr "티켓 - Tickets"
 
 msgid "Tries"
-msgstr "시도"
+msgstr "시도 - Tries"
 
 msgid "Whistles"
-msgstr "호각"
+msgstr "호각 - Whistles"
 
 msgid "Loading..."
 msgstr "불러오는 중..."
@@ -3870,12 +3817,6 @@ msgstr "캠페인 기록지에 기록"
 
 msgid "Review and add records"
 msgstr "열람 및 기록 추가"
-
-msgid "Chaos bag"
-msgstr "혼돈 주머니"
-
-msgid "Review and simulate draw"
-msgstr "열람 및 뽑기 시뮬레이션"
 
 msgid "Draw random"
 msgstr "무작위 뽑기"
@@ -4300,9 +4241,6 @@ msgstr "회복 유형을 선택하십시오"
 
 msgid "Chosen heal type"
 msgstr "선택한 회복 유형"
-
-msgid "Assigned weaknesses"
-msgstr "할당된 약점"
 
 msgid "Review and draw weaknesses"
 msgstr "약점 보기 및 뽑기"
@@ -4732,13 +4670,13 @@ msgid "Note: this campaign is a fairly new addition to the app and may contain s
 msgstr "주의: 이 캠페인은 앱에 새로 추가된 것으로 약간의 오류가 있을 수 있습니다."
 
 msgid "Durability"
-msgstr "내구도"
+msgstr "내구도 - Durability"
 
 msgid "Leylines"
-msgstr "지맥"
+msgstr "지맥 - Leylines"
 
 msgid "Offerings"
-msgstr "공물"
+msgstr "공물 - Offerings"
 
 msgid "Patrol"
 msgstr "순찰"
@@ -4881,9 +4819,6 @@ msgstr "모든 보유 게임들을 드래프트 후보로 선정"
 msgid "Draft Pool"
 msgstr "드래프트 후보군"
 
-msgid "Grid"
-msgstr "격자"
-
 msgid "Invalid deck"
 msgstr "유효하지 않은 덱"
 
@@ -4950,9 +4885,6 @@ msgstr "복사된 덱으로의 링크"
 
 msgid "Build a deck randomly"
 msgstr "무작위로 덱 구성"
-
-msgid "A single core set is always included"
-msgstr "기본판 하나는 항상 포함됩니다."
 
 msgid "Campaigns Cycles"
 msgstr "캠페인 사이클"
@@ -5237,7 +5169,7 @@ msgid "Add trait"
 msgstr "특성 추가"
 
 msgid "Embark"
-msgstr "탑승"
+msgstr "임무 개시"
 
 #, javascript-format
 msgid "Depart from ${ currentLocation.name }"
@@ -5430,7 +5362,7 @@ msgid "Choose a skill"
 msgstr "능력 선택"
 
 msgid "Use the embark button below"
-msgstr "아래의 탑승 기능을 사용하십시오"
+msgstr "아래의 버튼으로 임무를 개시하십시오."
 
 msgid "Review the world map"
 msgstr "세계 지도 검토"
@@ -5468,10 +5400,10 @@ msgid "This deck is owned by another player. You can record the changes now and 
 msgstr "이 덱은 다른 플레이어가 소유하고 있습니다. 지금 변경점을 기록할 수 있으며, 소유주가 다음에 앱을 열 때 덱에 저장할 수 있는 기회가 주어집니다."
 
 msgid "Time Passed"
-msgstr "흐른 시간"
+msgstr "경과한 시간"
 
 msgid "Bearer"
-msgstr "소지자"
+msgstr "보유자"
 
 msgid "You cannot have more than 5 Seeker and/or Survivor cards"
 msgstr "탐구자 그리고/또는 생존자인 카드를 5장보다 많이 포함할 수 없습니다."
@@ -5531,7 +5463,11 @@ msgid ""
 "- Because you are playing <i>The Scarlet Keys</i> campaign, a side-story costs a certain amount of <b>time</b> instead of experience.\n"
 "- Weaknesses, trauma, experience, and rewards granted by playing a side-story stay with the investigators for the remainder of the campaign.\n"
 "- Each side-story may only be played once per campaign."
-msgstr "외전 이야기는 <아컴호러 카드게임> 캠페인에 속한 두 연속 시나리오 사이에 진행할 수 있는 별도의 시나리오입니다.- <i>진홍색 열쇠</i> 캠페인 확장을 플레이하고 있으므로, 외전 이야기를 즐기려면 경험치 대신 <b>시간</b>을 일정량 소비해야 합니다.- 외전 이야기에서 얻은 약점, 트라우마, 경험치, 보상은 캠페인을 마칠 때까지 조사자에게 남습니다.- 각 외전 이야기는 캠페인마다 1번씩만 즐길 수 있습니다.- 캠페인 도중에 외전 이야기를 진행한다면, 이 시나리오를 현재 진행중인 캠페인의 다음 시나리오로 간주합니다. 즉, 혼돈 주머니, 약점, 트라우마, 기존에 획득한 이야기 자산이 외전이야기에 그대로 이어집니다."
+msgstr ""
+"외전 이야기는 <아컴호러 카드게임> 캠페인에 속한 두 연속 시나리오 사이에 진행할 수 있는 별도의 시나리오입니다.\n"
+"- <i>진홍색 열쇠</i> 캠페인 확장을 플레이하고 있으므로, 외전 이야기를 즐기려면 경험치 대신 <b>시간</b>을 일정량 소비해야 합니다.\n"
+"- 외전 이야기에서 얻은 약점, 트라우마, 경험치, 보상은 캠페인을 마칠 때까지 조사자에게 남습니다. 캠페인 도중에 외전 이야기를 진행한다면, 이 시나리오를 현재 진행중인 캠페인의 다음 시나리오로 간주합니다. 즉, 혼돈 주머니, 약점, 트라우마, 기존에 획득한 이야기 자산이 외전이야기에 그대로 이어집니다.\n"
+"- 각 외전 이야기는 캠페인마다 1번씩만 즐길 수 있습니다."
 
 #, javascript-format
 msgid "Mark ${ travelDistance } time"
@@ -5559,7 +5495,7 @@ msgid "Exile other cards"
 msgstr "다른 카드 추방"
 
 msgid "Name of Paradimensional Artifact"
-msgstr "준차원 인공물 이름"
+msgstr "초차원적 유물의 명칭"
 
 msgid "Prologue: Rain and Riddles"
 msgstr "서막: 비와 수수께끼"
@@ -5738,7 +5674,7 @@ msgstr ""
 
 #, javascript-format
 msgid "Return, but ${ doNotRemove } ${ bless } / ${ curse } tokens"
-msgstr "‘토큰 되돌리기’ 버튼만 누르시고, ${ bless } / ${ curse } 토큰은 ${ doNotRemove }"
+msgstr "임의로 ${ bless } / ${ curse } 토큰을 ${ doNotRemove }! (자동 반영)"
 
 msgid "Recent token history"
 msgstr "최근 토큰 기록"
@@ -5876,7 +5812,7 @@ msgid "Experience cost: ${ basicXpCost } for decks that include ${ investigator.
 msgstr "경험치 비용: ${ investigator.name } 조사자의 경우 ${ basicXpCost }점, 다른 조사자는의 경우 ${ challengeDiscountCost }점"
 
 msgid "Aether"
-msgstr "에테르"
+msgstr "에테르 - Aether"
 
 msgid "Campaign Rules & FAQ"
 msgstr "캠페인 규칙과 자주 묻는 질문"
@@ -5955,6 +5891,367 @@ msgstr "이미지 캐시 정리됨"
 msgid "Clear image cache"
 msgstr "이미지 캐시 비우기"
 
+msgid "Unable to create campaign"
+msgstr "생성 불가능 캠페인"
+
+msgid "Handle is already taken"
+msgstr "이미 존재하는 계정명입니다."
+
+msgid "Portents"
+msgstr ""
+
+msgid "Truths"
+msgstr ""
+
+msgid "Specialist"
+msgstr "전문가"
+
+msgid "Enemy-Location"
+msgstr "적-장소"
+
+msgid "Incomplete card database"
+msgstr "불완전한 카드 데이터베이스"
+
+msgid "New cards available"
+msgstr "사용 가능한 새로운 카드"
+
+msgid ""
+"Your most recent sync did not complete.\n"
+"\n"
+"When trying again, please keep the app open and in the foreground until it is finished."
+msgstr ""
+"가장 최근 동기화가 완료되지 않았습니다.\n"
+"\n"
+"다시 동기화를 시도할 때에는, 완료될 때까지 앱을 열려 있는 상태로 유지하십시오."
+
+#, javascript-format
+msgid "It looks like your app is missing ${ updates.missingCardCount } card."
+msgid_plural "It looks like your app is missing ${ updates.missingCardCount } cards."
+msgstr[0] "앱에 카드 ${ updates.missingCardCount }장이 누락된 것 같습니다."
+msgstr[1] "앱에 카드 ${ updates.missingCardCount }장이 누락된 것 같습니다."
+
+msgid "Some decks may not load fully and campaigns might appear incomplete until this is fixed."
+msgstr "일부 덱은 완전히 불러올 수 없으며, 이 문제가 해결될 때까지 캠페인이 불완전하게 표시될 수 있습니다."
+
+msgid "Download cards"
+msgstr "카드 내려받기"
+
+msgid "It has been more than a week since you checked for new cards."
+msgstr "새 카드를 확인하지 않은지 너무 오래되었습니다."
+
+#, javascript-format
+msgid "Chinese (Simplified): ${ simplifiedChineseTranslators }"
+msgstr "중국어(간체): ${ simplifiedChineseTranslators }"
+
+msgid "Narration"
+msgstr "나레이션"
+
+msgid "These cards might have been updated, from a new taboo list, or contain minor corrections."
+msgstr "이러한 카드는 새로운 금기 목록에서 업데이트되었거나 사소한 수정 사항이 포함되어 있을 수 있습니다."
+
+msgid "Fatigue"
+msgstr ""
+
+msgid "The Colour Out of Oz"
+msgstr ""
+
+msgid "Preparations"
+msgstr ""
+
+msgid "Companions of Oz"
+msgstr ""
+
+msgid "Advantages"
+msgstr ""
+
+msgid "Order of Events"
+msgstr ""
+
+msgid "Ages Unwound"
+msgstr ""
+
+msgid "Create new deck"
+msgstr "새로운 덱 생성하기"
+
+msgid "Timeline"
+msgstr ""
+
+msgid "Strange Assistance"
+msgstr ""
+
+msgid "Attachments"
+msgstr "부착"
+
+msgid "Bewitching"
+msgstr "환혹"
+
+msgid "Hunch deck"
+msgstr "직감 덱"
+
+msgid "Stick to the Plan"
+msgstr "계획 엄수"
+
+msgid "Market deck"
+msgstr "거래 덱"
+
+msgid "Branded spell"
+msgstr "낙인 마법"
+
+msgid "Too many selected"
+msgstr "너무 많이 선택되었습니다"
+
+msgid "Each card must be different"
+msgstr "각 카드는 서로 달라야 합니다"
+
+#, javascript-format
+msgid "Limit of ${ limit } card"
+msgid_plural "Limit of ${ limit } cards"
+msgstr[0] "카드 ${ limit }장 한정"
+
+#, javascript-format
+msgid "${ total } of ${ attachment.targetSize }"
+msgstr "${ attachment.targetSize }/${ total }"
+
+msgid "Draft"
+msgstr "드래프트"
+
+#, javascript-format
+msgid "Act: ${ count }"
+msgid_plural "Acts: ${ count }"
+msgstr[0] "주요목적: ${ count }"
+msgstr[1] "주요목적: ${ count }"
+
+#, javascript-format
+msgid "Agenda: ${ count }"
+msgid_plural "Agendas: ${ count }"
+msgstr[0] "주요사건: ${ count }"
+msgstr[1] "주요사건: ${ count }"
+
+#, javascript-format
+msgid "Location: ${ count }"
+msgid_plural "Locations: ${ count }"
+msgstr[0] "장소: ${ count }"
+msgstr[1] "장소: ${ count }"
+
+#, javascript-format
+msgid "Enemy: ${ count }"
+msgid_plural "Enemies: ${ count }"
+msgstr[0] "적: ${ count }"
+msgstr[1] "적: ${ count }"
+
+#, javascript-format
+msgid "Enemy-Location: ${ count }"
+msgid_plural "Enemy-Locations: ${ count }"
+msgstr[0] "적-장소: ${ count }"
+msgstr[1] "적-장소: ${ count }"
+
+#, javascript-format
+msgid "Treachery: ${ count }"
+msgid_plural "Treacheries: ${ count }"
+msgstr[0] "음모: ${ count }"
+msgstr[1] "음모: ${ count }"
+
+#, javascript-format
+msgid "Story: ${ count }"
+msgid_plural "Stories: ${ count }"
+msgstr[0] "이야기: ${ count }"
+msgstr[1] "이야기: ${ count }"
+
+#, javascript-format
+msgid "Key: ${ count }"
+msgid_plural "Keys: ${ count }"
+msgstr[0] "열쇠: ${ count }"
+msgstr[1] "열쇠: ${ count }"
+
+#, javascript-format
+msgid "Asset: ${ count }"
+msgid_plural "Assets: ${ count }"
+msgstr[0] "자산: ${ count }"
+msgstr[1] "자산: ${ count }"
+
+msgid "Scenario reference"
+msgid_plural "Scenario references: ${ count }"
+msgstr[0] "시나리오 참조"
+msgstr[1] "시나리오 참조: ${ count }"
+
+#, javascript-format
+msgid "Unknown: ${ count }"
+msgid_plural "Unknowns: ${ count }"
+msgstr[0] "알 수 없음: ${ count }"
+msgstr[1] "알 수 없음: ${ count }"
+
+msgid "Campaign required"
+msgstr "필수 캠페인"
+
+msgid "You must select a campaign."
+msgstr "캠페인을 반드시 선택해야 합니다."
+
+msgid "The Drowned City"
+msgstr ""
+
+msgid "Artifacts Earned"
+msgstr ""
+
+msgid "Alien Glyphs"
+msgstr ""
+
+msgid "Locations Explored"
+msgstr ""
+
+msgid "Task Progress"
+msgstr ""
+
+#, javascript-format
+msgid "Remove ${ investigator.card.name }?"
+msgstr "${ investigator.card.name } 조사자를 제거하시겠습니까?"
+
+#, javascript-format
+msgid ""
+"Are you sure you want to remove ${ investigator.card.name } from this campaign?\n"
+"\n"
+"Campaign log data associated with them may be lost."
+msgstr ""
+"정말로 캠페인에서 ${ investigator.card.name } 조사자를 제거하시겠습니까?\n"
+"\n"
+"관련된 캠페인 기록지 데이터가 손실될 수 있습니다."
+
+msgid "Draw random token"
+msgstr "무작위로 토큰 뽑기"
+
+msgid "View or edit"
+msgstr "보기 또는 편집"
+
+msgid "View"
+msgstr "보기"
+
+msgid "Review chaos bag"
+msgstr "혼돈 주머니 확인하기"
+
+msgid "Change lead investigator"
+msgstr "대표 조사자 변경하기"
+
+msgid "To handle resignation or elimination"
+msgstr "후퇴하거나 쓰러진 경우에 처리하기"
+
+msgid "Core set"
+msgstr "기본판"
+
+msgid "Cycles"
+msgstr "사이클"
+
+msgid "Starter decks"
+msgstr "조사자 확장"
+
+msgid "Fan-made Cycles"
+msgstr "팬 제작 사이클"
+
+msgid "Legacy"
+msgstr "유산"
+
+msgid "Current"
+msgstr "현행"
+
+msgid "Limited"
+msgstr "제한"
+
+msgid "Custom"
+msgstr "커스텀"
+
+msgid "Use all cards from any product"
+msgstr "모든 제품의 카드를 사용"
+
+msgid "Use only cards from recent expansions"
+msgstr "최근 확장의 카드만 사용"
+
+msgid "Use only cards from your choice of three expansions"
+msgstr "선택한 확장 3종의 카드만 사용"
+
+msgid "Use a completely custom card pool"
+msgstr "임의의 카드 구성 환경을 사용"
+
+#, javascript-format
+msgid "Limited: ${ selectedPacks.size } packs selected"
+msgstr "제한: ${ selectedPacks.size }종 선택됨"
+
+#, javascript-format
+msgid "Custom: ${ selectedPacks.size } packs selected"
+msgstr "커스텀: ${ selectedPacks.size }종 선택됨"
+
+msgid "Card pool"
+msgstr "카드 구성 환경"
+
+msgid "This is an optional variant that push players to build their decks creatively using a smaller cardpool."
+msgstr "이것은 선택적 변형으로, 플레이어들이 더 적은 카드 구성 환경을 활용해 창의적으로 덱을 구성하도록 유도합니다."
+
+msgid "Select packs"
+msgstr "팩 선택"
+
+msgid "Choose a core set and three expansions to use for this limited pool."
+msgstr "제한된 카드 구성 환경으로 사용할 기본판과 확장 3종을 선택하십시오."
+
+msgid "Choose any number of packs to use for this custom pool."
+msgstr "커스텀 카드 구성 환경으로 사용할 팩을 원하는 만큼 선택하십시오."
+
+msgid "Limited: Not enough cycles selected"
+msgstr "제한: 사이클을 충분히 선택하지 않음"
+
+msgid "Limited: Too many cycles selected"
+msgstr "제한: 사이클을 너무 많이 선택함"
+
+msgid "Limited:"
+msgstr "제한:"
+
+msgid "Current:"
+msgstr "현행:"
+
+msgid "Cycles (select 3)"
+msgstr "사이클 (선택 3종)"
+
+msgid "When the World Screamed"
+msgstr ""
+
+msgid "Contains cards not in the selected card pool."
+msgstr "선택한 카드 구성 환경에는 없는 카드를 포함하고 있습니다."
+
+msgid "Card"
+msgstr ""
+
+msgid "Edit Scenario Result"
+msgstr ""
+
+msgid "Merge Backup"
+msgstr ""
+
+msgid "Safe Mode"
+msgstr ""
+
+msgid "Choose Packs"
+msgstr ""
+
+msgid "Rule"
+msgstr ""
+
+msgid "Card Upgrade"
+msgstr ""
+
+msgid "Contains cards that are not in the selected card pool."
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Card Image"
+msgstr ""
+
+msgid "Taboos"
+msgstr ""
+
+msgid "Edit Name"
+msgstr ""
+
+msgid "Scenario results"
+msgstr ""
+
 msgctxt "investigator"
 msgid "Custom"
 msgstr "맞춤형 조사자"
@@ -5963,6 +6260,1670 @@ msgctxt "slots"
 msgid "None"
 msgstr "없음"
 
+msgctxt "trait"
+msgid "???"
+msgstr "???"
+
+msgctxt "trait"
+msgid "Abomination"
+msgstr "흉물 - Abomination"
+
+msgctxt "trait"
+msgid "Abyss"
+msgstr "심연 - Abyss"
+
+msgctxt "trait"
+msgid "Act 1"
+msgstr "주요목적 1 - Act 1"
+
+msgctxt "trait"
+msgid "Act 2"
+msgstr "주요목적 2 - Act 2"
+
+msgctxt "trait"
+msgid "Agency"
+msgstr "요원 - Agency"
+
+msgctxt "trait"
+msgid "Ally"
+msgstr "조력자 - Ally"
+
+msgctxt "trait"
+msgid "Altered"
+msgstr "달라진 - Altered"
+
+msgctxt "trait"
+msgid "Ancient"
+msgstr "고대 - Ancient"
+
+msgctxt "trait"
+msgid "Ancient One"
+msgstr "고대의 존재 - Ancient One"
+
+msgctxt "trait"
+msgid "Arkham"
+msgstr "아컴 - Arkham"
+
+msgctxt "trait"
+msgid "Arkham Asylum"
+msgstr "아컴 정신병원 - Arkham Asylum"
+
+msgctxt "trait"
+msgid "Armor"
+msgstr "방어구 - Armor"
+
+msgctxt "trait"
+msgid "Artist"
+msgstr "예술가 - Artist"
+
+msgctxt "trait"
+msgid "Assistant"
+msgstr "조수 - Assistant"
+
+msgctxt "trait"
+msgid "Attack"
+msgstr ""
+
+msgctxt "trait"
+msgid "Augury"
+msgstr "예지 - Augury"
+
+msgctxt "trait"
+msgid "Avatar"
+msgstr "화신 - Avatar"
+
+msgctxt "trait"
+msgid "Basement"
+msgstr "지하층 - Basement"
+
+msgctxt "trait"
+msgid "Bayou"
+msgstr "늪지대 - Bayou"
+
+msgctxt "trait"
+msgid "Believer"
+msgstr "신자 - Believer"
+
+msgctxt "trait"
+msgid "Blessed"
+msgstr "축복받은 - Blessed"
+
+msgctxt "trait"
+msgid "Blunder"
+msgstr "실수 - Blunder"
+
+msgctxt "trait"
+msgid "Boat"
+msgstr "배 - Boat"
+
+msgctxt "trait"
+msgid "Bold"
+msgstr "대담한 - Bold"
+
+msgctxt "trait"
+msgid "Boon"
+msgstr "이익 - Boon"
+
+msgctxt "trait"
+msgid "Bridge"
+msgstr "다리 - Bridge"
+
+msgctxt "trait"
+msgid "Brotherhood"
+msgstr "형제단 - Brotherhood"
+
+msgctxt "trait"
+msgid "Byakhee"
+msgstr "비야키 - Byakhee"
+
+msgctxt "trait"
+msgid "Bystander"
+msgstr "주변인 - Bystander"
+
+msgctxt "trait"
+msgid "Cairo"
+msgstr "카이로 - Cairo"
+
+msgctxt "trait"
+msgid "Campsite"
+msgstr "야영지 - Campsite"
+
+msgctxt "trait"
+msgid "Carnevale"
+msgstr "사육제 - Carnevale"
+
+msgctxt "trait"
+msgid "Cave"
+msgstr "동굴 - Cave"
+
+msgctxt "trait"
+msgid "Central"
+msgstr "중심부 - Central"
+
+msgctxt "trait"
+msgid "Charm"
+msgstr "부적 - Charm"
+
+msgctxt "trait"
+msgid "Chosen"
+msgstr "선택받은 자 - Chosen"
+
+msgctxt "trait"
+msgid "Circle"
+msgstr "의식진 - Circle"
+
+msgctxt "trait"
+msgid "City"
+msgstr "도시 - City"
+
+msgctxt "trait"
+msgid "Civic"
+msgstr "공공근로자 - Civic"
+
+msgctxt "trait"
+msgid "Clairvoyant"
+msgstr "선견자 - Clairvoyant"
+
+msgctxt "trait"
+msgid "Clothing"
+msgstr "옷 - Clothing"
+
+msgctxt "trait"
+msgid "Clover Club"
+msgstr "클로버 클럽 - Clover Club"
+
+msgctxt "trait"
+msgid "Coastal"
+msgstr "해안가 - Coastal"
+
+msgctxt "trait"
+msgid "Composure"
+msgstr "침착 - Composure"
+
+msgctxt "trait"
+msgid "Condition"
+msgstr "상태 - Condition"
+
+msgctxt "trait"
+msgid "Connection"
+msgstr "인맥 - Connection"
+
+msgctxt "trait"
+msgid "Conspirator"
+msgstr "음모자 - Conspirator"
+
+msgctxt "trait"
+msgid "Construct"
+msgstr "구조물 - Construct"
+
+msgctxt "trait"
+msgid "Covenant"
+msgstr "성약 - Covenant"
+
+msgctxt "trait"
+msgid "Creature"
+msgstr "생물 - Creature"
+
+msgctxt "trait"
+msgid "Crime Scene"
+msgstr "범죄 현장 - Crime Scene"
+
+msgctxt "trait"
+msgid "Criminal"
+msgstr "범죄자 - Criminal"
+
+msgctxt "trait"
+msgid "Cultist"
+msgstr "추종자 - Cultist"
+
+msgctxt "trait"
+msgid "Curse"
+msgstr "저주 - Curse"
+
+msgctxt "trait"
+msgid "Cursed"
+msgstr "저주받은 - Cursed"
+
+msgctxt "trait"
+msgid "Dark Young"
+msgstr "암흑의 자손 - Dark Young"
+
+msgctxt "trait"
+msgid "Deep One"
+msgstr "심해인 - Deep One"
+
+msgctxt "trait"
+msgid "Depths"
+msgstr "무저갱 - Depths"
+
+msgctxt "trait"
+msgid "Desert"
+msgstr "사막 - Desert"
+
+msgctxt "trait"
+msgid "Desperate"
+msgstr "절박함 - Desperate"
+
+msgctxt "trait"
+msgid "Detective"
+msgstr "탐정 - Detective"
+
+msgctxt "trait"
+msgid "Developed"
+msgstr "단련된 - Developed"
+
+msgctxt "trait"
+msgid "Dhole"
+msgstr "드홀 - Dhole"
+
+msgctxt "trait"
+msgid "Distortion"
+msgstr "왜곡 - Distortion"
+
+msgctxt "trait"
+msgid "Dreamer"
+msgstr "꿈꾸는 자 - Dreamer"
+
+msgctxt "trait"
+msgid "Dreamlands"
+msgstr "몽환의 땅 - Dreamlands"
+
+msgctxt "trait"
+msgid "Drifter"
+msgstr "방랑자 - Drifter"
+
+msgctxt "trait"
+msgid "Dunwich"
+msgstr "던위치 - Dunwich"
+
+msgctxt "trait"
+msgid "Eldritch"
+msgstr "섬뜩한 - Eldritch"
+
+msgctxt "trait"
+msgid "Elite"
+msgstr "정예 - Elite"
+
+msgctxt "trait"
+msgid "Endtimes"
+msgstr "종말 - Endtimes"
+
+msgctxt "trait"
+msgid "Evidence"
+msgstr "증거 - Evidence"
+
+msgctxt "trait"
+msgid "Exhibit"
+msgstr "전시실 - Exhibit"
+
+msgctxt "trait"
+msgid "Expedition"
+msgstr "탐사 - Expedition"
+
+msgctxt "trait"
+msgid "Expert"
+msgstr "전문화 - Expert"
+
+msgctxt "trait"
+msgid "Extradimensional"
+msgstr "초차원 - Extradimensional"
+
+msgctxt "trait"
+msgid "Extraterrestrial"
+msgstr "외계 - Extraterrestrial"
+
+msgctxt "trait"
+msgid "Eztli"
+msgstr "에스틀리 - Eztli"
+
+msgctxt "trait"
+msgid "Familiar"
+msgstr "사역령 - Familiar"
+
+msgctxt "trait"
+msgid "Fated"
+msgstr "숙명 - Fated"
+
+msgctxt "trait"
+msgid "Favor"
+msgstr "호의 - Favor"
+
+msgctxt "trait"
+msgid "Firearm"
+msgstr "총 - Firearm"
+
+msgctxt "trait"
+msgid "Flaw"
+msgstr "결함 - Flaw"
+
+msgctxt "trait"
+msgid "Flora"
+msgstr "식물 - Flora"
+
+msgctxt "trait"
+msgid "Footwear"
+msgstr "신발 - Footwear"
+
+msgctxt "trait"
+msgid "Forbidden"
+msgstr "금단 - Forbidden"
+
+msgctxt "trait"
+msgid "Forgotten"
+msgstr "잊힌 - Forgotten"
+
+msgctxt "trait"
+msgid "Fortune"
+msgstr "행운 - Fortune"
+
+msgctxt "trait"
+msgid "Future"
+msgstr "미래 - Future"
+
+msgctxt "trait"
+msgid "Gambit"
+msgstr "도박수 - Gambit"
+
+msgctxt "trait"
+msgid "Geist"
+msgstr "유령 - Geist"
+
+msgctxt "trait"
+msgid "Ghast"
+msgstr "가스트 - Ghast"
+
+msgctxt "trait"
+msgid "Ghoul"
+msgstr "구울 - Ghoul"
+
+msgctxt "trait"
+msgid "Government"
+msgstr "정부 - Government"
+
+msgctxt "trait"
+msgid "Grant"
+msgstr "후원금 - Grant"
+
+msgctxt "trait"
+msgid "Graveyard"
+msgstr "묘지 - Graveyard"
+
+msgctxt "trait"
+msgid "Ground Floor"
+msgstr "1층 - Ground Floor"
+
+msgctxt "trait"
+msgid "Guest"
+msgstr "손님 - Guest"
+
+msgctxt "trait"
+msgid "Gug"
+msgstr "구그 - Gug"
+
+msgctxt "trait"
+msgid "Hall"
+msgstr "복도 - Hall"
+
+msgctxt "trait"
+msgid "Hazard"
+msgstr "위기 - Hazard"
+
+msgctxt "trait"
+msgid "Hex"
+msgstr "사술 - Hex"
+
+msgctxt "trait"
+msgid "Hideout"
+msgstr "은신처 - Hideout"
+
+msgctxt "trait"
+msgid "Historical Society"
+msgstr "사학회 - Historical Society"
+
+msgctxt "trait"
+msgid "Humanoid"
+msgstr "인간형 - Humanoid"
+
+msgctxt "trait"
+msgid "Hunter"
+msgstr "사냥꾼 - Hunter"
+
+msgctxt "trait"
+msgid "Hybrid"
+msgstr "혼혈 - Hybrid"
+
+msgctxt "trait"
+msgid "Illicit"
+msgstr "불법 - Illicit"
+
+msgctxt "trait"
+msgid "Improvised"
+msgstr "즉흥 - Improvised"
+
+msgctxt "trait"
+msgid "Injury"
+msgstr "부상 - Injury"
+
+msgctxt "trait"
+msgid "Innate"
+msgstr "본성 - Innate"
+
+msgctxt "trait"
+msgid "Innocent"
+msgstr "무고한 - Innocent"
+
+msgctxt "trait"
+msgid "Innsmouth"
+msgstr "인스머스 - Innsmouth"
+
+msgctxt "trait"
+msgid "Insect"
+msgstr "곤충 - Insect"
+
+msgctxt "trait"
+msgid "Insight"
+msgstr "통찰 - Insight"
+
+msgctxt "trait"
+msgid "Instrument"
+msgstr "악기 - Instrument"
+
+msgctxt "trait"
+msgid "Island"
+msgstr "섬 - Island"
+
+msgctxt "trait"
+msgid "Item"
+msgstr "물품 - Item"
+
+msgctxt "trait"
+msgid "Job"
+msgstr "작업 - Job"
+
+msgctxt "trait"
+msgid "Jungle"
+msgstr "밀림 - Jungle"
+
+msgctxt "trait"
+msgid "Kadath"
+msgstr "카다스 - Kadath"
+
+msgctxt "trait"
+msgid "Key"
+msgstr "열쇠 - Key"
+
+msgctxt "trait"
+msgid "Lead"
+msgstr "실마리 - Lead"
+
+msgctxt "trait"
+msgid "Leng"
+msgstr "렝 - Leng"
+
+msgctxt "trait"
+msgid "Lodge"
+msgstr "집회소 - Lodge"
+
+msgctxt "trait"
+msgid "Madness"
+msgstr "정신이상 - Madness"
+
+msgctxt "trait"
+msgid "Manifold"
+msgstr ""
+
+msgctxt "trait"
+msgid "Mask"
+msgstr "가면 - Mask"
+
+msgctxt "trait"
+msgid "Medic"
+msgstr "치료사 - Medic"
+
+msgctxt "trait"
+msgid "Melee"
+msgstr "근접 - Melee"
+
+msgctxt "trait"
+msgid "Mexico City"
+msgstr "멕시코시티 - Mexico City"
+
+msgctxt "trait"
+msgid "Mi-Go"
+msgstr "미고 - Mi-Go"
+
+msgctxt "trait"
+msgid "Midtown"
+msgstr "중심가 - Midtown"
+
+msgctxt "trait"
+msgid "Miskatonic"
+msgstr "미스캐토닉 - Miskatonic"
+
+msgctxt "trait"
+msgid "Mnar"
+msgstr "므나르 - Mnar"
+
+msgctxt "trait"
+msgid "Monster"
+msgstr "괴물 - Monster"
+
+msgctxt "trait"
+msgid "Montréal"
+msgstr ""
+
+msgctxt "trait"
+msgid "Mountain"
+msgstr "산 - Mountain"
+
+msgctxt "trait"
+msgid "Mutated"
+msgstr "변이체 - Mutated"
+
+msgctxt "trait"
+msgid "Mystery"
+msgstr "불가사의 - Mystery"
+
+msgctxt "trait"
+msgid "New Orleans"
+msgstr "뉴올리언스 - New Orleans"
+
+msgctxt "trait"
+msgid "New York City"
+msgstr ""
+
+msgctxt "trait"
+msgid "Nightgaunt"
+msgstr "나이트건트 - Nightgaunt"
+
+msgctxt "trait"
+msgid "Obstacle"
+msgstr "장애물 - Obstacle"
+
+msgctxt "trait"
+msgid "Occult"
+msgstr "비술 - Occult"
+
+msgctxt "trait"
+msgid "Ocean"
+msgstr "해양 - Ocean"
+
+msgctxt "trait"
+msgid "Omen"
+msgstr "징조 - Omen"
+
+msgctxt "trait"
+msgid "Ooth-Nargai"
+msgstr "우스 나르가이 - Ooth-Nargai"
+
+msgctxt "trait"
+msgid "Ooze"
+msgstr ""
+
+msgctxt "trait"
+msgid "Oozified"
+msgstr ""
+
+msgctxt "trait"
+msgid "Oriab"
+msgstr "오리아브 - Oriab"
+
+msgctxt "trait"
+msgid "Otherworld"
+msgstr "다른 세계 - Otherworld"
+
+msgctxt "trait"
+msgid "Pact"
+msgstr "계약 - Pact"
+
+msgctxt "trait"
+msgid "Paradox"
+msgstr "역설 - Paradox"
+
+msgctxt "trait"
+msgid "Paris"
+msgstr "파리 - Paris"
+
+msgctxt "trait"
+msgid "Part 1"
+msgstr "1부 - Part 1"
+
+msgctxt "trait"
+msgid "Passageway"
+msgstr "통로 - Passageway"
+
+msgctxt "trait"
+msgid "Patron"
+msgstr "후원가 - Patron"
+
+msgctxt "trait"
+msgid "Performer"
+msgstr "공연자 - Performer"
+
+msgctxt "trait"
+msgid "Pnakotus"
+msgstr "프나코투스 - Pnakotus"
+
+msgctxt "trait"
+msgid "Poison"
+msgstr "독 - Poison"
+
+msgctxt "trait"
+msgid "Police"
+msgstr "경찰 - Police"
+
+msgctxt "trait"
+msgid "Port"
+msgstr "항구 - Port"
+
+msgctxt "trait"
+msgid "Portal"
+msgstr "차원문 - Portal"
+
+msgctxt "trait"
+msgid "Power"
+msgstr "권능 - Power"
+
+msgctxt "trait"
+msgid "Practiced"
+msgstr "숙련 - Practiced"
+
+msgctxt "trait"
+msgid "Present-Day"
+msgstr "오늘날 - Present-Day"
+
+msgctxt "trait"
+msgid "Prison"
+msgstr "감옥 - Prison"
+
+msgctxt "trait"
+msgid "Private"
+msgstr "일반인 출입금지 - Private"
+
+msgctxt "trait"
+msgid "Providence"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rail"
+msgstr "철로 - Rail"
+
+msgctxt "trait"
+msgid "Ranged"
+msgstr "원거리 - Ranged"
+
+msgctxt "trait"
+msgid "Relic"
+msgstr "유물 - Relic"
+
+msgctxt "trait"
+msgid "Reporter"
+msgstr "기자 - Reporter"
+
+msgctxt "trait"
+msgid "Research"
+msgstr "연구 - Research"
+
+msgctxt "trait"
+msgid "Return"
+msgstr "돌아온 - Return"
+
+msgctxt "trait"
+msgid "Ritual"
+msgstr "의식 - Ritual"
+
+msgctxt "trait"
+msgid "Ritual Site"
+msgstr "의식터 - Ritual Site"
+
+msgctxt "trait"
+msgid "River"
+msgstr "강 - River"
+
+msgctxt "trait"
+msgid "Riverside"
+msgstr "강변 - Riverside"
+
+msgctxt "trait"
+msgid "Road"
+msgstr "도로 - Road"
+
+msgctxt "trait"
+msgid "Ruins"
+msgstr "유적 - Ruins"
+
+msgctxt "trait"
+msgid "Salem"
+msgstr "세일럼 - Salem"
+
+msgctxt "trait"
+msgid "Sanctum"
+msgstr "성소 - Sanctum"
+
+msgctxt "trait"
+msgid "Scheme"
+msgstr "모략 - Scheme"
+
+msgctxt "trait"
+msgid "Scholar"
+msgstr "학자 - Scholar"
+
+msgctxt "trait"
+msgid "Science"
+msgstr "과학 - Science"
+
+msgctxt "trait"
+msgid "Script"
+msgstr "글귀 - Script"
+
+msgctxt "trait"
+msgid "Second Floor"
+msgstr "2층 - Second Floor"
+
+msgctxt "trait"
+msgid "Sentinel Hill"
+msgstr "파수꾼 언덕 - Sentinel Hill"
+
+msgctxt "trait"
+msgid "Serpent"
+msgstr "뱀 - Serpent"
+
+msgctxt "trait"
+msgid "Service"
+msgstr "서비스 - Service"
+
+msgctxt "trait"
+msgid "Servitor"
+msgstr "시종 - Servitor"
+
+msgctxt "trait"
+msgid "Shantak"
+msgstr "샨타크 - Shantak"
+
+msgctxt "trait"
+msgid "Shattered"
+msgstr "산산조각난 - Shattered"
+
+msgctxt "trait"
+msgid "Ship"
+msgstr "배 - Ship"
+
+msgctxt "trait"
+msgid "Shoggoth"
+msgstr "쇼고스 - Shoggoth"
+
+msgctxt "trait"
+msgid "Silver Twilight"
+msgstr "은빛 황혼회 - Silver Twilight"
+
+msgctxt "trait"
+msgid "Skai"
+msgstr "스카이 - Skai"
+
+msgctxt "trait"
+msgid "Socialite"
+msgstr "유명인사 - Socialite"
+
+msgctxt "trait"
+msgid "Song"
+msgstr "노래 - Song"
+
+msgctxt "trait"
+msgid "Sorcerer"
+msgstr "주술사 - Sorcerer"
+
+msgctxt "trait"
+msgid "Spectral"
+msgstr "혼령계 - Spectral"
+
+msgctxt "trait"
+msgid "Spell"
+msgstr "마법 - Spell"
+
+msgctxt "trait"
+msgid "Spider"
+msgstr "거미 - Spider"
+
+msgctxt "trait"
+msgid "Spirit"
+msgstr "영혼 - Spirit"
+
+msgctxt "trait"
+msgid "St Mary's"
+msgstr "세인트 메리 병원 - St Mary's"
+
+msgctxt "trait"
+msgid "Staff"
+msgstr "직원 - Staff"
+
+msgctxt "trait"
+msgid "Steps"
+msgstr "계단 - Steps"
+
+msgctxt "trait"
+msgid "Summon"
+msgstr "소환 - Summon"
+
+msgctxt "trait"
+msgid "Supply"
+msgstr "보급 - Supply"
+
+msgctxt "trait"
+msgid "Surface"
+msgstr "표면 - Surface"
+
+msgctxt "trait"
+msgid "Suspect"
+msgstr "용의자 - Suspect"
+
+msgctxt "trait"
+msgid "Syndicate"
+msgstr "조직원 - Syndicate"
+
+msgctxt "trait"
+msgid "Tactic"
+msgstr "전술 - Tactic"
+
+msgctxt "trait"
+msgid "Talent"
+msgstr "재능 - Talent"
+
+msgctxt "trait"
+msgid "Tarot"
+msgstr "타로 - Tarot"
+
+msgctxt "trait"
+msgid "Task"
+msgstr "과업 - Task"
+
+msgctxt "trait"
+msgid "Temple"
+msgstr "사원 - Temple"
+
+msgctxt "trait"
+msgid "Tenochtitlán"
+msgstr "테노치티틀란 - Tenochtitlán"
+
+msgctxt "trait"
+msgid "Tentacle"
+msgstr "촉수 - Tentacle"
+
+msgctxt "trait"
+msgid "Terror"
+msgstr "두려움 - Terror"
+
+msgctxt "trait"
+msgid "Third Floor"
+msgstr "3층 - Third Floor"
+
+msgctxt "trait"
+msgid "Tindalos"
+msgstr "틴달로스 - Tindalos"
+
+msgctxt "trait"
+msgid "Tome"
+msgstr "서적 - Tome"
+
+msgctxt "trait"
+msgid "Tool"
+msgstr "도구 - Tool"
+
+msgctxt "trait"
+msgid "Town"
+msgstr ""
+
+msgctxt "trait"
+msgid "Train"
+msgstr "열차 - Train"
+
+msgctxt "trait"
+msgid "Trap"
+msgstr "함정 - Trap"
+
+msgctxt "trait"
+msgid "Trick"
+msgstr "속임수 - Trick"
+
+msgctxt "trait"
+msgid "Unhallowed"
+msgstr "부정한 땅 - Unhallowed"
+
+msgctxt "trait"
+msgid "Upgrade"
+msgstr "향상 - Upgrade"
+
+msgctxt "trait"
+msgid "Vale"
+msgstr "계곡 - Vale"
+
+msgctxt "trait"
+msgid "Vehicle"
+msgstr "탑승물 - Vehicle"
+
+msgctxt "trait"
+msgid "Venice"
+msgstr "베네치아 - Venice"
+
+msgctxt "trait"
+msgid "Veteran"
+msgstr "참전용사 - Veteran"
+
+msgctxt "trait"
+msgid "Void"
+msgstr "공허 - Void"
+
+msgctxt "trait"
+msgid "Warden"
+msgstr "파수꾼 - Warden"
+
+msgctxt "trait"
+msgid "Wastes"
+msgstr "황무지 - Wastes"
+
+msgctxt "trait"
+msgid "Wayfarer"
+msgstr "여행자 - Wayfarer"
+
+msgctxt "trait"
+msgid "Weapon"
+msgstr "무기 - Weapon"
+
+msgctxt "trait"
+msgid "Wilderness"
+msgstr "험지 - Wilderness"
+
+msgctxt "trait"
+msgid "Witch"
+msgstr "마녀 - Witch"
+
+msgctxt "trait"
+msgid "Witch House"
+msgstr "마녀집 - Witch House"
+
+msgctxt "trait"
+msgid "Woods"
+msgstr "숲 - Woods"
+
+msgctxt "trait"
+msgid "Y'ha-nthlei"
+msgstr "이하 느틀레이 - Y'ha-nthlei"
+
+msgctxt "trait"
+msgid "Yithian"
+msgstr "이스인 - Yithian"
+
+msgctxt "trait"
+msgid "Yoth"
+msgstr "요스 - Yoth"
+
+msgctxt "trait"
+msgid "Zoog"
+msgstr "주그 - Zoog"
+
+msgctxt "trait"
+msgid "Broken"
+msgstr "깨진 - Broken"
+
+msgctxt "trait"
+msgid "Entrepreneur"
+msgstr "사업가 - Entrepreneur"
+
+msgctxt "trait"
+msgid "Falcon Point"
+msgstr "송골매 곶 - Falcon Point"
+
+msgctxt "trait"
+msgid "Lair"
+msgstr "침소/은거처 - Lair"
+
+msgctxt "trait"
+msgid "Synergy"
+msgstr "시너지 - Synergy"
+
+msgctxt "trait"
+msgid "Unbroken"
+msgstr "깨지지 않은 - Unbroken"
+
+msgctxt "trait"
+msgid "Resolute"
+msgstr "결연한 - Resolute"
+
+msgctxt "trait"
+msgid "Coterie"
+msgstr "동지회 - Coterie"
+
+msgctxt "trait"
+msgid "Dilemma"
+msgstr "딜레마 - Dilemma"
+
+msgctxt "trait"
+msgid "Eidolon"
+msgstr "허깨비 - Eidolon"
+
+msgctxt "trait"
+msgid "Elder Thing"
+msgstr "옛것 - Elder Thing"
+
+msgctxt "trait"
+msgid "Glacier"
+msgstr "빙하 - Glacier"
+
+msgctxt "trait"
+msgid "Mainland"
+msgstr "본토 - Mainland"
+
+msgctxt "trait"
+msgid "Mirage"
+msgstr "신기루 - Mirage"
+
+msgctxt "trait"
+msgid "Mountains"
+msgstr "산맥 - Mountains"
+
+msgctxt "trait"
+msgid "Past"
+msgstr "과거 - Past"
+
+msgctxt "trait"
+msgid "Possessed"
+msgstr "홀린 - Possessed"
+
+msgctxt "trait"
+msgid "Present"
+msgstr "현재 - Present"
+
+msgctxt "trait"
+msgid "Scientist"
+msgstr "과학자 - Scientist"
+
+msgctxt "trait"
+msgid "Uncharted"
+msgstr "미개척지 - Uncharted"
+
+msgctxt "trait"
+msgid "Casino"
+msgstr "카지노 - Casino"
+
+msgctxt "trait"
+msgid "Double"
+msgstr "이중 - Double"
+
+msgctxt "trait"
+msgid "AI"
+msgstr "AI"
+
+msgctxt "trait"
+msgid "Abandoned"
+msgstr "버려진 - Abandoned"
+
+msgctxt "trait"
+msgid "Access"
+msgstr "외부해치 - Access"
+
+msgctxt "trait"
+msgid "Alexandria"
+msgstr "알렉산드리아 - Alexandria"
+
+msgctxt "trait"
+msgid "Ally? Creature"
+msgstr "조력자? 생물 - Ally? Creature"
+
+msgctxt "trait"
+msgid "Ancient One?"
+msgstr "고대의 존재? - Ancient One?"
+
+msgctxt "trait"
+msgid "Bad dog"
+msgstr "이 개놈아! - Bad dog"
+
+msgctxt "trait"
+msgid "Bazaar"
+msgstr "바자르 - Bazaar"
+
+msgctxt "trait"
+msgid "Blessed?"
+msgstr "축복받은? - Blessed?"
+
+msgctxt "trait"
+msgid "Bokor"
+msgstr "부두 주술사 - Bokor"
+
+msgctxt "trait"
+msgid "Book"
+msgstr ""
+
+msgctxt "trait"
+msgid "Buenos Aires"
+msgstr "부에노스아이레스 - Buenos Aires"
+
+msgctxt "trait"
+msgid "Card"
+msgstr "카드 - Card"
+
+msgctxt "trait"
+msgid "Case"
+msgstr "사건 - Case"
+
+msgctxt "trait"
+msgid "Castle"
+msgstr "성 - Castle"
+
+msgctxt "trait"
+msgid "Chair"
+msgstr "의자 - Chair"
+
+msgctxt "trait"
+msgid "Chess"
+msgstr "체스 - Chess"
+
+msgctxt "trait"
+msgid "Classy"
+msgstr "세련된 - Classy"
+
+msgctxt "trait"
+msgid "Collector"
+msgstr "수집가 - Collector"
+
+msgctxt "trait"
+msgid "Consort"
+msgstr ""
+
+msgctxt "trait"
+msgid "Corpse"
+msgstr "시체 - Corpse"
+
+msgctxt "trait"
+msgid "Corruption"
+msgstr "타락 - Corruption"
+
+msgctxt "trait"
+msgid "Darkness"
+msgstr ""
+
+msgctxt "trait"
+msgid "Device"
+msgstr "장치 - Device"
+
+msgctxt "trait"
+msgid "Downtown"
+msgstr "번화가 - Downtown"
+
+msgctxt "trait"
+msgid "Enigma"
+msgstr "수수께끼 - Enigma"
+
+msgctxt "trait"
+msgid "Entrance"
+msgstr ""
+
+msgctxt "trait"
+msgid "Fellow Dogs"
+msgstr "개 친구들 - Fellow Dogs"
+
+msgctxt "trait"
+msgid "Footwear, but not really"
+msgstr "신발(못 신는다) - Footwear, but not really"
+
+msgctxt "trait"
+msgid "Hardship"
+msgstr ""
+
+msgctxt "trait"
+msgid "Haunted"
+msgstr "신들린 - Haunted"
+
+msgctxt "trait"
+msgid "Havana"
+msgstr "아바나 - Havana"
+
+msgctxt "trait"
+msgid "Human"
+msgstr "인간형 - Human"
+
+msgctxt "trait"
+msgid "Infection"
+msgstr ""
+
+msgctxt "trait"
+msgid "Istanbul"
+msgstr "이스탄불 - Istanbul"
+
+msgctxt "trait"
+msgid "Kuala Lumpur"
+msgstr "쿠알라룸푸르 - Kuala Lumpur"
+
+msgctxt "trait"
+msgid "Local"
+msgstr "현지인 - Local"
+
+msgctxt "trait"
+msgid "Locus Site"
+msgstr "거점 지역 - Locus Site"
+
+msgctxt "trait"
+msgid "London"
+msgstr "런던 - London"
+
+msgctxt "trait"
+msgid "Loyal"
+msgstr "충직한 - Loyal"
+
+msgctxt "trait"
+msgid "Lunatic"
+msgstr "광인 - Lunatic"
+
+msgctxt "trait"
+msgid "Machine"
+msgstr "기계 - Machine"
+
+msgctxt "trait"
+msgid "Madness?"
+msgstr "정신이상? - Madness?"
+
+msgctxt "trait"
+msgid "Marrakesh"
+msgstr "마라케시 - Marrakesh"
+
+msgctxt "trait"
+msgid "Medical"
+msgstr "의료 - Medical"
+
+msgctxt "trait"
+msgid "Music"
+msgstr "음악 - Music"
+
+msgctxt "trait"
+msgid "Musician"
+msgstr "음악가 - Musician"
+
+msgctxt "trait"
+msgid "Northside"
+msgstr "북부 - Northside"
+
+msgctxt "trait"
+msgid "Nostalgia II"
+msgstr "향수 2호 - Nostalgia II"
+
+msgctxt "trait"
+msgid "Outsider"
+msgstr "바깥개체 - Outsider"
+
+msgctxt "trait"
+msgid "Parasitic"
+msgstr ""
+
+msgctxt "trait"
+msgid "Plains"
+msgstr ""
+
+msgctxt "trait"
+msgid "Priestess"
+msgstr ""
+
+msgctxt "trait"
+msgid "Pup"
+msgstr "멍멍이 - Pup"
+
+msgctxt "trait"
+msgid "Resonant"
+msgstr ""
+
+msgctxt "trait"
+msgid "Restricted"
+msgstr "제한구역 - Restricted"
+
+msgctxt "trait"
+msgid "Retired"
+msgstr ""
+
+msgctxt "trait"
+msgid "Risen"
+msgstr "되살아난 - Risen"
+
+msgctxt "trait"
+msgid "Row"
+msgstr "열 - Row"
+
+msgctxt "trait"
+msgid "Royalty"
+msgstr "귀족 - Royalty"
+
+msgctxt "trait"
+msgid "Saga"
+msgstr ""
+
+msgctxt "trait"
+msgid "Shadow"
+msgstr "그림자 - Shadow"
+
+msgctxt "trait"
+msgid "Shapeshifter"
+msgstr "형태변환자 - Shapeshifter"
+
+msgctxt "trait"
+msgid "Sheldon Gang"
+msgstr "쉘든 조직원 - Sheldon Gang"
+
+msgctxt "trait"
+msgid "Sister"
+msgstr ""
+
+msgctxt "trait"
+msgid "Slope"
+msgstr "경사 - Slope"
+
+msgctxt "trait"
+msgid "Soldier"
+msgstr "병사 - Soldier"
+
+msgctxt "trait"
+msgid "Stable"
+msgstr "안정한 - Stable"
+
+msgctxt "trait"
+msgid "Stop"
+msgstr "거기 서! - Stop"
+
+msgctxt "trait"
+msgid "Table"
+msgstr "탁자 - Table"
+
+msgctxt "trait"
+msgid "Tatterdemalion"
+msgstr "누더기호 - Tatterdemalion"
+
+msgctxt "trait"
+msgid "That's bad"
+msgstr "나쁜 - That's bad"
+
+msgctxt "trait"
+msgid "Tower"
+msgstr "탑 - Tower"
+
+msgctxt "trait"
+msgid "Traitor"
+msgstr "배신자 - Traitor"
+
+msgctxt "trait"
+msgid "Tulgey Wood"
+msgstr "털진 숲 - Tulgey Wood"
+
+msgctxt "trait"
+msgid "Underground"
+msgstr ""
+
+msgctxt "trait"
+msgid "Unstable"
+msgstr "불안정한 - Unstable"
+
+msgctxt "trait"
+msgid "Upper Floor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Virtual"
+msgstr "가상 - Virtual"
+
+msgctxt "trait"
+msgid "Weather"
+msgstr "날씨 - Weather"
+
+msgctxt "trait"
+msgid "What? No"
+msgstr "뭐? 안 돼 - What? No"
+
+msgctxt "trait"
+msgid "Wonderland"
+msgstr "이상한 나라 - Wonderland"
+
+msgctxt "trait"
+msgid "Yuggoth"
+msgstr "유고스 - Yuggoth"
+
+msgctxt "trait"
+msgid "Blight"
+msgstr "마름병 - Blight"
+
+msgctxt "trait"
+msgid "Colour"
+msgstr "색체 - Colour"
+
+msgctxt "trait"
+msgid "Crew"
+msgstr "일당 - Crew"
+
+msgctxt "trait"
+msgid "Delta"
+msgstr ""
+
+msgctxt "trait"
+msgid "Emissary"
+msgstr "특사 - Emissary"
+
+msgctxt "trait"
+msgid "Game"
+msgstr "게임 - Game"
+
+msgctxt "trait"
+msgid "Inconspicuous"
+msgstr "이목을 끌지 않는 - Inconspicuous"
+
+msgctxt "trait"
+msgid "Miasma"
+msgstr ""
+
+msgctxt "trait"
+msgid "Public"
+msgstr "일반인 구역 - Public"
+
+msgctxt "trait"
+msgid "Resident"
+msgstr "주민 - Resident"
+
+msgctxt "trait"
+msgid "Role"
+msgstr "역할 - Role"
+
+msgctxt "trait"
+msgid "Rot"
+msgstr "부패 - Rot"
+
+msgctxt "trait"
+msgid "Sub-Level"
+msgstr ""
+
+msgctxt "trait"
+msgid "Unpracticed"
+msgstr "미숙 - Unpracticed"
+
+msgctxt "trait"
+msgid "Allied"
+msgstr ""
+
+msgctxt "trait"
+msgid "Bog"
+msgstr "습지 - Bog"
+
+msgctxt "trait"
+msgid "Cart"
+msgstr "수레 - Cart"
+
+msgctxt "trait"
+msgid "Dark"
+msgstr "어둠 - Dark"
+
+msgctxt "trait"
+msgid "Dormant"
+msgstr "휴면 - Dormant"
+
+msgctxt "trait"
+msgid "Fairy"
+msgstr ""
+
+msgctxt "trait"
+msgid "Farm"
+msgstr "농장 - Farm"
+
+msgctxt "trait"
+msgid "Field"
+msgstr "벌판 - Field"
+
+msgctxt "trait"
+msgid "Forest"
+msgstr "산림 - Forest"
+
+msgctxt "trait"
+msgid "Hemlock Vale"
+msgstr "헴록 베일 - Hemlock Vale"
+
+msgctxt "trait"
+msgid "Kingsport"
+msgstr ""
+
+msgctxt "trait"
+msgid "Lantern Club"
+msgstr ""
+
+msgctxt "trait"
+msgid "Leader"
+msgstr ""
+
+msgctxt "trait"
+msgid "Lit"
+msgstr "불 켜진 - Lit"
+
+msgctxt "trait"
+msgid "Machination"
+msgstr ""
+
+msgctxt "trait"
+msgid "Manor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Misfortune"
+msgstr ""
+
+msgctxt "trait"
+msgid "Oz"
+msgstr ""
+
+msgctxt "trait"
+msgid "Plot"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rival"
+msgstr ""
+
+msgctxt "trait"
+msgid "Room"
+msgstr "방 - Room"
+
+msgctxt "trait"
+msgid "Scion"
+msgstr ""
+
+msgctxt "trait"
+msgid "Station"
+msgstr "역 - Station"
+
+msgctxt "trait"
+msgid "Sunken"
+msgstr "가라앉은 - Sunken"
+
+msgctxt "trait"
+msgid "Unlit"
+msgstr "불 꺼진 - Unlit"
+
+msgctxt "trait"
+msgid "Adrift"
+msgstr ""
+
+msgctxt "trait"
+msgid "Arkham?"
+msgstr ""
+
+msgctxt "trait"
+msgid "Artifact"
+msgstr ""
+
+msgctxt "trait"
+msgid "Brand"
+msgstr ""
+
+msgctxt "trait"
+msgid "Completed"
+msgstr ""
+
+msgctxt "trait"
+msgid "Cretaceous"
+msgstr ""
+
+msgctxt "trait"
+msgid "Egypt"
+msgstr ""
+
+msgctxt "trait"
+msgid "France"
+msgstr ""
+
+msgctxt "trait"
+msgid "Glyph"
+msgstr ""
+
+msgctxt "trait"
+msgid "Headgear"
+msgstr ""
+
+msgctxt "trait"
+msgid "Incomplete"
+msgstr ""
+
+msgctxt "trait"
+msgid "Monsters"
+msgstr ""
+
+msgctxt "trait"
+msgid "Posture"
+msgstr ""
+
+msgctxt "trait"
+msgid "Prosthesis"
+msgstr ""
+
+msgctxt "trait"
+msgid "R'lyeh"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rome"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sailor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Star Spawn"
+msgstr ""
+
+msgctxt "trait"
+msgid "Stowaway"
+msgstr ""
+
+msgctxt "trait"
+msgid "Student"
+msgstr ""
+
+msgctxt "trait"
+msgid "Symbiote"
+msgstr ""
+
+msgctxt "trait"
+msgid "Tandem"
+msgstr ""
+
 #, javascript-format
 msgctxt "masculine"
 msgid "${ investigator.name } is driven <b>insane</b>."
@@ -6054,6 +8015,14 @@ msgctxt "masculine"
 msgid "Since ${ list } does not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
 msgid_plural "Since ${ list } do not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
 msgstr[0] "${ list } 조사자가 ${ supplyName } 탐험 물자를 가지고 있지 않으므로, 해당 조사자는 <b>${ sectionName }</b> 항목을 읽어야만 합니다."
+
+msgctxt "masculine"
+msgid "Killed"
+msgstr "사망한 조사자"
+
+msgctxt "masculine"
+msgid "Insane"
+msgstr "미친 조사자"
 
 #, javascript-format
 msgctxt "feminine"
@@ -6159,6 +8128,14 @@ msgid "Since ${ list } does not have a ${ supplyName }, they must read <b>${ sec
 msgid_plural "Since ${ list } do not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
 msgstr[0] "${ list } 조사자가 ${ supplyName } 탐험 물자를 가지고 있지 않으므로, 해당 조사자는 <b>${ sectionName }</b> 항목을 읽어야만 합니다."
 
+msgctxt "feminine"
+msgid "Killed"
+msgstr "사망한 조사자"
+
+msgctxt "feminine"
+msgid "Insane"
+msgstr "미친 조사자"
+
 msgctxt "nonbinary"
 msgid "Alive"
 msgstr "생존"
@@ -6250,6 +8227,14 @@ msgstr "캠페인 기록지의 ‘${ entry.section }’ 목록 아래에 <i>${ c
 msgctxt "nonbinary"
 msgid "If <i>${ card.name }</i> is listed under ‘${ entry.section }’ in your Campaign Log."
 msgstr "캠페인 기록지의 ‘${ entry.section }’ 목록 아래에 <i>${ card.name }</i> 항목이 있습니까?"
+
+msgctxt "nonbinary"
+msgid "Killed"
+msgstr "사망한 조사자"
+
+msgctxt "nonbinary"
+msgid "Insane"
+msgstr "미친 조사자"
 
 msgctxt "Traits"
 msgid "All"
@@ -6369,7 +8354,7 @@ msgstr "새롭게 디자인된 혼돈 주머니 확률 계산기 "
 
 msgctxt "releaseNotes"
 msgid "<center>\"Never tell me the odds!\" - Han Solo</center>"
-msgstr "<center>“절대 확률을 말하지 마세요!” - 한 솔로</center>"
+msgstr "<center>“절대 확률을 언급하지 마세요!” - 한 솔로</center>"
 
 msgctxt "releaseNotes"
 msgid "Sorry Han, this isn't the feature for you. When it came time to try to work [bless] and [curse] tokens into the existing odds calculator, this app's visual designer (Eugene Sarnetsky) worked hard to reimagine how to present the mathy information in a more intuitive and visual manner."
@@ -6513,11 +8498,11 @@ msgstr "- 아컴디비 사이트와의 호환성을 유지하기 위해 이 카�
 
 msgctxt "releaseNotes"
 msgid "The Scarlet Keys Campaign"
-msgstr "진홍색 열쇠 캠페인 확장 (영문)"
+msgstr "진홍색 열쇠 캠페인 확장"
 
 msgctxt "releaseNotes"
 msgid "This release adds support for the newly released Scarlet Keys campaign expansion."
-msgstr "이번 배포에서 신규 공개된 진홍색 열쇠 캠페인 확장에 대한 지원(영문)이 추가됩니다."
+msgstr "이번 배포에서 신규 공개된 진홍색 열쇠 캠페인 확장에 대한 지원이 추가됩니다."
 
 msgctxt "releaseNotes"
 msgid "- As you may know (or will soon find out), this is by far the most ambitious campaign we've ever seen in Arkham. I've done my best to handle the new features as faithfully as I can in the app, and am pretty pleased with the implementation."
@@ -6554,1426 +8539,6 @@ msgstr "또한 아컴 카드 계정을 사용하여 캠페인을 업로드하고
 msgctxt "releaseNotes"
 msgid "And as always, many thanks to my many supporters on Patreon -- I appreciate your support which helps keep the servers running."
 msgstr "그리고 언제나 그렇듯이, 서버를 계속 운영할 수 있도록 도와주시는 많은 후원자 여러분께 감사드립니다."
-
-msgctxt "trait"
-msgid "???"
-msgstr "???"
-
-msgctxt "trait"
-msgid "Abomination"
-msgstr "흉물"
-
-msgctxt "trait"
-msgid "Abyss"
-msgstr "심연"
-
-msgctxt "trait"
-msgid "Act 1"
-msgstr "주요목적 1"
-
-msgctxt "trait"
-msgid "Act 2"
-msgstr "주요목적 2"
-
-msgctxt "trait"
-msgid "Agency"
-msgstr "요원"
-
-msgctxt "trait"
-msgid "Ally"
-msgstr "조력자"
-
-msgctxt "trait"
-msgid "Altered"
-msgstr "달라진"
-
-msgctxt "trait"
-msgid "Ancient"
-msgstr "고대"
-
-msgctxt "trait"
-msgid "Ancient One"
-msgstr "고대의 존재"
-
-msgctxt "trait"
-msgid "Arkham"
-msgstr "아컴"
-
-msgctxt "trait"
-msgid "Arkham Asylum"
-msgstr "아컴 정신병원"
-
-msgctxt "trait"
-msgid "Armor"
-msgstr "방어구"
-
-msgctxt "trait"
-msgid "Artist"
-msgstr "예술가"
-
-msgctxt "trait"
-msgid "Assistant"
-msgstr "조수"
-
-msgctxt "trait"
-msgid "Attack"
-msgstr ""
-
-msgctxt "trait"
-msgid "Augury"
-msgstr "예지"
-
-msgctxt "trait"
-msgid "Avatar"
-msgstr "화신"
-
-msgctxt "trait"
-msgid "Basement"
-msgstr "지하층"
-
-msgctxt "trait"
-msgid "Bayou"
-msgstr "늪지대"
-
-msgctxt "trait"
-msgid "Believer"
-msgstr "신자"
-
-msgctxt "trait"
-msgid "Blessed"
-msgstr "축복받은"
-
-msgctxt "trait"
-msgid "Blunder"
-msgstr "실수"
-
-msgctxt "trait"
-msgid "Boat"
-msgstr "배"
-
-msgctxt "trait"
-msgid "Bold"
-msgstr "대담한"
-
-msgctxt "trait"
-msgid "Boon"
-msgstr "이익"
-
-msgctxt "trait"
-msgid "Bridge"
-msgstr "다리"
-
-msgctxt "trait"
-msgid "Brotherhood"
-msgstr "형제단"
-
-msgctxt "trait"
-msgid "Byakhee"
-msgstr "비야키"
-
-msgctxt "trait"
-msgid "Bystander"
-msgstr "주변인"
-
-msgctxt "trait"
-msgid "Cairo"
-msgstr "카이로"
-
-msgctxt "trait"
-msgid "Campsite"
-msgstr "야영지"
-
-msgctxt "trait"
-msgid "Carnevale"
-msgstr "사육제"
-
-msgctxt "trait"
-msgid "Cave"
-msgstr "동굴"
-
-msgctxt "trait"
-msgid "Central"
-msgstr "중심부"
-
-msgctxt "trait"
-msgid "Charm"
-msgstr "부적"
-
-msgctxt "trait"
-msgid "Chosen"
-msgstr "선택받은 자"
-
-msgctxt "trait"
-msgid "Circle"
-msgstr "의식진"
-
-msgctxt "trait"
-msgid "City"
-msgstr "도시"
-
-msgctxt "trait"
-msgid "Civic"
-msgstr "공공근로자"
-
-msgctxt "trait"
-msgid "Clairvoyant"
-msgstr "선견자"
-
-msgctxt "trait"
-msgid "Clothing"
-msgstr "옷"
-
-msgctxt "trait"
-msgid "Clover Club"
-msgstr "클로버 클럽"
-
-msgctxt "trait"
-msgid "Coastal"
-msgstr "해안가"
-
-msgctxt "trait"
-msgid "Composure"
-msgstr "침착"
-
-msgctxt "trait"
-msgid "Condition"
-msgstr "상태"
-
-msgctxt "trait"
-msgid "Connection"
-msgstr "인맥"
-
-msgctxt "trait"
-msgid "Conspirator"
-msgstr "음모자"
-
-msgctxt "trait"
-msgid "Construct"
-msgstr "구조물"
-
-msgctxt "trait"
-msgid "Covenant"
-msgstr "성약"
-
-msgctxt "trait"
-msgid "Creature"
-msgstr "생물"
-
-msgctxt "trait"
-msgid "Crime Scene"
-msgstr "범죄 현장"
-
-msgctxt "trait"
-msgid "Criminal"
-msgstr "범죄자"
-
-msgctxt "trait"
-msgid "Cultist"
-msgstr "추종자"
-
-msgctxt "trait"
-msgid "Curse"
-msgstr "저주"
-
-msgctxt "trait"
-msgid "Cursed"
-msgstr "저주받은"
-
-msgctxt "trait"
-msgid "Dark Young"
-msgstr "암흑의 자손"
-
-msgctxt "trait"
-msgid "Deep One"
-msgstr "심해인"
-
-msgctxt "trait"
-msgid "Depths"
-msgstr "무저갱"
-
-msgctxt "trait"
-msgid "Desert"
-msgstr "사막"
-
-msgctxt "trait"
-msgid "Desperate"
-msgstr "절박함"
-
-msgctxt "trait"
-msgid "Detective"
-msgstr "탐정"
-
-msgctxt "trait"
-msgid "Developed"
-msgstr "단련된"
-
-msgctxt "trait"
-msgid "Dhole"
-msgstr "드홀"
-
-msgctxt "trait"
-msgid "Distortion"
-msgstr "왜곡"
-
-msgctxt "trait"
-msgid "Dreamer"
-msgstr "꿈꾸는 자"
-
-msgctxt "trait"
-msgid "Dreamlands"
-msgstr "몽환의 땅"
-
-msgctxt "trait"
-msgid "Drifter"
-msgstr "방랑자"
-
-msgctxt "trait"
-msgid "Dunwich"
-msgstr "던위치"
-
-msgctxt "trait"
-msgid "Eldritch"
-msgstr "섬뜩한"
-
-msgctxt "trait"
-msgid "Elite"
-msgstr "정예"
-
-msgctxt "trait"
-msgid "Endtimes"
-msgstr "종말"
-
-msgctxt "trait"
-msgid "Evidence"
-msgstr "증거"
-
-msgctxt "trait"
-msgid "Exhibit"
-msgstr "전시실"
-
-msgctxt "trait"
-msgid "Expedition"
-msgstr "탐사"
-
-msgctxt "trait"
-msgid "Expert"
-msgstr "전문화"
-
-msgctxt "trait"
-msgid "Extradimensional"
-msgstr "초차원"
-
-msgctxt "trait"
-msgid "Extraterrestrial"
-msgstr "외계"
-
-msgctxt "trait"
-msgid "Eztli"
-msgstr "에스틀리"
-
-msgctxt "trait"
-msgid "Familiar"
-msgstr "사역령"
-
-msgctxt "trait"
-msgid "Fated"
-msgstr "숙명"
-
-msgctxt "trait"
-msgid "Favor"
-msgstr "호의"
-
-msgctxt "trait"
-msgid "Firearm"
-msgstr "총"
-
-msgctxt "trait"
-msgid "Flaw"
-msgstr "결함"
-
-msgctxt "trait"
-msgid "Flora"
-msgstr "식물"
-
-msgctxt "trait"
-msgid "Footwear"
-msgstr "신발"
-
-msgctxt "trait"
-msgid "Forbidden"
-msgstr "금단"
-
-msgctxt "trait"
-msgid "Forgotten"
-msgstr "잊힌"
-
-msgctxt "trait"
-msgid "Fortune"
-msgstr "행운"
-
-msgctxt "trait"
-msgid "Future"
-msgstr "미래"
-
-msgctxt "trait"
-msgid "Gambit"
-msgstr "도박수"
-
-msgctxt "trait"
-msgid "Geist"
-msgstr "유령"
-
-msgctxt "trait"
-msgid "Ghast"
-msgstr "가스트"
-
-msgctxt "trait"
-msgid "Ghoul"
-msgstr "구울"
-
-msgctxt "trait"
-msgid "Government"
-msgstr "정부"
-
-msgctxt "trait"
-msgid "Grant"
-msgstr "후원금"
-
-msgctxt "trait"
-msgid "Graveyard"
-msgstr "묘지"
-
-msgctxt "trait"
-msgid "Ground Floor"
-msgstr "1층"
-
-msgctxt "trait"
-msgid "Guest"
-msgstr "손님"
-
-msgctxt "trait"
-msgid "Gug"
-msgstr "구그"
-
-msgctxt "trait"
-msgid "Hall"
-msgstr "복도"
-
-msgctxt "trait"
-msgid "Hazard"
-msgstr "위기"
-
-msgctxt "trait"
-msgid "Hex"
-msgstr "사술"
-
-msgctxt "trait"
-msgid "Hideout"
-msgstr "은신처"
-
-msgctxt "trait"
-msgid "Historical Society"
-msgstr "사학회"
-
-msgctxt "trait"
-msgid "Humanoid"
-msgstr "인간형"
-
-msgctxt "trait"
-msgid "Hunter"
-msgstr "사냥꾼"
-
-msgctxt "trait"
-msgid "Hybrid"
-msgstr "혼혈"
-
-msgctxt "trait"
-msgid "Illicit"
-msgstr "불법"
-
-msgctxt "trait"
-msgid "Improvised"
-msgstr "즉흥"
-
-msgctxt "trait"
-msgid "Injury"
-msgstr "부상"
-
-msgctxt "trait"
-msgid "Innate"
-msgstr "본성"
-
-msgctxt "trait"
-msgid "Innocent"
-msgstr "무고한"
-
-msgctxt "trait"
-msgid "Innsmouth"
-msgstr "인스머스"
-
-msgctxt "trait"
-msgid "Insect"
-msgstr ""
-
-msgctxt "trait"
-msgid "Insight"
-msgstr "통찰"
-
-msgctxt "trait"
-msgid "Instrument"
-msgstr "악기"
-
-msgctxt "trait"
-msgid "Island"
-msgstr "섬"
-
-msgctxt "trait"
-msgid "Item"
-msgstr "물품"
-
-msgctxt "trait"
-msgid "Job"
-msgstr "작업"
-
-msgctxt "trait"
-msgid "Jungle"
-msgstr "밀림"
-
-msgctxt "trait"
-msgid "Kadath"
-msgstr "카다스"
-
-msgctxt "trait"
-msgid "Key"
-msgstr "열쇠"
-
-msgctxt "trait"
-msgid "Lead"
-msgstr "실마리"
-
-msgctxt "trait"
-msgid "Leng"
-msgstr "렝"
-
-msgctxt "trait"
-msgid "Lodge"
-msgstr "집회소"
-
-msgctxt "trait"
-msgid "Madness"
-msgstr "정신이상"
-
-msgctxt "trait"
-msgid "Manifold"
-msgstr ""
-
-msgctxt "trait"
-msgid "Mask"
-msgstr "가면"
-
-msgctxt "trait"
-msgid "Medic"
-msgstr "치료사"
-
-msgctxt "trait"
-msgid "Melee"
-msgstr "근접"
-
-msgctxt "trait"
-msgid "Mexico City"
-msgstr "멕시코시티"
-
-msgctxt "trait"
-msgid "Mi-Go"
-msgstr "미고"
-
-msgctxt "trait"
-msgid "Midtown"
-msgstr "중심가"
-
-msgctxt "trait"
-msgid "Miskatonic"
-msgstr "미스캐토닉"
-
-msgctxt "trait"
-msgid "Mnar"
-msgstr "므나르"
-
-msgctxt "trait"
-msgid "Monster"
-msgstr "괴물"
-
-msgctxt "trait"
-msgid "Montréal"
-msgstr ""
-
-msgctxt "trait"
-msgid "Mountain"
-msgstr "산"
-
-msgctxt "trait"
-msgid "Mutated"
-msgstr ""
-
-msgctxt "trait"
-msgid "Mystery"
-msgstr "불가사의"
-
-msgctxt "trait"
-msgid "New Orleans"
-msgstr "뉴올리언스"
-
-msgctxt "trait"
-msgid "New York City"
-msgstr ""
-
-msgctxt "trait"
-msgid "Nightgaunt"
-msgstr "나이트건트"
-
-msgctxt "trait"
-msgid "Obstacle"
-msgstr "장애물"
-
-msgctxt "trait"
-msgid "Occult"
-msgstr "비술"
-
-msgctxt "trait"
-msgid "Ocean"
-msgstr "해양"
-
-msgctxt "trait"
-msgid "Omen"
-msgstr "징조"
-
-msgctxt "trait"
-msgid "Ooth-Nargai"
-msgstr "우스 나르가이"
-
-msgctxt "trait"
-msgid "Ooze"
-msgstr ""
-
-msgctxt "trait"
-msgid "Oozified"
-msgstr ""
-
-msgctxt "trait"
-msgid "Oriab"
-msgstr "오리아브"
-
-msgctxt "trait"
-msgid "Otherworld"
-msgstr "다른 세계"
-
-msgctxt "trait"
-msgid "Pact"
-msgstr "계약"
-
-msgctxt "trait"
-msgid "Paradox"
-msgstr "역설"
-
-msgctxt "trait"
-msgid "Paris"
-msgstr "파리"
-
-msgctxt "trait"
-msgid "Part 1"
-msgstr "1부"
-
-msgctxt "trait"
-msgid "Passageway"
-msgstr "통로"
-
-msgctxt "trait"
-msgid "Patron"
-msgstr "후원가"
-
-msgctxt "trait"
-msgid "Performer"
-msgstr "공연자"
-
-msgctxt "trait"
-msgid "Pnakotus"
-msgstr "프나코투스"
-
-msgctxt "trait"
-msgid "Poison"
-msgstr "독"
-
-msgctxt "trait"
-msgid "Police"
-msgstr "경찰"
-
-msgctxt "trait"
-msgid "Port"
-msgstr "항구"
-
-msgctxt "trait"
-msgid "Portal"
-msgstr ""
-
-msgctxt "trait"
-msgid "Power"
-msgstr "권능"
-
-msgctxt "trait"
-msgid "Practiced"
-msgstr "숙련"
-
-msgctxt "trait"
-msgid "Present-Day"
-msgstr "오늘날"
-
-msgctxt "trait"
-msgid "Prison"
-msgstr "감옥"
-
-msgctxt "trait"
-msgid "Private"
-msgstr "일반인 출입금지"
-
-msgctxt "trait"
-msgid "Providence"
-msgstr ""
-
-msgctxt "trait"
-msgid "Rail"
-msgstr "철로"
-
-msgctxt "trait"
-msgid "Ranged"
-msgstr "원거리"
-
-msgctxt "trait"
-msgid "Relic"
-msgstr "유물"
-
-msgctxt "trait"
-msgid "Reporter"
-msgstr "기자"
-
-msgctxt "trait"
-msgid "Research"
-msgstr "연구"
-
-msgctxt "trait"
-msgid "Return"
-msgstr "돌아온"
-
-msgctxt "trait"
-msgid "Ritual"
-msgstr "의식"
-
-msgctxt "trait"
-msgid "Ritual Site"
-msgstr ""
-
-msgctxt "trait"
-msgid "River"
-msgstr "강"
-
-msgctxt "trait"
-msgid "Riverside"
-msgstr "강변"
-
-msgctxt "trait"
-msgid "Road"
-msgstr "도로"
-
-msgctxt "trait"
-msgid "Ruins"
-msgstr "유적"
-
-msgctxt "trait"
-msgid "Salem"
-msgstr "세일럼"
-
-msgctxt "trait"
-msgid "Sanctum"
-msgstr "성소"
-
-msgctxt "trait"
-msgid "Scheme"
-msgstr "모략"
-
-msgctxt "trait"
-msgid "Scholar"
-msgstr "학자"
-
-msgctxt "trait"
-msgid "Science"
-msgstr "과학"
-
-msgctxt "trait"
-msgid "Script"
-msgstr "글귀"
-
-msgctxt "trait"
-msgid "Second Floor"
-msgstr "2층"
-
-msgctxt "trait"
-msgid "Sentinel Hill"
-msgstr "파수꾼 언덕"
-
-msgctxt "trait"
-msgid "Serpent"
-msgstr "뱀"
-
-msgctxt "trait"
-msgid "Service"
-msgstr "서비스"
-
-msgctxt "trait"
-msgid "Servitor"
-msgstr "시종"
-
-msgctxt "trait"
-msgid "Shantak"
-msgstr "샨타크"
-
-msgctxt "trait"
-msgid "Shattered"
-msgstr "산산조각난"
-
-msgctxt "trait"
-msgid "Ship"
-msgstr "배"
-
-msgctxt "trait"
-msgid "Shoggoth"
-msgstr "쇼고스"
-
-msgctxt "trait"
-msgid "Silver Twilight"
-msgstr "은빛 황혼회"
-
-msgctxt "trait"
-msgid "Skai"
-msgstr "스카이"
-
-msgctxt "trait"
-msgid "Socialite"
-msgstr "유명인사"
-
-msgctxt "trait"
-msgid "Song"
-msgstr "노래"
-
-msgctxt "trait"
-msgid "Sorcerer"
-msgstr "주술사"
-
-msgctxt "trait"
-msgid "Spectral"
-msgstr "혼령계"
-
-msgctxt "trait"
-msgid "Spell"
-msgstr "마법"
-
-msgctxt "trait"
-msgid "Spider"
-msgstr "거미"
-
-msgctxt "trait"
-msgid "Spirit"
-msgstr "영혼"
-
-msgctxt "trait"
-msgid "St Mary's"
-msgstr "세인트 메리 병원"
-
-msgctxt "trait"
-msgid "Staff"
-msgstr "직원"
-
-msgctxt "trait"
-msgid "Steps"
-msgstr "계단"
-
-msgctxt "trait"
-msgid "Summon"
-msgstr "소환"
-
-msgctxt "trait"
-msgid "Supply"
-msgstr "보급"
-
-msgctxt "trait"
-msgid "Surface"
-msgstr "표면"
-
-msgctxt "trait"
-msgid "Suspect"
-msgstr "용의자"
-
-msgctxt "trait"
-msgid "Syndicate"
-msgstr "조직원"
-
-msgctxt "trait"
-msgid "Tactic"
-msgstr "전술"
-
-msgctxt "trait"
-msgid "Talent"
-msgstr "재능"
-
-msgctxt "trait"
-msgid "Tarot"
-msgstr "타로"
-
-msgctxt "trait"
-msgid "Task"
-msgstr "과업"
-
-msgctxt "trait"
-msgid "Temple"
-msgstr "사원"
-
-msgctxt "trait"
-msgid "Tenochtitlán"
-msgstr "테노치티틀란"
-
-msgctxt "trait"
-msgid "Tentacle"
-msgstr "촉수"
-
-msgctxt "trait"
-msgid "Terror"
-msgstr "두려움"
-
-msgctxt "trait"
-msgid "Third Floor"
-msgstr "3층"
-
-msgctxt "trait"
-msgid "Tindalos"
-msgstr "틴달로스"
-
-msgctxt "trait"
-msgid "Tome"
-msgstr "서적"
-
-msgctxt "trait"
-msgid "Tool"
-msgstr "도구"
-
-msgctxt "trait"
-msgid "Town"
-msgstr ""
-
-msgctxt "trait"
-msgid "Train"
-msgstr "열차"
-
-msgctxt "trait"
-msgid "Trap"
-msgstr "함정"
-
-msgctxt "trait"
-msgid "Trick"
-msgstr "속임수"
-
-msgctxt "trait"
-msgid "Unhallowed"
-msgstr "부정한 땅"
-
-msgctxt "trait"
-msgid "Upgrade"
-msgstr "향상"
-
-msgctxt "trait"
-msgid "Vale"
-msgstr "계곡"
-
-msgctxt "trait"
-msgid "Vehicle"
-msgstr "탑승물"
-
-msgctxt "trait"
-msgid "Venice"
-msgstr "베네치아"
-
-msgctxt "trait"
-msgid "Veteran"
-msgstr "참전용사"
-
-msgctxt "trait"
-msgid "Void"
-msgstr "공허"
-
-msgctxt "trait"
-msgid "Warden"
-msgstr "파수꾼"
-
-msgctxt "trait"
-msgid "Wastes"
-msgstr "황무지"
-
-msgctxt "trait"
-msgid "Wayfarer"
-msgstr "여행자"
-
-msgctxt "trait"
-msgid "Weapon"
-msgstr "무기"
-
-msgctxt "trait"
-msgid "Wilderness"
-msgstr "험지"
-
-msgctxt "trait"
-msgid "Witch"
-msgstr "마녀"
-
-msgctxt "trait"
-msgid "Witch House"
-msgstr "마녀집"
-
-msgctxt "trait"
-msgid "Woods"
-msgstr "숲"
-
-msgctxt "trait"
-msgid "Y'ha-nthlei"
-msgstr "이하 느틀레이"
-
-msgctxt "trait"
-msgid "Yithian"
-msgstr "이스인"
-
-msgctxt "trait"
-msgid "Yoth"
-msgstr "요스"
-
-msgctxt "trait"
-msgid "Zoog"
-msgstr "주그"
-
-msgctxt "trait"
-msgid "Broken"
-msgstr "깨진"
-
-msgctxt "trait"
-msgid "Entrepreneur"
-msgstr "사업가"
-
-msgctxt "trait"
-msgid "Falcon Point"
-msgstr "송골매 곶"
-
-msgctxt "trait"
-msgid "Lair"
-msgstr "침소"
-
-msgctxt "trait"
-msgid "Synergy"
-msgstr "시너지"
-
-msgctxt "trait"
-msgid "Unbroken"
-msgstr "깨지지 않은"
-
-msgctxt "trait"
-msgid "Resolute"
-msgstr "결연한"
-
-msgctxt "trait"
-msgid "Coterie"
-msgstr ""
-
-msgctxt "trait"
-msgid "Dilemma"
-msgstr "딜레마"
-
-msgctxt "trait"
-msgid "Eidolon"
-msgstr "허깨비"
-
-msgctxt "trait"
-msgid "Elder Thing"
-msgstr "옛것"
-
-msgctxt "trait"
-msgid "Glacier"
-msgstr "빙하"
-
-msgctxt "trait"
-msgid "Mainland"
-msgstr "본토"
-
-msgctxt "trait"
-msgid "Mirage"
-msgstr "신기루"
-
-msgctxt "trait"
-msgid "Mountains"
-msgstr "산맥"
-
-msgctxt "trait"
-msgid "Past"
-msgstr "과거"
-
-msgctxt "trait"
-msgid "Possessed"
-msgstr "홀린"
-
-msgctxt "trait"
-msgid "Present"
-msgstr "현재"
-
-msgctxt "trait"
-msgid "Scientist"
-msgstr "과학자"
-
-msgctxt "trait"
-msgid "Uncharted"
-msgstr "미개척지"
-
-msgctxt "trait"
-msgid "Casino"
-msgstr ""
-
-msgctxt "trait"
-msgid "Double"
-msgstr "이중"
-
-msgctxt "trait"
-msgid "AI"
-msgstr "AI"
-
-msgctxt "trait"
-msgid "Abandoned"
-msgstr ""
-
-msgctxt "trait"
-msgid "Access"
-msgstr "외부해치"
-
-msgctxt "trait"
-msgid "Alexandria"
-msgstr ""
-
-msgctxt "trait"
-msgid "Ally? Creature"
-msgstr "조력자? 생물"
-
-msgctxt "trait"
-msgid "Ancient One?"
-msgstr "고대의 존재?"
-
-msgctxt "trait"
-msgid "Bad dog"
-msgstr "이 개놈아!"
-
-msgctxt "trait"
-msgid "Bazaar"
-msgstr ""
-
-msgctxt "trait"
-msgid "Blessed?"
-msgstr "축복받은?"
-
-msgctxt "trait"
-msgid "Bokor"
-msgstr "부두 주술사"
-
-msgctxt "trait"
-msgid "Book"
-msgstr ""
-
-msgctxt "trait"
-msgid "Buenos Aires"
-msgstr ""
-
-msgctxt "trait"
-msgid "Card"
-msgstr "카드"
-
-msgctxt "trait"
-msgid "Case"
-msgstr "사건"
-
-msgctxt "trait"
-msgid "Castle"
-msgstr "성"
-
-msgctxt "trait"
-msgid "Chair"
-msgstr "의자"
-
-msgctxt "trait"
-msgid "Chess"
-msgstr "체스"
-
-msgctxt "trait"
-msgid "Classy"
-msgstr "세련된"
-
-msgctxt "trait"
-msgid "Collector"
-msgstr "수집가"
-
-msgctxt "trait"
-msgid "Consort"
-msgstr ""
-
-msgctxt "trait"
-msgid "Corpse"
-msgstr "시체"
-
-msgctxt "trait"
-msgid "Corruption"
-msgstr ""
-
-msgctxt "trait"
-msgid "Darkness"
-msgstr ""
-
-msgctxt "trait"
-msgid "Device"
-msgstr "장치"
-
-msgctxt "trait"
-msgid "Downtown"
-msgstr "번화가"
-
-msgctxt "trait"
-msgid "Enigma"
-msgstr "수수께끼"
-
-msgctxt "trait"
-msgid "Entrance"
-msgstr ""
-
-msgctxt "trait"
-msgid "Fellow Dogs"
-msgstr "개 친구들"
-
-msgctxt "trait"
-msgid "Footwear, but not really"
-msgstr "신발(못 신는다)"
-
-msgctxt "trait"
-msgid "Hardship"
-msgstr ""
-
-msgctxt "trait"
-msgid "Haunted"
-msgstr "신들린"
-
-msgctxt "trait"
-msgid "Havana"
-msgstr ""
-
-msgctxt "trait"
-msgid "Human"
-msgstr "인간형"
-
-msgctxt "trait"
-msgid "Infection"
-msgstr ""
-
-msgctxt "trait"
-msgid "Istanbul"
-msgstr ""
-
-msgctxt "trait"
-msgid "Kuala Lumpur"
-msgstr ""
-
-msgctxt "trait"
-msgid "Local"
-msgstr "현지인"
-
-msgctxt "trait"
-msgid "Locus Site"
-msgstr ""
-
-msgctxt "trait"
-msgid "London"
-msgstr ""
-
-msgctxt "trait"
-msgid "Loyal"
-msgstr "충직한"
-
-msgctxt "trait"
-msgid "Lunatic"
-msgstr "광인"
-
-msgctxt "trait"
-msgid "Machine"
-msgstr "기계"
-
-msgctxt "trait"
-msgid "Madness?"
-msgstr "정신이상?"
-
-msgctxt "trait"
-msgid "Marrakesh"
-msgstr ""
-
-msgctxt "trait"
-msgid "Medical"
-msgstr "의료"
-
-msgctxt "trait"
-msgid "Music"
-msgstr "음악"
-
-msgctxt "trait"
-msgid "Musician"
-msgstr "음악가"
-
-msgctxt "trait"
-msgid "Northside"
-msgstr "북부"
-
-msgctxt "trait"
-msgid "Nostalgia II"
-msgstr "향수 2호"
-
-msgctxt "trait"
-msgid "Outsider"
-msgstr ""
-
-msgctxt "trait"
-msgid "Parasitic"
-msgstr ""
-
-msgctxt "trait"
-msgid "Plains"
-msgstr ""
-
-msgctxt "trait"
-msgid "Priestess"
-msgstr ""
-
-msgctxt "trait"
-msgid "Pup"
-msgstr "멍멍이"
-
-msgctxt "trait"
-msgid "Resonant"
-msgstr ""
-
-msgctxt "trait"
-msgid "Restricted"
-msgstr "제한구역"
-
-msgctxt "trait"
-msgid "Retired"
-msgstr ""
-
-msgctxt "trait"
-msgid "Risen"
-msgstr ""
-
-msgctxt "trait"
-msgid "Row"
-msgstr "열"
-
-msgctxt "trait"
-msgid "Royalty"
-msgstr "귀족"
-
-msgctxt "trait"
-msgid "Saga"
-msgstr ""
-
-msgctxt "trait"
-msgid "Shadow"
-msgstr "그림자"
-
-msgctxt "trait"
-msgid "Shapeshifter"
-msgstr "형태변환자"
-
-msgctxt "trait"
-msgid "Sheldon Gang"
-msgstr "쉘든 조직원"
-
-msgctxt "trait"
-msgid "Sister"
-msgstr ""
-
-msgctxt "trait"
-msgid "Slope"
-msgstr "경사"
-
-msgctxt "trait"
-msgid "Soldier"
-msgstr "병사"
-
-msgctxt "trait"
-msgid "Stable"
-msgstr ""
-
-msgctxt "trait"
-msgid "Stop"
-msgstr "거기 서!"
-
-msgctxt "trait"
-msgid "Table"
-msgstr "탁자"
-
-msgctxt "trait"
-msgid "Tatterdemalion"
-msgstr "누더기호"
-
-msgctxt "trait"
-msgid "That's bad"
-msgstr "나쁜"
-
-msgctxt "trait"
-msgid "Tower"
-msgstr ""
-
-msgctxt "trait"
-msgid "Traitor"
-msgstr "배신자"
-
-msgctxt "trait"
-msgid "Tulgey Wood"
-msgstr "털진 숲"
-
-msgctxt "trait"
-msgid "Underground"
-msgstr ""
-
-msgctxt "trait"
-msgid "Unstable"
-msgstr ""
-
-msgctxt "trait"
-msgid "Upper Floor"
-msgstr ""
-
-msgctxt "trait"
-msgid "Virtual"
-msgstr "가상"
-
-msgctxt "trait"
-msgid "Weather"
-msgstr "날씨"
-
-msgctxt "trait"
-msgid "What? No"
-msgstr "뭐? 안 돼"
-
-msgctxt "trait"
-msgid "Wonderland"
-msgstr "이상한 나라"
-
-msgctxt "trait"
-msgid "Yuggoth"
-msgstr ""
 
 #, javascript-format
 msgctxt "filter"
@@ -8063,31 +8628,31 @@ msgstr "현재"
 
 msgctxt "fan-made-uses"
 msgid "Blame"
-msgstr "비난"
+msgstr "비난 - Blame"
 
 msgctxt "fan-made-uses"
 msgid "Poems"
-msgstr "시문"
+msgstr "시문 - Poems"
 
 msgctxt "fan-made-uses"
 msgid "Portions"
-msgstr "몫"
+msgstr "몫 - Portions"
 
 msgctxt "uses"
 msgid "Supplies"
-msgstr "소모품"
+msgstr "소모품 - Supplies"
 
 msgctxt "uses"
 msgid "Evidence"
-msgstr "증거"
+msgstr "증거 - Evidence"
 
 msgctxt "uses"
 msgid "Time"
-msgstr "시간"
+msgstr "시간 - Time"
 
 msgctxt "uses"
 msgid "Treats"
-msgstr "사료"
+msgstr "사료 - Treats"
 
 msgctxt "Slots"
 msgid "All"
@@ -8160,6 +8725,12 @@ msgctxt "header"
 msgid "Key"
 msgid_plural "Keys"
 msgstr[0] "열쇠"
+
+msgctxt "header"
+msgid "Enemy-Location"
+msgid_plural "Enemy-Locations"
+msgstr[0] ""
+msgstr[1] ""
 
 msgctxt "tags"
 msgid "Add"

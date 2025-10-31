@@ -1,58 +1,58 @@
-
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Platform } from 'react-native';
+import { registerRootComponent } from 'expo';
+import * as Sentry from '@sentry/react-native';
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistCache } from 'apollo-cache-persist';
-import { PersistGate } from 'redux-persist/integration/react';
-import { ApolloProvider } from '@apollo/client';
-import { Navigation } from 'react-native-navigation';
-import Crashes from 'appcenter-crashes';
+import { getApps, initializeApp } from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
-import 'react-native-sqlite-storage';
+import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-gesture-handler';
 import 'react-native-console-time-polyfill';
 import 'reflect-metadata';
 
-import DatabaseProvider from './src/data/sqlite/DatabaseProvider';
-import { registerScreens } from './src/app/screens';
-import { store, persistor } from './src/app/store';
-import StyleProvider from './src/styles/StyleProvider';
-import LanguageProvider from './src/lib/i18n/LanguageProvider';
-import ArkhamCardsAuthProvider from './src/lib/ArkhamCardsAuthProvider';
-import App from './src/app/App';
-import { ENABLE_ARKHAM_CARDS_ACCOUNT } from './src/app_constants';
+globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
+
+import { store, persistor } from './src/application/store';
 import createApolloClient from './src/data/apollo/createApolloClient';
-import ApolloClientContext from './src/data/apollo/ApolloClientContext';
-import { PlayerCardProvider } from '@data/sqlite/PlayerCardProvider';
+import AppNavigator from './src/navigation/AppNavigator';
 
-function MyProvider({ store: { redux, persistor, apollo, anonApollo }, children }) {
-  return (
-    <Provider store={redux}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ArkhamCardsAuthProvider>
-          <ApolloProvider client={apollo}>
-            <ApolloClientContext.Provider value={{ client: apollo, anonClient: anonApollo }}>
-              <LanguageProvider>
-                <DatabaseProvider>
-                  <PlayerCardProvider>
-                    <StyleProvider>
-                      { children }
-                    </StyleProvider>
-                  </PlayerCardProvider>
-                </DatabaseProvider>
-              </LanguageProvider>
-            </ApolloClientContext.Provider>
-          </ApolloProvider>
-        </ArkhamCardsAuthProvider>
-      </PersistGate>
-    </Provider>
-  );
+const navigationIntegration = Sentry.reactNavigationIntegration();
+
+if (__DEV__) {
+  // Adds messages only in a dev environment
+  loadDevMessages();
+  loadErrorMessages();
 }
 
-if (ENABLE_ARKHAM_CARDS_ACCOUNT) {
-  database().setPersistenceEnabled(true);
+Sentry.init({
+  dsn: 'https://fdad4da29224c7fd11ee224a94b1ba0c@o4509060598530048.ingest.us.sentry.io/4509060599316480',
+  integrations: [navigationIntegration],
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
+// Initialize Firebase if not already initialized
+console.log('Firebase apps before init:', getApps().length);
+if (!getApps().length) {
+  console.log('Calling initializeApp()');
+  initializeApp({
+    apiKey: 'AIzaSyDb3uTSlVozaog4jNJB3_1wlESBF80sCX0',
+    appId: '1:375702423113:ios:ddc3bfe55bd62d38eda198',
+    messagingSenderId: '375702423113',
+    projectId: 'arkhamblob',
+    storageBucket: 'arkhamblob.appspot.com',
+    databaseURL: 'https://arkhamblob.firebaseio.com',
+  });
+  console.log('initializeApp() completed');
 }
+console.log('Firebase apps after init:', getApps().length);
+
+// database().setPersistenceEnabled(true);
 
 const [apolloClient, anonClient] = createApolloClient(store);
 
@@ -61,18 +61,38 @@ persistCache({
   storage: AsyncStorage,
 });
 
-function shouldProcess() {
-  return !__DEV__;
+
+function App() {
+  const [appIsReady, setAppIsReady] = React.useState(false);
+
+  React.useEffect(() => {
+    async function prepare() {
+      try {
+        // Enable edge-to-edge on Android
+        // You can add any additional loading logic here
+        // For now, we'll just mark it as ready
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure everything is initialized
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!appIsReady) {
+    return null;
+  }
+
+  const storeProps = { redux: store, persistor: persistor, apollo: apolloClient, anonApollo: anonClient };
+
+  return (
+    <AppNavigator store={storeProps} navigationIntegration={navigationIntegration} />
+  );
 }
-Crashes.setListener({
-  shouldProcess,
-});
+database().setPersistenceEnabled(true);
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-let app = null;
-Navigation.events().registerAppLaunchedListener(() => {
-  // SQLite.enablePromise(true);
-  registerScreens(MyProvider, { redux: store, persistor: persistor, apollo: apolloClient, anonApollo: anonClient });
-  app = new App(store);
-});
-
+registerRootComponent(App);

@@ -7,7 +7,7 @@ import SetupStepWrapper from '@components/campaignguide/SetupStepWrapper';
 import ScenarioStepContext from '@components/campaignguide/ScenarioStepContext';
 import CampaignGuideTextComponent from '@components/campaignguide/CampaignGuideTextComponent';
 import { PlayScenarioInput } from '@data/scenario/types';
-import { PlayingScenarioBranch, PLAY_SCENARIO_STEP_ID } from '@data/scenario/fixedSteps';
+import { PlayingScenarioBranch } from '@data/scenario/fixedSteps';
 import { chooseOneInputChoices } from '@data/scenario/inputHelper';
 import ScenarioGuideContext from '@components/campaignguide/ScenarioGuideContext';
 import { CampaignId } from '@actions/types';
@@ -16,13 +16,16 @@ import StyleContext from '@styles/StyleContext';
 import space from '@styles/space';
 
 interface Props {
-  componentId: string;
   campaignId: CampaignId;
   id: string;
   input: PlayScenarioInput;
+  text?: string
 }
 
-export default function PlayScenarioComponent({ componentId, campaignId, id, input }: Props) {
+export default function PlayScenarioComponent({ campaignId, id, input, text }: Props) {
+  const iteration = useMemo(() => {
+    return id.split('#')[1];
+  }, [id]);
   const { scenarioState } = useContext(ScenarioGuideContext);
   const { campaignLog } = useContext(ScenarioStepContext);
   const { colors, typography } = useContext(StyleContext);
@@ -54,7 +57,6 @@ export default function PlayScenarioComponent({ componentId, campaignId, id, inp
     if (firstDecision === undefined) {
       return (
         <PlayOptionsComponent
-          componentId={componentId}
           id={id}
           campaignId={campaignId}
           input={input}
@@ -73,14 +75,14 @@ export default function PlayScenarioComponent({ componentId, campaignId, id, inp
       )
     }
     return null;
-  }, [scenarioState, campaignLog, typography, colors, componentId, campaignId, id, input]);
+  }, [scenarioState, campaignLog, typography, colors, campaignId, id, input]);
 
   return (
     <>
-      { (id === PLAY_SCENARIO_STEP_ID) && (
+      { !iteration && (
         <SetupStepWrapper>
           <CampaignGuideTextComponent
-            text={t`Start playing the scenario now.`}
+            text={text ?? t`Start playing the scenario now.`}
           />
         </SetupStepWrapper>
       ) }

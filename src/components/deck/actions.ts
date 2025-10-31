@@ -1,7 +1,8 @@
 import { flatMap, map, filter, forEach, range, sortBy } from 'lodash';
-import Config from 'react-native-config';
 import { ThunkAction } from 'redux-thunk';
 import { Action } from 'redux';
+
+import { getEnvVar } from '@lib/env';
 
 import { newLocalDeck, updateLocalDeck, upgradeLocalDeck } from './localHelper';
 import { handleAuthErrors } from './authHelper';
@@ -50,6 +51,8 @@ import { DeckActions } from '@data/remote/decks';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
 import specialMetaSlots, { ensureConsistentMeta } from '@data/deck/specialMetaSlots';
 import { parseCustomizationDecision } from '@lib/parseDeck';
+
+const OAUTH_SITE = getEnvVar('OAUTH_SITE');
 
 export function setInvestigatorSort(sort: SortType): SetInvestigatorSortAction {
   return {
@@ -186,7 +189,7 @@ export function fetchPublicDeck(
   useDeckEndpoint: boolean
 ): ThunkAction<void, AppState, unknown, Action<string>> {
   return (dispatch) => {
-    const uri = `${Config.OAUTH_SITE}api/public/${useDeckEndpoint ? 'deck' : 'decklist'}/${id.id}`;
+    const uri = `${OAUTH_SITE}api/public/${useDeckEndpoint ? 'deck' : 'decklist'}/${id.id}`;
     fetch(uri, { method: 'GET' })
       .then(response => {
         if (response.ok === true) {
@@ -559,6 +562,19 @@ export function decDeckSlot(id: DeckId, code: string, mode?: 'side' | 'extra' | 
   };
 }
 
+
+export function incDeckAttachmentSlot(id: DeckId, code: string, limit: number | undefined, attachment_code: string): UpdateDeckEditCountsAction {
+  return {
+    type: UPDATE_DECK_EDIT_COUNTS,
+    id,
+    code: code,
+    operation: 'inc',
+    limit,
+    countType: 'attachment',
+    attachment_code,
+  };
+}
+
 export function setDeckSlot(id: DeckId, code: string, value: number, mode?: 'side' | 'extra' | 'ignore'): UpdateDeckEditCountsAction {
   return {
     type: UPDATE_DECK_EDIT_COUNTS,
@@ -703,13 +719,15 @@ export function resetDeckChecklist(
 export function setDeckChecklistCard(
   id: DeckId,
   card: string,
-  value: boolean
+  value: number,
+  toggle: boolean
 ): SetDeckChecklistCardAction {
   return {
     type: SET_DECK_CHECKLIST_CARD,
     id,
     card,
     value,
+    toggle,
   };
 }
 

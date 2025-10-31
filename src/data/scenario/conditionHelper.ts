@@ -54,6 +54,7 @@ import {
   ScarletKeyCountCondition,
   CampaignDataStandaloneCondition,
   InvestigatorCampaignLogCardsCondition,
+  CampaignLogTaskCondition,
 } from './types';
 import GuidedCampaignLog from './GuidedCampaignLog';
 import Card from '@data/types/Card';
@@ -176,6 +177,8 @@ export function getOperand(
   switch (op.type) {
     case 'campaign_log_count':
       return campaignLog.count(op.section, op.id || '$count');
+    case 'campaign_log_task':
+      return campaignLog.task(op.section, op.id);
     case 'chaos_bag':
       return campaignLog.chaosBag[op.token] || 0;
     case 'constant':
@@ -273,7 +276,7 @@ export function investigatorCampaignLogCardsResult(
 }
 
 export function campaignLogConditionResult(
-  condition: CampaignLogSectionExistsCondition | CampaignLogCondition | CampaignLogCardsCondition,
+  condition: CampaignLogSectionExistsCondition | CampaignLogCondition | CampaignLogCardsCondition | CampaignLogTaskCondition,
   campaignLog: GuidedCampaignLog
 ): BinaryResult {
   switch (condition.type) {
@@ -294,6 +297,16 @@ export function campaignLogConditionResult(
         campaignLog.allCards(condition.section, condition.id),
         campaignLog.allCardCounts(condition.section, condition.id)
       );
+    case 'campaign_log_task': {
+      const investigator = campaignLog.taskAssignee(condition.section, condition.id);
+      const count = campaignLog.task(condition.section, condition.id);
+      return binaryConditionResult(
+        !!investigator,
+        condition.options,
+        investigator ? [investigator] : [],
+        [count]
+      );
+    }
   }
 }
 export function campaignLogCardsSwitchResult(
@@ -310,7 +323,11 @@ export function campaignLogCardsSwitchResult(
   };
 }
 
-function checkTraumaCondition(code: string, trauma: 'killed' | 'insane' | 'alive', campaignLog: GuidedCampaignLog) {
+function checkTraumaCondition(
+  code: string,
+  trauma: 'killed' | 'insane' | 'alive',
+  campaignLog: GuidedCampaignLog
+) {
   switch(trauma) {
     case 'killed': return campaignLog.isKilled(code);
     case 'insane': return campaignLog.isInsane(code);
@@ -385,7 +402,11 @@ export function partnerStatusConditionResult(
   );
 }
 
-function basicTrauma(code: string, trauma: 'mental' | 'physical' | 'alive', campaignLog: GuidedCampaignLog) {
+function basicTrauma(
+  code: string,
+  trauma: 'mental' | 'physical' | 'alive',
+  campaignLog: GuidedCampaignLog
+) {
   switch (trauma) {
     case 'mental': return campaignLog.hasMentalTrauma(code);
     case 'physical': return campaignLog.hasPhysicalTrauma(code);
@@ -544,7 +565,7 @@ function investigatorConditionMatches(
     }
     const matches = filter(
       options,
-      option => investigatorDataMatches(card, investigatorData, option.condition)
+      option => investigatorDataMatches(card.card, investigatorData, option.condition)
     );
     if (matches.length) {
       investigatorChoices[card.code] = map(matches, match => match.condition);
@@ -711,6 +732,7 @@ export function multiConditionResult(
             return investigatorCardConditionResult(subCondition, campaignLog).options ? 1 : 0;
           }
           return binaryCardConditionResult(subCondition, campaignLog).option ? 1 : 0;
+        case 'campaign_log_cards':
         case 'campaign_log':
         case 'campaign_log_section_exists':
           return campaignLogConditionResult(subCondition, campaignLog).option ? 1 : 0;
@@ -879,6 +901,10 @@ export function investigatorStatusConditionResult(condition: ScenarioDataInvesti
         return !campaignLog.isDefeated(code);
       case 'resigned':
         return campaignLog.resigned(code);
+      case 'not_resigned':
+        return !campaignLog.resigned(code);
+      case 'alive':
+        return campaignLog.isAlive(code);
     }
   });
   return binaryConditionResult(
@@ -905,6 +931,7 @@ export function conditionResult(
     case 'campaign_log_cards':
     case 'campaign_log_section_exists':
     case 'campaign_log':
+    case 'campaign_log_task':
       return campaignLogConditionResult(condition, campaignLog);
     case 'campaign_log_cards_switch':
       return campaignLogCardsSwitchResult(condition, campaignLog);

@@ -1,17 +1,21 @@
 import React from 'react';
-
+import Animated, { interpolateColor, useAnimatedProps, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import ArkhamIcon from './ArkhamIcon';
+import AgesIcon from './AgesIcon';
 import AppIcon from './AppIcon';
 import CarcosaIcon from './CarcosaIcon';
 import CyclopeanIcon from './CyclopeanIcon';
 import CircleIcon from './CircleIcon';
+import CircusExMortisIcon from './CircusExMortisIcon';
 import CoreSetIcon from './CoreSetIcon';
 import DarkMatterIcon from './DarkMatterIcon';
 import DreamEatersIcon from './DreamEatersIcon';
+import DrownedIcon from './DrownedIcon';
 import DunwichIcon from './DunwichIcon';
 import EdgeIcon from './EdgeIcon';
 import ForgottenIcon from './ForgottenIcon';
 import HemlockIcon from './HemlockIcon';
+import OzIcon from './OzIcon';
 import StandaloneIcon from './StandaloneIcon';
 import InnsmouthIcon from './InnsmouthIcon';
 import AliceIcon from './AliceIcon';
@@ -21,14 +25,48 @@ interface Props {
   encounter_code: string;
   size: number;
   color: string;
+  pack?: boolean;
+}
+
+const AnimatedOzIcon = Animated.createAnimatedComponent(OzIcon);
+
+const TheColourItself = ({ size }: { size: number }) => {
+  const color = useSharedValue(1);
+  const animatedProps = useAnimatedProps(() => {
+    const purpleColor = interpolateColor(
+      color.value,
+      [0, 1, 2],
+      ['#B405F6', '#c025fb', '#a004db']
+    );
+    return {
+      color: purpleColor,
+    };
+  });
+  React.useEffect(() => {
+    color.value = withRepeat(
+      withTiming(2, { duration: 1200 }),
+      -1,
+      true
+    );
+  }, [color]);
+  return <AnimatedOzIcon size={size} name="the_colour_itself" animatedProps={animatedProps} />;
 }
 
 export default class EncounterIcon extends React.PureComponent<Props> {
   aliceIcon(name: string, size: number, color: string) {
     return (<AliceIcon name={name} size={size} color={color} />);
   }
+  ozIcon(name: string, size: number, color: string) {
+    return (<OzIcon name={name} size={size} color={color} />);
+  }
+  circusExMortisIcon(name: string, size: number, color: string) {
+    return (<CircusExMortisIcon name={name} size={size} color={color} />);
+  }
   arkhamIcon(name: string, size: number, color: string) {
     return (<ArkhamIcon name={name} size={size} color={color} />);
+  }
+  agesIcon(name: string, size: number, color: string) {
+    return (<AgesIcon name={name} size={size} color={color} />);
   }
   appIcon(name: string, size: number, color: string) {
     return (<AppIcon name={name} size={size} color={color} />);
@@ -44,6 +82,9 @@ export default class EncounterIcon extends React.PureComponent<Props> {
   }
   darkMatterIcon(name: string, size: number, color: string) {
     return (<DarkMatterIcon name={name} size={size} color={color} />);
+  }
+  drownedIcon(name: string, size: number, color: string) {
+    return (<DrownedIcon name={name} size={size} color={color} />);
   }
 
   cyclopeanIcon(name: string, size: number, color: string) {
@@ -91,6 +132,7 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       encounter_code,
       size,
       color,
+      pack,
     } = this.props;
     switch (encounter_code) {
       case 'nat':
@@ -254,6 +296,9 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'the_stranger':
       case 'stranger':
         return this.carcosaIcon('the_stranger', size, color);
+      case 'tmg':
+      case 'the_midwinter_gala':
+        return this.standaloneIcon('gala', size, color);
       case 'iotv':
       case 'tdor':
       case 'tdg':
@@ -292,6 +337,10 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'on_the_road_again':
       case 'ptr':
       case 'path_of_the_righteous':
+      case 'pap':
+      case 'pistols_and_pearls':
+      case 'hfa':
+      case 'hunting_for_answers':
         return this.cardIcon('parallel', size, color);
       case 'cotr':
       case 'curse_of_the_rougarou':
@@ -300,12 +349,15 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'bayou':
         return this.standaloneIcon('the_bayou', size, color);
       case 'blob':
-      case 'blbe':
       case 'blob_that_ate_everything':
-      case 'blob_that_ate_everything_else':
         return this.standaloneIcon('the_blob_that_ate_everything', size, color);
+      case 'blbe':
+      case 'blob_that_ate_everything_else':
+        return this.standaloneIcon('blob_that_ate_everything_else', size, color);
       case 'migo_incursion':
         return this.standaloneIcon('migo', size, color);
+      case 'migo_incursion_2':
+        return this.standaloneIcon('migo_incursion_2', size, color);
       case 'machinations_epic_multiplayer':
       case 'blob_epic_multiplayer':
       case 'epic_multiplayer':
@@ -564,6 +616,37 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'ticc':
       case 'the_innsmouth_conspiracy':
         return this.innsmouthIcon('tic', size, color);
+      case 'tdcp':
+        return this.drownedIcon('tdcp', size, color);
+      case 'tdc':
+      case 'tdcc':
+        return this.drownedIcon('tdcc', size, color);
+      case 'the_grand_vault':
+      case 'one_last_job':
+      case 'the_drowned_quarter':
+      case 'the_apiary':
+      case 'tasks':
+      case 'the_inescapable':
+      case 'elder_mist':
+      case 'dreams':
+      case 'domination':
+      case 'deep_ones':
+      case 'cosmic_legacy':
+      case 'alien_machinery':
+      case 'court_of_the_ancients':
+      case 'tdc_flood':
+      case 'tdc_expedition':
+      case 'pilgrims':
+      case 'rlyeh':
+      case 'obsidian_canyons':
+      case 'sepulchre_of_the_sleeper':
+      case 'star_spawn':
+      case 'stowaways':
+      case 'the_doom_of_arkham_part_1':
+      case 'the_doom_of_arkham_part_2':
+      case 'the_western_wall':
+      case 'undersea_creatures':
+        return this.drownedIcon(encounter_code, size, color);
       case 'creatures_of_the_deep':
         return this.innsmouthIcon('creatures_from_below', size, color);
       case 'the_locals':
@@ -614,6 +697,7 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'the_symphony_of_erich_zann':
       case 'the_symphony_of_erich_zahn':
         return this.standaloneIcon('zez', size, color);
+      case 'zcos':
       case 'the_colour_out_of_space':
         return this.standaloneIcon('meteoric_phenomenon', size, color);
       case 'a_sea_of_troubles':
@@ -667,7 +751,7 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'alice_in_wonderland':
       case 'zaw':
         return this.aliceIcon('alice_in_wonderland', size, color);
-      case 'deep_ones':
+      case 'coc_deep_ones':
       case 'sinking_ship':
       case 'the_black_stone':
       case 'occultism':
@@ -677,7 +761,15 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'ancient_hunger':
       case 'witch_cult':
       case 'tomes':
+      case 'forgotten_island':
+      case 'cosmic_journey':
+      case 'abominable_contessa':
         return this.standaloneIcon(encounter_code, size, color);
+      case 'when_the_world_screamed':
+      case 'zwtws':
+        return this.standaloneIcon('when_the_world_screamed', size, color);
+      case 'film_fatale':
+        return this.standaloneIcon(pack ? 'film_fatale' : 'film_fatale_encounter', size, color);
       case 'legendry':
         return this.standaloneIcon('legendary', size, color);
       case 'zbs':
@@ -995,6 +1087,106 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'written_in_rock':
       case 'the_lost_sister':
         return this.hemlockIcon(encounter_code, size, color);
+
+      case 'depraved_legions':
+      case 'spiraling_inferno':
+      case 'scorched_wasteland':
+      case 'malevolent_ritual':
+      case 'final_annihilation':
+        return this.standaloneIcon(encounter_code, size, color);
+      case 'zlf':
+      case 'legions_of_fire':
+        return this.standaloneIcon('legions_of_fire', size, color);
+
+      case 'zoz_the_road_to_oz': return this.ozIcon('the_road_to_oz', size, color);
+      case 'zoz_ferocious_beasts': return this.ozIcon('ferocious_beasts', size, color);
+      case 'zoz_wicked_witches': return this.ozIcon('wicked_witches', size, color);
+      case 'zoz_prismatic_evils': return this.ozIcon('prismatic_evils', size, color);
+      case 'zoz_terror_out_of_space': return this.ozIcon('terror_out_of_space', size, color);
+      case 'zoz_princess_of_oz': return this.ozIcon('princess_of_oz', size, color);
+      case 'zoz_chromatic_infection': return this.ozIcon('chromatic_infection', size, color);
+      case 'zoz_deep_impact': return this.ozIcon('deep_impact', size, color);
+      case 'zoz_emerald_city': return this.ozIcon('emerald_city', size, color);
+      case 'zoz_alien_vibrance': return this.ozIcon('alien_vibrance', size, color);
+      case 'zoz_horrid_infection': return this.ozIcon('horrid_infection', size, color);
+      case 'zoz_companions_of_oz': return this.ozIcon('companions_of_oz', size, color);
+      case 'zoz_spiraling_decay': return this.ozIcon('spiraling_decay', size, color);
+      case 'zoz_double_whammy': return this.ozIcon('double_whammy', size, color);
+      case 'zoz_chasing_rainbows': return this.ozIcon('chasing_rainbows', size, color);
+      case 'zoz_blighted_land': return this.ozIcon('blighted_land', size, color);
+      case 'zoz_misery_loves_company': return this.ozIcon('misery_loves_company', size, color);
+      case 'zoz_nomes': return this.ozIcon('nomes', size, color);
+      case 'zoz_violent_invasion': return this.ozIcon('violent_invasion', size, color);
+      case 'zoz_hall_of_the_mountain_king': return this.ozIcon('hall_of_the_mountain_king', size, color);
+      case 'zoz_defense_of_the_realm': return this.ozIcon('defense_of_the_realm', size, color);
+      case 'zoz_true_colours': return this.ozIcon('true_colours', size, color);
+      case 'zoz_the_colour_itself':
+        return <TheColourItself size={size} />
+      case 'zoz_munchkin': return this.ozIcon('munchkin_country', size, color);
+      case 'zoz_winkie': return this.ozIcon('winkie_country', size, color);
+      case 'zoz_quadling': return this.ozIcon('quadling_country', size, color);
+      case 'zoz_gillikin': return this.ozIcon('gillikin_country', size, color);
+      case 'zoz':
+      case 'the_colour_out_of_oz':
+        return this.ozIcon('zoz', size, color);
+      case 'zau_night_of_fire':
+      case 'a_night_of_fire':
+        return this.agesIcon('a_night_of_fire', size, color);
+      case 'zau_myriad_gentleman':
+      case 'the_myriad_gentleman':
+        return this.agesIcon('the_myriad_gentleman', size, color);
+      case 'zau_world_torn_down':
+      case 'a_world_torn_down':
+        return this.agesIcon('a_world_torn_down', size, color);
+      case 'zau_unstuck':
+      case 'unstuck':
+        return this.agesIcon('unstuck', size, color);
+      case 'zau_year_to_plan':
+      case 'a_year_to_plan':
+        return this.agesIcon('a_year_to_plan', size, color);
+      case 'zau_world_torn_down_again':
+      case 'a_world_torn_down_again':
+        return this.agesIcon('a_world_torn_down_again', size, color);
+      case 'zau_time_runs_out':
+      case 'time_runs_out':
+        return this.agesIcon('time_runs_out', size, color);
+      case 'zau_agents_of_aforgomon': return this.agesIcon('agents_of_aforgomon', size, color);
+      case 'zau_missions': return this.agesIcon('missions', size, color);
+      case 'zau_myriad': return this.agesIcon('myriad', size, color);
+      case 'zau_night_of_the_ritual': return this.agesIcon('night_of_the_ritual', size, color);
+      case 'zau_nyctophobia': return this.agesIcon('nyctophobia', size, color);
+      case 'zau_paradox': return this.agesIcon('paradox', size, color);
+      case 'zau_shifting_reality': return this.agesIcon('shifting_reality', size, color);
+      case 'zau_thugs': return this.agesIcon('thugs', size, color);
+      case 'zau_unleashed_chaos': return this.agesIcon('unleashed_chaos', size, color);
+      case 'zau_unravelling_years': return this.agesIcon('unravelling_years', size, color);
+      case 'zau':
+      case 'zau_ages_unwound': return this.agesIcon('ages_unwound', size, color);
+      case 'tablet':
+        return this.arkhamIcon('tablet', size, color);
+      case 'zcx':
+        return this.circusExMortisIcon('zcx_circus_ex_mortis',size, color);
+      case 'zcx_one_night_only':
+      case 'zcx_primrose_path':
+      case 'zcx_harms_way':
+      case 'zcx_all_points_west':
+      case 'zcx_piper_at_the_gates_of_dawn':
+      case 'zcx_bacchanalia':
+      case 'zcx_red_sunrise':
+      case 'zcx_thousand_to_one':
+      case 'zcx_children_of_the_goat':
+      case 'zcx_circus_grounds':
+      case 'zcx_cult_of_shub_niggurath':
+      case 'zcx_illusory_tricks':
+      case 'zcx_lunatic_night':
+      case 'zcx_new_moon_daredevils':
+      case 'zcx_new_moon_entertainers':
+      case 'zcx_panicked_masses':
+      case 'zcx_primordial_evils':
+      case 'zcx_savage_woods':
+      case 'zcx_destiny_and_prophecy':
+      case 'zcx_circus_ex_mortis':
+        return this.circusExMortisIcon(encounter_code,size, color);
       case 'rcore':
       default:
         return this.coreIcon('core', size, color);

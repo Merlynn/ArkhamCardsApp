@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import {
   Platform,
   SafeAreaView,
@@ -8,48 +8,64 @@ import {
   View,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { Navigation } from 'react-native-navigation';
-import ActionButton from 'react-native-action-button';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@navigation/types';
+import { getDeckScreenOptions, openUrl } from '@components/nav/helper';
 
-import StyleContext, { StyleContextType } from '@styles/StyleContext';
+
+import StyleContext from '@styles/StyleContext';
 import { useComponentDidDisappear, useFlag, useKeyboardHeight, useTabooSetId } from '@components/core/hooks';
 import { useDeckEditState, useParsedDeck } from './hooks';
 import CardTextComponent from '@components/card/CardTextComponent';
 import space, { s, xs } from '@styles/space';
-import { openUrl } from '@components/nav/helper';
 import DatabaseContext from '@data/sqlite/DatabaseContext';
-import { NavigationProps } from '@components/nav/types';
 import AppIcon from '@icons/AppIcon';
-import { NOTCH_BOTTOM_PADDING } from '@styles/sizes';
 import { setDeckDescription } from './actions';
 import DeckNavFooter from '@components/deck/DeckNavFooter';
 import { DeckId } from '@actions/types';
+import SimpleFab from '@components/core/SimpleFab';
+import { t } from 'ttag';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface DeckDescriptionProps {
   id: DeckId;
+  headerBackgroundColor: string | undefined;
 }
 
-type Props = DeckDescriptionProps & NavigationProps;
-
-export default function DeckDescriptionView({ id, componentId }: Props) {
+export default function DeckDescriptionView() {
+  const route = useRoute<RouteProp<RootStackParamList, 'Deck.Description'>>();
+  const navigation = useNavigation();
+  const { id } = route.params;
   const { db } = useContext(DatabaseContext);
-  const { backgroundStyle, colors, shadow, typography } = useContext(StyleContext);
+  const { backgroundStyle, colors, typography } = useContext(StyleContext);
   const textInputRef = useRef<TextInput>(null);
   const dispatch = useDispatch();
   const tabooSetId = useTabooSetId();
-  const parsedDeckObj = useParsedDeck(id, componentId);
+  const parsedDeckObj = useParsedDeck(id);
   const { mode } = useDeckEditState(parsedDeckObj);
   const { deck, deckEdits, parsedDeck } = parsedDeckObj;
-  const factionColor = useMemo(() => colors.faction[parsedDeck?.investigator.factionCode() || 'neutral'].background, [parsedDeck, colors.faction]);
+  const factionColor = useMemo(() => colors.faction[parsedDeck?.faction ?? 'neutral'].background, [parsedDeck, colors.faction]);
   const [description, setDescription] = useState(deckEdits?.descriptionChange || deck?.description_md || '');
   useEffect(() => {
     setDescription(deckEdits?.descriptionChange || deck?.description_md || '');
   }, [deck, deckEdits]);
   const [edit, toggleEdit] = useFlag(false);
-  const linkPressed = useCallback(async(url: string, context: StyleContextType) => {
-    await openUrl(url, context, db, componentId, tabooSetId);
-  }, [componentId, tabooSetId, db]);
-  const fabIcon = useCallback(() => (
+
+  useLayoutEffect(() => {
+    if (parsedDeck) {
+      const screenOptions = getDeckScreenOptions(
+        colors,
+        { title: t`Notes` },
+        parsedDeck.investigator.front
+      );
+      navigation.setOptions(screenOptions);
+    }
+  }, [navigation, colors, parsedDeck]);
+
+  const linkPressed = useCallback(async(url: string) => {
+    await openUrl(navigation, url, db, colors, tabooSetId);
+  }, [navigation, tabooSetId, db, colors]);
+  const fabIcon = useMemo(() => (
     <AppIcon name={edit ? 'check' : 'edit'} color={mode === 'view' && !edit ? '#FFFFFF' : colors.L30} size={24} />
   ), [edit, colors, mode]);
   const saveChanges = useCallback(() => {
@@ -60,13 +76,13 @@ export default function DeckDescriptionView({ id, componentId }: Props) {
     if (edit) {
       dispatch(setDeckDescription(id, description));
     }
-    Navigation.pop(componentId);
-  }, [edit, id, description, dispatch, componentId]);
+    navigation.goBack();
+  }, [edit, id, description, dispatch, navigation]);
   useComponentDidDisappear(() => {
     if (edit) {
       dispatch(setDeckDescription(id, description));
     }
-  }, componentId, [edit, id, description]);
+  }, [edit, id, description]);
   const hasDescriptionChange = description !== (deck?.description_md || '');
   const [keyboardHeight] = useKeyboardHeight();
   const onEdit = useCallback(() => {
@@ -77,19 +93,20 @@ export default function DeckDescriptionView({ id, componentId }: Props) {
       }, 500);
     }
   }, [toggleEdit, textInputRef]);
+  const insets = useSafeAreaInsets();
   const fab = useMemo(() => {
     return (
-      <ActionButton
-        buttonColor={mode === 'view' && !edit ? factionColor : colors.D20}
-        renderIcon={fabIcon}
+      <SimpleFab
+        color={mode === 'view' && !edit ? factionColor : colors.D20}
+        icon={fabIcon}
         onPress={edit ? saveChanges : onEdit}
+        position="right"
+        accessiblityLabel={t`Edit`}
         offsetX={s + xs}
-        offsetY={((Platform.OS === 'ios' ? keyboardHeight : 0) || NOTCH_BOTTOM_PADDING) + s + xs}
-        shadowStyle={shadow.large}
-        fixNativeFeedbackRadius
+        offsetY={(Platform.OS === 'ios' ? keyboardHeight : 0) + insets.bottom + s + xs}
       />
     );
-  }, [shadow, edit, fabIcon, onEdit, saveChanges, colors, mode, factionColor, keyboardHeight]);
+  }, [edit, fabIcon, onEdit, saveChanges, colors, mode, factionColor, insets, keyboardHeight]);
   return (
     <View style={styles.wrapper}>
       { edit ? (
@@ -112,7 +129,6 @@ export default function DeckDescriptionView({ id, componentId }: Props) {
       { (mode === 'edit' || hasDescriptionChange || edit) && (
         <DeckNavFooter
           deckId={id}
-          componentId={componentId}
           forceShow
           control="fab"
           onPress={backPressed}

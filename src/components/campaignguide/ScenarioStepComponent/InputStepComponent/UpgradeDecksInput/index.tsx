@@ -19,7 +19,6 @@ import StyleContext from '@styles/StyleContext';
 import space, { s } from '@styles/space';
 
 interface Props {
-  componentId: string;
   id: string;
   skipDeckSave?: boolean;
   specialXp?: SpecialXp;
@@ -29,7 +28,7 @@ interface Props {
   investigatorCounter?: string;
 }
 
-export default function UpgradeDecksInput({ componentId, id, exile, hideXp, skipDeckSave, specialXp, investigatorCounter, storyCards }: Props) {
+export default function UpgradeDecksInput({ id, exile, hideXp, skipDeckSave, specialXp, investigatorCounter, storyCards }: Props) {
   const { latestDecks, campaignState } = useContext(CampaignGuideContext);
   const { typography, width } = useContext(StyleContext);
   const { scenarioState } = useContext(ScenarioGuideContext);
@@ -131,12 +130,12 @@ export default function UpgradeDecksInput({ componentId, id, exile, hideXp, skip
             <View style={[space.paddingSideS, space.paddingVerticalXs]} key={investigator.code}>
               <CompactInvestigatorRow
                 key={investigator.code}
-                investigator={investigator}
+                investigator={investigator.card}
                 eliminated
                 width={width - s * (hasDecision ? 4 : 2)}
               >
                 <Text style={[typography.mediumGameFont, typography.white]}>
-                  {investigator.traumaString(listSeperator, campaignLog.traumaAndCardData(investigator.code))}
+                  {investigator.card.traumaString(listSeperator, campaignLog.traumaAndCardData(investigator.code))}
                 </Text>
               </CompactInvestigatorRow>
             </View>
@@ -146,7 +145,6 @@ export default function UpgradeDecksInput({ componentId, id, exile, hideXp, skip
           <UpgradeDeckRow
             key={investigator.code}
             id={id}
-            componentId={componentId}
             campaignLog={campaignLog}
             campaignState={campaignState}
             scenarioState={scenarioState}

@@ -3,21 +3,22 @@ import { t } from 'ttag';
 
 import { Deck } from '@actions/types';
 import { showDeckModal } from '@components/nav/helper';
-import Card from '@data/types/Card';
 import { parseBasicDeck } from '@lib/parseDeck';
-import StyleContext from '@styles/StyleContext';
 import MiniPickerStyleButton from '@components/deck/controls/MiniPickerStyleButton';
 import MiniCampaignT from '@data/interfaces/MiniCampaignT';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import { useLatestDeckCards } from '@components/core/hooks';
 import LanguageContext from '@lib/i18n/LanguageContext';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
+import { useNavigation } from '@react-navigation/native';
+import StyleContext from '@styles/StyleContext';
 
 interface Props {
   deck?: LatestDeckT;
   campaign: MiniCampaignT;
-  investigator: Card;
-  showDeckUpgrade?: (investigator: Card, deck: Deck) => void;
+  investigator: CampaignInvestigator;
+  showDeckUpgrade?: (investigator: CampaignInvestigator, deck: Deck) => void;
   editXpPressed?: () => void;
 
   unspentXp: number;
@@ -41,28 +42,30 @@ export default function useXpSection({
   showDeckUpgrade,
   editXpPressed,
 }: Props): [React.ReactNode, boolean] {
-  const { colors } = useContext(StyleContext);
   const { userId } = useContext(ArkhamCardsAuthContext);
+  const { colors } = useContext(StyleContext);
   const showDeckUpgradePress = useCallback(() => {
     if (deck && showDeckUpgrade) {
       showDeckUpgrade(investigator, deck.deck);
     }
   }, [investigator, deck, showDeckUpgrade]);
+  const navigation = useNavigation();
 
   const onPress = useCallback(() => {
     if (deck) {
       showDeckModal(
+        navigation,
+        colors,
         deck.id,
         deck.deck,
         campaign?.id,
-        colors,
-        investigator,
+        investigator.card,
         'upgrade',
       );
     }
-  }, [colors, campaign, deck, investigator]);
+  }, [navigation, colors, campaign, deck, investigator]);
   const ownerDeck = !deck?.owner || !userId || deck.owner.id === userId;
-  const [cards] = useLatestDeckCards(deck);
+  const [cards] = useLatestDeckCards(deck, false);
   const { listSeperator } = useContext(LanguageContext);
   const parsedDeck = useMemo(() => {
     if (!deck || uploading || !cards) {

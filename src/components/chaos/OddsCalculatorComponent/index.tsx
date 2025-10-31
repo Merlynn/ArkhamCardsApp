@@ -13,7 +13,6 @@ import Card from '@data/types/Card';
 import space, { isTablet, s } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
 import { useCounter, useCounters, useFlag } from '@components/core/hooks';
-import { useChaosBagResults } from '@data/hooks';
 import useCardsFromQuery from '@components/card/useCardsFromQuery';
 import { SCENARIO_CARDS_QUERY } from '@data/sqlite/query';
 import LoadingSpinner from '@components/core/LoadingSpinner';
@@ -27,9 +26,9 @@ import AppIcon from '@icons/AppIcon';
 import DeckBubbleHeader from '@components/deck/section/DeckBubbleHeader';
 import NewDialog from '@components/core/NewDialog';
 import ChaosToken, { getChaosTokenSize } from '../ChaosToken';
-import { loadChaosTokens } from '@data/scenario';
+import { useChaosTokens } from '@data/scenario/hooks';
 import LanguageContext from '@lib/i18n/LanguageContext';
-import { SingleChaosTokenValue, ChaosTokenModifier, SimpleChaosTokenValue } from '@data/scenario/types';
+import { SingleChaosTokenValue, ChaosTokenModifier, SimpleChaosTokenValue, ScenarioChaosTokens } from '@data/scenario/types';
 import ToggleTokenInput from './ToggleTokenInput';
 import { TINY_PHONE } from '@styles/sizes';
 import TokenTextLine from './TokenTextLine';
@@ -53,9 +52,11 @@ interface Props {
   cycleScenarios?: Scenario[];
   scenarioName: string | undefined;
   scenarioCard: Card | undefined;
+  scenarioIcon: string | undefined;
   scenarioCode: string | undefined;
   scenarioCardText: string | undefined;
   difficulty: CampaignDifficulty | undefined;
+  chaosBagResults: ChaosBagResultsT;
 }
 
 export const SCENARIO_CODE_FIXER: {
@@ -84,6 +85,7 @@ function parseSpecialTokenValuesText(
   scenarioCard: Card | undefined,
   scenarioCode: string | undefined,
   investigator: Card | undefined,
+  parsedTokens: ScenarioChaosTokens | undefined,
 ): SingleChaosTokenValue[] {
   const tokenText: { [key: string]: string | undefined } = {};
   const scenarioTokens: SingleChaosTokenValue[] = [];
@@ -172,7 +174,6 @@ function parseSpecialTokenValuesText(
       }
     });
   }
-  const parsedTokens = loadChaosTokens(lang, scenarioCard?.code, scenarioCode);
   if (parsedTokens) {
     const resultTokens: SingleChaosTokenValue[] = map(
       hardExpert ? parsedTokens.hard : parsedTokens.standard,
@@ -841,8 +842,10 @@ export default function OddsCalculatorComponent({
   scenarioName,
   scenarioCard,
   scenarioCardText,
+  scenarioIcon,
   scenarioCode,
   difficulty: campaignDifficulty,
+  chaosBagResults,
 }: Props) {
   const { lang } = useContext(LanguageContext);
   const [showBlurse, toggleShowBlurse] = useFlag(true);
@@ -857,7 +860,6 @@ export default function OddsCalculatorComponent({
   const [selectedInvestigator, onSelectInvestigator] = useState(0);
   const [scenarioCards, loading] = useCardsFromQuery({ query: SCENARIO_CARDS_QUERY });
   const [currentScenario, setCurrentScenario] = useState<Scenario | undefined>(undefined);
-  const chaosBagResults = useChaosBagResults(campaign.id);
   const chaosBag = useMemo(() => {
     const sealed: ChaosBag = {};
     forEach(chaosBagResults.sealedTokens, token => {
@@ -898,11 +900,11 @@ export default function OddsCalculatorComponent({
 
   const items: Item<Scenario | undefined>[] = useMemo(() => {
     return [
-      ...(scenarioName && scenarioCard && scenarioCode ? [
+      ...(scenarioName && scenarioCard && scenarioIcon ? [
         {
           title: scenarioName,
           value: undefined,
-          iconNode: <EncounterIcon encounter_code={scenarioCode} size={24} color={colors.M} />,
+          iconNode: <EncounterIcon encounter_code={scenarioIcon} size={24} color={colors.M} />,
         },
       ] : []),
       ...map(filter(
@@ -922,7 +924,7 @@ export default function OddsCalculatorComponent({
         };
       }),
     ];
-  }, [colors, cycleScenarios, standaloneScenarios, scenarioCode, scenarioCard, scenarioName]);
+  }, [colors, cycleScenarios, standaloneScenarios, scenarioIcon, scenarioCode, scenarioCard, scenarioName]);
   const name = currentScenario?.name || scenarioName;
   const code = currentScenario?.code || scenarioCode;
 
@@ -979,6 +981,7 @@ export default function OddsCalculatorComponent({
   }, [currentScenario, encounterCode, scenarioCardText, scenarioCards, hardOrExpert]);
 
   const selectedInvestigatorCard = selectedInvestigator >= 0 && selectedInvestigator < allInvestigators.length ? allInvestigators[selectedInvestigator] : undefined;
+  const parsedTokens = useChaosTokens(lang, scenarioCard?.code, currentScenario?.code || scenarioCode);
   const [specialTokenValues, initialXValue] = useMemo(() => {
     const stv: SingleChaosTokenValue[] = parseSpecialTokenValuesText(
       lang,
@@ -986,7 +989,8 @@ export default function OddsCalculatorComponent({
       scenarioText,
       scenarioCard,
       currentScenario?.code || scenarioCode,
-      selectedInvestigatorCard
+      selectedInvestigatorCard,
+      parsedTokens
     );
     const skull = find(stv, x => x.token === 'skull');
     const cultist = find(stv, x => x.token === 'cultist');
@@ -1003,7 +1007,7 @@ export default function OddsCalculatorComponent({
       stv,
       initialValues,
     ];
-  }, [lang, scenarioText, hardOrExpert, currentScenario, scenarioCard, scenarioCode, selectedInvestigatorCard]);
+  }, [lang, scenarioText, hardOrExpert, currentScenario, scenarioCard, scenarioCode, selectedInvestigatorCard, parsedTokens]);
   const [xValue, incXValue, decXValue] = useCounters(initialXValue);
 
   const allSpecialTokenValues: SimpleChaosTokenValue[] = useMemo(() => {
@@ -1155,7 +1159,11 @@ export default function OddsCalculatorComponent({
             <InvestigatorRadioChoice
               key={investigator.code}
               type="investigator"
-              investigator={investigator}
+              investigator={{
+                code: investigator.alternate_of_code ?? investigator.code,
+                card: investigator,
+                alternate_code: investigator.alternate_of_code ? investigator.code : undefined,
+              }}
               description={investigator.subname}
               index={index}
               onSelect={onSelectInvestigator}

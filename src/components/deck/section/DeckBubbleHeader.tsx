@@ -15,8 +15,10 @@ export default function DeckBubbleHeader({ title, color, inverted, crossedOut }:
   const { colors, typography } = useContext(StyleContext);
   return (
     <View style={[space.marginTopS, space.marginBottomS, styles.header, { backgroundColor: color || (inverted ? colors.D20 : colors.L20) }]}>
-      <Text style={[typography.subHeaderText, inverted ? typography.inverted : undefined, crossedOut ? styles.crossedOut : undefined]}>
-        { title }
+      <Text
+        style={[typography.subHeaderText, inverted ? typography.inverted : undefined, crossedOut ? styles.crossedOut : undefined]}
+        numberOfLines={1}>
+        {title}
       </Text>
     </View>
   );
@@ -29,6 +31,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
   crossedOut: {
     textDecorationLine: 'line-through',

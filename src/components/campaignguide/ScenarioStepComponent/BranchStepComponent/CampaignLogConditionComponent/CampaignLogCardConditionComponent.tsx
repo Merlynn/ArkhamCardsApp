@@ -11,7 +11,6 @@ import useSingleCard from '@components/card/useSingleCard';
 import StyleContext from '@styles/StyleContext';
 import space from '@styles/space';
 import Card from '@data/types/Card';
-import { useCards } from '@components/core/hooks';
 import useCardList from '@components/card/useCardList';
 import SetupStepWrapper from '@components/campaignguide/SetupStepWrapper';
 import CampaignGuideTextComponent from '@components/campaignguide/CampaignGuideTextComponent';
@@ -46,9 +45,9 @@ interface InvestigatorCardsProps {
 }
 
 export function CampaignLogCardsInvestigatorConditionComponent({ step, cards, prompt }: InvestigatorCardsProps) {
-  const { colors, typography } = useContext(StyleContext);
+  const { colors } = useContext(StyleContext);
   const { listSeperator } = useContext(LanguageContext);
-  const [investigatorCards, loading] = useCardList(cards, 'player');
+  const [investigatorCards, loading] = useCardList(cards, 'player', false);
   const investigators = useMemo(() => stringList(map(investigatorCards, card => card.name), listSeperator), [investigatorCards, listSeperator]);
   if (loading) {
     return <ActivityIndicator animating size="small" color={colors.lightText} />;
@@ -59,7 +58,7 @@ export function CampaignLogCardsInvestigatorConditionComponent({ step, cards, pr
         text={ngettext(
           msgid`${investigators} must read <b>${prompt}</b>.`,
           `${investigators} must read <b>${prompt}</b>.`,
-          investigators.length
+          investigatorCards.length
         )}
       />
     </SetupStepWrapper>

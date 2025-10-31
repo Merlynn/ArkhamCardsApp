@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { View } from 'react-native';
-import { flatMap } from 'lodash';
+import { find, flatMap } from 'lodash';
 import { t } from 'ttag';
 
 import CampaignGuide from '@data/scenario/CampaignGuide';
@@ -28,22 +28,27 @@ export default function CampaignLogSectionComponent({ sectionId, campaignGuide, 
   const editCampaignLogPressed = useCallback(() => {
     showTextEditDialog(t`Record that...`, '', saveTextEntry);
   }, [showTextEditDialog, saveTextEntry]);
+  const alternateTitleEntry = sectionId === 'task_progress' ? find(section.entries, entry => entry.type === 'basic') : undefined;
+  const alternateTitle = alternateTitleEntry ? campaignGuide.logEntry(sectionId, alternateTitleEntry.id, true) : undefined;
+  const alternateText = alternateTitle && alternateTitle.type === 'text' ? alternateTitle.text : undefined;
   return (
     <>
       { flatMap(section.entries, (entry, idx) => (
-        entry.id === '$relationship' ? null :
-        <View key={`${entry.id}_${idx}`}>
-          <CampaignLogEntryComponent
-            entry={entry}
-            sectionId={sectionId}
-            campaignGuide={campaignGuide}
-            section={section}
-            interScenarioId={interScenarioId}
-            title={title}
-            first={idx === 0}
-            last={idx === section.entries.length - 1}
-          />
-        </View>
+        (entry.id === '$relationship' || entry.id === '$fatigue' || (sectionId === 'task_progress' && entry.id !== '$count')) ? null : (
+          <View key={`${entry.id}_${idx}`}>
+            <CampaignLogEntryComponent
+              entry={entry}
+              sectionId={sectionId}
+              campaignGuide={campaignGuide}
+              section={section}
+              interScenarioId={interScenarioId}
+              title={title}
+              first={idx === 0}
+              last={idx === section.entries.length - 1}
+              alternateText={alternateText}
+            />
+          </View>
+        )
       )) }
       { interScenarioId && sectionId === 'campaign_notes' && (
         <DeckButton

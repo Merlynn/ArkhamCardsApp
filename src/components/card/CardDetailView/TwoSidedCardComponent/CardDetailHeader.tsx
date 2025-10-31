@@ -10,6 +10,7 @@ import space, { xs } from '@styles/space';
 import EncounterIcon from '@icons/EncounterIcon';
 import ArkhamIcon from '@icons/ArkhamIcon';
 import { useSettingValue } from '@components/core/hooks';
+import IconizedText from '@components/core/IconizedText';
 
 interface Props {
   card: Card;
@@ -184,13 +185,14 @@ function HeaderContent({ card, back }: { card: Card, back: boolean}) {
       <View style={styles.titleRow}>
         <View style={styles.column}>
           <View style={[styles.row, space.marginLeftS, space.paddingTopXs]}>
-            <Text style={[typography.cardName, { color: '#FFFFFF' }]}>
-              { `${name}${card.is_unique ? ' ✷' : ''}` }
+            <Text style={[typography.cardName, { color: '#FFFFFF' }]} numberOfLines={1}>
+              <IconizedText text={name} iconSize={17} color="#FFFFFF" />
+              { card.is_unique ? ' ✷' : '' }
             </Text>
           </View>
           { !!subname && (
-            <Text style={[typography.cardTraits, space.marginLeftS, { color: '#FFFFFF' }]}>
-              { card.subname }
+            <Text style={[typography.cardTraits, space.marginLeftS, { color: '#FFFFFF' }]} numberOfLines={1}>
+              <IconizedText text={card.subname ?? ''} iconSize={13} color="#FFFFFF" />
             </Text>
           ) }
         </View>
@@ -201,7 +203,7 @@ function HeaderContent({ card, back }: { card: Card, back: boolean}) {
 
 export default function CardDetailHeader({ card, width, back, linked }: Props) {
   return (
-    <RoundedFactionHeader faction={card.factionCode()} width={width} dualFaction={!!card.faction2_code}>
+    <RoundedFactionHeader isCardHeader faction={card.factionCode()} width={width} dualFaction={!!card.faction2_code}>
       <HeaderContent card={card} back={!!back} />
       <FactionIcons card={card} linked={linked} />
     </RoundedFactionHeader>

@@ -1,11 +1,11 @@
 import { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { BackHandler, Keyboard, Platform } from 'react-native';
-import { Navigation, NavigationButtonPressedEvent, ComponentDidAppearEvent, ComponentDidDisappearEvent, NavigationConstants } from 'react-native-navigation';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { forEach, findIndex, flatMap, debounce, find, uniq, keys } from 'lodash';
+import { useFocusEffect } from '@react-navigation/native';
 
-import { CampaignCycleCode, DeckId, MiscLocalSetting, MiscRemoteSetting, MiscSetting, SORT_BY_CARD_ID, SORT_BY_PACK, SORT_BY_TYPE, Slots, SortType } from '@actions/types';
-import Card, { CardsMap } from '@data/types/Card';
+import { CampaignCycleCode, DeckId, MiscLocalSetting, MiscRemoteSetting, MiscSetting, Slots, SortType } from '@actions/types';
+import Card, { CardsMap, InvestigatorChoice } from '@data/types/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   AppState,
@@ -20,7 +20,7 @@ import { DeckActions } from '@data/remote/decks';
 import SingleCampaignT from '@data/interfaces/SingleCampaignT';
 import { useDeck } from '@data/hooks';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import useCardsFromQuery from '@components/card/useCardsFromQuery';
 import { useCardMap } from '@components/card/useCardList';
 import { combineQueries, INVESTIGATOR_CARDS_QUERY, NO_CUSTOM_CARDS_QUERY, where } from '@data/sqlite/query';
@@ -28,7 +28,7 @@ import { PlayerCardContext } from '@data/sqlite/PlayerCardContext';
 import { setMiscSetting } from '@components/settings/actions';
 import specialCards from '@data/deck/specialCards';
 import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from '@components/Toast';
+import Toast from 'react-native-toast-message';
 import { RANDOM_BASIC_WEAKNESS } from '@app_constants';
 import { useAppDispatch } from '@app/store';
 
@@ -41,102 +41,46 @@ export function useBackButton(handler: () => boolean) {
   }, [handler]);
 }
 
-export function useNavigationConstants(): Partial<NavigationConstants> {
-  const [constants, setConstants] = useState<NavigationConstants>();
-  useEffect(() => {
-    let canceled = false;
-    Navigation.constants().then(r => {
-      if (!canceled) {
-        setConstants(r);
-      }
-    });
-    return () => {
-      canceled = true;
-    };
-  }, []);
-  return constants || {};
-}
-export function useNavigationButtonPressed(
-  handler: (event: NavigationButtonPressedEvent) => void,
-  componentId: string,
-  deps: any[],
-  debounceDelay: number = 300
-) {
-  const handlerRef = useRef(handler);
-  useEffect(() => {
-    handlerRef.current = handler;
-  }, [handler]);
-  const debouncedHandler = useMemo(() => debounce((event: NavigationButtonPressedEvent) => handlerRef.current && handlerRef.current(event), debounceDelay, { leading: true, trailing: false }), [debounceDelay]);
-  useEffect(() => {
-    const sub = Navigation.events().registerNavigationButtonPressedListener((event: NavigationButtonPressedEvent) => {
-      if (event.componentId === componentId) {
-        debouncedHandler(event);
-      }
-    });
-    return () => {
-      sub.remove();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentId, debouncedHandler, ...deps]);
-}
-
-export function useComponentVisible(componentId: string): boolean {
+export function useComponentVisible(): boolean {
   const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    const appearSub = Navigation.events().registerComponentDidAppearListener((event: ComponentDidAppearEvent) => {
-      if (event.componentId === componentId) {
-        setVisible(true);
-      }
-    });
-    const disappearSub = Navigation.events().registerComponentDidDisappearListener((event: ComponentDidDisappearEvent) => {
-      if (event.componentId === componentId) {
+
+  useFocusEffect(
+    useCallback(() => {
+      setVisible(true);
+      return () => {
         setVisible(false);
-      }
-    });
-    return () => {
-      appearSub.remove();
-      disappearSub.remove();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentId, setVisible]);
+      };
+    }, [])
+  );
+
   return visible;
 }
 
 export function useComponentDidAppear(
-  handler: (event: ComponentDidAppearEvent) => void,
-  componentId: string,
+  handler: () => void,
   deps: any[],
 ) {
-  useEffect(() => {
-    const sub = Navigation.events().registerComponentDidAppearListener((event: ComponentDidAppearEvent) => {
-      if (event.componentId === componentId) {
-        handler(event);
-      }
-    });
-    return () => {
-      sub.remove();
-    };
+  useFocusEffect(
+    useCallback(() => {
+      handler();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentId, handler, ...deps]);
+    }, deps)
+  );
 }
 
 
 export function useComponentDidDisappear(
-  handler: (event: ComponentDidDisappearEvent) => void,
-  componentId: string,
+  handler: () => void,
   deps: any[],
 ) {
-  useEffect(() => {
-    const sub = Navigation.events().registerComponentDidDisappearListener((event: ComponentDidDisappearEvent) => {
-      if (event.componentId === componentId) {
-        handler(event);
-      }
-    });
-    return () => {
-      sub.remove();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentId, handler, ...deps]);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        handler();
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps)
+  );
 }
 
 
@@ -264,7 +208,7 @@ export function useCounters(initialValue: Counters, extra?: {
   ) => {
     switch (action.type) {
       case 'set':
-      let newState = {
+        let newState = {
           ...state,
           [action.key]: action.value,
         };
@@ -359,7 +303,7 @@ export function useToggles(initialState: (Toggles) | (() => Toggles), sync?: (to
   (state?: Toggles) => void,
   (code: string) => void,
 ] {
-  const [toggles, updateToggles] = useReducer<Reducer<Toggles, SectionToggleAction>, null>((state: Toggles, action: SectionToggleAction) => {
+  const [toggles, updateToggles] = useReducer((state: Toggles, action: SectionToggleAction) => {
     switch (action.type) {
       case 'clear':
         return action.state || (typeof initialState === 'function' ? initialState() : initialState);
@@ -576,7 +520,7 @@ function lazyCardMap(indexBy: 'code' | 'id'): Reducer<LazyCardsState, LoadCardsA
 }
 
 export function useCards(indexBy: 'code' | 'id', initialCards?: Card[]): [CardsMap, (action: LoadCardsAction) => void, Set<string>] {
-  const [{ cards, fetching }, updateCards] = useReducer<Reducer<LazyCardsState, LoadCardsAction>, Card[] | null>(
+  const [{ cards, fetching }, updateCards] = useReducer(
     lazyCardMap(indexBy),
     initialCards || null,
     (initialCards: Card[] | null) => {
@@ -603,13 +547,24 @@ export function useTabooSetId(tabooSetOverride?: number): number {
   return useSelector((state: AppState) => selector(state, tabooSetOverride)) || 0;
 }
 
-export function usePlayerCards(codes: string[], tabooSetOverride?: number): [CardsMap | undefined, boolean, boolean] {
+export function usePlayerCards(
+  codes: string[],
+  store: boolean,
+  tabooSetOverride?: number,
+): [CardsMap | undefined, boolean, boolean] {
   const tabooSetId = useTabooSetId(tabooSetOverride);
   const [cards, setCards] = useState<CardsMap>();
   const [loading, setLoading] = useState(true);
   const { getPlayerCards, getExistingCards } = useContext(PlayerCardContext);
+  const previousTabooSetId = useRef<number | undefined>(tabooSetId);
+  const currentCards = useRef<CardsMap>(cards ?? {});
   useEffect(() => {
-    const knownCards = getExistingCards(tabooSetId);
+    if (cards) {
+      currentCards.current = cards;
+    }
+  }, [cards]);
+  useEffect(() => {
+    const knownCards: CardsMap = store ? getExistingCards(tabooSetId) : {};
     if (findIndex(codes, code => !knownCards[code]) === -1) {
       const cards: CardsMap = {};
       forEach(codes, code => {
@@ -620,23 +575,39 @@ export function usePlayerCards(codes: string[], tabooSetOverride?: number): [Car
       return;
     }
 
-    setLoading(true);
-    let canceled = false;
-    if (codes.length) {
-      getPlayerCards(codes, tabooSetId).then(cards => {
-        if (!canceled) {
-          setCards(cards);
-          setLoading(false);
+    const existingCards: CardsMap = {};
+    let codesToFetch: string[] = [];
+    if (previousTabooSetId.current === tabooSetId) {
+      forEach(codes, code => {
+        if (currentCards.current[code]) {
+          existingCards[code] = currentCards.current[code];
+        } else {
+          codesToFetch.push(code);
         }
-      });
+      })
     } else {
-      setCards({});
-      setLoading(false);
+      codesToFetch = codes;
     }
+    if (!codesToFetch.length) {
+      setCards(existingCards);
+      return;
+    }
+    let canceled = false;
+    setLoading(true);
+    getPlayerCards(codesToFetch, tabooSetId, store).then(cards => {
+      if (!canceled) {
+        previousTabooSetId.current = tabooSetId;
+        setCards({
+          ...cards,
+          ...existingCards,
+        });
+        setLoading(false);
+      }
+    });
     return () => {
       canceled = true;
     };
-  }, [tabooSetId, codes, getExistingCards, getPlayerCards, setLoading]);
+  }, [tabooSetId, codes, store, getExistingCards, getPlayerCards, setLoading]);
   const cardsMissing = useMemo(() => {
     if (codes.length === 0) {
       return false;
@@ -646,10 +617,10 @@ export function usePlayerCards(codes: string[], tabooSetOverride?: number): [Car
   return [cards, loading, cardsMissing];
 }
 
-export function usePlayerCardsFunc(generator: () => string[], deps: any[], tabooSetOverride?: number) {
+export function usePlayerCardsFunc(generator: () => string[], deps: any[], store: boolean, tabooSetOverride?: number) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const codes = useMemo(generator, deps);
-  return usePlayerCards(codes, tabooSetOverride);
+  return usePlayerCards(codes, store, tabooSetOverride);
 }
 
 function deckToSlots(deck: LatestDeckT): string[] {
@@ -667,29 +638,26 @@ function deckToSlots(deck: LatestDeckT): string[] {
 }
 
 const EMPTY_CARD_LIST: string[] = [];
-export function useLatestDeckCards(deck: LatestDeckT | undefined): [CardsMap | undefined, boolean, boolean] {
-  return usePlayerCardsFunc(() => deck ? deckToSlots(deck) : EMPTY_CARD_LIST, [deck], deck?.deck.taboo_id);
+export function useLatestDeckCards(deck: LatestDeckT | undefined, store: boolean): [CardsMap | undefined, boolean, boolean] {
+  return usePlayerCardsFunc(() => deck ? deckToSlots(deck) : EMPTY_CARD_LIST, [deck], store, deck?.deck.taboo_id);
 }
 
-export function useLatestDecksCards(decks: LatestDeckT[] | undefined, tabooSetId: number): [CardsMap | undefined, boolean, boolean] {
-  return usePlayerCardsFunc(() => decks ? uniq(flatMap(decks, deckToSlots)) : EMPTY_CARD_LIST, [decks], tabooSetId);
+export function useLatestDecksCards(decks: LatestDeckT[] | undefined, store: boolean, tabooSetId: number): [CardsMap | undefined, boolean, boolean] {
+  return usePlayerCardsFunc(() => decks ? uniq(flatMap(decks, deckToSlots)) : EMPTY_CARD_LIST, [decks], store, tabooSetId);
 }
 
 export function useInvestigators(codes: string[], tabooSetOverride?: number): CardsMap | undefined {
-  const [cards] = useCardMap(codes, 'player', tabooSetOverride)
+  const [cards] = useCardMap(codes, 'player', true, tabooSetOverride)
   return cards;
 }
 export function useCopyAction(value: string, confirmationText: string): () => void {
   return useCallback(() => {
     Clipboard.setString(value);
-    Navigation.showOverlay({
-      component: {
-        name: 'Toast',
-        passProps: {
-          message: confirmationText,
-        },
-        options: Toast.options,
-      },
+    Toast.show({
+      type: 'success',
+      text1: confirmationText,
+      position: 'bottom',
+      visibilityTime: 2000,
     });
   }, [value, confirmationText]);
 }
@@ -778,7 +746,7 @@ export function useAllInvestigators(
   return useCardsFromQuery({ query, sort, tabooSetOverride });
 }
 
-export function useParallelInvestigators(investigatorCode?: string, tabooSetOverride?: number): [Card[], boolean] {
+export function useParallelInvestigator(investigatorCode?: string, tabooSetOverride?: number): [Card[], boolean] {
   const query = useMemo(() => investigatorCode ? where('c.alternate_of_code = :investigatorCode', { investigatorCode }) : undefined, [investigatorCode]);
   const [cards, loading] = useCardsFromQuery({ query, tabooSetOverride });
   const { storePlayerCards } = useContext(PlayerCardContext);
@@ -790,23 +758,35 @@ export function useParallelInvestigators(investigatorCode?: string, tabooSetOver
   return [cards, loading];
 }
 
-export function useRequiredCards(investigatorFront: Card | undefined, investigatorBack: Card | undefined, tabooSetOverride?: number): [Card[], boolean] {
+export function useParallelInvestigators(codes?: string[], tabooSetOverride?: number): [Card[], boolean] {
+  const query = useMemo(() => codes ? where('c.alternate_of_code in (:...codes)', { codes }) : undefined, [codes]);
+  const [cards, loading] = useCardsFromQuery({ query, tabooSetOverride });
+  const { storePlayerCards } = useContext(PlayerCardContext);
+  useEffect(() => {
+    if (cards.length) {
+      storePlayerCards(cards);
+    }
+  }, [cards, storePlayerCards]);
+  return [cards, loading];
+}
+
+export function useRequiredCards(investigator?: InvestigatorChoice, tabooSetOverride?: number): [Card[], boolean] {
   const [codes, loading] = useMemo(() => {
-    if (!investigatorFront || !investigatorBack) {
+    if (!investigator?.front || !investigator?.back) {
       return [[], true];
     }
     return [
       uniq([
-        ...flatMap(investigatorBack.deck_requirements?.card || [], req => [
+        ...flatMap(investigator.back.deck_requirements?.card || [], req => [
           ...(req.code ? [req.code] : []),
           ...(req.alternates || []),
         ]),
-        ...(specialCards[investigatorFront.code]?.front?.codes || []),
-        ...(specialCards[investigatorBack.code]?.back?.codes || []),
+        ...(specialCards[investigator.front.code]?.front?.codes || []),
+        ...(specialCards[investigator.back.code]?.back?.codes || []),
       ]),
       false,
     ];
-  }, [investigatorBack, investigatorFront]);
+  }, [investigator]);
   const query = useMemo(() => codes?.length ? where('c.code in (:...codes)', { codes }) : undefined, [codes]);
   const [cards, cardsLoading] = useCardsFromQuery({ query, tabooSetOverride });
   const { storePlayerCards } = useContext(PlayerCardContext);
@@ -903,7 +883,7 @@ export function usePressCallback(callback: undefined | (() => void), bufferTime:
 }
 
 export function useInterval(callback: () => void, delay: number) {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<() => void>(null);
 
   useEffect(() => {
     savedCallback.current = callback;

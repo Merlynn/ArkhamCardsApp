@@ -3,19 +3,19 @@ import { View } from 'react-native';
 
 import Card from '@data/types/Card';
 import DeckQuantityComponent from './DeckQuantityComponent';
-import { CardCount } from './CardCount';
+import { CardCount, DeckCardCount } from './CardCount';
 import CardUpgradeButton from './CardUpgradeButton';
 import CardToggle from './CardToggle';
+import CardChecklistToggles from './CardChecklistToggles';
 import CardQuantityComponent from './CardQuantityComponent';
 import { EditSlotsActions } from '@components/core/hooks';
-import { DeckId } from '@actions/types';
+import { AttachableDefinition } from '@actions/types';
 import ShuffleButton, { DraftButton } from './ShuffleButton';
 import { DiscountComponent } from './DiscountComponent';
+import { AttachmentDetailCount } from './AttachmentComponent';
 
 export type ControlType = {
   type: 'deck';
-  deckId: DeckId;
-  min: number | undefined;
   limit: number;
   mode?: 'side' | 'extra' | 'ignore';
 } | {
@@ -27,14 +27,20 @@ export type ControlType = {
   showZeroCount: boolean;
   reversed?: boolean;
 } | {
+  type: 'deck_count';
+  count: number;
+  deltaCountMode?: boolean;
+  showZeroCount?: boolean;
+} | {
   type: 'count';
   count: number;
   deltaCountMode?: boolean;
   showZeroCount?: boolean;
 } | {
+  type: 'attachment';
+  attachment: AttachableDefinition;
+} | {
   type: 'upgrade';
-  deckId: DeckId;
-  min: number | undefined;
   limit: number;
   mode?: 'side' | 'extra' | 'ignore'
   editable: boolean;
@@ -48,8 +54,8 @@ export type ControlType = {
 } | {
   type: 'count_with_toggle';
   count: number;
-  value: boolean;
-  toggleValue: (value: boolean) => void;
+  values: number[];
+  toggleValue: (value: number, toggle: boolean) => void;
 } | {
   type: 'shuffle';
   count?: number;
@@ -73,10 +79,8 @@ export function ControlComponent({ card, control, handleCardPress }: Props) {
     case 'deck':
       return (
         <DeckQuantityComponent
-          deckId={control.deckId}
-          min={control.min}
           limit={control.limit}
-          code={card.code}
+          card={card}
           mode={control.mode}
           editable
         />
@@ -90,28 +94,57 @@ export function ControlComponent({ card, control, handleCardPress }: Props) {
       );
     case 'draft':
       return <DraftButton card={card} onPress={control.onDraft} />;
+    case 'attachment': {
+      return (
+        <AttachmentDetailCount
+          code={card.code}
+          attachment={control.attachment}
+        />
+      );
+    }
+    case 'deck_count':
+      return (
+        <DeckCardCount
+          count={control.count}
+          card={card}
+          deltaCountMode={control.deltaCountMode}
+          showZeroCount={control.showZeroCount}
+        />
+      );
     case 'count':
-      return <CardCount count={control.count} deltaCountMode={control.deltaCountMode} showZeroCount={control.showZeroCount} />;
+      return (
+        <CardCount
+          count={control.count}
+          deltaCountMode={control.deltaCountMode}
+          showZeroCount={control.showZeroCount}
+        />
+      );
     case 'upgrade':
       return (
         <CardUpgradeButton
           onUpgradePress={control.customizable ? handleCardPress : control.onUpgradePress}
           card={card}
-          deckId={control.deckId}
-          min={control.min}
           editable={control.editable}
           limit={control.limit}
           mode={control.mode}
         />
       );
     case 'toggle':
-      return <CardToggle value={control.value} toggleValue={control.toggleValue} disabled={control.disabled} />;
+      return (
+        <CardToggle
+          value={control.value}
+          toggleValue={control.toggleValue}
+          disabled={control.disabled}
+        />
+      );
     case 'count_with_toggle':
       return (
-        <>
-          <CardCount count={control.count} />
-          <CardToggle value={control.value} toggleValue={control.toggleValue} />
-        </>
+        <CardChecklistToggles
+          code={card.code}
+          values={control.values}
+          toggleValue={control.toggleValue}
+          quantity={control.count}
+        />
       );
     case 'quantity':
       return (

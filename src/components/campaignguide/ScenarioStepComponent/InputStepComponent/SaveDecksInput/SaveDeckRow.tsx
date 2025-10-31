@@ -15,7 +15,7 @@ import Card from '@data/types/Card';
 import space, { s, xs } from '@styles/space';
 import CampaignStateHelper from '@data/scenario/CampaignStateHelper';
 import ScenarioStateHelper from '@data/scenario/ScenarioStateHelper';
-import GuidedCampaignLog from '@data/scenario/GuidedCampaignLog';
+import GuidedCampaignLog, { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 import StyleContext from '@styles/StyleContext';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import { DeckActions } from '@data/remote/decks';
@@ -29,6 +29,7 @@ import { useAppDispatch } from '@app/store';
 import useTraumaSection from '../UpgradeDecksInput/useTraumaSection';
 import AppIcon from '@icons/AppIcon';
 import useDeckUpgradeAction from '@components/deck/useDeckUpgradeAction';
+import { useNavigation } from '@react-navigation/native';
 
 function deckMessage(saved: boolean, hasDeck: boolean, hasAdjustments: boolean, hasDeckChanges: boolean, isOwner: boolean) {
   if (saved) {
@@ -49,11 +50,10 @@ function deckMessage(saved: boolean, hasDeck: boolean, hasAdjustments: boolean, 
   return t`When you have finished making adjustments, press the 'Save' button to record your changes.`;
 }
 interface Props {
-  componentId: string;
   id: string;
   campaignState: CampaignStateHelper;
   scenarioState: ScenarioStateHelper;
-  investigator: Card;
+  investigator: CampaignInvestigator;
   deck?: LatestDeckT;
   campaignLog: GuidedCampaignLog;
   editable: boolean;
@@ -62,12 +62,11 @@ interface Props {
   adjustXp: boolean;
 }
 
-function computeChoiceId(stepId: string, investigator: Card) {
+function computeChoiceId(stepId: string, investigator: CampaignInvestigator) {
   return `${stepId}#${investigator.code}`;
 }
 
 function SaveDeckRow({
-  componentId,
   id,
   campaignState,
   scenarioState,
@@ -82,6 +81,7 @@ function SaveDeckRow({
   const { colors, typography, width } = useContext(StyleContext);
   const { userId, arkhamDbUser } = useContext(ArkhamCardsAuthContext);
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
   const choiceId = useMemo(() => {
     return computeChoiceId(id, investigator);
   }, [id, investigator]);
@@ -142,8 +142,8 @@ function SaveDeckRow({
   }, [deck, userId, storyAssetDeltas, adjustXp, saveDeck, saveDelayedDeck, saveCampaignLog]);
 
   const onCardPress = useCallback((card: Card) => {
-    showCard(componentId, card.code, card, colors, { showSpoilers: true });
-  }, [componentId, colors]);
+    showCard(navigation, card.code, card, colors, { showSpoilers: true });
+  }, [navigation, colors]);
 
   const renderDeltas = useCallback((cards: Card[], deltas: Slots) => {
     return map(
@@ -171,7 +171,7 @@ function SaveDeckRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const storyAssetCodes = useMemo(() => flatMap(storyAssetDeltas, (count, code) => count !== 0 ? code : []), [storyAssetDeltas]);
-  const [storyAssetCards] = useCardList(storyAssetCodes, 'player');
+  const [storyAssetCards] = useCardList(storyAssetCodes, 'player', false);
   const storyAssetSection = useMemo(() => {
     if (!storyAssetCards.length) {
       return null;
@@ -241,7 +241,7 @@ function SaveDeckRow({
     const deckButton = deck && choices !== undefined && deckChoice && (
       <ShowDeckButton
         deckId={deckChoice}
-        investigator={investigator}
+        investigator={investigator.card}
       />
     );
 
@@ -291,7 +291,7 @@ function SaveDeckRow({
     <View style={space.paddingBottomS}>
       <AnimatedCompactInvestigatorRow
         yithian={isYithian}
-        investigator={investigator}
+        investigator={investigator.card}
         open={choices === undefined || open}
         toggleOpen={toggleOpen}
         disabled={choices === undefined}

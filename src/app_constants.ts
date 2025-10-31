@@ -1,42 +1,42 @@
-import { Platform } from 'react-native';
 import { find, forEach } from 'lodash';
 import { t } from 'ttag';
 
-import { ChaosTokenModifier, SimpleChaosTokenValue } from '@data/scenario/types';
-import { Pack } from '@actions/types';
-
-export const ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA = true;
-export const ENABLE_ARKHAM_CARDS_ACCOUNT_IOS = true;
-export const ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID_BETA = true;
-export const ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID = true;
-export const ENABLE_ARKHAM_CARDS_ACCOUNT = (Platform.OS === 'ios' && (ENABLE_ARKHAM_CARDS_ACCOUNT_IOS || ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA)) ||
-  (Platform.OS === 'android' && (ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID || ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID_BETA));
+import {
+  ChaosTokenModifier,
+  SimpleChaosTokenValue,
+} from '@data/scenario/types';
+import { AttachableDefinition, Pack } from '@actions/types';
+import { JOE_DIAMOND_CODE } from '@data/deck/specialCards';
+import Card from '@data/types/Card';
 
 export type TypeCodeType =
-  'asset' |
-  'event' |
-  'skill' |
-  'act' |
-  'agenda' |
-  'story' |
-  'enemy' |
-  'treachery' |
-  'location' |
-  'investigator' |
-  'scenario' |
-  'key';
+  | 'asset'
+  | 'event'
+  | 'skill'
+  | 'act'
+  | 'agenda'
+  | 'story'
+  | 'enemy'
+  | 'enemy_location'
+  | 'treachery'
+  | 'location'
+  | 'investigator'
+  | 'scenario'
+  | 'key';
 
 export type SlotCodeType =
-  'hand' |
-  'hand x2' |
-  'arcane' |
-  'arcane x2' |
-  'accessory' |
-  'body' |
-  'ally' |
-  'tarot';
+  | 'hand'
+  | 'hand x2'
+  | 'arcane'
+  | 'arcane x2'
+  | 'accessory'
+  | 'body'
+  | 'ally'
+  | 'tarot';
 
-export function asSlotCodeType(val: string | undefined): SlotCodeType | undefined {
+export function asSlotCodeType(
+  val: string | undefined
+): SlotCodeType | undefined {
   if (!val) {
     return undefined;
   }
@@ -67,13 +67,13 @@ export const SLOTS: SlotCodeType[] = [
 ];
 
 export type FactionCodeType =
-  'guardian' |
-  'seeker' |
-  'rogue' |
-  'mystic' |
-  'survivor' |
-  'neutral' |
-  'mythos';
+  | 'guardian'
+  | 'seeker'
+  | 'rogue'
+  | 'mystic'
+  | 'survivor'
+  | 'neutral'
+  | 'mythos';
 
 export const CORE_FACTION_CODES: FactionCodeType[] = [
   'mystic',
@@ -110,11 +110,12 @@ export const FACTION_CODE_TO_STRING = {
   dual: 'Dual',
 };
 
-export type SkillCodeType = 'willpower' |
-  'intellect' |
-  'combat' |
-  'agility' |
-  'wild';
+export type SkillCodeType =
+  | 'willpower'
+  | 'intellect'
+  | 'combat'
+  | 'agility'
+  | 'wild';
 
 export const BASIC_SKILLS: SkillCodeType[] = [
   'willpower',
@@ -123,21 +124,31 @@ export const BASIC_SKILLS: SkillCodeType[] = [
   'agility',
 ];
 
-export const SKILLS: SkillCodeType[] = [
-  ...BASIC_SKILLS,
-  'wild',
-];
+export const SKILLS: SkillCodeType[] = [...BASIC_SKILLS, 'wild'];
 
 export type SpecialChaosTokenType =
-  'frost' |
-  'bless' | 'curse' |
-  'skull' | 'cultist' | 'tablet' | 'elder_thing' |
-  'auto_fail' | 'elder_sign';
+  | 'frost'
+  | 'bless'
+  | 'curse'
+  | 'skull'
+  | 'cultist'
+  | 'tablet'
+  | 'elder_thing'
+  | 'auto_fail'
+  | 'elder_sign';
 
 export type ChaosTokenType =
-  '+1' | '0' | '-1' | '-2' | '-3' |
-  '-4' | '-5' | '-6' | '-7' | '-8' |
-  SpecialChaosTokenType;
+  | '+1'
+  | '0'
+  | '-1'
+  | '-2'
+  | '-3'
+  | '-4'
+  | '-5'
+  | '-6'
+  | '-7'
+  | '-8'
+  | SpecialChaosTokenType;
 
 export function isSpecialToken(token: ChaosTokenType) {
   switch (token) {
@@ -156,12 +167,28 @@ export function isSpecialToken(token: ChaosTokenType) {
   }
 }
 
+export const POOL_CURRENT_PACKS = ['tskp', 'fhvp', 'tdcp'];
+export const POOL_INVESTIGATOR_CYCLE = 'cycle:investigator';
+export const POOL_INVESTIGATOR_PACKS = ['nat','har','win','jac','ste'];
+
 export const CHAOS_TOKENS: ChaosTokenType[] = [
-  '+1', '0', '-1', '-2', '-3',
-  '-4', '-5', '-6', '-7', '-8',
+  '+1',
+  '0',
+  '-1',
+  '-2',
+  '-3',
+  '-4',
+  '-5',
+  '-6',
+  '-7',
+  '-8',
   'frost',
-  'skull', 'cultist', 'tablet', 'elder_thing',
-  'auto_fail', 'elder_sign',
+  'skull',
+  'cultist',
+  'tablet',
+  'elder_thing',
+  'auto_fail',
+  'elder_sign',
 ];
 
 export type ChaosBag = {
@@ -179,15 +206,15 @@ export const CHAOS_TOKEN_ORDER: ChaosBag = {
   '-6': 7,
   '-7': 8,
   '-8': 9,
-  'skull': 10,
-  'cultist': 11,
-  'tablet': 12,
-  'elder_thing': 13,
-  'auto_fail': 14,
-  'elder_sign': 15,
-  'frost': 16,
-  'bless': 17,
-  'curse': 18,
+  skull: 10,
+  cultist: 11,
+  tablet: 12,
+  elder_thing: 13,
+  auto_fail: 14,
+  elder_sign: 15,
+  frost: 16,
+  bless: 17,
+  curse: 18,
 };
 
 export const SPECIAL_TOKENS: SpecialChaosTokenType[] = [
@@ -212,29 +239,51 @@ export const CHAOS_TOKEN_COLORS: { [skill: string]: string } = {
 
 export function chaosTokenName(token: ChaosTokenType) {
   switch (token) {
-    case 'frost': return t`Frost`;
-    case 'bless': return t`Bless`;
-    case 'curse': return t`Curse`;
-    case 'skull': return t`Skull`;
-    case 'cultist': return t`Cultist`;
-    case 'tablet': return t`Tablet`;
-    case 'elder_thing': return t`Elder Thing`;
-    case 'auto_fail': return t`Auto-Fail`;
-    case 'elder_sign': return t`Elder Sign`;
-    case '+1': return '+1';
-    case '0': return '0';
-    case '-1': return '-1';
-    case '-2': return '-2';
-    case '-3': return '-3';
-    case '-4': return '-4';
-    case '-5': return '-5';
-    case '-6': return '-6';
-    case '-7': return '-7';
-    case '-8': return '-8';
+    case 'frost':
+      return t`Frost`;
+    case 'bless':
+      return t`Bless`;
+    case 'curse':
+      return t`Curse`;
+    case 'skull':
+      return t`Skull`;
+    case 'cultist':
+      return t`Cultist`;
+    case 'tablet':
+      return t`Tablet`;
+    case 'elder_thing':
+      return t`Elder Thing`;
+    case 'auto_fail':
+      return t`Auto-Fail`;
+    case 'elder_sign':
+      return t`Elder Sign`;
+    case '+1':
+      return '+1';
+    case '0':
+      return '0';
+    case '-1':
+      return '-1';
+    case '-2':
+      return '-2';
+    case '-3':
+      return '-3';
+    case '-4':
+      return '-4';
+    case '-5':
+      return '-5';
+    case '-6':
+      return '-6';
+    case '-7':
+      return '-7';
+    case '-8':
+      return '-8';
   }
 }
 
-export function getChaosTokenValue(token: ChaosTokenType, specialTokenValues: SimpleChaosTokenValue[]): ChaosTokenModifier | undefined {
+export function getChaosTokenValue(
+  token: ChaosTokenType,
+  specialTokenValues: SimpleChaosTokenValue[]
+): ChaosTokenModifier | undefined {
   switch (token) {
     case 'frost':
       return { modifier: -1, reveal_another: 1 };
@@ -249,25 +298,34 @@ export function getChaosTokenValue(token: ChaosTokenType, specialTokenValues: Si
     case 'tablet':
     case 'elder_thing':
     case 'elder_sign': {
-      const specialValue = find(specialTokenValues, t => t.token === token);
+      const specialValue = find(specialTokenValues, (t) => t.token === token);
       if (!specialValue) {
         return undefined;
       }
       return specialValue.value;
     }
-    case '+1': return { modifier: 1 };
-    case '0': return { modifier: 0 };
-    case '-1': return { modifier: -1 };
-    case '-2': return { modifier: -2 };
-    case '-3': return { modifier: -3 };
-    case '-4': return { modifier: -4 };
-    case '-5': return { modifier: -5 };
-    case '-6': return { modifier: -6 };
-    case '-7': return { modifier: -7 };
-    case '-8': return { modifier: -8 };
+    case '+1':
+      return { modifier: 1 };
+    case '0':
+      return { modifier: 0 };
+    case '-1':
+      return { modifier: -1 };
+    case '-2':
+      return { modifier: -2 };
+    case '-3':
+      return { modifier: -3 };
+    case '-4':
+      return { modifier: -4 };
+    case '-5':
+      return { modifier: -5 };
+    case '-6':
+      return { modifier: -6 };
+    case '-7':
+      return { modifier: -7 };
+    case '-8':
+      return { modifier: -8 };
   }
 }
-
 
 export const CHAOS_BAG_TOKEN_COUNTS: ChaosBag = {
   '+1': 3,
@@ -285,13 +343,13 @@ export const CHAOS_BAG_TOKEN_COUNTS: ChaosBag = {
   cultist: 4,
   tablet: 4,
   elder_thing: 4,
-  auto_fail: 1,
-  elder_sign: 1,
+  auto_fail: 2,
+  elder_sign: 2,
 };
 
 export const BURN_AFTER_READING_CODE = '08076';
-export const PRECIOUS_MEMENTO_FORMER_CODE = '08114'
-export const PRECIOUS_MEMENTO_FUTURE_CODE = '08115'
+export const PRECIOUS_MEMENTO_FORMER_CODE = '08114';
+export const PRECIOUS_MEMENTO_FUTURE_CODE = '08115';
 export const RAVEN_QUILL_CODE = '09042';
 export const ARCANE_RESEARCH_CODE = '04109';
 export const ADAPTABLE_CODE = '02110';
@@ -311,6 +369,64 @@ export const FORCED_LEARNING_CODE = '08031'; // Deck size +15
 export const UNDERWORLD_SUPPORT_CODE = '08046';
 export const DOWN_THE_RABBIT_HOLE_CODE = '08059';
 export const UNDERWORLD_MARKET_CODE = '09077';
+export const BEWITCHING_CODE = '10079';
+export const STICK_TO_THE_PLAN_CODE = '03264';
+export const UNSOLVED_CASE_CODE = '05010';
+export const ELDRITCH_BRAND_CODE = '11080';
+
+export function getAttachableCards(): { [code: string]: AttachableDefinition } {
+  return {
+    [BEWITCHING_CODE]: {
+      code: BEWITCHING_CODE,
+      limit: 1,
+      name: t`Attachments`,
+      buttonLabel: t`Bewitching`,
+      traits: ['trick'],
+      icon: 'wand',
+      targetSize: 3,
+    },
+    [JOE_DIAMOND_CODE]: {
+      code: JOE_DIAMOND_CODE,
+      traits: ['insight'],
+      name: t`Hunch deck`,
+      buttonLabel: t`Hunch deck`,
+      icon: 'lightbulb',
+      targetSize: 11,
+      requiredCards: {
+        [UNSOLVED_CASE_CODE]: 1,
+      },
+      filter: (card: Card) => card.type_code === 'event',
+    },
+    [STICK_TO_THE_PLAN_CODE]: {
+      code: STICK_TO_THE_PLAN_CODE,
+      limit: 1,
+      traits: ['tactic', 'supply'],
+      name: t`Attachments`,
+      buttonLabel: t`Stick to the Plan`,
+      icon: 'package',
+      targetSize: 3,
+      filter: (card: Card) => card.type_code === 'event',
+    },
+    [UNDERWORLD_MARKET_CODE]: {
+      code: UNDERWORLD_MARKET_CODE,
+      traits: ['illicit'],
+      name: t`Market deck`,
+      buttonLabel: t`Market deck`,
+      icon: 'store',
+      targetSize: 10,
+    },
+    [ELDRITCH_BRAND_CODE]: {
+      code: ELDRITCH_BRAND_CODE,
+      traits: ['spell'],
+      name: t`Branded spell`,
+      buttonLabel: t`Branded spell`,
+      icon: 'stamp',
+      targetSize: 1,
+      filter: (card: Card) => card.type_code === 'asset' && !card.restrictions_investigator,
+    },
+  };
+}
+export const ATTACHABLE_CARDS: { [code: string]: AttachableDefinition } = getAttachableCards();
 
 export const UNIDENTIFIED_UNTRANSLATED = new Set([
   '02021', // Strange Solution
@@ -329,7 +445,7 @@ export interface TarotCard {
   inverted_text: string;
 }
 
-export function getTarotCards(): { [id: string] : TarotCard } {
+export function getTarotCards(): { [id: string]: TarotCard } {
   return {
     the_fool: {
       id: 'the_fool',
@@ -488,20 +604,80 @@ export function getTarotCards(): { [id: string] : TarotCard } {
   };
 }
 
-
 export type ReprintPackCode =
-  'dwlp' | 'dwlc' |
-  'ptcp' | 'ptcc' |
-  'tfap' | 'tfac' |
-  'tcup' | 'tcuc' |
-  'tdep' | 'tdec' |
-  'ticp' | 'ticc';
+  | 'dwlp'
+  | 'dwlc'
+  | 'ptcp'
+  | 'ptcc'
+  | 'tfap'
+  | 'tfac'
+  | 'tcup'
+  | 'tcuc'
+  | 'tdep'
+  | 'tdec'
+  | 'ticp'
+  | 'ticc';
 
 export interface ReprintPack {
   code: ReprintPackCode;
   packs: string[];
+  codes?: string[];
   player: boolean;
   cyclePosition: number;
+}
+
+
+export function getCardPoolSections(): {
+  section: string;
+  packs: string[];
+  type: 'core' | 'fan' | 'custom' | 'limited';
+  fanMade?: boolean;
+  custom?: boolean;
+}[] {
+  return [
+    {
+      type: 'core',
+      section: t`Core set`,
+      packs: ['core', 'rcore'],
+    },
+    {
+      type: 'limited',
+      section: t`Cycles`,
+      packs: [
+        'dwlp',
+        'ptcp',
+        'tfap',
+        'tcup',
+        'tdep',
+        'ticp',
+        'eoep',
+        'tskp',
+        'fhvp',
+        'tdcp',
+      ],
+    },
+    {
+      type: 'custom',
+      section: t`Starter decks`,
+      custom: true,
+      packs: [
+        'nat',
+        'har',
+        'win',
+        'jac',
+        'ste',
+      ],
+    },
+    {
+      type: 'fan',
+      section: t`Fan-made Cycles`,
+      fanMade: true,
+      packs: [
+        'zgoo',
+        'zdh',
+      ],
+    },
+  ];
 }
 export const specialPacks: ReprintPack[] = [
   {
@@ -549,10 +725,22 @@ export const specialPacks: ReprintPack[] = [
   {
     code: 'tcuc',
     packs: ['tcu', 'tsn', 'wos', 'fgg', 'uad', 'icc', 'bbt'],
+    codes: [
+      // x2
+      '05021', // Delay the inevitable
+      '05026', // Curiosity
+      '05029', // Money talks
+      '05030', // Cunning
+      '05037', // Act of desperation
+      '05038', // Able bodied
+      // x1
+      '05024', // Fingerprint Kit
+      '05025', // Connect the Dots
+      '05028', // Well Connected
+    ],
     player: false,
     cyclePosition: 5,
   },
-  /*
   {
     code: 'tdep',
     packs: ['tde', 'sfk', 'tsh', 'dsm', 'pnr', 'wgd', 'woc'],
@@ -577,22 +765,33 @@ export const specialPacks: ReprintPack[] = [
     player: false,
     cyclePosition: 7,
   },
-  */
 ];
 
-export const specialReprintPlayerPacks: { [code: string]: string | undefined } = {};
-export const specialReprintCampaignPacks: { [code: string]: string | undefined } = {};
-forEach(specialPacks, pack => {
-  forEach(pack.packs, p => {
+export const specialReprintPlayerPacks: {
+  [pack_code: string]: string | undefined;
+} = {};
+export const specialReprintCampaignPacks: {
+  [pack_code: string]: string | undefined;
+} = {};
+export const specialReprintCardPacks: {
+  [card_code: string]: string | undefined;
+} = {};
+forEach(specialPacks, (pack) => {
+  forEach(pack.packs, (p) => {
     if (pack.player) {
       specialReprintPlayerPacks[p] = pack.code;
     } else {
       specialReprintCampaignPacks[p] = pack.code;
     }
   });
+  forEach(pack.codes ?? [], (c) => {
+    specialReprintCardPacks[c] = pack.code;
+  });
 });
 
-export const specialPacksSet: Set<string> = new Set(specialPacks.map(p => p.code));
+export const specialPacksSet: Set<string> = new Set(
+  specialPacks.map((p) => p.code)
+);
 
 export function getSpecialPackNames(): { [code: string]: string } {
   return {
@@ -621,4 +820,48 @@ export function reprintPackToPack(pack: ReprintPack): Pack {
     known: 1,
     total: 1,
   };
+}
+
+/**
+ * Expands a pack code into its physical pack codes.
+ * - If it's POOL_INVESTIGATOR_CYCLE, expands to all investigator packs
+ * - If it's a special/virtual pack (like ptcp, dwlp), expands to its physical packs
+ * - Otherwise returns the pack code as-is
+ */
+export function expandPackCode(packCode: string): string[] {
+  if (packCode === POOL_INVESTIGATOR_CYCLE) {
+    return POOL_INVESTIGATOR_PACKS;
+  }
+  const specialPack = specialPacks.find(sp => sp.code === packCode);
+  if (specialPack) {
+    return specialPack.packs;
+  }
+  return [packCode];
+}
+
+export function cycleName(position: string): string {
+  switch (position) {
+    case '1': return t`Core Set`;
+    case '1_cycle': return t`Campaigns`;
+    case '2': return t`The Dunwich Legacy`;
+    case '3': return t`The Path to Carcosa`;
+    case '4': return t`The Forgotten Age`;
+    case '5': return t`The Circle Undone`;
+    case '6': return t`The Dream-Eaters`;
+    case '7': return t`The Innsmouth Conspiracy`;
+    case '8': return t`Edge of the Earth`;
+    case '9': return t`The Scarlet Keys`;
+    case '10': return t`The Feast of Hemlock Vale`;
+    case '11': return t`The Drowned City`;
+    case '50': return t`Return to...`;
+    case '60': return t`Investigator Starter Decks`;
+    case '70': return t`Standalone`;
+    case '80': return t`Books`;
+    case '90': return t`Parallel`;
+    case '100': return t`Non-canon Content`;
+    case '110': return t`Fan-made Campaigns`;
+    case '120': return t`Fan-made Scenarios`;
+    case '130': return t`Fan-made Investigators`;
+    default: return 'Unknown';
+  }
 }

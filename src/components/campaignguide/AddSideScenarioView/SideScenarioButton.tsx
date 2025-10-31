@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Navigation } from 'react-native-navigation';
+
 import { head } from 'lodash';
 import { t } from 'ttag';
 
@@ -8,19 +8,16 @@ import EncounterIcon from '@icons/EncounterIcon';
 import NavButton from '@components/core/NavButton';
 import { ChallengeData, CustomData, Scenario } from '@data/scenario/types';
 import space, { s, m } from '@styles/space';
-import { ChallengeScenarioProps } from '@components/campaignguide/ChallengeScenarioView';
 import StyleContext from '@styles/StyleContext';
 import useSingleCard from '@components/card/useSingleCard';
-import useCardList from '@components/card/useCardList';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   scenario: Scenario;
   onPress: (scenario: Scenario) => void;
   useTime: boolean;
 }
 
-const EMPTY_LIST: string[] = [];
 function ChallengeBlock({ scenario, challenge, useTime }: { scenario: Scenario; challenge: ChallengeData; useTime: boolean }) {
   const { typography } = useContext(StyleContext);
   const [investigatorCard] = useSingleCard(challenge.investigator, 'player');
@@ -96,37 +93,20 @@ function CustomBlock({ scenario, custom, useTime }: { scenario: Scenario; custom
     </View>
   );
 }
-export default function SideScenarioButton({ scenario, onPress, componentId, useTime }: Props) {
+export default function SideScenarioButton({ scenario, onPress, useTime }: Props) {
   const { typography, colors } = useContext(StyleContext);
-
+  const navigation = useNavigation();
   const _onPress = () => {
     onPress(scenario);
   };
 
   const _onPressChallenge = () => {
     if (scenario.challenge) {
-      Navigation.push<ChallengeScenarioProps>(componentId, {
-        component: {
-          name: 'Guide.ChallengeScenario',
-          passProps: {
-            scenario,
-            challenge: scenario.challenge,
-            onPress,
-          },
-          options: {
-            topBar: {
-              title: {
-                text: scenario.scenario_name,
-              },
-              subtitle: {
-                text: t`Challenge Scenario`,
-              },
-              backButton: {
-                title: t`Cancel`,
-              },
-            },
-          },
-        },
+      navigation.navigate('Guide.ChallengeScenario', {
+        scenario,
+        challenge: scenario.challenge,
+        onPress,
+        title: scenario.scenario_name,
       });
     }
   };

@@ -10,8 +10,7 @@ import MiniDeckT from '@data/interfaces/MiniDeckT';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { useLatestDeck } from '@data/hooks';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
-import { useDebounce } from 'use-debounce/lib';
-import useSingleCard from '@components/card/useSingleCard';
+import { useDebounce } from 'use-debounce';
 import ArkhamLargeList from '@components/core/ArkhamLargeList';
 import ThinDeckListRow from './ThinDeckListRow';
 
@@ -43,7 +42,6 @@ function DeckListItem({
   const { width } = useContext(StyleContext);
   const { lang } = useContext(LanguageContext);
   const deck = useLatestDeck(deckId, deckToCampaign);
-  const [investigator] = useSingleCard(deck?.investigator, 'player', deck?.deck.taboo_id || 0);
   if (!deck) {
     return null;
   }
@@ -52,7 +50,6 @@ function DeckListItem({
       key={deckId.id.uuid}
       lang={lang}
       deck={deck}
-      investigator={investigator}
       onPress={deckClicked}
       editDeckTags={editDeckTags}
       width={width}
@@ -60,7 +57,7 @@ function DeckListItem({
   );
 }
 
-const MemoDeckListItem = React.memo(DeckListItem);
+const MemoDeckListItem = DeckListItem;
 
 export default function DeckList({
   deckIds, header, searchTerm, refreshing, deckToCampaign,
@@ -87,7 +84,7 @@ export default function DeckList({
         return searchMatchesText(searchTerm, [deckId.name, investigator.name]);
       }), deckId => {
         return {
-          key: `${deckId.id.uuid}`,
+          type: 'deck',
           deckId: deckId,
           deckClicked,
         };
@@ -101,11 +98,12 @@ export default function DeckList({
     setNumDecks(numDecks + 10);
   }, [numDecks, setNumDecks]);
 
-  usePlayerCardsFunc(() => take(uniq(map(items, deck => deck.deckId.investigator)), 15), [items]);
-  const renderItem = useCallback(({ deckId }: { deckId: MiniDeckT }) => {
+  usePlayerCardsFunc(() => take(uniq(map(items, deck => deck.deckId.investigator)), 15), [items], false);
+  const renderItem = useCallback(({ deckId }: {
+    deckId: MiniDeckT;
+  }) => {
     return (
       <MemoDeckListItem
-        key={deckId.id.uuid}
         deckId={deckId}
         deckClicked={deckClicked}
         deckToCampaign={deckToCampaign}
@@ -126,6 +124,7 @@ export default function DeckList({
       renderItem={renderItem}
       renderHeader={renderHeader}
       renderFooter={renderFooter}
+      estimatedItemSize={50}
     />
   );
 }

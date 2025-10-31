@@ -4,7 +4,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import FastImage from 'react-native-blasted-image';
+import { Image as FastImage } from 'expo-image';
 
 import { TouchableOpacity } from '@components/core/Touchables';
 import ArkhamIcon from '@icons/ArkhamIcon';
@@ -14,11 +14,12 @@ import Card from '@data/types/Card';
 import { isBig } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
 import { showCardImage } from '@components/nav/helper';
+import { useNavigation } from '@react-navigation/native';
 
 const SCALE_FACTOR = isBig ? 1.2 : 1.0;
 
 interface Props {
-  componentId?: string;
+  pressable?: boolean;
   card: Card;
   size?: 'tiny';
 }
@@ -29,7 +30,9 @@ function imageStyle(card: Card) {
     case 'investigator': return styles.investigatorImage;
     case 'agenda': return styles.agendaImage;
     case 'act': return styles.actImage;
-    case 'location': return styles.locationImage;
+    case 'enemy_location':
+    case 'location':
+      return styles.locationImage;
     case 'treachery': return styles.treacheryImage;
     default: return {};
   }
@@ -86,9 +89,10 @@ function ImagePlaceholder({ card }: { card: Card }) {
 }
 
 function ImageContent({ card }: { card: Card }) {
-  const uri = (card.type_code === 'location' && card.double_sided) ?
+  const url = ((card.type_code === 'location' && card.double_sided) ?
     card.backImageUri() :
-    card.imageUri();
+    card.imageUri()
+  ) ?? '';
 
   const horizontal = card.type_code === 'act' ||
     card.type_code === 'investigator' ||
@@ -100,7 +104,7 @@ function ImageContent({ card }: { card: Card }) {
         <FastImage
           style={styles.verticalContainer}
           source={{
-            uri,
+            uri: url,
           }}
           resizeMode="contain"
         />
@@ -114,7 +118,7 @@ function ImageContent({ card }: { card: Card }) {
         <FastImage
           style={[styles.image, imageStyle(card)]}
           source={{
-            uri,
+            uri: url,
           }}
           resizeMode="contain"
         />
@@ -123,13 +127,11 @@ function ImageContent({ card }: { card: Card }) {
   );
 }
 
-export default function PlayerCardImage({ componentId, card }: Props) {
-  const { colors } = useContext(StyleContext);
+export default function PlayerCardImage({ pressable, card }: Props) {
+  const navigation = useNavigation();
   const onPress = useCallback(() => {
-    if (componentId) {
-      showCardImage(componentId, card, colors);
-    }
-  }, [componentId, card, colors]);
+    showCardImage(navigation, card);
+  }, [navigation, card]);
 
   if (!card.hasImage()) {
     return (
@@ -139,7 +141,7 @@ export default function PlayerCardImage({ componentId, card }: Props) {
     );
   }
 
-  if (componentId) {
+  if (pressable) {
     return (
       <TouchableOpacity onPress={onPress}>
         <ImageContent card={card} />

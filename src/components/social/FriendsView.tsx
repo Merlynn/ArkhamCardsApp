@@ -5,19 +5,22 @@ import { t } from 'ttag';
 import CollapsibleSearchBox from '@components/core/CollapsibleSearchBox';
 import { SimpleUser, UserProfile } from '@data/remote/hooks';
 import { SearchResults, useSearchUsers, useUpdateFriendRequest } from '@data/remote/api';
-import { NavigationProps } from '@components/nav/types';
 import useFriendFeedComponent, { FriendFeedItem, UserControls } from './useFriendFeedComponent';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { searchNormalize } from '@data/types/Card';
+import { FriendRequestAction } from '@generated/graphql/apollo-schema';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 export interface FriendsViewProps {
   userId: string;
+  title?: string;
 }
 
 type Refresh = () => void;
 
-function FeedComponent({ userId, componentId, searchTerm, searchResults, handleScroll, onSearchChange, performSearch, showHeader, focus }: {
-  componentId: string;
+function FeedComponent({ userId, searchTerm, searchResults, handleScroll, onSearchChange, performSearch, showHeader, focus }: {
   userId: string;
   searchTerm: string;
   searchResults: SearchResults;
@@ -40,10 +43,10 @@ function FeedComponent({ userId, componentId, searchTerm, searchResults, handleS
   const [error, setError] = useState<string>();
   const updateFriendRequest = useUpdateFriendRequest(setError);
   const acceptRequest = useCallback(async(userId: string) => {
-    return await updateFriendRequest(userId, 'request');
+    return await updateFriendRequest(userId, FriendRequestAction.Request);
   }, [updateFriendRequest]);
   const rejectRequest = useCallback((userId: string) => {
-    return updateFriendRequest(userId, 'revoke');
+    return updateFriendRequest(userId, FriendRequestAction.Revoke);
   }, [updateFriendRequest]);
   const controls: UserControls = useMemo(() => {
     return {
@@ -56,9 +59,9 @@ function FeedComponent({ userId, componentId, searchTerm, searchResults, handleS
     isSelf: boolean,
     profile?: UserProfile
   ) => {
-    const normalizedSearch = searchTerm && searchNormalize(searchTerm, lang);
+    const normalizedSearch = searchTerm && searchNormalize(searchTerm.trim(), lang);
     const matchesSearch = (f: SimpleUser) => {
-      return !normalizedSearch || !f.handle || searchNormalize(f.handle, lang).indexOf(normalizedSearch) !== -1;
+      return !normalizedSearch || !f.handle || searchNormalize(f.handle.trim(), lang).indexOf(normalizedSearch) !== -1;
     };
     const feed: FriendFeedItem[] = [];
     if (searchTerm && searchTerm !== searchResults.term) {
@@ -127,7 +130,6 @@ function FeedComponent({ userId, componentId, searchTerm, searchResults, handleS
     return feed;
   }, [clearSearchPressed, performSearch, lang, controls, searchResults, searchFriendsPressed, searchTerm]);
   const [feed, refresh] = useFriendFeedComponent({
-    componentId,
     error,
     userId,
     toFeed,
@@ -143,7 +145,9 @@ function FeedComponent({ userId, componentId, searchTerm, searchResults, handleS
   );
 }
 
-export default function FriendsView({ userId, componentId }: FriendsViewProps & NavigationProps) {
+export default function FriendsView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Friends'>>();
+  const { userId } = route.params;
   const [searchTerm, updateSearchTerm] = useState<string>('');
   const { search, searchResults } = useSearchUsers();
   const onSearchChange = useCallback((value: string, submit: boolean) => {
@@ -164,7 +168,6 @@ export default function FriendsView({ userId, componentId }: FriendsViewProps & 
     >
       { (handleScroll, showHeader, focus) => (
         <FeedComponent
-          componentId={componentId}
           userId={userId}
           handleScroll={handleScroll}
           showHeader={showHeader}
@@ -178,3 +181,8 @@ export default function FriendsView({ userId, componentId }: FriendsViewProps & 
     </CollapsibleSearchBox>
   );
 }
+
+function options<T extends BasicStackParamList>({ route }: { route: RouteProp<T, 'Friends'> }): NativeStackNavigationOptions {
+  return { title: route.params?.title ?? t`Friends` };
+};
+FriendsView.options = options;

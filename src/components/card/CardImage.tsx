@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import FastImage from 'react-native-blasted-image';
+import { Image as FastImage } from 'expo-image';
 import { find, map, range } from 'lodash';
 
 import { TouchableShrink } from '@components/core/Touchables';
@@ -45,14 +45,13 @@ interface Props {
 
 export default function CardImage({ card, width, superCompact }: Props) {
   const { colors, shadow, typography } = useContext(StyleContext);
-  const uri = card.imageUri();
-  if (uri) {
+  const url = card.imageUri();
+  if (url) {
     return (
       <FastImage
-        accessibilityLabel={card.name}
         style={{ width, height: CARD_RATIO * width }}
         source={{
-          uri,
+          uri: url,
         }}
         resizeMode="contain"
       />
@@ -152,7 +151,7 @@ export function TouchableCardImage({ onPress, ...props }: Props & { onPress: (ca
 const styles = StyleSheet.create({
   simpleCard: {
     borderRadius: 8,
-    paddding: s,
+    padding: s,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-start',

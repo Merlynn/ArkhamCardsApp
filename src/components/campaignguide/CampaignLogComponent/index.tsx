@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { flatMap, keys, range, map, sum, values } from 'lodash';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { t } from 'ttag';
 
 import ChaosBagLine from '@components/core/ChaosBagLine';
@@ -25,11 +26,13 @@ import { ProcessedCampaign } from '@data/scenario';
 import CampaignLogScarletKeysComponent from './CampaignLogScarletKeysComponent';
 import CampaignLogCalendarComponent from './CampaignLogCalendarComponent';
 import { MAX_WIDTH } from '@styles/sizes';
-import AppIcon from '@icons/AppIcon';
 import CampaignLogChecklistComponent from './CampaignLogChecklistComponent';
+import CampaignLogInvestigatorChecklistComponent from './CampaignLogInvestigatorChecklistComponent';
+import CampaignLogGlyphsComponent from './CampaignLogGlyphsComponent';
+import useTextEditDialog from '@components/core/useTextEditDialog';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   campaignId: CampaignId;
   campaignGuide: CampaignGuide;
   campaignLog: GuidedCampaignLog;
@@ -42,14 +45,26 @@ interface Props {
   processedCampaign: ProcessedCampaign | undefined;
 }
 
-function RelationshipBoxes({ section }: { section: EntrySection }) {
+function RelationshipBoxes({ section, isFatigue }: { section: EntrySection; isFatigue?: boolean }) {
   const { colors, typography } = useContext(StyleContext);
   const relationshipEntry = section.entries.find(entry => entry.id === '$relationship');
   const relationshipValue = relationshipEntry?.type === 'count' ? relationshipEntry.count : 0;
+
+  const fatigueEntry = section.entries.find(entry => entry.id === '$fatigue');
+  const fatigueValue = fatigueEntry?.type === 'count' ? fatigueEntry.count : 0;
   return (
     <View style={{ flexDirection: 'row' }}>
-      <Text style={[typography.cursive, { fontSize: 14, lineHeight: 16, color: colors.D30 }, space.paddingRightXs]} allowFontScaling={false}>{t`Relationship Level`}</Text>
-      { map(range(0, 6), (idx) => (
+      <Text
+        style={[
+          typography.cursive,
+          { fontSize: 14, lineHeight: 16, color: colors.D30 },
+          space.paddingRightXs,
+        ]}
+        allowFontScaling={false}
+      >
+        {isFatigue ? t`Fatigue` : t`Relationship Level`}
+      </Text>
+      { map(range(0, isFatigue ? 5 : 6), (idx) => (
         <View key={idx} style={{
           width: 14,
           height: 14,
@@ -60,9 +75,19 @@ function RelationshipBoxes({ section }: { section: EntrySection }) {
           borderColor: colors.D10,
           position: 'relative',
         }}>
+          { isFatigue && idx === 4 && (
+            <View style={{ position: 'absolute', top: 0, left: 0, opacity: 0.5 }}>
+              <MaterialCommunityIcons size={12} name="skull" color={colors.D10} allowFontScaling={false} />
+            </View>
+          )}
           { relationshipValue > idx ? (
             <View style={{ position: 'absolute', top: 0, left: 0 }}>
               <MaterialIcons size={12} name="favorite" color={colors.D20} allowFontScaling={false} />
+            </View>
+          ) : null }
+          { fatigueValue > idx ? (
+            <View style={{ position: 'absolute', top: 0, left: 2 }}>
+              <Text style={{ color: colors.D30, fontSize: 11 }} maxFontSizeMultiplier={1} allowFontScaling={false}>X</Text>
             </View>
           ) : null }
         </View>
@@ -77,11 +102,21 @@ interface CardSectionProps {
   campaignGuide: CampaignGuide;
   width: number;
   isRelationship: boolean
+  isFatigue: boolean;
 }
 
-function CardSection({ code, section, campaignGuide, width, isRelationship }: CardSectionProps) {
+function CardSection({ code, section, campaignGuide, width, isRelationship, isFatigue }: CardSectionProps) {
   const [card] = useSingleCard(code, 'encounter');
   const eliminated = !!section?.sectionCrossedOut;
+  const detail = useMemo(() => {
+    if (section && isRelationship) {
+      return <RelationshipBoxes section={section} />;
+    }
+    if (section && isFatigue) {
+      return <RelationshipBoxes section={section} isFatigue />;
+    }
+    return undefined;
+  }, [section, isRelationship, isFatigue])
   const header = useMemo(() => {
     const campaignCard = campaignGuide.card(code);
     return (
@@ -90,15 +125,15 @@ function CardSection({ code, section, campaignGuide, width, isRelationship }: Ca
         name={campaignCard?.name}
         investigator={card}
         image={campaignCard?.img}
-        detail={isRelationship && section ? <RelationshipBoxes section={section} /> : undefined}
+        detail={detail}
         eliminated={eliminated}
         width={width}
         open={!eliminated}
       />
     );
-  }, [card, eliminated, width]);
+  }, [card, detail, eliminated, width, campaignGuide, code]);
   const entries = useMemo(() => {
-    return section?.entries.filter(entry => entry.id !== '$relationship') ?? []
+    return section?.entries.filter(entry => entry.id !== '$fatigue' && entry.id !== '$relationship') ?? []
   }, [section?.entries]);
   if (eliminated) {
     return header;
@@ -123,7 +158,6 @@ function CardSection({ code, section, campaignGuide, width, isRelationship }: Ca
 }
 
 export default function CampaignLogComponent({
-  componentId,
   campaignId,
   campaignGuide,
   campaignLog,
@@ -137,10 +171,11 @@ export default function CampaignLogComponent({
 }: Props) {
   const { backgroundStyle } = useContext(StyleContext);
   const { colon } = useContext(LanguageContext);
+  const [dialog, showTextEditDialog] = useTextEditDialog();
   const renderLogEntrySectionContent = useCallback((
     id: string,
     title: string,
-    type?: 'investigator_count' | 'count' | 'checklist' | 'supplies' | 'header' | 'partner' | 'scarlet_keys' | 'relationship',
+    type?: 'investigator_count' | 'investigator_checklist' | 'count' | 'checklist' | 'supplies' | 'header' | 'partner' | 'scarlet_keys' | 'relationship' | 'fatigue' | 'glyphs',
     checklist?: ChecklistItem[],
     partners?: Partner[],
     calendar?: CalendarEntry[],
@@ -174,7 +209,25 @@ export default function CampaignLogComponent({
           </View>
         );
       }
-      case 'investigator_count':
+      case 'investigator_checklist': {
+        const section = campaignLog.sections[id];
+        return (
+          <View style={[space.paddingSideS, space.paddingBottomM]}>
+            <DeckBubbleHeader title={title} />
+            { !!section && (
+              <CampaignLogInvestigatorChecklistComponent
+                sectionId={id}
+                title={title}
+                section={section}
+                interScenarioId={interScenarioId}
+                campaignGuide={campaignGuide}
+                campaignLog={campaignLog}
+              />
+            ) }
+          </View>
+        );
+      }
+      case 'investigator_count': {
         const section = campaignLog.investigatorSections[id];
         return (
           <View style={space.paddingSideS}>
@@ -190,6 +243,7 @@ export default function CampaignLogComponent({
             ) }
           </View>
         );
+      }
       case 'supplies': {
         const section = campaignLog.investigatorSections[id];
         return (
@@ -249,9 +303,29 @@ export default function CampaignLogComponent({
           </View>
         );
       case 'relationship':
+      case 'fatigue':
+      case 'glyphs':
       default: {
         const section = campaignLog.sections[id];
-        if (CARD_REGEX.test(id) || type === 'relationship') {
+        if (type === 'glyphs') {
+          return (
+            <View style={space.paddingSideS}>
+              <DeckBubbleHeader title={title} crossedOut={section && section.sectionCrossedOut} />
+              { !!section && (
+                <View style={[space.paddingTopS, space.paddingSideS, space.paddingBottomS]}>
+                  <CampaignLogGlyphsComponent
+                    sectionId={id}
+                    campaignGuide={campaignGuide}
+                    section={section}
+                    interScenarioId={interScenarioId}
+                    showTextEditDialog={showTextEditDialog}
+                  />
+                </View>
+              ) }
+            </View>
+          );
+        }
+        if (CARD_REGEX.test(id) || type === 'relationship' || type === 'fatigue') {
           return (
             <View style={[space.paddingTopS, space.paddingSideS]}>
               <CardSection
@@ -260,6 +334,7 @@ export default function CampaignLogComponent({
                 section={section}
                 width={width - s * 2}
                 isRelationship={type === 'relationship'}
+                isFatigue={type === 'fatigue'}
               />
             </View>
           );
@@ -281,21 +356,21 @@ export default function CampaignLogComponent({
         );
       }
     }
-  }, [campaignLog, campaignGuide, width, interScenarioId, colon]);
-
+  }, [campaignLog, campaignGuide, width, interScenarioId, colon, showTextEditDialog]);
+  const navigation = useNavigation();
   const oddsCalculatorPressed = useCallback(() => {
-    showGuideChaosBagOddsCalculator(componentId, campaignId, campaignLog.chaosBag, campaignLog.investigatorCodesSafe(), scenarioId, standalone, processedCampaign);
-  }, [componentId, campaignId, campaignLog, scenarioId, standalone, processedCampaign]);
+    showGuideChaosBagOddsCalculator(navigation, campaignId, campaignLog.chaosBag, campaignLog.investigatorCodesSafe(), scenarioId, standalone, processedCampaign);
+  }, [navigation, campaignId, campaignLog, scenarioId, standalone, processedCampaign]);
 
   const chaosBagSimulatorPressed = useCallback(() => {
     showGuideDrawChaosBag(
-      componentId,
+      navigation,
       campaignId,
       campaignLog.investigatorCodesSafe(),
       scenarioId,
       standalone,
     );
-  }, [componentId, campaignId, campaignLog, scenarioId, standalone]);
+  }, [navigation, campaignId, campaignLog, scenarioId, standalone]);
 
   const chaosBagSection = useMemo(() => {
     if (hideChaosBag) {
@@ -336,19 +411,22 @@ export default function CampaignLogComponent({
     );
   }, [campaignLog, hideChaosBagButtons, chaosBagSimulatorPressed, oddsCalculatorPressed, width, hideChaosBag, standalone]);
   return (
-    <View style={[backgroundStyle, space.paddingBottomM]}>
-      { chaosBagSection }
-      { flatMap(campaignGuide.campaignLogSections(), log => {
-        if (log.hidden) {
-          return null;
-        }
-        return (
-          <View key={log.id}>
-            { renderLogEntrySectionContent(log.id, log.title, log.type, log.checklist, log.partners, log.calendar, log.scarlet_keys) }
-          </View>
-        );
-      }) }
-    </View>
+    <>
+      <View style={[backgroundStyle, space.paddingBottomM]}>
+        { chaosBagSection }
+        { flatMap(campaignGuide.campaignLogSections(), log => {
+          if (log.hidden) {
+            return null;
+          }
+          return (
+            <View key={log.id}>
+              { renderLogEntrySectionContent(log.id, log.title, log.type, log.checklist, log.partners, log.calendar, log.scarlet_keys) }
+            </View>
+          );
+        }) }
+      </View>
+      { dialog }
+    </>
   );
 }
 

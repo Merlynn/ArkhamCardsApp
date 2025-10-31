@@ -6,55 +6,51 @@ import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import space from '@styles/space';
 import DeckPickerStyleButton from '@components/deck/controls/DeckPickerStyleButton';
 import { ShowAlert, useSimpleTextDialog } from '@components/deck/dialogs';
-import { NavigationProps } from '@components/nav/types';
-import { Navigation } from 'react-native-navigation';
-import { FriendsViewProps } from '@components/social/FriendsView';
-import { useUpdateHandle } from '@data/remote/api';
+
 import StyleContext from '@styles/StyleContext';
 import { useMyProfile } from '@data/remote/hooks';
 import { useComponentDidAppear } from '@components/core/hooks';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import ArkhamCardsLoginButton from './auth/ArkhamCardsLoginButton';
+import { useUpdateHandleMutation } from '@generated/graphql/apollo-schema';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
   showAlert: ShowAlert;
 }
-export default function ArkhamCardsAccountDetails({ componentId, showAlert }: NavigationProps & Props) {
+export default function ArkhamCardsAccountDetails({ showAlert }: Props) {
   const { typography } = useContext(StyleContext);
+  const navigation = useNavigation();
   const { userId, loading } = useContext(ArkhamCardsAuthContext);
   const { lang } = useContext(LanguageContext);
   const [profile, loadingProfile, refresh] = useMyProfile(false);
 
   useComponentDidAppear(() => {
     refresh();
-  }, componentId, [refresh]);
+  }, [refresh]);
 
-  const updateHandle = useUpdateHandle();
+  const [updateHandle] = useUpdateHandleMutation();
   const [dialog, showDialog] = useSimpleTextDialog({
     title: t`Account Name`,
     value: profile?.handle || '',
-    onValidate: updateHandle,
+    onValidate: async(handle: string) => {
+      try {
+        const result = await updateHandle({ variables: { handle } });
+        if (result.errors) {
+          return t`Handle is already taken`;
+        }
+        return undefined;
+      } catch (e) {
+        return t`Handle is already taken`;
+      }
+    },
     placeholder: t`Choose a handle for your account`,
   });
   const editFriendsPressed = useCallback(() => {
     if (userId) {
-      Navigation.push<FriendsViewProps>(componentId, {
-        component: {
-          name: 'Friends',
-          passProps: {
-            userId,
-          },
-          options: {
-            topBar: {
-              title: {
-                text: t`Your Friends`,
-              },
-            },
-          },
-        },
-      });
+      navigation.navigate('Friends', { userId, title: t`Your Friends` });
     }
-  }, [componentId, userId]);
+  }, [userId, navigation]);
   const friendCount = profile?.friends?.length || 0;
   const pendingFriendCount = profile?.receivedRequests?.length || 0;
   const accountNameLabel = useMemo(() => {
@@ -105,7 +101,7 @@ export default function ArkhamCardsAccountDetails({ componentId, showAlert }: Na
           />
         </>
       ) }
-      <ArkhamCardsLoginButton showAlert={showAlert} handle={accountNameLabel} />
+      <ArkhamCardsLoginButton showAlert={showAlert} />
       { dialog }
     </View>
   );

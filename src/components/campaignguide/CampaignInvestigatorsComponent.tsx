@@ -8,7 +8,6 @@ import { Trauma } from '@actions/types';
 import InvestigatorCampaignRow from '@components/campaign/InvestigatorCampaignRow';
 import { ProcessedCampaign, StepId } from '@data/scenario';
 import CampaignGuideContext from '@components/campaignguide/CampaignGuideContext';
-import Card from '@data/types/Card';
 import space, { s, l } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
 import { ShowAlert, ShowCountDialog } from '@components/deck/dialogs';
@@ -24,9 +23,9 @@ import LoadingCardSearchResult from '@components/cardlist/LoadingCardSearchResul
 import { useArkhamDbError } from '@data/hooks';
 import { useAppDispatch } from '@app/store';
 import CampaignHeader from './CampaignHeader';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 
 interface Props {
-  componentId: string;
   actions: UpdateCampaignActions;
   processedCampaign: ProcessedCampaign;
   savingDeckUpgrade: boolean;
@@ -34,28 +33,27 @@ interface Props {
   login: () => void;
   showAddInvestigator: () => void;
   showCountDialog: ShowCountDialog;
-  showTraumaDialog: (investigator: Card, traumaData: Trauma) => void;
+  showTraumaDialog: (investigator: CampaignInvestigator, traumaData: Trauma) => void;
   showAlert: ShowAlert;
   saveDeckUpgrade: SaveDeckUpgrade<StepId>;
   saveDeck: SaveDeck<StepId>;
 }
 
 function AliveInvestigatorRow({
-  componentId, investigator, processedCampaign, investigatorCountSections, suppliesSections, savingDeckUpgrade,
+  investigator, processedCampaign, investigatorCountSections, suppliesSections, savingDeckUpgrade,
   login, removeInvestigatorPressed, showChooseDeckForInvestigator, showXpDialogPressed, showTraumaDialog,
   saveDeckUpgrade, saveDeck,
 }: {
-  componentId: string;
-  investigator: Card;
+  investigator: CampaignInvestigator;
   processedCampaign: ProcessedCampaign;
   investigatorCountSections: CampaignLogSectionDefinition[];
   suppliesSections: CampaignLogSectionDefinition[];
   savingDeckUpgrade: boolean;
   login: () => void;
-  showTraumaDialog: (investigator: Card, traumaData: Trauma) => void;
-  showChooseDeckForInvestigator: (investigator: Card) => void;
-  showXpDialogPressed: (investigator: Card) => void;
-  removeInvestigatorPressed: (investigator: Card) => void;
+  showTraumaDialog: (investigator: CampaignInvestigator, traumaData: Trauma) => void;
+  showChooseDeckForInvestigator: (investigator: CampaignInvestigator) => void;
+  showXpDialogPressed: (investigator: CampaignInvestigator) => void;
+  removeInvestigatorPressed: (investigator: CampaignInvestigator) => void;
   saveDeckUpgrade: SaveDeckUpgrade<StepId>;
   saveDeck: SaveDeck<StepId>;
 }) {
@@ -108,19 +106,19 @@ function AliveInvestigatorRow({
   }, [saveDeck, saveDeckUpgrade, nextDeckUpgradeStepId, deck, campaignState, setSaving]);
   const arkhamDbError = useArkhamDbError();
   const needsArkhamDbReauth = !deck?.deck.local && arkhamDbError === 'badAccessToken';
-  const traumaAndCardData = useMemo(() =>
-    processedCampaign.campaignLog.traumaAndCardData(investigator.code),
-  [processedCampaign.campaignLog, investigator.code]);
+  const traumaAndCardData = useMemo(
+    () => processedCampaign.campaignLog.traumaAndCardData(investigator.code),
+    [processedCampaign.campaignLog, investigator.code]
+  );
   return (
     <InvestigatorCampaignRow
       campaign={campaign}
       campaignGuide={campaignGuide}
       badge={nextDeckUpgradeStepId ? 'deck' : undefined}
-      spentXp={spentXp[investigator.code] || 0}
+      spentXp={spentXp[investigator.code] ?? 0}
       totalXp={processedCampaign.campaignLog.totalXp(investigator.code)}
       unspentXp={processedCampaign.campaignLog.specialXp(investigator.code, 'unspect_xp')}
       deck={deck}
-      componentId={componentId}
       investigator={investigator}
       showXpDialog={showXpDialogPressed}
       traumaAndCardData={traumaAndCardData}
@@ -163,11 +161,13 @@ function AliveInvestigatorRow({
               return null;
             }
             const investigatorSection = section[investigator.code];
+            const alternateTitleEntry = find(investigatorSection?.entries, e => e.type === 'basic');
+            const alternateTitle = alternateTitleEntry ? campaignGuide.logEntry(investigatorCount.id, alternateTitleEntry.id, true) : undefined;
             const countEntry = find(investigatorSection?.entries, e => e.id === '$count' && e.type === 'count');
             return (
               <View key={`${investigator.code}-${investigatorCount.id}`} style={space.paddingBottomS}>
                 <DeckSlotHeader
-                  title={investigatorCount.title}
+                  title={alternateTitle && alternateTitle.type === 'text' ? alternateTitle.text : investigatorCount.title}
                   first
                 />
                 <Text style={[space.marginLeftS, typography.gameFont]}>
@@ -206,19 +206,18 @@ function AliveInvestigatorRow({
 
 export default function CampaignInvestigatorsComponent(props: Props) {
   const {
-    componentId, loading, processedCampaign, actions, savingDeckUpgrade,
+    loading, processedCampaign, actions, savingDeckUpgrade,
     login, showAddInvestigator, showTraumaDialog, showAlert, showCountDialog,
     saveDeckUpgrade, saveDeck,
   } = props;
   const { syncCampaignChanges, campaign, campaignId, campaignGuide, campaignState, latestDecks, campaignInvestigators, spentXp } = useContext(CampaignGuideContext);
-  const { typography } = useContext(StyleContext);
   const dispatch = useAppDispatch();
 
   const appState = useAppState();
   const syncCampaignData = useCallback(() => {
     syncCampaignChanges(processedCampaign);
   }, [syncCampaignChanges, processedCampaign]);
-  const syncCampaignDataRef = useRef<() => void>(syncCampaignData);
+  const syncCampaignDataRef = useRef<() => void>(null);
 
   useEffect(() => {
     syncCampaignDataRef.current = syncCampaignData;
@@ -234,14 +233,14 @@ export default function CampaignInvestigatorsComponent(props: Props) {
   useEffect(() => {
     // Update the campaign on unmount.
     return () => {
-      syncCampaignDataRef.current();
+      syncCampaignDataRef.current?.();
     };
   }, []);
 
-  const showChooseDeckForInvestigator = useCallback((investigator: Card) => {
+  const showChooseDeckForInvestigator = useCallback((investigator: CampaignInvestigator) => {
     campaignState.showChooseDeck(investigator);
   }, [campaignState]);
-  const removeInvestigatorPressed = useCallback((investigator: Card) => {
+  const removeInvestigatorPressed = useCallback((investigator: CampaignInvestigator) => {
     const deck = latestDecks[investigator.code];
     if (deck) {
       showAlert(
@@ -280,9 +279,9 @@ export default function CampaignInvestigatorsComponent(props: Props) {
     investigator => processedCampaign.campaignLog.isEliminated(investigator)
   ), [processedCampaign.campaignLog, campaignInvestigators]);
 
-  const showXpDialogPressed = useCallback((investigator: Card) => {
+  const showXpDialogPressed = useCallback((investigator: CampaignInvestigator) => {
     showCountDialog({
-      title: investigator.name,
+      title: investigator.card.name,
       label: t`Spent experience`,
       value: spentXp[investigator.code] || 0,
       max: processedCampaign.campaignLog.totalXp(investigator.code),
@@ -325,7 +324,6 @@ export default function CampaignInvestigatorsComponent(props: Props) {
             <AliveInvestigatorRow
               key={investigator.code}
               investigator={investigator}
-              componentId={componentId}
               investigatorCountSections={investigatorCountSections}
               suppliesSections={suppliesSections}
               processedCampaign={processedCampaign}
@@ -355,14 +353,17 @@ export default function CampaignInvestigatorsComponent(props: Props) {
               <InvestigatorCampaignRow
                 campaignGuide={campaignGuide}
                 key={investigator.code}
+                eliminated
                 spentXp={spentXp[investigator.code] || 0}
                 totalXp={processedCampaign.campaignLog.totalXp(investigator.code)}
                 unspentXp={processedCampaign.campaignLog.specialXp(investigator.code, 'unspect_xp')}
                 showXpDialog={showXpDialogPressed}
-                showTraumaDialog={betweenScenarios && ((traumaAndCardData?.physical && traumaAndCardData?.physical === investigator.health) || (traumaAndCardData?.mental && traumaAndCardData?.mental === investigator.sanity)) ? showTraumaDialog : undefined}
+                showTraumaDialog={betweenScenarios && (
+                  (traumaAndCardData?.physical && traumaAndCardData?.physical === investigator.card.health) ||
+                  (traumaAndCardData?.mental && traumaAndCardData?.mental === investigator.card.sanity)
+                ) ? showTraumaDialog : undefined}
                 campaign={campaign}
                 deck={latestDecks[investigator.code]}
-                componentId={componentId}
                 investigator={investigator}
                 traumaAndCardData={traumaAndCardData}
               />

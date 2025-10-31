@@ -4,7 +4,6 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import Animated, { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
 import StyleContext from '@styles/StyleContext';
-import { s } from '@styles/space';
 import ArkhamSwitch from '../ArkhamSwitch';
 import LineItem from './LineItem';
 
@@ -19,9 +18,10 @@ interface Props<T> {
   onValueChange: (value: T) => void;
   selected: boolean;
   last: boolean;
+  showDisabledIcons?: boolean;
   indicator?: 'check' | 'radio' | 'none';
 }
-export default function ItemPickerLine<T>({ iconName, iconNode, disabled, text, description, rightNode, selected, last, value, indicator = 'radio', onValueChange }: Props<T>) {
+export default function ItemPickerLine<T>({ iconName, iconNode, disabled, text, description, rightNode, selected, last, value, indicator = 'radio', onValueChange, showDisabledIcons }: Props<T>) {
   const { colors } = useContext(StyleContext);
   const onPress = useCallback(() => {
     ReactNativeHapticFeedback.trigger('impactLight');
@@ -46,13 +46,14 @@ export default function ItemPickerLine<T>({ iconName, iconNode, disabled, text, 
         iconName={iconName}
         iconNode={iconNode}
         rightNode={rightNode}
+        showDisabledIcons={showDisabledIcons}
         indicatorNode={indicator !== 'none' && (
           indicator === 'radio' ? (
             <Animated.View style={[styles.circle, { borderColor: disabled ? colors.L20 : colors.L10 }, animStyle]}>
               { !!selected && <View style={[styles.circleFill, { backgroundColor: colors.M }]} />}
             </Animated.View>
           ) : (
-            <ArkhamSwitch value={selected} color="dark" />
+            <ArkhamSwitch value={selected} color="dark" disabled={disabled} />
           )
         ) || undefined}
         text={text}
@@ -65,37 +66,6 @@ export default function ItemPickerLine<T>({ iconName, iconNode, disabled, text, 
 }
 
 const styles = StyleSheet.create({
-  row: {
-    minHeight: 48,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginLeft: s,
-    marginRight: s,
-    paddingTop: s,
-    paddingBottom: s,
-  },
-  contentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  column: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  leadRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flex: 1,
-  },
-  icon: {
-    minWidth: 32,
-    minHeight: 32,
-  },
   circle: {
     width: 24,
     height: 24,

@@ -1,5 +1,5 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { filter, flatMap, forEach, keys, map } from 'lodash';
+import React, { ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { filter, forEach, keys, map } from 'lodash';
 import {
   ActivityIndicator,
   Image,
@@ -10,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import FastImage from 'react-native-blasted-image';
 import FlipCard from 'react-native-flip-card';
 import { t, c } from 'ttag';
 import stable from 'stable';
@@ -32,7 +31,6 @@ const PLAYER_BACK = require('../../../assets/player-back.png');
 const PADDING = 32;
 
 interface Props {
-  componentId: string;
   weaknessSet: WeaknessSet;
   updateDrawnCard: (code: string, assignedCards: Slots) => void;
   playerCount?: number;
@@ -43,7 +41,7 @@ interface Props {
   investigator: Card | undefined;
 }
 
-export default function WeaknessDrawComponent({ componentId,investigator, weaknessSet, updateDrawnCard, playerCount, campaignMode, customHeader, customFlippedHeader, saving }: Props) {
+export default function WeaknessDrawComponent({ investigator, weaknessSet, updateDrawnCard, playerCount, campaignMode, customHeader, customFlippedHeader, saving }: Props) {
   const { colors, typography, width, height } = useContext(StyleContext);
   const [headerHeight, setHeaderHeight] = useState(32);
   const [flippedHeaderHeight, setFlippedHeaderHeight] = useState(32);
@@ -56,19 +54,19 @@ export default function WeaknessDrawComponent({ componentId,investigator, weakne
   const [drawNewCard, setDrawNewCard] = useState(false);
   const weaknessCards = useWeaknessCards();
   const [nextCard, setNextCard] = useState<Card | undefined>();
-  useEffect(() => {
-    FastImage.preload(
-      flatMap(weaknessCards, c => {
-        const uri = c?.imageUri();
-        if (!uri) {
-          return [];
-        }
-        return {
-          uri,
-        };
-      })
-    );
-  }, [weaknessCards]);
+  // useEffect(() => {
+  //   FastImage.preload(
+  //     flatMap(weaknessCards, c => {
+  //       const uri = c?.imageUri();
+  //       if (!uri) {
+  //         return [];
+  //       }
+  //       return {
+  //         uri,
+  //       };
+  //     })
+  //   );
+  // }, [weaknessCards]);
 
   const [cardWidth, cardHeight] = useMemo(() => {
     const wBasedWidth = width - PADDING * 2;
@@ -208,7 +206,6 @@ export default function WeaknessDrawComponent({ componentId,investigator, weakne
       <View onLayout={onHeaderLayout}>
         { customHeader }
         <ChooserButton
-          componentId={componentId}
           title={t`Traits`}
           all={c('Traits').t`All`}
           values={allTraits}
@@ -237,7 +234,7 @@ export default function WeaknessDrawComponent({ componentId,investigator, weakne
         </View>
       </View>
     );
-  }, [componentId, customHeader, customFlippedHeader, saving, campaignMode, onToggleChange,
+  }, [customHeader, customFlippedHeader, saving, campaignMode, onToggleChange,
     allTraits, colors, drawAnother, onFlippedHeaderLayout, onHeaderLayout, typography,
     selectedTraits, flipped, headerHeight, flippedHeaderHeight, standalone, multiplayer]);
 

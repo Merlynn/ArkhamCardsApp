@@ -1,12 +1,11 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState, useReducer } from 'react';
-import { filter, forEach, map, throttle, uniq } from 'lodash';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useContext, useMemo, useState, useReducer, useLayoutEffect } from 'react';
+import { dropWhile, filter, forEach, map, reverse, throttle, uniq } from 'lodash';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { LayoutComponent, Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation';
+
 import { t } from 'ttag';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { iconsMap } from '@app/NavIcons';
 import {
   CORE,
   CUSTOM,
@@ -25,7 +24,7 @@ import {
   NewCampaignAction,
   NewStandaloneCampaignAction,
   NEW_GUIDED_CAMPAIGNS,
-  BROWSE_CAMPAIGNS,
+  OZ,
 } from '@actions/types';
 import { ChaosBag } from '@app_constants';
 import CampaignSelector from './CampaignSelector';
@@ -36,13 +35,11 @@ import SettingsSwitch from '@components/core/SettingsSwitch';
 import DeckSelector from './DeckSelector';
 import WeaknessSetPackChooserComponent from '@components/weakness/WeaknessSetPackChooserComponent';
 import { newCampaign, newLinkedCampaign, newStandalone } from '@components/campaign/actions';
-import { NavigationProps } from '@components/nav/types';
 import Card from '@data/types/Card';
-import { EditChaosBagProps, useEditChaosBagDialog } from '../../chaos/EditChaosBagDialog';
-import COLORS from '@styles/colors';
+import { useEditChaosBagDialog } from '../../chaos/EditChaosBagDialog';
 import space, { m, s, l } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
-import { useFlag, useNavigationButtonPressed, useSlots, useWeaknessCards } from '@components/core/hooks';
+import { useFlag, useSlots, useWeaknessCards } from '@components/core/hooks';
 import { CampaignSelection } from '../SelectCampaignDialog';
 import { useAlertDialog, usePickerDialog, useSimpleTextDialog } from '@components/deck/dialogs';
 import DeckPickerStyleButton from '@components/deck/controls/DeckPickerStyleButton';
@@ -58,6 +55,8 @@ import { LatestDeckRedux } from '@data/local/types';
 import ActionButton from '@components/campaignguide/prompts/ActionButton';
 import { AppState } from '@reducers';
 import LoadingSpinner from '@components/core/LoadingSpinner';
+import { useNavigation } from '@react-navigation/native';
+import HeaderButton from '@components/core/HeaderButton';
 
 interface CampaignChoice {
   selection: CampaignSelection;
@@ -81,7 +80,8 @@ function getKeyName(
   return 'sections';
 }
 
-function NewCampaignView({ componentId }: NavigationProps) {
+function NewCampaignView() {
+  const navigation = useNavigation();
   const { backgroundStyle, colors, typography } = useContext(StyleContext);
   const weaknessCards = useWeaknessCards();
   const dispatch: ThunkDispatch<AppState, unknown, NewLinkedCampaignAction | NewCampaignAction | NewStandaloneCampaignAction> = useDispatch();
@@ -90,14 +90,7 @@ function NewCampaignView({ componentId }: NavigationProps) {
   const [uploadCampaign, toggleUploadCampaign] = useFlag(false);
 
   const [name, setName] = useState('');
-  const [{ selection, campaign, hasGuide }, setCampaignChoice] = useState<CampaignChoice>({
-    selection: {
-      type: 'campaign',
-      code: CORE,
-    },
-    campaign: t`The Night of the Zealot`,
-    hasGuide: true,
-  });
+  const [campaignChoice, setCampaignChoice] = useState<CampaignChoice | undefined>();
   const [guided, toggleGuided] = useFlag(true);
   const [difficulty, setDifficulty] = useState<CampaignDifficulty>(CampaignDifficulty.STANDARD);
   const [selectedDecks, setSelectedDecks] = useState<LatestDeckT[]>([]);
@@ -115,45 +108,29 @@ function NewCampaignView({ componentId }: NavigationProps) {
   const [weaknessAssignedCards, updateWeaknessAssignedCards] = useSlots({});
   const [customChaosBag, setCustomChaosBag] = useState<ChaosBag>(getChaosBag(CORE, CampaignDifficulty.STANDARD));
   const [customCampaignLog, setCustomCampaignLog] = useState<CustomCampaignLog>({ sections: [t`Campaign Notes`] });
-  const isGuided = hasGuide && (guided || (selection.type === 'campaign' && selection.code === 'tde'));
+  const isGuided = !!campaignChoice?.hasGuide && (guided || (campaignChoice?.selection.type === 'campaign' && campaignChoice?.selection.code === 'tde'));
 
   const [addSectionDialog, showAddSectionDialog] = useAddCampaignNoteSectionDialog();
   const hasDefinedChaosBag = useMemo(() => {
-    return selection.type === 'campaign' && selection.code !== CUSTOM && !!getChaosBag(selection.code, difficulty);
-  }, [selection, difficulty]);
+    return campaignChoice?.selection.type === 'campaign' && campaignChoice?.selection.code !== CUSTOM && !!getChaosBag(campaignChoice?.selection.code, difficulty);
+  }, [campaignChoice, difficulty]);
   const chaosBag: ChaosBag = useMemo(() => {
-    if (hasDefinedChaosBag && selection.type === 'campaign') {
-      return getChaosBag(selection.code, difficulty);
+    if (hasDefinedChaosBag && campaignChoice?.selection.type === 'campaign') {
+      return getChaosBag(campaignChoice.selection.code, difficulty);
     }
     return customChaosBag;
-  }, [selection, difficulty, customChaosBag, hasDefinedChaosBag]);
+  }, [campaignChoice, difficulty, customChaosBag, hasDefinedChaosBag]);
 
   const hasDefinedCampaignLog = useMemo(() => {
-    return (selection.type === 'campaign' && selection.code !== CUSTOM && !!getCampaignLog(selection.code));
-  }, [selection]);
+    return (campaignChoice?.selection.type === 'campaign' && campaignChoice?.selection.code !== CUSTOM && !!getCampaignLog(campaignChoice.selection.code));
+  }, [campaignChoice]);
 
   const campaignLog = useMemo(() => {
-    if (hasDefinedCampaignLog && selection.type === 'campaign') {
-      return getCampaignLog(selection.code);
+    if (hasDefinedCampaignLog && campaignChoice?.selection.type === 'campaign') {
+      return getCampaignLog(campaignChoice.selection.code);
     }
     return customCampaignLog;
-  }, [selection, customCampaignLog, hasDefinedCampaignLog]);
-
-  useEffect(() => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        title: {
-          text: selection.type === 'campaign' ? t`New Campaign` : t`New Standalone`,
-        },
-        rightButtons: [{
-          text: t`Done`,
-          id: 'save',
-          color: COLORS.M,
-          accessibilityLabel: t`Done`,
-        }],
-      },
-    });
-  }, [componentId, name, selection]);
+  }, [campaignChoice, customCampaignLog, hasDefinedCampaignLog]);
 
   const addCampaignNoteSection = useCallback((name: string, isCount?: boolean, perInvestigator?: boolean) => {
     if (!name) {
@@ -195,7 +172,7 @@ function NewCampaignView({ componentId }: NavigationProps) {
     }
   }, [weaknessCards, weaknessAssignedCards, updateWeaknessAssigned, showAlert]);
 
-  const checkNewDeckForWeakness = useMaybeShowWeaknessPrompt(componentId, checkDeckForWeaknessPrompt);
+  const checkNewDeckForWeakness = useMaybeShowWeaknessPrompt(checkDeckForWeaknessPrompt);
   const investigatorAdded = useCallback((card: Card) => {
     updateInvestigatorIds({ type: 'add', investigator: card.code });
   }, [updateInvestigatorIds]);
@@ -204,15 +181,23 @@ function NewCampaignView({ componentId }: NavigationProps) {
     updateInvestigatorIds({ type: 'remove', investigator: card.code });
   }, [updateInvestigatorIds]);
 
+  const includeParallel = campaignChoice?.selection.type === 'campaign' && campaignChoice.selection.code === OZ;
+  const getDeckInvestigator = useCallback((deck: Deck) => {
+    return includeParallel ? deck.meta?.alternate_front ?? deck.investigator_code : deck.investigator_code
+  }, [includeParallel]);
   const deckAdded = useCallback(async(deck: Deck) => {
     setSelectedDecks([...selectedDecks, new LatestDeckRedux(deck, undefined, undefined)]);
-    updateInvestigatorIds({ type: 'add', investigator: deck.investigator_code });
+    const investigatorId = getDeckInvestigator(deck);
+    updateInvestigatorIds({ type: 'add', investigator: investigatorId });
     setInvestigatorToDeck({
       ...investigatorToDeck,
-      [deck.investigator_code]: getDeckId(deck),
+      [investigatorId]: getDeckId(deck),
     });
     checkNewDeckForWeakness(deck);
-  }, [setSelectedDecks, updateInvestigatorIds, setInvestigatorToDeck, checkNewDeckForWeakness, selectedDecks, investigatorToDeck]);
+  }, [
+    setSelectedDecks, updateInvestigatorIds, setInvestigatorToDeck, checkNewDeckForWeakness,
+    selectedDecks, investigatorToDeck, getDeckInvestigator,
+  ]);
 
 
   const deckRemoved = useCallback((id: DeckId, deck?: Deck) => {
@@ -225,28 +210,34 @@ function NewCampaignView({ componentId }: NavigationProps) {
     setSelectedDecks(filter(selectedDecks, deck => deck.id.uuid !== id.uuid));
     if (deck) {
       updateInvestigatorIds({ type: 'remove', investigator: deck.investigator_code });
+      if (deck.meta?.alternate_front) {
+        updateInvestigatorIds({ type: 'remove', investigator: deck.meta.alternate_front });
+      }
     }
     setInvestigatorToDeck(updatedInvestigatorToDeck);
-  }, [investigatorToDeck, selectedDecks, setSelectedDecks, updateInvestigatorIds, setInvestigatorToDeck]);
+  }, [investigatorToDeck, selectedDecks,
+    setSelectedDecks, updateInvestigatorIds, setInvestigatorToDeck]);
 
   const placeholderName = useMemo(() => {
-    if (selection.type === 'campaign' && selection.code === CUSTOM) {
+    if (!campaignChoice) {
+      return '';
+    }
+    if (campaignChoice.selection.type === 'campaign' && campaignChoice.selection.code === CUSTOM) {
       return t`(required)`;
     }
-    if (selection.type === 'standalone') {
-      return campaign;
+    if (campaignChoice.selection.type === 'standalone') {
+      return campaignChoice?.campaign;
     }
+    const campaign = campaignChoice.campaign;
     return t`My ${campaign} Campaign`;
-  }, [campaign, selection]);
+  }, [campaignChoice]);
 
-  const showCampaign = useCallback((component: LayoutComponent) => {
-    Navigation.pop(componentId);
-    Navigation.push(BROWSE_CAMPAIGNS, {
-      component,
-    });
-  }, [componentId]);
   const onSave = useCallback(() => {
-    if (selection.type === 'campaign' && selection.code === CUSTOM && !name) {
+    if (!campaignChoice) {
+      showAlert(t`Campaign required`, t`You must select a campaign.`);
+      return;
+    }
+    if (campaignChoice.selection.type === 'campaign' && campaignChoice.selection.code === CUSTOM && !name) {
       showAlert(t`Name required`, t`You must specify a name for custom campaigns.`);
       return;
     }
@@ -254,24 +245,12 @@ function NewCampaignView({ componentId }: NavigationProps) {
 
     setTimeout(() => {
       const deckIds = map(selectedDecks, d => d.id);
-      const options: Options = {
-        topBar: {
-          title: {
-            text: name || placeholderName,
-          },
-          backButton: {
-            title: t`Back`,
-          },
-          rightButtons: [
-            {
-              icon: iconsMap.edit,
-              id: 'edit',
-              color: COLORS.M,
-              accessibilityLabel: t`Edit name`,
-            },
-          ],
-        },
-      };
+      const selection = campaignChoice.selection;
+      const state = navigation.getState();
+      const routes = dropWhile(
+        reverse([...state?.routes ?? []]),
+        r => r.name === 'Campaign.New'
+      ).reverse();
       if (selection.type === 'campaign') {
         if (selection.code === TDE) {
           dispatch(newLinkedCampaign(
@@ -285,15 +264,20 @@ function NewCampaignView({ componentId }: NavigationProps) {
               assignedCards: weaknessAssignedCards,
             },
           )).then(({ campaignId, campaignIdA, campaignIdB }) => {
-            showCampaign({
-              name: 'Guide.LinkedCampaign',
-              passProps: {
-                campaignId,
-                campaignIdA,
-                campaignIdB,
-                upload: uploadCampaign,
-              },
-              options,
+            navigation.reset({
+              index: routes.length,
+              routes: [
+                ...routes as any,
+                {
+                  name: 'Guide.LinkedCampaign',
+                  params: {
+                    campaignId,
+                    campaignIdA,
+                    campaignIdB,
+                    upload: uploadCampaign,
+                  },
+                },
+              ],
             });
           });
         } else {
@@ -313,13 +297,18 @@ function NewCampaignView({ componentId }: NavigationProps) {
             },
             isGuided
           )).then(campaignId => {
-            showCampaign({
-              name: isGuided ? 'Guide.Campaign' : 'Campaign',
-              passProps: {
-                campaignId,
-                upload: uploadCampaign,
-              },
-              options,
+            navigation.reset({
+              index: routes.length,
+              routes: [
+                ...routes as any,
+                {
+                  name: isGuided ? 'Guide.Campaign' : 'Campaign',
+                  params: {
+                    campaignId,
+                    upload: uploadCampaign,
+                  },
+                },
+              ],
             });
           });
         }
@@ -335,33 +324,46 @@ function NewCampaignView({ componentId }: NavigationProps) {
             assignedCards: weaknessAssignedCards,
           },
         )).then(campaignId => {
-          showCampaign({
-            name: 'Guide.Standalone',
-            passProps: {
-              campaignId,
-              scenarioId: selection.id.scenarioId,
-              standalone: true,
-              upload: uploadCampaign,
-            },
-            options,
+          navigation.reset({
+            index: routes.length,
+            routes: [
+              ...routes as any,
+              {
+                name: 'Guide.Standalone',
+                params: {
+                  campaignId,
+                  scenarioId: selection.id.scenarioId,
+                  standalone: true,
+                  upload: uploadCampaign,
+                },
+              },
+            ],
           });
         });
       }
     }, 0);
-  }, [dispatch, showAlert, showCampaign, campaignLog, chaosBag, placeholderName, name, selection, userId,
+  }, [dispatch, showAlert, navigation, campaignLog, chaosBag, placeholderName, name, campaignChoice, userId,
     difficulty, selectedDecks, investigatorIds, weaknessPacks, weaknessAssignedCards, isGuided, uploadCampaign]);
 
   const savePressed = useMemo(() => throttle(onSave, 200), [onSave]);
-  useNavigationButtonPressed(({ buttonId }) => {
-    if (buttonId === 'save') {
-      savePressed();
-    }
-  }, componentId, [savePressed]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: !campaignChoice || campaignChoice.selection.type === 'campaign' ? t`New Campaign` : t`New Standalone`,
+      headerRight: () => (
+        <HeaderButton
+          text={t`Done`}
+          accessibilityLabel={t`Done`}
+          onPress={savePressed}
+        />
+      ),
+    });
+  }, [navigation, name, campaignChoice, savePressed]);
 
   const { dialog: chaosBagDialog, showDialog: showChaosBagDialog } = useEditChaosBagDialog({
     chaosBag: customChaosBag,
     updateChaosBag: setCustomChaosBag,
-    cycleCode: selection.type === 'campaign' ? selection.code : 'custom',
+    cycleCode: campaignChoice?.selection.type === 'campaign' ? campaignChoice?.selection.code : 'custom',
     difficulty,
     setDifficulty,
   });
@@ -422,7 +424,6 @@ function NewCampaignView({ componentId }: NavigationProps) {
         >
           <View style={[space.paddingXs, space.paddingRightS]}>
             <WeaknessSetPackChooserComponent
-              componentId={componentId}
               compact
               onSelectedPacksChanged={setWeaknessPacks}
             />
@@ -430,10 +431,10 @@ function NewCampaignView({ componentId }: NavigationProps) {
         </AnimatedRoundedFactionBlock>
       </View>
     );
-  }, [componentId, setWeaknessPacks, renderWeaknessHeader, open, toggleOpen, colors]);
+  }, [setWeaknessPacks, renderWeaknessHeader, open, toggleOpen, colors]);
 
   const campaignLogSection = useMemo(() => {
-    if (isGuided || selection.type === 'standalone') {
+    if (isGuided || !campaignChoice || campaignChoice.selection.type === 'standalone') {
       return null;
     }
     const onPress = hasDefinedCampaignLog ?
@@ -487,8 +488,9 @@ function NewCampaignView({ componentId }: NavigationProps) {
         </RoundedFactionBlock>
       </View>
     );
-  }, [typography, colors, hasDefinedChaosBag, hasDefinedCampaignLog, isGuided, campaignLog, selection,
-    showCampaignLogDialog, deleteCampaignNoteSection]);
+  }, [typography, colors, hasDefinedChaosBag, hasDefinedCampaignLog, isGuided, campaignLog, campaignChoice,
+    showCampaignLogDialog, deleteCampaignNoteSection,
+  ]);
 
   const showDeckSelector = useCallback(() => {
     if (deckAdded) {
@@ -498,24 +500,11 @@ function NewCampaignView({ componentId }: NavigationProps) {
         onInvestigatorSelect: investigatorAdded,
         selectedDecks,
         selectedInvestigatorIds: investigatorIds,
+        includeParallel,
       };
-      Navigation.showModal<MyDecksSelectorProps>({
-        stack: {
-          children: [{
-            component: {
-              name: 'Dialog.DeckSelector',
-              passProps,
-              options: {
-                modalPresentationStyle: Platform.OS === 'ios' ?
-                  OptionsModalPresentationStyle.fullScreen :
-                  OptionsModalPresentationStyle.overCurrentContext,
-              },
-            },
-          }],
-        },
-      });
+      navigation.navigate('Dialog.DeckSelector', passProps);
     }
-  }, [selectedDecks, investigatorIds, deckAdded, investigatorAdded]);
+  }, [navigation, includeParallel, selectedDecks, investigatorIds, deckAdded, investigatorAdded]);
   const [dialog, showDialog] = useSimpleTextDialog({
     title: t`Name`,
     placeholder: placeholderName,
@@ -523,16 +512,13 @@ function NewCampaignView({ componentId }: NavigationProps) {
     onValueChange: onNameChange,
   });
   if (saving) {
-    return <LoadingSpinner large message={selection.type === 'campaign' ? t`Creating campaign...` : t`Creating standalone...`} />;
+    return <LoadingSpinner large message={campaignChoice?.selection.type === 'campaign' ? t`Creating campaign...` : t`Creating standalone...`} />;
   }
   return (
     <View style={styles.flex}>
       <ScrollView contentContainerStyle={backgroundStyle}>
         <View style={space.paddingS}>
-          <CampaignSelector
-            componentId={componentId}
-            campaignChanged={campaignChanged}
-          />
+          <CampaignSelector campaignChanged={campaignChanged} />
           <DeckPickerStyleButton
             icon="name"
             title={t`Name`}
@@ -542,18 +528,18 @@ function NewCampaignView({ componentId }: NavigationProps) {
             last
           />
         </View>
-        { hasGuide && selection.type === 'campaign' && (
+        { campaignChoice?.hasGuide && campaignChoice?.selection.type === 'campaign' && (
           <SettingsSwitch
             title={t`Guided Campaign`}
-            description={(selection.code === 'tde' || guided) ? t`Use app for scenario setup & resolutions` : t`Track campaign log and resolutions manually`}
+            description={(campaignChoice.selection.code === 'tde' || guided) ? t`Use app for scenario setup & resolutions` : t`Track campaign log and resolutions manually`}
             onValueChange={toggleGuided}
-            disabled={selection.code === 'tde'}
+            disabled={campaignChoice.selection.code === 'tde'}
             noDisableText
-            value={selection.code === 'tde' || guided}
+            value={campaignChoice.selection.code === 'tde' || guided}
             last
           />
         ) }
-        { selection.type === 'campaign' && !isGuided && (
+        { campaignChoice?.selection.type === 'campaign' && !isGuided && (
           <View style={space.paddingS}>
             <DeckPickerStyleButton
               icon="difficulty"
@@ -573,14 +559,14 @@ function NewCampaignView({ componentId }: NavigationProps) {
             />
           </View>
         ) }
-        { hasGuide && guided && selection.type === 'campaign' && INCOMPLETE_GUIDED_CAMPAIGNS.has(selection.code) && (
+        { campaignChoice?.hasGuide && guided && campaignChoice.selection.type === 'campaign' && INCOMPLETE_GUIDED_CAMPAIGNS.has(campaignChoice.selection.code) && (
           <View style={styles.block}>
             <Text style={typography.text}>
               { t`Note: this campaign is still being released and so the guide is incomplete (and may contain some mistakes).\nAs new scenarios are released, I will try to update the app promptly but there may be some slight delays.` }
             </Text>
           </View>
         ) }
-        { hasGuide && guided && selection.type === 'campaign' && NEW_GUIDED_CAMPAIGNS.has(selection.code) && (
+        { campaignChoice?.hasGuide && guided && campaignChoice.selection.type === 'campaign' && NEW_GUIDED_CAMPAIGNS.has(campaignChoice.selection.code) && (
           <View style={styles.block}>
             <Text style={typography.text}>
               { t`Note: this campaign is a fairly new addition to the app and may contain some mistakes.` }
@@ -588,7 +574,7 @@ function NewCampaignView({ componentId }: NavigationProps) {
           </View>
         ) }
         { campaignLogSection }
-        { (selection.type !== 'campaign' || selection.code !== TDE) && (
+        { (campaignChoice?.selection.type !== 'campaign' || campaignChoice.selection.code !== TDE) && (
           <View style={space.paddingS}>
             <RoundedFactionBlock
               faction="neutral"
@@ -602,7 +588,6 @@ function NewCampaignView({ componentId }: NavigationProps) {
               noSpace
             >
               <DeckSelector
-                componentId={componentId}
                 investigatorToDeck={investigatorToDeck}
                 investigatorIds={investigatorIds}
                 deckRemoved={deckRemoved}
@@ -634,8 +619,8 @@ function NewCampaignView({ componentId }: NavigationProps) {
           <DeckButton
             icon="check-thin"
             thin
-            disabled={selection.type === 'campaign' && selection.code === CUSTOM && !name}
-            title={selection.type === 'campaign' ? t`Create Campaign` : t`Create Standalone`}
+            disabled={!campaignChoice || campaignChoice.selection.type === 'campaign' && campaignChoice.selection.code === CUSTOM && !name}
+            title={!campaignChoice || campaignChoice.selection.type === 'campaign' ? t`Create Campaign` : t`Create Standalone`}
             onPress={savePressed}
           />
         </View>

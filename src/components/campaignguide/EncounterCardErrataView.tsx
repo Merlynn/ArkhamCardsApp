@@ -1,17 +1,16 @@
 import React, { useContext, useMemo } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { flatMap, forEach, map, min, max, groupBy } from 'lodash';
-import { t } from 'ttag';
 
 import CampaignGuideTextComponent from '@components/campaignguide/CampaignGuideTextComponent';
-import withCampaignGuideContext, { CampaignGuideInputProps } from '@components/campaignguide/withCampaignGuideContext';
 import { CardsMap } from '@data/types/Card';
 import space from '@styles/space';
 import { CardErrata } from '@data/scenario/types';
 import EncounterIcon from '@icons/EncounterIcon';
 import StyleContext from '@styles/StyleContext';
 import useCardList from '@components/card/useCardList';
-import CampaignGuideContext from './CampaignGuideContext';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
 
 export interface EncounterCardErrataProps {
   errata: CardErrata[];
@@ -40,16 +39,18 @@ function CardErrataComponent({ errata, cards }: { errata: CardErrata; cards: Car
                     encounter_code={cards[0].pack_code}
                     size={16 * fontScale}
                     color={colors.darkText}
+                    pack
                   />
                 )
               ) : (
-              !!cards[0].cycle_code && (
-                <EncounterIcon
-                  encounter_code={cards[0].cycle_code}
-                  size={16 * fontScale}
-                  color={colors.darkText}
-                />
-              )) }
+                !!cards[0].cycle_code && (
+                  <EncounterIcon
+                    encounter_code={cards[0].cycle_code}
+                    size={16 * fontScale}
+                    color={colors.darkText}
+                    pack
+                  />
+                )) }
               &nbsp;
               { (cards.length > 1) ? (
                 `${min(map(cards, card => card.position || 0))} - ${max(map(cards, card => card.position || 0))}`
@@ -63,10 +64,12 @@ function CardErrataComponent({ errata, cards }: { errata: CardErrata; cards: Car
     </View>
   );
 }
-function EncounterCardErrataView({ errata }: EncounterCardErrataProps) {
+function EncounterCardErrataView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Guide.CardErrata'>>();
+  const { errata } = route.params;
   const { colors } = useContext(StyleContext);
   const errataCodes = useMemo(() => flatMap(errata, e => e.code), [errata]);
-  const [errataCards, loading] = useCardList(errataCodes, 'encounter');
+  const [errataCards, loading] = useCardList(errataCodes, 'encounter', false);
   const cardsMap = useMemo(() => {
     const result: CardsMap = {};
     forEach(errataCards, card => {
@@ -92,19 +95,6 @@ function EncounterCardErrataView({ errata }: EncounterCardErrataProps) {
     </ScrollView>
   );
 }
-
-EncounterCardErrataView.options = () => {
-  return {
-    topBar: {
-      title: {
-        text: t`Encounter Card Errata`,
-      },
-      backButton: {
-        title: t`Back`,
-      },
-    },
-  };
-};
 
 export default EncounterCardErrataView;
 

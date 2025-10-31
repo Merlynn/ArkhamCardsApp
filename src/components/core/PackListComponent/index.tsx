@@ -15,12 +15,11 @@ import { Pack } from '@actions/types';
 import CardSectionHeader from '@components/core/CardSectionHeader';
 import PackRow from './PackRow';
 import StyleContext from '@styles/StyleContext';
-import { ReprintPack, reprintPackToPack, specialPacks } from '@app_constants';
-import ArkhamSwitch from '../ArkhamSwitch';
+import { cycleName, ReprintPack, reprintPackToPack, specialPacks } from '@app_constants';
 import ArkhamButton from '../ArkhamButton';
 import { useToggles } from '../hooks';
 
-type PackItem =  {
+type PackItem = {
   type: 'pack';
   pack: Pack;
 } | {
@@ -40,13 +39,12 @@ interface PackCycle extends SectionListData<PackItem> {
 }
 
 interface Props {
-  componentId: string;
   alwaysShowCoreSet?: boolean;
   cyclesOnly?: boolean;
   coreSetName?: string;
   packs: Pack[];
   checkState?: { [pack_code: string]: boolean | undefined };
-  setChecked: (pack_code: string, checked: boolean) => void;
+  setChecked?: (pack_code: string, checked: boolean) => void;
   setCycleChecked?: (cycle_code: string, checked: boolean) => void;
   header?: JSX.Element;
   renderFooter?: () => JSX.Element;
@@ -64,42 +62,13 @@ function keyExtractor(item: PackItem) {
   }
 }
 
-function cycleName(position: string): string {
-  switch (position) {
-    case '1': return t`Core Set`;
-    case '1_cycle': return t`Campaigns`;
-    case '2': return t`The Dunwich Legacy`;
-    case '3': return t`The Path to Carcosa`;
-    case '4': return t`The Forgotten Age`;
-    case '5': return t`The Circle Undone`;
-    case '6': return t`The Dream-Eaters`;
-    case '7': return t`The Innsmouth Conspiracy`;
-    case '8': return t`Edge of the Earth`;
-    case '9': return t`The Scarlet Keys`;
-    case '10': return t`The Feast of Hemlock Vale`;
-    case '50': return t`Return to...`;
-    case '60': return t`Investigator Starter Decks`;
-    case '70': return t`Standalone`;
-    case '80': return t`Books`;
-    case '90': return t`Parallel`;
-    case '100': return t`Non-canon Content`;
-    case '110': return t`Fan-made Campaigns`;
-    case '120': return t`Fan-made Scenarios`;
-    case '130': return t`Fan-made Investigators`;
-    default: return 'Unknown';
-  }
-}
-
 function renderSectionHeader({ section }: { section: SectionListData<PackItem> }) {
   return (
-    <CardSectionHeader
-      section={{ subTitle: section.title }}
-    />
+    <CardSectionHeader section={{ subTitle: section.title }} />
   );
 }
 
 export default function PackListComponent({
-  componentId,
   alwaysShowCoreSet,
   coreSetName,
   packs,
@@ -127,22 +96,19 @@ export default function PackListComponent({
           { (alwaysShowCoreSet || includeNoCore) && pack.code === 'core' && (
             <PackRow
               key="always-core"
-              componentId={componentId}
               pack={pack}
               packId="no_core"
               nameOverride={t`Core Set`}
-              description={alwaysShowCoreSet ? t`A single core set is always included` : undefined}
               cycle={cyclePacks}
               baseQuery={baseQuery}
               compact={compact}
-              setChecked={!alwaysShowCoreSet && !checkState?.core ? setChecked : undefined}
-              checked={alwaysShowCoreSet || !checkState?.no_core}
+              setChecked={!checkState?.core ? setChecked : undefined}
+              checked={!checkState?.no_core}
             />
           ) }
           { (!includeNoCore || !checkState?.no_core) && (
             <PackRow
               key={pack.id}
-              componentId={componentId}
               pack={pack}
               nameOverride={coreSetName}
               cycle={cyclePacks}
@@ -160,7 +126,6 @@ export default function PackListComponent({
     return (
       <PackRow
         key={pack.id}
-        componentId={componentId}
         pack={pack}
         cycle={cyclePacks}
         setChecked={setChecked}
@@ -171,7 +136,7 @@ export default function PackListComponent({
         alwaysCycle={cyclesOnly}
       />
     );
-  }, [packs, checkState, componentId, cyclesOnly, alwaysShowCoreSet, includeNoCore, setChecked, setCycleChecked, baseQuery, compact, coreSetName]);
+  }, [packs, checkState, cyclesOnly, alwaysShowCoreSet, includeNoCore, setChecked, setCycleChecked, baseQuery, compact, coreSetName]);
 
   const renderItem = useCallback(({ item }: SectionListRenderItemInfo<PackItem>) => {
     switch (item.type) {
@@ -181,7 +146,6 @@ export default function PackListComponent({
         return (
           <PackRow
             key={item.pack.code}
-            componentId={componentId}
             pack={item.pack}
             cycle={[]}
             setChecked={setChecked}
@@ -199,7 +163,6 @@ export default function PackListComponent({
               { map(item.packs, pack => (
                 <PackRow
                   key={pack.code}
-                  componentId={componentId}
                   pack={pack}
                   cycle={[]}
                   setChecked={setChecked}
@@ -215,11 +178,12 @@ export default function PackListComponent({
         }
         return (
           <View>
+            { /* eslint-disable-next-line react/jsx-no-bind */ }
             <ArkhamButton icon="show" title={t`Show original release packs`} onPress={() => setShowLegacy(item.cycleCode)} />
           </View>
         );
     }
-  }, [renderPack, checkState, setShowLegacy, showLegacy]);
+  }, [baseQuery, compact, cyclesOnly, setChecked, setCycleChecked, renderPack, checkState, setShowLegacy, showLegacy]);
 
 
   if (!packs.length) {
@@ -249,7 +213,7 @@ export default function PackListComponent({
       pack => (cyclesOnly && pack.cycle_position >= 2 && pack.cycle_position < 50) ? 2 : pack.cycle_position),
     (group, key) => {
       const reprintPacks = filter(specialPacks, reprintPack => `${reprintPack.cyclePosition}` === key);
-      if (reprintPacks.length) {
+      if (!cyclesOnly && reprintPacks.length) {
         const items: PackItem[] = [
           ...map(reprintPacks, reprint => {
             const item: PackItem = {

@@ -30,6 +30,7 @@ export type Condition =
   | CampaignLogCondition
   | CampaignLogCountCondition
   | CampaignLogInvestigatorCountCondition
+  | CampaignLogTaskCondition
   | MathCondition
   | CardCondition
   | CampaignDataCondition
@@ -69,7 +70,10 @@ export type Effect =
   | CheckCampaignLogCardsEffect
   | CheckCampaignLogCountEffect
   | ScarletKeyEffect
-  | BackupStateEffect;
+  | BackupStateEffect
+  | CampaignLogAssignTaskEffect
+  | CampaignLogTaskEffect
+  | CampaignLogTextEffect;
 export type SpecialXp = "resupply_points" | "supply_points" | "unspect_xp";
 export type InvestigatorSelector =
   | "lead_investigator"
@@ -100,8 +104,9 @@ export type ScenarioDataEffect =
   | ScenarioDataInvestigatorEffect
   | ScenarioDataInvestigatorStatusEffect
   | ScenarioDataAddInvestigatorEffect
-  | ScenarioDataStatusEffect;
-export type InvestigatorStatus = "alive" | "resigned" | "physical" | "mental" | "eliminated";
+  | ScenarioDataStatusEffect
+  | ScenarioDataPlayScenarioEffect;
+export type InvestigatorStatus = "alive" | "resigned" | "physical" | "mental" | "eliminated" | "killed" | "insane";
 export type ScenarioStatus = "not_started" | "skipped" | "started" | "resolution" | "completed" | "unlocked";
 export type ChaosToken = ("+1" | "0" | "-1" | "-2" | "-3" | "-4" | "-5" | "-6" | "-7" | "-8") | SpecialChaosToken;
 export type SpecialChaosToken =
@@ -114,11 +119,12 @@ export type SpecialChaosToken =
   | "bless"
   | "curse"
   | "frost";
-export type ChoiceIcon = "mental" | "physical" | "resign" | "dismiss" | "accept";
+export type ChoiceIcon = "mental" | "physical" | "resign" | "dismiss" | "accept" | "killed" | "insane";
 export type DefaultOption = Option;
 export type MathCondition = MathCompareCondition | MathOpCondition | MathEqualsCondition;
 export type Operand =
   | CampaignLogCountOperand
+  | CampaignLogTaskOperand
   | ChaosBagOperand
   | ConstantOperand
   | MostXpEarnedOperand
@@ -204,6 +210,7 @@ export type BinaryChoiceCondition =
   | PartnerStatusCondition
   | LocationCondition
   | ScarletKeyCondition;
+export type TextBoxEffect = FreeformCampaignLogEffect | CampaignLogTextEffect;
 export type LocationConnector =
   | "purple_moon"
   | "blue_triangle"
@@ -231,10 +238,12 @@ export interface Campaign {
   id: string;
   name: string;
   tarot?: string[];
+  pack_codes?: string[];
   version: number;
   position: number;
   no_side_scenario_xp?: boolean;
   map?: CampaignMap;
+  include_parallel_investigators?: boolean;
   cards?: {
     code: string;
     name: string;
@@ -333,8 +342,11 @@ export interface CampaignLogSectionDefinition {
     | "header"
     | "partner"
     | "scarlet_keys"
+    | "fatigue"
     | "relationship"
-    | "checklist";
+    | "checklist"
+    | "investigator_checklist"
+    | "glyphs";
   hidden?: boolean;
   partners?: Partner[];
   checklist?: ChecklistItem[];
@@ -387,6 +399,7 @@ export interface MultiCondition {
   type: "multi";
   conditions: (
     | CampaignLogCondition
+    | CampaignLogCardsCondition
     | CampaignLogSectionExistsCondition
     | CampaignDataChaosBagCondition
     | CampaignDataNextScenarioCondition
@@ -532,6 +545,7 @@ export interface CampaignLogEffect {
   section: string;
   id?: string;
   text?: string;
+  investigator_section?: string;
   cross_out?: boolean;
   bullet_type?: BulletType;
   decorate?: "circle";
@@ -546,7 +560,14 @@ export interface CampaignLogCardsEffect {
   masculine_text?: string;
   feminine_text?: string;
   nonbinary_text?: string;
-  cards?: "$lead_investigator" | "$all_investigators" | "$defeated_investigators" | "$input_value" | "$fixed_codes";
+  plural_text?: string;
+  cards?:
+    | "$lead_investigator"
+    | "$all_investigators"
+    | "$defeated_investigators"
+    | "$input_value"
+    | "$fixed_codes"
+    | "$not_resigned";
   codes?: string[];
   cross_out?: boolean;
   remove?: boolean;
@@ -562,6 +583,7 @@ export interface CampaignLogCountEffect {
   text?: string;
   hidden?: boolean;
   min?: number;
+  alternate?: boolean;
 }
 export interface CampaignLogInvestigatorCountEffect {
   type: "campaign_log_investigator_count";
@@ -572,6 +594,7 @@ export interface CampaignLogInvestigatorCountEffect {
   operation: "set_input" | "set" | "add_input" | "add" | "cross_out";
   value?: number;
   text?: string;
+  min?: number;
 }
 export interface CampaignDataSetScenariosEffect {
   type: "campaign_data";
@@ -643,6 +666,11 @@ export interface ScenarioDataStatusEffect {
   status: ScenarioStatus;
   resolution?: string;
 }
+export interface ScenarioDataPlayScenarioEffect {
+  type: "scenario_data";
+  setting: "play_scenario_step_id";
+  step_id: string;
+}
 export interface AddRemoveChaosTokenEffect {
   type: "add_chaos_token" | "remove_chaos_token";
   tokens: ChaosToken[];
@@ -688,6 +716,7 @@ export interface CheckCampaignLogCardsEffect {
   masculine_text?: string;
   feminine_text?: string;
   nonbinary_text?: string;
+  plural_text?: string;
   bullet_type?: BulletType;
 }
 export interface CheckCampaignLogCountEffect {
@@ -705,6 +734,35 @@ export interface ScarletKeyEffect {
 export interface BackupStateEffect {
   type: "backup_state";
   operation: "save" | "restore";
+}
+export interface CampaignLogAssignTaskEffect {
+  type: "campaign_log_assign_task";
+  section: string;
+  id: string;
+  investigator: "$input_value";
+  task_section: string;
+  task_id: string;
+}
+export interface CampaignLogTaskEffect {
+  type: "campaign_log_task";
+  section: string;
+  id: string;
+  operation: "set_input" | "set" | "add_input" | "add" | "subtract_input";
+  value?: number;
+  min?: number;
+}
+export interface CampaignLogTextEffect {
+  type: "campaign_log_text";
+  section: string;
+  id: string;
+  hidden?: boolean;
+  bullet_type?: BulletType;
+}
+export interface CampaignLogCardsCondition {
+  type: "campaign_log_cards";
+  section: string;
+  id: string;
+  options: BoolOption[];
 }
 export interface CampaignLogSectionExistsCondition {
   type: "campaign_log_section_exists";
@@ -818,6 +876,11 @@ export interface CampaignLogCountOperand {
   section: string;
   id?: string;
 }
+export interface CampaignLogTaskOperand {
+  type: "campaign_log_task";
+  section: string;
+  id: string;
+}
 export interface ChaosBagOperand {
   type: "chaos_bag";
   token: ChaosToken;
@@ -897,7 +960,7 @@ export interface ScarletKeyCountCondition {
 export interface ScenarioDataInvestigatorStatusCondition {
   type: "scenario_data";
   scenario_data: "investigator_status";
-  investigator: "defeated" | "not_defeated" | "resigned";
+  investigator: "alive" | "defeated" | "not_defeated" | "resigned" | "not_resigned";
   options: BoolOption[];
 }
 export interface CampaignLogInvestigatorCountCondition {
@@ -906,6 +969,12 @@ export interface CampaignLogInvestigatorCountCondition {
   investigator: "any" | "all";
   options: NumOption[];
   default_option?: DefaultOption;
+}
+export interface CampaignLogTaskCondition {
+  type: "campaign_log_task";
+  section: string;
+  id: string;
+  options: BoolOption[];
 }
 export interface CampaignDataLinkedCondition {
   type: "campaign_data";
@@ -947,12 +1016,6 @@ export interface CheckSuppliesAnyCondition {
   id: string;
   name: string;
   prompt?: string;
-  options: BoolOption[];
-}
-export interface CampaignLogCardsCondition {
-  type: "campaign_log_cards";
-  section: string;
-  id: string;
   options: BoolOption[];
 }
 export interface CampaignLogCardsSwitchCondition {
@@ -1049,6 +1112,7 @@ export interface Choice {
   feminine_text?: string;
   masculine_text?: string;
   nonbinary_text?: string;
+  plural_text?: string;
   description?: string;
   steps?: string[];
   border?: boolean;
@@ -1088,7 +1152,7 @@ export interface InvestigatorChoiceInput {
   type: "investigator_choice";
   source: "campaign" | "scenario";
   optional?: boolean;
-  investigator: "all" | "choice" | "any" | "resigned" | "defeated" | "not_defeated";
+  investigator: "all" | "choice" | "any" | "alive" | "resigned" | "defeated" | "not_defeated";
   min?: ConstantOperand | CampaignLogCountOperand;
   max?: ConstantOperand | CampaignLogCountOperand;
   condition?: InvestigatorChoiceCondition;
@@ -1126,7 +1190,7 @@ export interface ChooseOneInput {
   confirm_text?: string;
   show_hidden_choices?: boolean;
   choices: BinaryConditionalChoice[];
-  style?: "compact";
+  style?: "compact" | "glyphs";
   icon?: string;
 }
 export interface BinaryConditionalChoice {
@@ -1198,6 +1262,7 @@ export interface ScenarioInvestigatorsInput {
   type: "scenario_investigators";
   choose_none_steps?: string[];
   lead_investigator_effects?: Effect[];
+  include_parallel?: boolean;
 }
 export interface PlayScenarioInput {
   type: "play_scenario";
@@ -1210,8 +1275,9 @@ export interface PlayScenarioInput {
 }
 export interface TextBoxInput {
   type: "text_box";
+  id?: string;
   undo?: boolean;
-  effects: FreeformCampaignLogEffect[];
+  effects: TextBoxEffect[];
 }
 export interface ReceiveCampaignLinkInput {
   type: "receive_campaign_link";
@@ -1385,6 +1451,7 @@ export interface LocationSetupCard {
   code: string;
   x: number;
   y: number;
+  layer?: "bottom" | "top";
 }
 export interface LocationDecoration {
   layer: "top" | "bottom";
@@ -1404,7 +1471,7 @@ export interface LocationArrow {
   width?: number;
   height?: number;
   opacity?: number;
-  rotation?: "90deg" | "180deg" | "270deg";
+  rotation?: "45deg" | "90deg" | "180deg" | "270deg" | "315deg";
 }
 export interface LocationConnectorsStep {
   id: string;
@@ -1508,6 +1575,7 @@ export interface CustomData {
     pl?: string;
     uk?: string;
     pt?: string;
+    "zh-cn"?: string;
   };
 }
 export interface Achievement {
@@ -1533,6 +1601,9 @@ export interface Scenario {
   chaos_bag_card?: string;
   chaos_bag_card_text?: string;
   chaos_bag_card_back_text?: string;
+  extra_chaos_bag_card?: string;
+  extra_chaos_bag_card_text?: string;
+  extra_chaos_bag_card_back_text?: string;
   scenario_name: string;
   full_name: string;
   header: string;
@@ -1565,6 +1636,7 @@ export interface Resolution {
   investigator_status?: InvestigatorStatus[];
   steps: string[];
   narration?: Narration;
+  condition?: BinaryChoiceCondition;
 }
 export interface Log {
   campaignName: string;
@@ -1617,6 +1689,7 @@ export interface CardErrata {
 }
 export interface ScenarioFaqEntry {
   scenario_code: string;
+  campaign_code?: string;
   questions: Question[];
 }
 export interface Question {

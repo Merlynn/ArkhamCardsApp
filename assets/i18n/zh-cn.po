@@ -1,0 +1,8885 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh-cn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"mime-version: 1.0\n"
+"x-generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "Guardian"
+msgstr "守卫者"
+
+msgid "Seeker"
+msgstr "探求者"
+
+msgid "Mystic"
+msgstr "潜修者"
+
+msgid "Rogue"
+msgstr "流浪者"
+
+msgid "Survivor"
+msgstr "求生者"
+
+msgid "Neutral"
+msgstr "中立"
+
+msgid "Weakness"
+msgstr "弱点"
+
+msgid "Mythos"
+msgstr "神秘"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Investigator"
+msgstr "调查员"
+
+msgid "Event"
+msgstr "事件"
+
+msgid "Skill"
+msgstr "技能"
+
+msgid "Basic Weakness"
+msgstr "基础弱点"
+
+msgid "Scenario"
+msgstr "冒险"
+
+msgid "Story"
+msgstr "故事"
+
+#, javascript-format
+msgid "Act ${ json.stage }"
+msgstr "场景${ json.stage }"
+
+#, javascript-format
+msgid "Agenda ${ json.stage }"
+msgstr "密谋${ json.stage }"
+
+#, javascript-format
+msgid "Act ${ linked_card.stage }"
+msgstr "场景${ linked_card.stage }"
+
+#, javascript-format
+msgid "Agenda ${ linked_card.stage }"
+msgstr "密谋${ linked_card.stage }"
+
+msgid "Second Core Set"
+msgstr "第二套基础游戏"
+
+msgid "Edit Collection"
+msgstr "编辑收藏"
+
+msgid "Search decks"
+msgstr "搜寻牌组"
+
+#, javascript-format
+msgid "No matching decks for \"${ searchTerm }\"."
+msgstr "找不到符合\"${ searchTerm }\"的牌组。"
+
+#, javascript-format
+msgid "${ scenarioCount } scenario completed"
+msgid_plural "${ scenarioCount } scenarios completed"
+msgstr[0] "已完成${ scenarioCount }场冒险"
+
+#, javascript-format
+msgid "${ xp } available experience"
+msgstr "可用${ xp }点经验值"
+
+#, javascript-format
+msgid "${ parsedDeck.experience } experience required"
+msgstr "需要${ parsedDeck.experience }点经验值"
+
+msgid "Not enough cards."
+msgstr "卡牌张数不足。"
+
+msgid "Too many cards."
+msgstr "卡牌张数太多。"
+
+msgid "Too many copies of a card with the same name."
+msgstr "太多同名卡牌。"
+
+msgid "Contains forbidden cards (cards not permitted by Faction)"
+msgstr "含有禁止卡牌(角色职阶不允许使用)"
+
+msgid "Contains too many limited cards."
+msgstr "含有太多限制卡牌。"
+
+msgid "Back"
+msgstr "返回"
+
+msgid "Edit Story Cards"
+msgstr "编辑故事牌"
+
+msgid "Draw Basic Weakness"
+msgstr "抽随机弱点"
+
+msgid "Draw From Collection"
+msgstr "从收藏中抽取"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Draw Weaknesses"
+msgstr "抽取弱点"
+
+msgid "Save"
+msgstr "存档"
+
+msgid "Sort by"
+msgstr "排序"
+
+msgid "Title"
+msgstr "卡牌名称"
+
+msgid "Pack"
+msgstr "扩充包"
+
+msgid "Connect to ArkhamDB"
+msgstr "连接ArkhamDB"
+
+msgid "Decks"
+msgstr "牌组"
+
+msgid "Hide ArkhamDB decks"
+msgstr "隐藏ArkhamDB的牌组"
+
+msgid "New Deck"
+msgstr "新牌组"
+
+msgid "Authorization error"
+msgstr "授权失败"
+
+msgid "Try again"
+msgstr "重试"
+
+msgid "Reauthorize"
+msgstr "再次授权"
+
+msgid "Deck"
+msgstr "牌组"
+
+msgid "Available weaknesses"
+msgstr "可用弱点"
+
+msgid "Saving"
+msgstr "储存中"
+
+msgid "Draw a Different Weakness"
+msgstr "抽另一张弱点卡"
+
+msgid "Draw Another"
+msgstr "再抽一张"
+
+msgid "Traits"
+msgstr "属性"
+
+msgid "All weaknesses have been drawn."
+msgstr "所有弱点卡都被抽完了。"
+
+msgid "Save to Deck"
+msgstr "加入牌组"
+
+msgid "Restore campaign data?"
+msgstr "是否回复剧本资料？"
+
+msgid "Backup campaign data?"
+msgstr "是否备份剧本资料？"
+
+msgid "Export Campaign Data"
+msgstr "汇出剧本资料"
+
+msgid "Backup"
+msgstr "备份"
+
+msgid "Backup Campaign Data"
+msgstr "备份剧本资料"
+
+msgid "Restore Campaign Data"
+msgstr "回复剧本资料"
+
+msgid "Caches"
+msgstr "暂存"
+
+msgid "Clear cache"
+msgstr "清除暂存区"
+
+msgid "Are you sure you want to sign out?"
+msgstr "你确定要登出？"
+
+msgid "Sign Out"
+msgstr "登出"
+
+msgid "Reconnect Account"
+msgstr "重新连接帐户"
+
+msgid "Sign in to ArkhamDB"
+msgstr "登入ArkhamDB"
+
+msgid "Edit Spoilers"
+msgstr "编辑剧透设定"
+
+msgid "Diagnostics"
+msgstr "诊断"
+
+msgid "About Arkham Cards"
+msgstr "关于Arkham Cards"
+
+msgid "Done"
+msgstr "完成"
+
+msgid "Updating cards"
+msgstr "卡牌资料更新中"
+
+msgid "Error: Check for Cards Again"
+msgstr "错误: 再次重试"
+
+msgid "Card Collection"
+msgstr "卡牌收藏"
+
+msgid "Elite"
+msgstr "精英"
+
+msgid "Hunter"
+msgstr "猎手"
+
+msgid "Alert"
+msgstr "警戒"
+
+msgid "Spawn"
+msgstr "生成"
+
+msgid "Aloof"
+msgstr "冷漠"
+
+msgid "Massive"
+msgstr "庞大"
+
+msgid "Non-Elite"
+msgstr "非精英"
+
+msgid "Non-Hunter"
+msgstr "非猎手"
+
+msgid "Retaliate"
+msgstr "反击"
+
+msgid "Parley"
+msgstr "谈判"
+
+msgid "Prey"
+msgstr "猎物"
+
+msgid "Fight"
+msgstr "攻击值"
+
+msgid "Health"
+msgstr "生命值"
+
+msgid "Per Investigator"
+msgstr "每调查员"
+
+msgid "Evade"
+msgstr "躲避值"
+
+msgid "Damage"
+msgstr "伤害"
+
+msgid "Horror"
+msgstr "恐惧"
+
+msgid "Enemy Filters"
+msgstr "敌人筛选器"
+
+msgid "Shroud"
+msgstr "隐藏值"
+
+msgid "Clues"
+msgstr "线索"
+
+msgid "Haunted"
+msgstr "闹鬼"
+
+msgid "Location Filters"
+msgstr "地点筛选器"
+
+msgid "Core Set"
+msgstr "基础游戏"
+
+msgid "Select Packs"
+msgstr "选择扩充包"
+
+msgid "Clear"
+msgstr "清除"
+
+msgid "Skill Icons"
+msgstr "技能图标"
+
+msgid "Skill Icons: All"
+msgstr "技能图标: 全部"
+
+msgid "Filter"
+msgstr "筛选"
+
+msgid "Packs: All"
+msgstr "扩充包: 全部"
+
+#, javascript-format
+msgid "Packs: ${ allPacksString }"
+msgstr "扩充包: ${ allPacksString }"
+
+msgid "HPI"
+msgstr "生命值每调查员"
+
+msgid "Enemies: All"
+msgstr "敌人: 全部"
+
+#, javascript-format
+msgid "Enemies: ${ searchParts }"
+msgstr "敌人: ${ searchParts }"
+
+msgid "Fixed Clues"
+msgstr "固定线索"
+
+msgid "Locations: All"
+msgstr "地点: 全部"
+
+#, javascript-format
+msgid "Locations: ${ searchParts }"
+msgstr "地点: ${ searchParts }"
+
+msgid "Level"
+msgstr "等级"
+
+msgid "Exceptional"
+msgstr "卓越"
+
+msgid "Non-Exceptional"
+msgstr "非卓越"
+
+msgid "Types"
+msgstr "类别"
+
+msgid "SubTypes"
+msgstr "子类别"
+
+msgid "Cost"
+msgstr "费用"
+
+msgid "Slots"
+msgstr "槽位"
+
+msgid "Uses"
+msgstr "使用"
+
+msgid "Fast"
+msgstr "快速"
+
+msgid "Permanent"
+msgstr "永久"
+
+msgid "Victory"
+msgstr "胜利"
+
+msgid "Exile"
+msgstr "放逐"
+
+msgid "Unique"
+msgstr "独特"
+
+msgid "Vengeance"
+msgstr "复仇"
+
+msgid "Encounter Sets"
+msgstr "遭遇组"
+
+msgid "Illustrators"
+msgstr "插画家"
+
+#, javascript-format
+msgid "Search ${ title }"
+msgstr "搜寻${ title }"
+
+#, javascript-format
+msgid "Select ${ title }"
+msgstr "选择${ title }"
+
+msgid "Note: This entry is crossed out"
+msgstr "注意: 这个项目被划掉了"
+
+msgid "Uncross Out"
+msgstr "复原"
+
+msgid "Cross Out"
+msgstr "划掉"
+
+msgid "Add Another"
+msgstr "另外新增"
+
+msgid "Check for updated cards?"
+msgstr "检查卡牌更新？"
+
+msgid "Ask me later"
+msgstr "稍后询问"
+
+msgid "Add Campaign Log Section"
+msgstr "新增冒险日志栏位"
+
+msgid "Section Name"
+msgstr "栏位名称"
+
+msgid "Count"
+msgstr "数量"
+
+msgid "Add"
+msgstr "新增"
+
+#, javascript-format
+msgid "Investigator: ${ investigatorName }"
+msgstr "调查员: ${ investigatorName }"
+
+msgid "Replace Random Weakness"
+msgstr "替换随机弱点"
+
+#, javascript-format
+msgid "Save to ${ investigator.name }’s Deck"
+msgstr "加入${ investigator.name }的牌组"
+
+msgid "Not yet started"
+msgstr "尚未开始"
+
+msgid "Trauma"
+msgstr "创伤"
+
+#, javascript-format
+msgid "${ investigator.card.firstName }’s Trauma"
+msgstr "${ investigator.card.firstName }的创伤"
+
+msgid "Physical Trauma"
+msgstr "肉体创伤"
+
+msgid "Mental Trauma"
+msgstr "精神创伤"
+
+msgid "Killed"
+msgstr "阵亡"
+
+msgid "Insane"
+msgstr "发疯"
+
+msgid "Hide decks from other campaigns"
+msgstr "隐藏其他剧本的牌组"
+
+msgid "Hide killed and insane investigators"
+msgstr "隐藏阵亡与发疯的调查员"
+
+msgid "Only show previous campaign members"
+msgstr "仅显示前一次剧本的成员"
+
+msgid "Experience"
+msgstr "经验值"
+
+msgid "Easy"
+msgstr "简单"
+
+msgid "Standard"
+msgstr "普通"
+
+msgid "Hard"
+msgstr "困难"
+
+msgid "Expert"
+msgstr "专家"
+
+msgid "Night of the Zealot"
+msgstr "狂热之夜"
+
+msgid "Return to the Night of the Zealot"
+msgstr "重返狂热之夜"
+
+msgid "The Dunwich Legacy"
+msgstr "敦威治遗产"
+
+msgid "Return to The Dunwich Legacy"
+msgstr "重返敦威治遗产"
+
+msgid "The Path To Carcosa"
+msgstr "卡尔克萨之路"
+
+msgid "The Forgotten Age"
+msgstr "失落的时代"
+
+msgid "The Circle Undone"
+msgstr "万象无终"
+
+msgid "The Gathering"
+msgstr "聚集于此"
+
+msgid "The Midnight Masks"
+msgstr "午夜假面"
+
+msgid "The Devourer Below"
+msgstr "地底噬魔"
+
+msgid "Extracurricular Activity"
+msgstr "课外活动"
+
+msgid "The House Always Wins"
+msgstr "百赌百胜"
+
+msgid "Armitage’s Fate"
+msgstr "阿米蒂奇的命运"
+
+msgid "The Miskatonic Museum"
+msgstr "博物馆之夜"
+
+msgid "Essex County Express"
+msgstr "疯狂列车"
+
+msgid "Blood on the Altar"
+msgstr "血色祭坛"
+
+msgid "The Survivors"
+msgstr "幸存者"
+
+msgid "Undimensioned and Unseen"
+msgstr "无人知晓"
+
+msgid "Where Doom Awaits"
+msgstr "毁灭之地"
+
+msgid "Lost in Time and Space"
+msgstr "迷失时空"
+
+msgid "Epilogue"
+msgstr "尾声故事"
+
+msgid "Return to Extracurricular Activity"
+msgstr "重返课外活动"
+
+msgid "Return to The House Always Wins"
+msgstr "重返百赌百胜"
+
+msgid "Return to The Miskatonic Museum"
+msgstr "重返博物馆之夜"
+
+msgid "Return to Essex County Express"
+msgstr "重返疯狂列车"
+
+msgid "Return to Blood on the Altar"
+msgstr "重返血色祭坛"
+
+msgid "Return to Undimensioned and Unseen"
+msgstr "重返无人知晓"
+
+msgid "Return to Where Doom Awaits"
+msgstr "重返毁灭之地"
+
+msgid "Return to Lost in Time and Space"
+msgstr "重返迷失时空"
+
+msgid "Prologue"
+msgstr "引导故事"
+
+msgid "Curtain Call"
+msgstr "谢幕"
+
+msgid "The Last King"
+msgstr "最后的王者"
+
+msgid "Lunacy’s Reward"
+msgstr "疯狂奖励"
+
+msgid "Echoes of the Past"
+msgstr "往事回声"
+
+msgid "The Unspeakable Oath"
+msgstr "邪秽誓约"
+
+msgid "Lost Soul"
+msgstr "失魂落魄"
+
+msgid "A Phantom of Truth"
+msgstr "真相幻影"
+
+msgid "The Pallid Mask"
+msgstr "苍白面具"
+
+msgid "Black Stars Rise"
+msgstr "黑星升起"
+
+msgid "Dim Carcosa"
+msgstr "卡城幽影"
+
+msgid "The Untamed Wilds"
+msgstr "荒莽密林"
+
+msgid "Restless Nights"
+msgstr "不眠之夜"
+
+msgid "The Doom of Eztli"
+msgstr "埃兹特里的覆灭"
+
+msgid "Expedition’s End"
+msgstr "探险结束"
+
+msgid "Threads of Fate"
+msgstr "命运之线"
+
+msgid "The Boundary Beyond"
+msgstr "界限彼端"
+
+msgid "The Jungle Beckons"
+msgstr "丛林的呼唤"
+
+msgid "Heart of the Elders"
+msgstr "久远腹地"
+
+msgid "The City of Archives"
+msgstr "天机之城"
+
+msgid "Those Held Captive"
+msgstr "仍被监禁"
+
+msgid "The Depths of Yoth"
+msgstr "幽嘶深渊"
+
+msgid "The Darkness"
+msgstr "无尽幽暗"
+
+msgid "Shattered Aeons"
+msgstr "破碎永世"
+
+msgid "Prologue: Disappearance at the Twilight Estate"
+msgstr "序章: 暮色庄园失踪事件"
+
+msgid "The Witching Hour"
+msgstr "巫异时刻"
+
+msgid "The Price of Progress"
+msgstr "进步的代价"
+
+msgid "The Secret Name"
+msgstr "隐秘之名"
+
+msgid "The Wages of Sin"
+msgstr "恶罪报应"
+
+msgid "For the Greater Good"
+msgstr "崇高利益"
+
+msgid "The Inner Circle"
+msgstr "核心圈"
+
+msgid "Union and Disillusion"
+msgstr "聚合幻灭"
+
+msgid "In the Clutches of Chaos"
+msgstr "混沌魔掌"
+
+msgid "Twist of Fate"
+msgstr "扭转命运"
+
+msgid "Before the Black Throne"
+msgstr "黑色王座"
+
+msgid "Return to The Gathering"
+msgstr "重返聚集于此"
+
+msgid "Return to the Midnight Masks"
+msgstr "重返午夜假面"
+
+msgid "Return to the Devourer Below"
+msgstr "重返地底噬魔"
+
+msgid "The Night of the Zealot"
+msgstr "狂热之夜"
+
+msgid "The Path to Carcosa"
+msgstr "卡尔克萨之路"
+
+msgid "Campaign Notes"
+msgstr "冒险日志"
+
+msgid "Cultists We Interrogated"
+msgstr "我们盘问过的异教徒"
+
+msgid "Cultists Who Got Away"
+msgstr "逃跑的异教徒"
+
+msgid "Sacrificed to Yog-Sothoth"
+msgstr "犹格·索托斯的祭品"
+
+msgid "VIPs Interviewed"
+msgstr "贵宾会谈"
+
+msgid "VIPs Slain"
+msgstr "贵宾遇害"
+
+msgid "Doubt"
+msgstr "疑惑"
+
+msgid "Conviction"
+msgstr "确信"
+
+msgid "Chasing the Stranger"
+msgstr "追踪陌生人"
+
+msgid "Supplies"
+msgstr "补给"
+
+msgid "Mementos Discovered"
+msgstr "遗留记忆"
+
+msgid "Missing Persons - Gavriella Mizrah"
+msgstr "失踪人口 - 加弗瑞拉·米兹拉克"
+
+msgid "Missing Persons - Jerome Davids"
+msgstr "失踪人口 - 杰罗姆·戴维斯"
+
+msgid "Missing Persons - Penny White"
+msgstr "失踪人口 - 佩妮·怀特"
+
+msgid "Missing Persons - Valentino Rivas"
+msgstr "失踪人口 - 瓦伦蒂诺·里瓦斯"
+
+#, javascript-format
+msgid "${ traumaData.physical } Physical"
+msgstr "${ traumaData.physical }肉体"
+
+#, javascript-format
+msgid "${ traumaData.mental } Mental"
+msgstr "${ traumaData.mental }精神"
+
+msgid "None"
+msgstr "无"
+
+msgid "My Campaigns"
+msgstr "我的剧本"
+
+msgid "Other Campaigns"
+msgstr "其他剧本"
+
+msgid "Select Campaign"
+msgstr "选择剧本"
+
+msgid "Campaign"
+msgstr "剧本模式"
+
+msgid "New Campaign"
+msgstr "新的剧本"
+
+msgid "Chaos Bag"
+msgstr "混乱袋"
+
+msgid "Adjust Weakness Set"
+msgstr "调整弱点牌库"
+
+#. eslint-disable prefer-template 
+msgid "This deck contains several basic weaknesses"
+msgstr "本牌组包含这些基础弱点"
+
+#. eslint-disable prefer-template 
+msgid "This deck contains a basic weakness"
+msgstr "本牌组包含此基础弱点"
+
+#. eslint-disable prefer-template 
+msgid "Do you want to remove them from the campaign’s Basic Weakness set?"
+msgstr "是否将这些弱点卡从本剧本模式之基础弱点牌库中移除？"
+
+#. eslint-disable prefer-template 
+msgid "Do you want to remove it from the campaign’s Basic Weakness set?"
+msgstr "是否将此弱点卡从本剧本模式之基础弱点牌库中移除？"
+
+msgid "Not Now"
+msgstr "下次再说"
+
+msgid "Okay"
+msgstr "好"
+
+msgid "(required)"
+msgstr "(必要)"
+
+#, javascript-format
+msgid "My ${ campaign } Campaign"
+msgstr "我的${ campaign }剧本模式"
+
+msgid "Include all basic weaknesses from these expansions"
+msgstr "使用选取的扩充包之中的所有基础弱点卡"
+
+msgid "Add Log Section"
+msgstr "新增日志栏位"
+
+msgid "Difficulty"
+msgstr "难度"
+
+msgid "Create Campaign"
+msgstr "创建剧本模式"
+
+msgid "Campaigns"
+msgstr "剧本"
+
+#, javascript-format
+msgid "No matching campaigns for \"${ search }\"."
+msgstr "找不到符合\"${ search }\"的剧本。"
+
+msgid "Search campaigns"
+msgstr "搜寻剧本"
+
+msgid "Save changes?"
+msgstr "是否储存？"
+
+msgid "Looks like you have made some changes that have not been saved."
+msgstr "有变更尚未储存。"
+
+msgid "Save Changes"
+msgstr "储存变更"
+
+msgid "Discard Changes"
+msgstr "放弃变更"
+
+msgid "Add note"
+msgstr "新增记录"
+
+#, javascript-format
+msgid "${ totalXp } total"
+msgstr "总共${ totalXp }"
+
+msgid "Upgrade Deck"
+msgstr "升级牌组"
+
+msgid "Remove"
+msgstr "移除"
+
+msgid "Upgrade"
+msgstr "升级"
+
+msgid "Scenarios"
+msgstr "冒险"
+
+msgid "Scenario Result"
+msgstr "冒险结果"
+
+msgid "Record Scenario Results"
+msgstr "记录冒险结果"
+
+msgid "Basic Weakness Set"
+msgstr "基础弱点牌库"
+
+#, javascript-format
+msgid "${ counts.assigned } / ${ counts.total } have been drawn."
+msgstr "${ counts.assigned } / ${ counts.total } 已经被抽出。"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Show Interludes"
+msgstr "显示幕间故事"
+
+msgid "Interlude"
+msgstr "幕间故事"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Resolution"
+msgstr "结局"
+
+#. This is the lead pack in a cycle.
+msgid "Mark entire cycle?"
+msgstr "选取整个循环？"
+
+#. This is the lead pack in a cycle.
+msgid "Clear entire cycle?"
+msgstr "清除整个循环？"
+
+#. This is the lead pack in a cycle.
+#, javascript-format
+msgid "Mark all packs in the ${ pack.name } cycle?"
+msgstr "选取${ pack.name }循环中的所有扩充包？"
+
+#. This is the lead pack in a cycle.
+#, javascript-format
+msgid "Clear all packs in the ${ pack.name } cycle?"
+msgstr "清除${ pack.name }循环中的所有扩充包？"
+
+#. This is the lead pack in a cycle.
+msgid "No"
+msgstr "不"
+
+#. This is the lead pack in a cycle.
+msgid "Yes"
+msgstr "是"
+
+#, javascript-format
+msgid "The Adventures of ${ investigator.name }"
+msgstr "${ investigator.name }的冒险"
+
+#, javascript-format
+msgid "${ investigator.name } Investigates"
+msgstr "${ investigator.name }的调查"
+
+#, javascript-format
+msgid "The ${ investigator.name } Mysteries"
+msgstr "${ investigator.name }的谜团"
+
+#, javascript-format
+msgid "The ${ investigator.name } Job"
+msgstr "${ investigator.name }的任务"
+
+#, javascript-format
+msgid "${ investigator.name } on the Road"
+msgstr "${ investigator.name }的旅途"
+
+#, javascript-format
+msgid "${ investigator.name } Does It All"
+msgstr "${ investigator.name }的蜕变"
+
+msgid "Create on ArkhamDB"
+msgstr "在ArkhamDB上创建"
+
+msgid "You seem to be offline. Refresh Network?"
+msgstr "无法连上网路。是否重试？"
+
+msgid "Search"
+msgstr "搜寻"
+
+#, javascript-format
+msgid "No matching investigators for \"${ searchTerm }\"."
+msgstr "找不到符合\"${ searchTerm }\"的调查员。"
+
+msgid "N/A"
+msgstr "不适用"
+
+msgid "All Investigators"
+msgstr "所有调查员"
+
+msgid "Draw"
+msgstr "抽取"
+
+msgid "Redraw"
+msgstr "重抽"
+
+msgid "Reshuffle"
+msgstr "重新洗牌"
+
+msgid "Reset"
+msgstr "重置"
+
+#, javascript-format
+msgid "${ normalCardCount } Card (${ totalCardCount } Total)"
+msgid_plural "${ normalCardCount } Cards (${ totalCardCount } Total)"
+msgstr[0] "${ normalCardCount }张卡牌(总共${ totalCardCount }张)"
+
+#, javascript-format
+msgid "Delete this upgrade (${ deck.version })"
+msgstr "删除这次更新(${ deck.version })"
+
+msgid "Delete all versions"
+msgstr "删除所有版本"
+
+msgid "Delete deck"
+msgstr "删除牌组"
+
+msgid "Are you sure you want to delete this deck?"
+msgstr "确定要删除牌组吗？"
+
+msgid "Save Local Changes"
+msgstr "储存本地的变更"
+
+msgid "Please save any local edits to this deck before sharing to ArkhamDB"
+msgstr "分享到ArkhamDB之前，请先储存牌组的编辑结果"
+
+msgid "Unsupported Operation"
+msgstr "不支援的操作"
+
+msgid "Upload to ArkhamDB"
+msgstr "上传至ArkhamDB"
+
+msgid "Special Cards"
+msgstr "特殊卡牌"
+
+msgid "View on ArkhamDB"
+msgstr "在ArkhamDB上检视"
+
+msgid "Save deck changes?"
+msgstr "是否储存牌组？"
+
+msgid "Edit Special Cards"
+msgstr "编辑特殊卡牌"
+
+msgid "Edit Deck"
+msgstr "编辑牌组"
+
+msgid "Deck has been deleted"
+msgstr "牌组已删除"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Required"
+msgstr "必要"
+
+msgid "Make a copy of a deck so that you can use it in a different campaign or choose different upgrades."
+msgstr "制作一份牌组复制。可将复制的牌组用于新的剧本模式，或者用于选择不同的升级。"
+
+msgid "Investigating for clues"
+msgstr "正在调查新线索"
+
+msgid "Cursing at the tentacle token"
+msgstr "正在消毒触手标记"
+
+msgid "Drawing a mythos card with surge"
+msgstr "正在献祭密谋卡以平息涌动"
+
+msgid "Placing doom on the agenda"
+msgstr "正在散布毁灭标记"
+
+msgid "Reticulating spines"
+msgstr "正在准备网状棘刺"
+
+msgid "Trying to make sense of the Time Warp FAQ"
+msgstr "正在查阅时空旅行的FAQ"
+
+msgid "Taking three damage and three horror"
+msgstr "受到3点伤害和3点恐惧"
+
+#, javascript-format
+msgid "No matching cards for \"${ searchTerm }\""
+msgstr "找不到符合\"${ searchTerm }\"的卡牌"
+
+msgid "No matching cards"
+msgstr "找不到符合的卡牌"
+
+msgid "Cost: None"
+msgstr "费用: 无"
+
+msgid "All Cards"
+msgstr "所有卡牌"
+
+msgid "Search for a card"
+msgstr "搜寻卡牌"
+
+#, javascript-format
+msgid "Clear \"${ searchTerm }\" search"
+msgstr "清除\"${ searchTerm }\"的搜寻"
+
+msgid "Apply"
+msgstr "应用"
+
+msgid "Filters"
+msgstr "筛选器"
+
+msgid "Player Cards"
+msgstr "玩家卡"
+
+msgid "Required Cards"
+msgstr "角色专属卡牌"
+
+msgid "Alternate Cards"
+msgstr "可替换卡牌"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+msgid "Allowed Cards"
+msgstr "可使用卡牌"
+
+msgid "Test Icons: "
+msgstr "技能检定标记:  "
+
+msgid "Show back"
+msgstr "显示背面"
+
+#, javascript-format
+msgid "Victory: ${ card.victory }."
+msgstr "胜利${ card.victory }。"
+
+#, javascript-format
+msgid "Vengeance: ${ card.vengeance }."
+msgstr "复仇${ card.vengeance }。"
+
+msgid "Show front"
+msgstr "显示正面"
+
+msgid "Deckbuilding Cards"
+msgstr "牌组建构卡牌"
+
+#, javascript-format
+msgid "An unexpected error occurred (${ error }). If restarting the app doesn't fix the problem, tap here to reauthorize."
+msgstr "发生非预期的错误(${ error })。如果重启APP无法修复问题，点击此处以重新授权。"
+
+msgid "Yig's Fury"
+msgstr "伊格之怒"
+
+msgid "Doesn't comply with the Investigator requirements."
+msgstr "不符合调查员卡牌构建需求。"
+
+msgid "Up by 5, hope I don't draw the tentacle"
+msgstr "超过5点了随便抽啦…噢不，又是触手"
+
+msgid "Cards"
+msgstr "卡牌"
+
+msgid "Settings"
+msgstr "设置"
+
+#, javascript-format
+msgid "Additional XP: ${ taboo.extra_xp }."
+msgstr "额外花费${ taboo.extra_xp }点XP。"
+
+msgid "The List of Taboos is a list of Arkham Horror: The Card Game cards with optional deckbuilding restrictions or text changes. This list is designed to craft a healthy balance between investigator power and scenario difficulty, and to enforce shifts in deckbuilding environments over time."
+msgstr "诡镇奇谈禁卡表是一种卡牌构建限制或者卡牌文本修正的清单。禁卡表的设计是为了改善调查员能力的平衡以及冒险难度，并且有不同版本逐渐地调整。"
+
+msgid "Adhering to The List of Taboos is completely optional. Investigators are not forced to adhere to the restrictions on this list, but if an investigator chooses to do so, they must do so in full (an investigator cannot pick and choose which restrictions to use)."
+msgstr "是否附加禁卡表规则是可选择的。调查员不一定要遵照禁卡表上的限制，但如果调查员选择要遵照禁卡表，则必须完全遵照禁卡表上的所有限制(不能只挑选其中一些限制而忽略其他限制)。"
+
+msgid "Note: not all cards have translations available."
+msgstr "注意: 并非所有卡牌都有可用的翻译。"
+
+msgid "Taboo List"
+msgstr "禁卡表"
+
+msgid "Error loading cards, make sure your network is working."
+msgstr "读取卡牌资料失败，请确认网路连线是否正常。"
+
+msgid "Try Again"
+msgstr "重试"
+
+msgid "Loading latest cards..."
+msgstr "读取最新卡牌资料…"
+
+msgid "Charts"
+msgstr "分析图表"
+
+msgid "Card Costs"
+msgstr "卡牌费用分析"
+
+msgid "Card Factions"
+msgstr "卡牌职阶分析"
+
+msgid "Bonded"
+msgstr "绑定"
+
+msgid "Bound Cards"
+msgstr "绑定卡牌"
+
+msgid "Taboo"
+msgstr "禁卡表"
+
+#, javascript-format
+msgid "Additional XP: ${ card.extra_xp }."
+msgstr "花费额外${ card.extra_xp }点经验。"
+
+msgid ""
+"No decks yet.\n"
+"\n"
+"Use the + button to create a new one."
+msgstr ""
+"没有牌组。\n"
+"\n"
+"使用 + 按钮来创建新牌组。"
+
+msgid ""
+"This deck does not seem to be part of a campaign yet.\n"
+"\n"
+"If you add this deck to a campaign, the app can keep track of the available weaknesses between multiple decks.\n"
+"\n"
+"Otherwise, you can draw random weaknesses from your entire collection."
+msgstr ""
+"你选择的牌组还尚未加入任何剧本之中。\n"
+"\n"
+"如果你将这个牌组加入一个剧本，此APP可以帮助你管理多套牌组之间的剩余可用弱点卡。\n"
+"\n"
+"或者你可以选择从你的卡牌收藏库之中抽取随机的基础弱点卡。"
+
+msgid ""
+"ArkhamDB is a popular deck building site where you can manage and share decks with others.\n"
+"\n"
+"Sign in to access your decks or share decks you have created with others."
+msgstr ""
+"ArkhamDB是一个卡牌构建的网站，可以管理牌组以及与其他人分享牌组。\n"
+"\n"
+"登入以存取你的牌组，或者与其他人分享你构建的牌组。"
+
+msgid ""
+"We are having trouble talking to ArkhamDB.\n"
+"\n"
+"If the problem persists, please try to reauthorize."
+msgstr ""
+"无法取得ArkhamDB的回应。\n"
+"\n"
+"如果问题没有解决，请尝试重新授权。"
+
+msgid ""
+"There are no weaknesses that match these trait filters left in the set.\n"
+"\n"
+"Please adjust the trait filter."
+msgstr ""
+"在可用的基础弱点牌库之中没有符合所选属性的弱点。\n"
+"\n"
+"请调整属性筛选器。"
+
+msgid ""
+"Data on ArkhamDB will be preserved, but all Campaign data and any edits made without internet might be lost.\n"
+"\n"
+"If you are having trouble with your account you can also reconnect."
+msgstr ""
+"在ArkhamDB上的资料将被保留，但所有的剧本资料以及任何没有网路连线时所做的编辑将无法储存。\n"
+"\n"
+"如果你的帐户发生任何问题，可以尝试重新连线。"
+
+msgid "Edit Assigned Weaknesses"
+msgstr "编辑已指定的弱点"
+
+msgid ""
+"No campaigns yet.\n"
+"\n"
+"Use the + button to create a new one.\n"
+"\n"
+"You can use this app to keep track of campaigns, including investigator trauma, the chaos bag, basic weaknesses, campaign notes and the experience values for all decks."
+msgstr ""
+"没有剧本。\n"
+"\n"
+"使用 + 按钮来创建新剧本。\n"
+"\n"
+"你可以使用此APP追踪记录剧本模式，包括调查员创伤、混乱袋、基础弱点、冒险日志以及所有牌组的经验。"
+
+msgid "Sort"
+msgstr "排序"
+
+msgid ""
+"You can upload your deck to ArkhamDB to share with others.\n"
+"\n"
+"After doing this you will need network access to make changes to the deck."
+msgstr ""
+"你可以将你的牌组上传至ArkhamDB与其他人分享。\n"
+"\n"
+"若选择分享，当你将来要变更牌组时，需要有网路连线。"
+
+msgid ""
+"It looks like you deleted this deck from ArkhamDB.\n"
+"\n"
+"If it was part of a campaign you can add the same investigator back to restore your campaign data."
+msgstr ""
+"你从ArkhamDB上将这个牌组删除了。\n"
+"\n"
+"如果剧本模式还在进行中，你可以将同一位调查员加回去以复原你的剧本资料。"
+
+#, javascript-format
+msgid ""
+"Base Version\n"
+"${ parsedBaseDeck.experience } XP"
+msgstr ""
+"基础版本\n"
+"${ parsedBaseDeck.experience }点经验"
+
+#, javascript-format
+msgid ""
+"Current Version ${ parsedCurrentDeck.deck.version }\n"
+"${ parsedCurrentDeck.experience } XP"
+msgstr ""
+"当前版本${ parsedCurrentDeck.deck.version }\n"
+"${ parsedCurrentDeck.experience }点经验"
+
+#, javascript-format
+msgid ""
+"Latest Version ${ parsedLatestDeck.deck.version }\n"
+"${ parsedLatestDeck.experience } XP"
+msgstr ""
+"最新版本${ parsedLatestDeck.deck.version }\n"
+"${ parsedLatestDeck.experience }点经验"
+
+msgid "Share"
+msgstr "分享"
+
+msgid "Exiled cards"
+msgstr "被放逐的卡牌"
+
+#, javascript-format
+msgid "Story cards to add - ${ scenarioName }"
+msgstr "待加入的故事牌 - ${ scenarioName }"
+
+msgid "Story cards to add"
+msgstr "待加入的故事牌"
+
+msgid "Story Cards - Existing"
+msgstr "已有的故事牌"
+
+msgid "Upgrade deck"
+msgstr "升级牌组"
+
+msgid "Saving..."
+msgstr "储存中…"
+
+msgid "Flip Card"
+msgstr "将卡牌翻面"
+
+#, javascript-format
+msgid "Doom: ${ doom }"
+msgstr "毁灭标记: ${ doom }"
+
+#, javascript-format
+msgid "Clues: ${ clues }${ perInvestigatorClues }"
+msgstr "线索: ${ clues }${ perInvestigatorClues }"
+
+#, javascript-format
+msgid "Shroud: ${ shroud }. Clues: ${ clues }${ perInvestigatorClues }."
+msgstr "隐藏值: ${ shroud }。线索: ${ clues }${ perInvestigatorClues }。"
+
+msgid "Update investigator decks"
+msgstr "升级调查员牌组"
+
+msgid ""
+"By upgrading a deck, you can track XP and story card upgrades as your campaign develops.\n"
+"\n"
+"Previous versions of your deck will still be accessible."
+msgstr ""
+"随著剧本推进，你可以使用牌组升级以追踪记录经验与故事卡\n"
+"\n"
+"你牌组的先前版本仍然可以存取。"
+
+msgid "Save and Upgrade Decks"
+msgstr "储存并升级牌组"
+
+msgid "Only Save"
+msgstr "仅储存"
+
+msgid "You can opt-in to always seeing taboos and buiding decks with them in Settings."
+msgstr "你可以在设置中选择是否要检视禁卡表并以禁卡表规则构建牌组。"
+
+#, javascript-format
+msgid "Level ${ level }"
+msgstr "等级${ level }"
+
+msgid "In Deck"
+msgstr "在牌组中"
+
+msgid "All Eligible Cards"
+msgstr "全部可用卡牌"
+
+msgid "Deckbuilding"
+msgstr "构建牌组"
+
+#, javascript-format
+msgid "Warning: this card contains possible spoilers for '${ card.pack_name }'."
+msgstr "警告: 这张卡牌可能含有“${ card.pack_name }”的剧透。"
+
+msgid "Pack Filters"
+msgstr "扩充筛选器"
+
+#, javascript-format
+msgid "${ count } Card"
+msgid_plural "${ count } Cards"
+msgstr[0] "${ count }张卡牌"
+
+msgid "Secondary Class"
+msgstr "次要职阶"
+
+#, javascript-format
+msgid "${ xp } available experience, ${ parsedDeck.changes.spentXp } spent"
+msgstr "${ xp }点可用经验，已花费${ parsedDeck.changes.spentXp }点经验"
+
+msgid "Preferences"
+msgstr "偏好"
+
+msgid "Swipe between card results"
+msgstr "轻扫切换卡牌"
+
+msgid "Select Faction"
+msgstr "选择职阶"
+
+msgid "Deck Size"
+msgstr "卡牌张数"
+
+msgid "Unable to update: you appear to be offline."
+msgstr "无法上传: 无网路连线。"
+
+msgid "We're having trouble updating your decks at this time. If the problem persists tap here to reauthorize."
+msgstr "更新牌组时遭遇到问题。如果问题无法解决，请按此重新授权。"
+
+msgid "Multiplayer"
+msgstr "多人游戏"
+
+msgid "Standalone"
+msgstr "独立冒险"
+
+msgid "Debug"
+msgstr "Debug"
+
+msgid "Swarm"
+msgstr "蜂拥"
+
+msgid "Seal"
+msgstr "封印"
+
+msgid "Myriad"
+msgstr "多重"
+
+msgid "Return to The Path to Carcosa"
+msgstr "重返卡尔克萨之路"
+
+msgid "The Dream-Quest"
+msgstr "梦寻秘境"
+
+msgid "The Web of Dreams"
+msgstr "睡梦之网"
+
+msgid "Return to Curtain Call"
+msgstr "重返谢幕"
+
+msgid "Return to The Last King"
+msgstr "重返最后的王者"
+
+msgid "Return to Echoes of the Past"
+msgstr "重返往事回声"
+
+msgid "Return to The Unspeakable Oath"
+msgstr "重返邪秽誓约"
+
+msgid "Return to A Phantom of Truth"
+msgstr "重返真相幻影"
+
+msgid "Return to The Pallid Mask"
+msgstr "重返苍白面具"
+
+msgid "Return to Black Stars Rise"
+msgstr "重返黑星升起"
+
+msgid "Return to Dim Carcosa"
+msgstr "重返卡城幽影"
+
+msgid "Beyond the Gates of Sleep"
+msgstr "梦境门外"
+
+msgid "The Black Cat"
+msgstr "黑猫"
+
+msgid "The Search for Kadath"
+msgstr "寻觅卡达斯"
+
+msgid "The Oneironauts"
+msgstr "梦境行者"
+
+msgid "Dark Side of the Moon"
+msgstr "月之暗面"
+
+msgid "The Great Ones"
+msgstr "梦境诸神"
+
+msgid "Where Gods Dwell"
+msgstr "神居之所"
+
+msgid "Waking Nightmare"
+msgstr "清醒噩梦"
+
+msgid "A Thousand Shapes of Horror"
+msgstr "万千骇形"
+
+msgid "Point of No Return"
+msgstr "无归之地"
+
+msgid "Weaver of the Cosmos"
+msgstr "编织宇宙"
+
+msgid "Evidence of Kadath"
+msgstr "卡达斯的证据"
+
+msgid "Steps of the Bridge"
+msgstr "桥梁进度"
+
+msgid "Deck Type"
+msgstr "牌组类型"
+
+msgid "Select Deck Size"
+msgstr "选择牌组大小"
+
+#, javascript-format
+msgid "Bonded Cards (${ count })"
+msgstr "绑定卡牌(${ count })"
+
+msgid "New Name"
+msgstr "新名称"
+
+msgid "Game Text"
+msgstr "卡牌效果文本"
+
+msgid "Flavor Text"
+msgstr "介绍文本"
+
+msgid "Card Backs"
+msgstr "卡背"
+
+msgid "Encounter Cards"
+msgstr "遭遇牌"
+
+#, javascript-format
+msgid "XP Discount: ${ taboo.extra_xp }."
+msgstr "折扣${ taboo.extra_xp }点经验。"
+
+msgid "At Death's Doorstep"
+msgstr "死亡门前"
+
+msgid "Sealed Tokens"
+msgstr "已封印标记"
+
+#, javascript-format
+msgid "XP Discount: ${ card.extra_xp }."
+msgstr "折扣${ card.extra_xp }点经验。"
+
+msgid "Add Investigator Deck"
+msgstr "新增调查员牌组"
+
+msgid "Note: Deck size should only be selected at deck creation time, not between scenarios."
+msgstr "注意: 卡牌张数限制仅需在卡牌创建时遵守，在每场冒险之间不用检查。"
+
+msgid "Note: Secondary faction should only be selected at deck creation time, not between scenarios."
+msgstr "注意: 第二职阶仅能在卡牌创建时选择，在每场冒险之间不能改变。"
+
+msgid ""
+"This deck contains next/previous versions with upgrades, so we cannot upload it to ArkhamDB at this time.\n"
+"\n"
+"If you would like to upload it, you can use Clone to upload a clone of the current deck."
+msgstr ""
+"这个牌组包含下次/前次升级的版本，无法上传至ArkhamDB。\n"
+"\n"
+"如果你想上传，可以使用复制功能来上传当前牌组的复制。"
+
+#, javascript-format
+msgid "${ xp } (${ adjustment }) XP"
+msgstr "${ xp } (${ adjustment })点经验"
+
+msgid "Draw Simulator"
+msgstr "抽牌模拟器"
+
+msgid "Available XP"
+msgstr "可用经验"
+
+msgid "Odds Calculator"
+msgstr "概率计算机"
+
+msgid "Weakness Set"
+msgstr "弱点牌"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Deck Cards"
+msgstr "玩家卡牌"
+
+msgid "Save changes before upgrading"
+msgstr "在升级前储存变更"
+
+msgid "Number of clues on your location"
+msgstr "你所在地点的线索数量"
+
+msgid "Horror on Agnes Baker"
+msgstr "艾格尼丝·贝克上的恐惧数量"
+
+msgid "Wendy's Amulet in play"
+msgstr "温蒂的护身符在场上"
+
+msgid "Number of resources you have"
+msgstr "你持有的资源数量"
+
+msgid "Damage on Mark Harrigan"
+msgstr "马克·哈里根上的伤害数量"
+
+msgid "Number of exhausted enemies in play"
+msgstr "场上消耗状态的敌人数量"
+
+msgid "Spend two resources to automatically succeed"
+msgstr "花费2资源自动成功"
+
+msgid "Resource cost of the top card on your deck"
+msgstr "你的牌堆顶部的牌的费用"
+
+msgid "Deleting"
+msgstr "删除中"
+
+msgid "Hand"
+msgstr "手部"
+
+msgid "Hand. Arcane"
+msgstr "手部，法术"
+
+msgid "Hand x2"
+msgstr "手部 x2"
+
+msgid "Arcane"
+msgstr "法术"
+
+msgid "Accessory"
+msgstr "饰品"
+
+msgid "Body"
+msgstr "服装"
+
+msgid "Body. Hand x2"
+msgstr "服装，手部 x2"
+
+msgid "Ally"
+msgstr "盟友"
+
+msgid "Tarot"
+msgstr "塔罗"
+
+msgid "Other"
+msgstr "其他"
+
+#, javascript-format
+msgid "Level ${ startXp }"
+msgstr "等级${ startXp }"
+
+#, javascript-format
+msgid "Level ${ startXp } - ${ endXp }"
+msgstr "等级${ startXp } - ${ endXp }"
+
+#, javascript-format
+msgid "Cost: ${ actualCost }"
+msgstr "费用: ${ actualCost }"
+
+msgid "No Changes"
+msgstr "没有变更"
+
+msgid "Card changes"
+msgstr "卡牌变更"
+
+msgid "Upgrade History"
+msgstr "升级历程"
+
+msgid "Original Deck"
+msgstr "原始牌组"
+
+#, javascript-format
+msgid "Latest Deck: ${ deck.changes.spentXp } of ${ deck.availableExperience } XP"
+msgstr "最新牌组: 已花费${ deck.changes.spentXp }点经验，总共${ deck.availableExperience }点经验"
+
+#, javascript-format
+msgid "Latest Deck: ${ deck.availableExperience } XP"
+msgstr "最新牌组: ${ deck.availableExperience }点经验"
+
+msgid "Too many off-class cards for Versatile"
+msgstr "多才多艺有太多不符合职阶的卡牌"
+
+msgid "Arcane x2"
+msgstr "法术 x2"
+
+msgid "Ally. Arcane"
+msgstr "盟友. 法术"
+
+#, javascript-format
+msgid "${ things[0] } and ${ things[1] }"
+msgstr "${ things[0] }和${ things[1] }"
+
+#, javascript-format
+msgid "${ listOfThings }, and ${ lastThing }"
+msgstr "${ listOfThings }，以及${ lastThing }"
+
+#, javascript-format
+msgid "${ this.name } <i>(${ this.subname })</i>"
+msgstr "${ this.name }<i>(${ this.subname })</i>"
+
+msgid "Campaign Setup"
+msgstr "剧本设置"
+
+msgid "Choose lead investigator"
+msgstr "选择队长"
+
+msgid "Lead Investigator"
+msgstr "队长"
+
+msgid "Alive"
+msgstr "幸存"
+
+msgid "Resigned"
+msgstr "已撤退"
+
+#, javascript-format
+msgid "Proceed to <b>${ nextScenarioName }</b>."
+msgstr "进入<b>${ nextScenarioName }</b>。"
+
+msgid "Mark the scenarios you've played through to make the results start showing up in search results."
+msgstr "标示你已完成的冒险，使其可以出现在搜寻结果中。"
+
+msgid "Loading"
+msgstr "读取中"
+
+#, javascript-format
+msgid "${ label }: All"
+msgstr "${ label }: 全部"
+
+msgid "Experience points"
+msgstr "经验值"
+
+msgid "Upgrading your deck allows changes and experience to be tracked over the course of a campaign."
+msgstr "升级你的牌组允许你随著剧本推进记录牌组与经验的变化。"
+
+msgid "Choose Investigator"
+msgstr "选择调查员"
+
+msgid "No one"
+msgstr "无"
+
+msgid "The investigators must decide (choose one):"
+msgstr "调查员必须选择(一项):"
+
+#, javascript-format
+msgid "${ supplyName } to use (${ desiredCount })"
+msgstr "使用的${ supplyName }(${ desiredCount })"
+
+msgid "Too many"
+msgstr "调查员人数太多"
+
+msgid "Not enough"
+msgstr "调查员人数不足"
+
+#, javascript-format
+msgid "Set the ${ encounterSetString } encounter set aside, out of play."
+msgid_plural "Set the ${ encounterSetString } encounter sets aside, out of play."
+msgstr[0] "将${ encounterSetString }遭遇组放在一边。"
+
+#, javascript-format
+msgid "Gather all cards from the ${ encounterSetString } encounter set."
+msgid_plural "Gather all cards from the following encounter sets: ${ encounterSetString }."
+msgstr[0] "将下列遭遇组中，所有遭遇卡找出: ${ encounterSetString }。"
+
+#, javascript-format
+msgid "${ startText } This set is indicated by the following icon:"
+msgid_plural "${ startText } These sets are indicated by the following icons:"
+msgstr[0] "${ startText }这些遭遇组的图标为:"
+
+msgid "Choose Investigators"
+msgstr "选择调查员"
+
+msgid "Campaign cards"
+msgstr "剧本卡牌"
+
+msgid "Physical trauma"
+msgstr "肉体创伤"
+
+msgid "Mental trauma"
+msgstr "精神创伤"
+
+msgid "Select deck"
+msgstr "选择牌组"
+
+msgid "View deck"
+msgstr "检视牌组"
+
+msgid "Update decks with scenario results"
+msgstr "以冒险结果更新牌组"
+
+#, javascript-format
+msgid "In your Campaign Log, cross out <i>${ logEntry.text }</i>"
+msgstr "将冒险日志中的<i>${ logEntry.text }</i>划去。"
+
+#, javascript-format
+msgid "In your Campaign Log, under \"${ logEntry.section }\", cross out <i>${ logEntry.text }</i>"
+msgstr "在冒险日志中，“${ logEntry.section }”底下，将<i>${ logEntry.text }</i>划去。"
+
+#, javascript-format
+msgid "In your Campaign Log, record that <i>${ logEntry.text }</i>"
+msgstr "在冒险日志中，记录下<i>${ logEntry.text }</i>"
+
+#, javascript-format
+msgid "Remove ${ card.name } (${ input.length })"
+msgstr "移除${ card.name } (${ input.length })"
+
+msgid "You suffer 1 physical or mental trauma <i>(your choice)</i>."
+msgstr "你受到1点肉体创伤或1点精神创伤<i>(自行选择)</i>。"
+
+msgid "All weaknesses have been assigned."
+msgstr "所有弱点卡都已经被选择了。"
+
+msgid "Do you want to use the app to randomize weaknesses?"
+msgstr "你是否想使用此APP随机挑选弱点？"
+
+#, javascript-format
+msgid "Because you are playing on <b>${ difficulty }</b> difficulty:"
+msgstr "由于你正在进行的游戏难度为<b>${ difficulty }</b>:"
+
+#, javascript-format
+msgid "Because you have already completed <b>${ scenarioName }</b>:"
+msgstr "由于你已完成<b>${ scenarioName }</b>:"
+
+#, javascript-format
+msgid "Because you have not yet completed <b>${ scenarioName }</b>:"
+msgstr "由于你尚未完成<b>${ scenarioName }</b>:"
+
+#, javascript-format
+msgid "Check Campaign Log. Because there is ${ count } mark under '${ logEntry.section }'"
+msgid_plural "Check Campaign Log. Because there are ${ count } marks under '${ logEntry.section }'"
+msgstr[0] "检查冒险日志。由于“${ logEntry.section }”底下有${ count }个标记"
+
+#, javascript-format
+msgid "Check Campaign Log. Because there is ${ count } entry under '${ logEntry.section }'"
+msgid_plural "Check Campaign Log. Because there are ${ count } entries under '${ logEntry.section }'"
+msgstr[0] "检查冒险日志。由于“${ logEntry.section }”底下有${ count }个项目"
+
+#, javascript-format
+msgid "Check Campaign Log. Because <i>${ entry }</i>"
+msgstr "检查冒险日志。由于<i>${ entry }</i>"
+
+#, javascript-format
+msgid "Check Campaign Log, is the <i>${ logEntry.section }</i> not crossed off?"
+msgstr "检查冒险日志。是否<i>${ logEntry.section }</i>没有被划掉？"
+
+#, javascript-format
+msgid "${ investigators } must read <b>${ prompt }</b>."
+msgid_plural "${ investigators } must read <b>${ prompt }</b>."
+msgstr[0] "${ investigators }必须阅读<b>${ prompt }</b>。"
+
+#, javascript-format
+msgid "Does any investigator have \"${ cardName }\" in their deck?"
+msgstr "是否有任何调查员的牌组中持有“${ cardName }”？"
+
+#, javascript-format
+msgid "Was an investigator with \"${ cardName }\" in their deck defeated?"
+msgstr "持有“${ cardName }”的调查员是否被击败了？"
+
+#, javascript-format
+msgid "For each investigator with \"${ cardName }\" in their deck:"
+msgstr "每位持有“${ cardName }”的调查员:"
+
+#, javascript-format
+msgid "Because there is ${ playerCount } player in the game:"
+msgid_plural "Because there are ${ playerCount } players in the game:"
+msgstr[0] "由于总共有${ playerCount }名玩家:"
+
+msgid "If the lead investigator was <b>killed</b>."
+msgstr "如果队长<b>阵亡</b>。"
+
+msgid "If all investigators were <b>killed</b>."
+msgstr "如果所有调查员都<b>阵亡</b>。"
+
+#, javascript-format
+msgid "Check ${ logEntry.section }. <i>If ${ logEntry.text }</i>"
+msgstr "检查${ logEntry.section }。如果<i>${ logEntry.text }</i>"
+
+#, javascript-format
+msgid "Are you sure you want to delete the campaign: ${ campaignName }"
+msgstr "你是否确定要删除剧本: ${ campaignName }"
+
+#, javascript-format
+msgid "${ scenarioName } (Attempt ${ attempt })"
+msgstr "${ scenarioName } (尝试${ attempt })"
+
+msgid "Select Deck"
+msgstr "选择牌组"
+
+msgid "Add Investigator"
+msgstr "新增调查员"
+
+msgid "Killed and Insane Investigators"
+msgstr "阵亡与发疯的调查员"
+
+msgid "Delete campaign"
+msgstr "删除剧本"
+
+msgid "Guide not yet available"
+msgstr "冒险指南尚未发布"
+
+msgid "Choose an Investigator"
+msgstr "选择一位调查员"
+
+msgid "Edit name"
+msgstr "编辑名字"
+
+msgid "Guided Campaign"
+msgstr "引导剧本模式"
+
+#. This is a deck upgrade action.
+msgid ""
+"Looks like you are trying to undo a deck upgrade.\n"
+"\n"
+"Note that the app will NOT delete your latest deck upgrade from ArkhamDB, so your deck will still have the earlier changes applied.\n"
+"\n"
+"You can view the deck and delete the most recent 'upgrade' to put things back the way they were."
+msgstr ""
+"你正试著复原牌组升级。\n"
+"\n"
+"注意: 此APP将不会从ArkhamDB上删除你最新的牌组更新，你的牌组依然会是上次更新的结果。\n"
+"\n"
+"你可以检视牌组并且删除最近的一次更新，来修正牌组。"
+
+msgid "Undo"
+msgstr "复原"
+
+msgid "In your Campaign Log, record that:"
+msgstr "在冒险日志中，记录下:"
+
+msgid "Enter a name for this deck."
+msgstr "为此牌组输入名称。"
+
+msgid "Create deck"
+msgstr "创建牌组"
+
+msgid "Sign In"
+msgstr "登入"
+
+msgid "Upload"
+msgstr "上传"
+
+msgid "The Dream-Eaters"
+msgstr "食梦者"
+
+msgid "The Innsmouth Conspiracy"
+msgstr "印斯茅斯暗潮"
+
+msgid "Return to..."
+msgstr "重返…"
+
+msgid "Investigator Starter Decks"
+msgstr "调查员扩充包"
+
+msgid "Show story assets from other campaigns"
+msgstr "显示其他剧本的故事支援卡"
+
+msgid "Story assets"
+msgstr "故事支援卡"
+
+msgid "Select Cards"
+msgstr "选择卡牌"
+
+msgid "Campaign Log"
+msgstr "冒险日志"
+
+msgid "Choose entry to add to campaign log:"
+msgstr "选择一个项目新增至冒险日志:"
+
+msgid "Edit campaign log"
+msgstr "编辑冒险日志"
+
+msgid "Draw chaos tokens"
+msgstr "抽取混乱标记"
+
+msgid "Draw random basic weakness"
+msgstr "抽取随机弱点"
+
+msgid "Start playing the scenario now."
+msgstr "开始进行冒险。"
+
+#, javascript-format
+msgid "In your Campaign Log, record that <i>${ text }</i>"
+msgstr "在冒险日志中，记录下<i>${ text }</i>"
+
+#, javascript-format
+msgid "In your Campaign Log, under \"${ logEntry.section }\", record <i>${ logEntry.text }</i>."
+msgstr "在冒险日志中，“${ logEntry.section }”下，记录<i>${ logEntry.text }</i>。"
+
+#, javascript-format
+msgid "Add ${ tokenString } to the chaos bag."
+msgstr "将${ tokenString }标记加入混乱袋。"
+
+#, javascript-format
+msgid "Remove ${ tokenString } from the chaos bag."
+msgstr "将${ tokenString }标记自混乱袋中移除。"
+
+msgid "Odds calculator"
+msgstr "概率计算机"
+
+msgid "Clean up broken campaigns"
+msgstr "清除已毁坏的剧本"
+
+#, javascript-format
+msgid "${ action.name } (Campaign A)"
+msgstr "${ action.name } (剧本A)"
+
+#, javascript-format
+msgid "${ action.name } (Campaign B)"
+msgstr "${ action.name } (剧本B)"
+
+msgid "Each investigator earns experience equal to the Victory X value of each card in the victory display."
+msgstr "每位调查员获得经验值，数量等同于胜利牌区中的胜利点数总值。"
+
+msgid "Victory display:"
+msgstr "胜利牌区:"
+
+#, javascript-format
+msgid "Each investigator pays ${ entry.xpCost } experience point to play this scenario."
+msgid_plural "Each investigator pays ${ entry.xpCost } experience points to play this scenario."
+msgstr[0] "要进行此冒险，每位调查员需要支付${ entry.xpCost }点经验值。"
+
+msgid "Import data"
+msgstr "汇入资料"
+
+#, javascript-format
+msgid "Upgrade ${ humanVersionNumber }: ${ deck.changes.spentXp } of ${ deck.availableExperience } XP"
+msgstr "升级${ humanVersionNumber }: ${ deck.changes.spentXp } / ${ deck.availableExperience }点经验"
+
+#, javascript-format
+msgid "Upgrade ${ humanVersionNumber }: ${ deck.availableExperience } XP"
+msgstr "升级${ humanVersionNumber }: ${ deck.availableExperience }点经验"
+
+msgid "Delete broken deck"
+msgstr "删除毁损的牌组"
+
+msgid "Looks like we are having trouble loading this deck for some reason"
+msgstr "读取此牌组时遭遇不明原因的失败"
+
+msgid "Delete Deck"
+msgstr "删除牌组"
+
+msgid "Parallel"
+msgstr "平行调查员"
+
+msgid "Random location"
+msgstr "随机地点"
+
+msgid "Draw location"
+msgstr "抽取地点卡"
+
+msgid "Switch campaign"
+msgstr "切换剧本"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "Proceed without saving"
+msgstr "继续(不储存)"
+
+msgid "Proceed anyway"
+msgstr "仍要继续"
+
+msgid ""
+"It looks like one or more deck upgrades are unsaved. If you would like the app to track spent experience as you make deck changes, please go back and press 'Save deck upgrade' on each investigator before proceeding to the next scenario.\n"
+"\n"
+"Once an upgrade has been saved, you can edit the deck as normal and the app will properly track the experience cost for any changes you make (the original versions of the deck can still be viewed from the deck's menu)."
+msgstr ""
+"有牌组的升级尚未储存。如果你希望此APP追踪你牌组变化时花费的经验，请在进入下一个冒险之前，按下每位调查员的“储存牌组升级”的按钮。\n"
+"\n"
+"当有升级被储存时，你可以正常地编辑牌组；此APP将会自动追踪任何改变所花费的经验值。(原始版本的牌组仍然可以从牌组选单中浏览)。"
+
+msgid "It looks like you edited the experience or trauma for an investigator, but have not saved it yet. Please go back and select ‘Save adjustments’ to ensure your changes are saved."
+msgstr "你编辑了一位调查员的创伤或经验值，但尚未储存。请按下“储存调整”的按钮以保留你的变化。"
+
+msgid "Choose Side-Scenario"
+msgstr "选择支线冒险"
+
+msgid "Add side scenario"
+msgstr "新增支线冒险"
+
+msgid "Remove deck"
+msgstr "移除牌组"
+
+msgid "Remove deck from campaign"
+msgstr "自剧本中移除牌组"
+
+msgid ""
+"Are you sure you want to remove this deck from the campaign?\n"
+"\n"
+"After removing the deck you will be able to select a different deck, but experience and story assets will only be saved as you complete new scenarios."
+msgstr ""
+"你是否确定要从剧本中移除此牌组？\n"
+"\n"
+"移除牌组后，你可以选择一个不同的牌组，但是经验值与故事支援卡只有在完成新冒险时才会储存。"
+
+msgid "Cannot remove"
+msgstr "无法移除"
+
+msgid ""
+"Since this investigator has participated in one or more scenarios during this campaign, they cannot be removed.\n"
+"\n"
+"However, you can choose to have them not participate in future scenarios of this campaign."
+msgstr ""
+"由于这位调查员曾参与了此剧本中一场以上的冒险，因此无法移除。\n"
+"\n"
+"但是，你可以选择不要将这位调查员加入此剧本中将来的冒险。"
+
+#, javascript-format
+msgid "Experience cost: ${ xpCost }"
+msgstr "经验花费: ${ xpCost }"
+
+msgid "Custom side scenario"
+msgstr "自订支线剧情"
+
+msgid "Scenario Name"
+msgstr "冒险名称"
+
+msgid "Experience Cost"
+msgstr "经验费用"
+
+msgid "Custom scenario"
+msgstr "自订冒险"
+
+msgid ""
+"Campaign A and Campaign B\n"
+"Eight-part campaign"
+msgstr ""
+"剧本A和剧本B\n"
+"8场冒险的剧本"
+
+msgid ""
+"Campaign A\n"
+"Four-part campaign"
+msgstr ""
+"剧本A\n"
+"4场冒险的剧本"
+
+msgid ""
+"Campaign B\n"
+"Four-part campaign"
+msgstr ""
+"剧本B\n"
+"4场冒险的剧本"
+
+msgid "Parallel investigator options should only be selected at deck creation time, not between scenarios."
+msgstr "平行调查员的选项只能在创建新牌组的时候选择，无法在每场冒险之间切换。"
+
+msgid "Advanced Cards"
+msgstr "进阶卡牌"
+
+msgid "Physical"
+msgstr "肉体"
+
+msgid "Mental"
+msgstr "精神"
+
+msgid "Record trauma"
+msgstr "记录创伤"
+
+msgid "Defeated: physical trauma"
+msgstr "被击败: 肉体创伤"
+
+msgid "Defeated: mental trauma"
+msgstr "被击败: 精神创伤"
+
+msgid "Defeated: no trauma"
+msgstr "被击败: 没有创伤"
+
+#, javascript-format
+msgid "The <i>${ scenario.scenario_name }</i> challenge scenario centers around the investigator ${ investigator.name }, and therefore has the following prerequisites:"
+msgstr "挑战剧情《${ scenario.scenario_name }》 以调查员${ investigator.name }为核心，因此具有以下先决条件:"
+
+#, javascript-format
+msgid "${ investigator.name } must be chosen as one of the investigators when playing this scenario."
+msgstr "进行此冒险时，${ investigator.name }必需选为其中一位调查员。"
+
+msgid "The app does not enforce Challenge Scenario prerequisites, so please confirm that they apply manually."
+msgstr "此APP没有强制检查挑战剧情的先决条件，请手动确认。"
+
+msgid "Play this scenario"
+msgstr "进行冒险"
+
+#, javascript-format
+msgid "${ investigator.card.name } earns ${ card.name } (Advanced)."
+msgstr "${ investigator.card.name }获得${ card.name } (进阶版)。"
+
+#, javascript-format
+msgid "${ investigator.card.name } earns ${ card.name }."
+msgstr "${ investigator.card.name }获得${ card.name }。"
+
+#, javascript-format
+msgid "${ investigator.card.name } removes ${ card.name } (Advanced)"
+msgstr "${ investigator.card.name }移除${ card.name } (进阶版)。"
+
+#, javascript-format
+msgid "${ investigator.card.name } removes ${ card.name }"
+msgstr "${ investigator.card.name }移除${ card.name }。"
+
+msgid "Challenge Scenario"
+msgstr "挑战剧情"
+
+#, javascript-format
+msgid "${ investigator.name } Challenge Scenario"
+msgstr "${ investigator.name }挑战剧情"
+
+#, javascript-format
+msgid "Experience cost: ${ challengeCost } for ${ investigator.name }, ${ xpCost } for each other investigator"
+msgstr "经验花费: ${ investigator.name }必须花费${ challengeCost }经验，其他调查员则必须花费${ xpCost }经验"
+
+msgid "Side"
+msgstr "支线"
+
+msgid "Challenge"
+msgstr "挑战"
+
+msgid "Challenge scenarios are special print-and-play scenarios that utilize existing products in the <i>Arkham Horror: The Card Game</i> collection, along with additional print-and-play cards, to create new content. These scenarios are designed with certain prerequisites in mind, in order to craft a challenging puzzle-like experience. Printable cards can be downloaded from Fantasy Flight Games under the \"Parallel Investigators\" section."
+msgstr "挑战剧情是一种特殊的可列印冒险，利用《诡镇奇谈：卡牌版》系列中的现有产品，以及其他列印出的卡牌来创建新内容。这些冒险有设计某些先决条件，以创造出具有挑战性的解谜体验。可列印的卡牌档案可以从Fantasy Flight Games官方网站的“平行调查员”区下载。"
+
+msgid "Download printable cards"
+msgstr "下载可列印卡牌"
+
+msgid "Return to Threads of Fate"
+msgstr "重返命运之线"
+
+msgid "Return to Heart of the Elders"
+msgstr "重返久远腹地"
+
+msgid "Return to Shattered Aeons"
+msgstr "重返破碎永世"
+
+#, javascript-format
+msgid "${ confirmText } <i>(included automatically)</i>"
+msgstr "${ confirmText } <i>(自动加入)</i>"
+
+msgid "Return to The Forgotten Age"
+msgstr "重返失落的时代"
+
+msgid "Return to The Untamed Wilds"
+msgstr "重返荒莽密林"
+
+msgid "Return to The Doom of Eztli"
+msgstr "重返埃兹特里的覆灭"
+
+msgid "Return to The Boundary Beyond"
+msgstr "重返界限彼端"
+
+msgid "Return to The City of Archives"
+msgstr "重返天机之城"
+
+msgid "Return to The Depths of Yoth"
+msgstr "重返幽嘶之城"
+
+msgid "Save XP"
+msgstr "储存经验"
+
+#, javascript-format
+msgid "${ xp } available experience, (${ parsedDeck.changes.spentXp } spent)"
+msgstr "${ xp }点可用经验(${ parsedDeck.changes.spentXp }已花费)"
+
+msgid " (Per Investigator)"
+msgstr " (每位调查员)"
+
+msgid "Use app for scenario setup & resolutions"
+msgstr "使用此APP管理冒险设置与结局"
+
+msgid "Track campaign log and resolutions manually"
+msgstr "手动追踪冒险日志以及结局"
+
+msgid "Investigators"
+msgstr "调查员"
+
+msgid "If you encounter any problems with the campaign guide system, please let me know at arkhamcards@gmail.com."
+msgstr "如果你在使用剧本引导系统时遇到任何问题，请联系arkhamcards@gmail.com。"
+
+#, javascript-format
+msgid "${ spentXp } of ${ totalXp } spent"
+msgstr "已花费${ spentXp } / ${ totalXp }点经验"
+
+msgid ""
+"Are you sure you want to remove this deck from the campaign?\n"
+"\n"
+"The deck will remain on ArkhamDB."
+msgstr ""
+"你确定要从剧本中移除此牌组？\n"
+"\n"
+"此牌组将会保留在ArkhamDB上。"
+
+msgid "Scenario or Interlude"
+msgstr "冒险或幕间故事"
+
+msgid "Alphabetize guide encounter sets"
+msgstr "依字母顺序排序遭遇组"
+
+msgid "Draw Weakness"
+msgstr "抽取弱点"
+
+msgid "<b>Note:</b> Trauma from investigator defeat is handled during scenario resolution."
+msgstr "<b>注意</b>: 被击败的调查员的创伤在冒险结局的阶段处理。"
+
+msgid "Contact us"
+msgstr "联络我们"
+
+#, javascript-format
+msgid "${ count } resupply"
+msgid_plural "${ count } resupply"
+msgstr[0] "${ count }重新补给"
+
+#, javascript-format
+msgid "${ count } supply point"
+msgid_plural "${ count } supply points"
+msgstr[0] "${ count }补给品点数"
+
+#, javascript-format
+msgid "${ xp } general / ${ resupplyPointsString } XP"
+msgid_plural "${ xp } general / ${ resupplyPointsString } XP"
+msgstr[0] "${ xp } general / ${ resupplyPointsString }点经验"
+
+msgid "Side scenarios cannot be added to a campaign until the previous scenario and following interludes are completed."
+msgstr "前一个冒险与幕间故事尚未完成之前，不能加入新的支线剧情。"
+
+#, javascript-format
+msgid "Missing card #${ code }. Please try updating cards from ArkhamDB in settings."
+msgstr "找不到卡牌#${ code }。请在设置中重新下载ArkhamDB的资料。"
+
+msgid "Unexpected file type"
+msgstr "不预期的档案类型"
+
+msgid "Backup Data"
+msgstr "备份资料"
+
+msgid "This app expects an Arkham Cards backup file (.acb/.json)"
+msgstr "此APP仅接受Arkham Cards备份档案(.acb/.json)"
+
+msgid ""
+"This feature will let you restore data from a lost device. If you were signed into ArkhamDB, please reauthorize before importing campaign data.\n"
+"\n"
+"After a backup is selected, you will be able to choose which data to import."
+msgstr ""
+"此功能允许你从遗失的装置中回复资料。如果你已登入ArkhamDB，请在汇入剧本资料前重新授权。\n"
+"\n"
+"选择备份后，你可以选择要汇入的资料。"
+
+msgid "This will let you backup your local decks and campaigns for safe-keeping. This can also be used to move them to another device."
+msgstr "备份本机的牌组与剧本资料。可以将资料移至另一装置。"
+
+msgid "Save backup"
+msgstr "储存备份"
+
+msgid "Cannot request access"
+msgstr "无法要求存取"
+
+msgid "It looks like you previously denied allowing Arkham Cards to read/write external files. Please visit your System settings to adjust this permission, and try again."
+msgstr "Arkham Cards没有读写外部文件的权限。请至系统设置调整此权限，然后重试。"
+
+#, javascript-format
+msgid "(${ investigator.name } - ${ scenarioCount } scenario"
+msgid_plural "${ investigator.name } - ${ scenarioCount } scenarios"
+msgstr[0] "(${ investigator.name } - ${ scenarioCount }冒险"
+
+msgid "Import"
+msgstr "汇入"
+
+msgid "Missing decks"
+msgstr "找不到牌组"
+
+msgid "It seems like you have chosen to import a campaign without importing one or more non-ArkhamDB decks. The campaign can still be imported, however the deck information will be removed."
+msgstr "你汇入剧本资料但没有汇入任何非ArkhamDB的牌组。剧本资料仍可汇入，但牌组资料将会被移除。"
+
+msgid "Import anyway"
+msgstr "仍要汇入"
+
+msgid "New:"
+msgstr "新的:"
+
+msgid "Updated:"
+msgstr "更新:"
+
+msgid "No changes:"
+msgstr "无变化:"
+
+msgid "Local version appears to be newer:"
+msgstr "本机的版本较新:"
+
+msgid "Import selected data"
+msgstr "汇入选取的资料"
+
+msgid "Select items to import"
+msgstr "选择汇入的项目"
+
+msgid "Investigator trauma"
+msgstr "调查员创伤"
+
+msgid ""
+"You can only edit trauma here between scenarios.\n"
+"\n"
+"During scenario play it can be edited using the scenario guide."
+msgstr ""
+"你只能在两场冒险之间编辑创伤。\n"
+"\n"
+"冒险进行中的创伤，可以在冒险指南中编辑。"
+
+msgid "Starting trauma can be adjusted after 'Campaign Setup' has been completed."
+msgstr "初始创伤可以在“冒险设置”完成之后调整。"
+
+msgid "Confirm"
+msgstr "确认"
+
+msgid "Changing app language requires downloading the translated card information from ArkhamDB. This requires network and can take some time."
+msgstr "更改APP语言需要从ArkhamDB下载翻译过的卡牌，需要网路连线与一点时间。"
+
+msgid "Download now"
+msgstr "开始下载"
+
+msgid "Doesn't get any"
+msgstr "找不到"
+
+msgid "Checklist"
+msgstr "清单"
+
+msgid "Limit 1 Covenant per deck."
+msgstr "每个牌组限制1张圣约。"
+
+msgid "Checking for FAQ"
+msgstr "正在读取FAQ"
+
+msgid "No entries at this time."
+msgstr "目前没有项目。"
+
+#, javascript-format
+msgid "Last Updated: ${ lastUpdated }"
+msgstr "最后更新: ${ lastUpdated }"
+
+#, javascript-format
+msgid "Default (${ systemLanguage })"
+msgstr "预设(${ systemLanguage })"
+
+msgid "Download language cards"
+msgstr "下载翻译卡牌"
+
+#, javascript-format
+msgid ""
+"Would you like to download updated cards from ArkhamDB to match your phone's preferred language (${ lang })?\n"
+"\n"
+"You can override your language preference for this app in Settings."
+msgstr ""
+"你是否要从ArkhamDB下载符合你装置偏好语言(${ lang })的卡牌？\n"
+"\n"
+"你可以在此APP的设置中更改你的语言偏好。"
+
+msgid "Not now"
+msgstr "下次再说"
+
+msgid "Updated today"
+msgstr "今天已更新"
+
+msgid "Updated yesterday"
+msgstr "昨天已更新"
+
+#, javascript-format
+msgid "Updated ${ dayOfWeek }"
+msgstr "${ dayOfWeek }已更新"
+
+#, javascript-format
+msgid "Updated ${ dateString }"
+msgstr "${ dateString }已更新"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Safe mode"
+msgstr "安全模式"
+
+msgid "The app drew an Auto-Fail"
+msgstr "此APP抽到自动失败的触手了"
+
+msgid "Sorry about that. If the app is crashing on launch, you can enter 'Safe mode' to backup your data."
+msgstr "很抱歉。此APP在启动时遭遇不测，你可以进入“安全模式” 来备份你的资料。"
+
+msgid "Start normally"
+msgstr "正常启动"
+
+msgid "Cache cleared"
+msgstr "暂存已清空"
+
+msgid "Rules"
+msgstr "规则"
+
+msgid "Encounter Card Errata"
+msgstr "遭遇牌勘误表"
+
+msgid "The following questions contain light spoilers for this scenario."
+msgstr "以下问题包含轻微的冒险剧透。"
+
+msgid "Show Spoilers"
+msgstr "显示剧透"
+
+msgid "Scenario FAQ"
+msgstr "冒险FAQ"
+
+msgid "Interlude FAQ"
+msgstr "幕间故事FAQ"
+
+#, javascript-format
+msgid "Show ${ nonCollection.length } non-collection card"
+msgid_plural "Show ${ nonCollection.length } non-collection cards"
+msgstr[0] "显示${ nonCollection.length }张不在收藏中的卡牌"
+
+#, javascript-format
+msgid "Show ${ section.nonCollectionCount } non-collection investigator"
+msgid_plural "Show ${ section.nonCollectionCount } non-collection investigators"
+msgstr[0] "显示${ section.nonCollectionCount }位不在收藏中的调查员"
+
+msgid "Edit spoiler settings"
+msgstr "编辑剧透设置"
+
+#, javascript-format
+msgid "Show ${ spoilerCardsCount } spoiler"
+msgid_plural "Show ${ spoilerCardsCount } spoilers"
+msgstr[0] "显示${ spoilerCardsCount }张剧透"
+
+msgid "Search player cards"
+msgstr "搜寻玩家卡"
+
+msgid "Search encounter cards"
+msgstr "搜寻遭遇卡"
+
+msgid "Clear search filters"
+msgstr "卡牌搜索筛选"
+
+msgid "Search game text"
+msgstr "搜寻卡牌效果文本"
+
+msgid "Search card backs"
+msgstr "搜寻卡背"
+
+msgid "Dark"
+msgstr "暗色"
+
+msgid "Light"
+msgstr "明亮"
+
+#, javascript-format
+msgid "Default (${ systemSchemeName })"
+msgstr "预设(${ systemSchemeName })"
+
+msgid "Theme"
+msgstr "主题"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Basic weakness"
+msgstr "基础弱点"
+
+msgid "Do not count towards deck size"
+msgstr "不计入卡牌张数"
+
+msgid "Menu"
+msgstr "选单"
+
+#, javascript-format
+msgid "Faction: ${ card.faction_name }, Level: ${ level }"
+msgstr "职阶: ${ card.faction_name }，等级: ${ level }"
+
+#, javascript-format
+msgid "Faction: ${ card.faction_name }, Cost: ${ cost }, Level: ${ level }"
+msgstr "职阶: ${ card.faction_name }，费用: ${ cost }，等级: ${ level }"
+
+#, javascript-format
+msgid "Faction: ${ card.faction_name }"
+msgstr "职阶: ${ card.faction_name }"
+
+#, javascript-format
+msgid "Encounter set: ${ card.encounter_name }"
+msgstr "遭遇组: ${ card.encounter_name }"
+
+msgid "Health: none"
+msgstr "生命值: 无"
+
+msgid "Sanity: none"
+msgstr "神智值: 无"
+
+#, javascript-format
+msgid "Health: ${ count }"
+msgstr "生命值: ${ count }"
+
+#, javascript-format
+msgid "Sanity: ${ count }"
+msgstr "神智值: ${ count }"
+
+#, javascript-format
+msgid "Willpower: ${ willpower }"
+msgstr "意志: ${ willpower }"
+
+#, javascript-format
+msgid "Intellect: ${ intellect }"
+msgstr "知识: ${ intellect }"
+
+#, javascript-format
+msgid "Combat: ${ combat }"
+msgstr "战斗: ${ combat }"
+
+#, javascript-format
+msgid "Agility: ${ agility }"
+msgstr "敏捷: ${ agility }"
+
+msgid "Search options"
+msgstr "搜寻选项"
+
+msgid "Search in:"
+msgstr "搜寻于:"
+
+msgid "Show all available cards"
+msgstr "显示所有可用卡牌"
+
+#, javascript-format
+msgid "Fight: ${ fight }"
+msgstr "攻击: ${ fight }"
+
+#, javascript-format
+msgid "Health: ${ health } per investigator"
+msgstr "生命值: ${ health }倍调查员数量"
+
+#, javascript-format
+msgid "Health: ${ health }"
+msgstr "生命值: ${ health }"
+
+#, javascript-format
+msgid "Evade: ${ evade }"
+msgstr "躲避值: ${ evade }"
+
+#, javascript-format
+msgid "Willpower: ${ count }"
+msgstr "意志: ${ count }"
+
+#, javascript-format
+msgid "Intellect: ${ count }"
+msgstr "知识: ${ count }"
+
+#, javascript-format
+msgid "Combat: ${ count }"
+msgstr "力量: ${ count }"
+
+#, javascript-format
+msgid "Agility: ${ count }"
+msgstr "敏捷: ${ count }"
+
+#, javascript-format
+msgid "Wild: ${ count }"
+msgstr "全能: ${ count }"
+
+msgid "Edit Chaos Bag"
+msgstr "编辑混乱袋"
+
+msgid "Chaos bag is empty"
+msgstr "混乱袋已空"
+
+msgid "Bless"
+msgstr "祝福"
+
+msgid "Curse"
+msgstr "诅咒"
+
+msgid "In Too Deep"
+msgstr "深陷危局"
+
+msgid "Devil Reef"
+msgstr "魔鬼礁石"
+
+msgid "Horror in High Gear"
+msgstr "全速恐惧"
+
+msgid "A Light in the Fog"
+msgstr "雾中之光"
+
+msgid "The Lair of Dagon"
+msgstr "达贡巢穴"
+
+msgid "Hidden Truths"
+msgstr "隐秘真相"
+
+msgid "Into the Maelstrom"
+msgstr "暗潮之下"
+
+msgid "Possible Suspects"
+msgstr "可能嫌犯"
+
+msgid "Possible Hideouts"
+msgstr "可能窝点"
+
+msgid "In Bag"
+msgstr "已加入"
+
+msgid "The Syzygy"
+msgstr "朔望"
+
+msgid "Coming soon"
+msgstr "敬请期待"
+
+msgid "Smaller"
+msgstr "较小"
+
+msgid "Default"
+msgstr "预设"
+
+msgid "Medium"
+msgstr "适中"
+
+msgid "Large"
+msgstr "较大"
+
+msgid "X-Large"
+msgstr "特大"
+
+msgid "XX-Large"
+msgstr "超大"
+
+msgid "Font Size"
+msgstr "字型大小"
+
+msgid "This can be used to make the app font size larger, though it may impact layout on some screens."
+msgstr "此选项能调整APP字型大小，但可能会影响某些萤幕画面的布局。"
+
+#, javascript-format
+msgid ""
+"Keep level ${ level } after upgrade\n"
+"Won't count towards deck size"
+msgstr ""
+"升级后保留等级${ level }\n"
+"不会计入卡牌张数"
+
+msgid "Shrewd Analysis Rule"
+msgstr "老练分析的规则"
+
+#, javascript-format
+msgid "This upgrade will cost ${ xpCost } experience."
+msgid_plural "This upgrade will cost ${ xpCost } experience."
+msgstr[0] "此升级将花费${ xpCost }点经验。"
+
+#, javascript-format
+msgid ""
+"Two random cards will be chosen among the following choice:\n"
+"\n"
+"${ upgradeCards }"
+msgid_plural ""
+"Two random cards will be chosen among the following choices:\n"
+"\n"
+"${ upgradeCards }"
+msgstr[0] ""
+"在以下选择中将随机挑选两张卡牌:\n"
+"\n"
+"${ upgradeCards }"
+
+msgid "You can edit your collection under Settings to adjust the eligible choices."
+msgstr "你可以在设置中编辑你的收藏库来调整可用的选项。"
+
+msgid "<b>Additional Options</b>: When you upgrade a [[Fortune]] or [[Gambit]] card, you may instead pay the full experience cost on the higher level version and leave the lower level version in your deck (it does not count towards your deck size or the number of copies of that card in your deck)."
+msgstr "<b>额外选项</b>: 当你升级[[幸运]]或[[局势]]卡牌时，你可以选择支付较高等卡牌的全额经验，并且将低等级卡牌留在你的牌组中(不计入卡牌张数限制或同名卡牌张数上限)。"
+
+msgid ""
+"<b>Shrewd Analysis</b>: If you meet the campaign conditions, you may use Shrewd Analysis to choose both upgrades randomly and only pay for one.\n"
+"\n"
+"<i>Note: the app handles this by adjusting experience to account for the 'free' upgrade.</i>"
+msgstr ""
+"<b>老练分析</b>: 如果你已满足剧本的要求，可以使用老练分析从可用选项中随机选择该卡牌的2张升级版本，仅需支付1次经验。\n"
+"\n"
+"<i>注意: 此APP可以借由调整经验来处理“免费”的升级。</i>"
+
+msgid "Upgrade results"
+msgstr "升级结果"
+
+msgid "Upgrade with Shrewd Analysis"
+msgstr "使用老练分析升级"
+
+msgid "The Pit of Despair"
+msgstr "绝望深坑"
+
+msgid "Puzzle Pieces"
+msgstr "记忆碎片"
+
+msgid "The Vanishing of Elina Harper"
+msgstr "艾莲娜·哈珀失踪案"
+
+msgid "Beneath the Waves"
+msgstr "浪涛之下"
+
+msgid "Memories Recovered"
+msgstr "找回的记忆"
+
+msgid ""
+"Note: this campaign is still being released and so the guide is incomplete (and may contain some mistakes).\n"
+"As new scenarios are released, I will try to update the app promptly but there may be some slight delays."
+msgstr ""
+"注意: 这个剧本仍在发表，因此剧本手册未完成(可能会导致某些错误)。\n"
+"当新冒险推出时，此APP将尽快更新。"
+
+#, javascript-format
+msgid "Slot: ${ card.slot }"
+msgstr "槽位: ${ card.slot }"
+
+msgid "Search rules"
+msgstr "搜寻规则"
+
+msgid "Signature Weakness"
+msgstr "专属弱点"
+
+#, javascript-format
+msgid "Show ${ nonCollectionCount } non-collection card"
+msgid_plural "Show ${ nonCollectionCount } non-collection cards"
+msgstr[0] "显示${ nonCollectionCount }张不在收藏中的卡牌"
+
+msgid "Hide versatile cards"
+msgstr "隐藏其他同名卡牌"
+
+msgid "Version to copy"
+msgstr "复制的版本"
+
+msgid "Updated Monday"
+msgstr "于周一更新"
+
+msgid "Updated Tuesday"
+msgstr "于周二更新"
+
+msgid "Updated Wednesday"
+msgstr "于周三更新"
+
+msgid "Updated Thursday"
+msgstr "于周四更新"
+
+msgid "Updated Friday"
+msgstr "于周五更新"
+
+msgid "Updated Saturday"
+msgstr "于周六更新"
+
+msgid "Updated Sunday"
+msgstr "于周日更新"
+
+msgid "Books"
+msgstr "精装小说"
+
+msgid "Upgraded"
+msgstr "升级"
+
+msgid "Added"
+msgstr "已加入"
+
+msgid "Removed"
+msgstr "已移除"
+
+msgid "Exiled"
+msgstr "已放逐"
+
+msgid "Latest upgrade"
+msgstr "最新更新"
+
+msgid "Add cards"
+msgstr "新增卡牌"
+
+#, javascript-format
+msgid "Deck #${ deck.id }"
+msgstr "牌组#${ deck.id }"
+
+msgid "Tools"
+msgstr "工具"
+
+msgid "For balancing and evaluating"
+msgstr "用于平衡和评估"
+
+msgid "Check your deck stability"
+msgstr "检查你的牌组稳定性"
+
+msgid "For easy deck assembly"
+msgstr "简易牌组组成"
+
+msgid "Story assets and weaknesses"
+msgstr "故事支援及弱点卡"
+
+msgid "Clone deck"
+msgstr "复制牌组"
+
+msgid "Open in browser"
+msgstr "在浏览器中开启"
+
+#, javascript-format
+msgid "${ cardCount } Cards"
+msgstr "${ cardCount }张卡牌"
+
+msgid "Original front · Original back"
+msgstr "原始版正面 · 原始版背面"
+
+msgid "Parallel front · Original back"
+msgstr "平行版正面 · 原始版背面"
+
+msgid "Original front · Parallel back"
+msgstr "原始版正面 · 平行版背面"
+
+msgid "Parallel front · Parallel back"
+msgstr "平行版正面 · 平行版背面"
+
+msgid "Card count"
+msgstr "卡牌张数"
+
+#, javascript-format
+msgid "${ normalCardCount } · ${ totalCardCount } total"
+msgid_plural "${ normalCardCount } · ${ totalCardCount } total"
+msgstr[0] "${ normalCardCount } · 总共${ totalCardCount }张"
+
+#, javascript-format
+msgid "${ bondedCardCount } bound"
+msgid_plural "${ bondedCardCount } bound"
+msgstr[0] "${ bondedCardCount }绑定"
+
+#, javascript-format
+msgid "${ unspentXpStr } unspent"
+msgid_plural "${ unspentXpStr } unspent"
+msgstr[0] "${ unspentXpStr }未花费"
+
+msgid "Deck is invalid"
+msgstr "牌组无效"
+
+msgid "Show splash cards"
+msgstr "显示受限卡牌"
+
+msgid "Hide splash cards"
+msgstr "隐藏受限卡牌"
+
+msgid "Limited Slots"
+msgstr "受牌组构建限制的卡牌"
+
+#, javascript-format
+msgid "${ count } of ${ limitSlotCount }"
+msgstr "${ count } / ${ limitSlotCount }"
+
+msgid "0 unspent"
+msgstr "无剩余经验"
+
+#, javascript-format
+msgid "${ overspent } overspent"
+msgstr "超支${ overspent }点经验"
+
+msgid "Missing system permission"
+msgstr "缺少系统权限"
+
+#, javascript-format
+msgid "Reads \"${ badThing.prompt }\""
+msgstr "阅读\"${ badThing.prompt }\""
+
+msgid "Sign in to Dissonant Voices?"
+msgstr "登入Dissonant Voices？"
+
+msgid "Dissonant Voices is an ongoing project by Mythos Busters to narrate the english scenario text for each Arkham Horror campaign."
+msgstr "Dissonant Voices是一个正在进行中的专案，由Mythos Busters提供英文版诡镇奇谈剧本之中，冒险文字的口述。"
+
+msgid "Are you sure you want to delete this standalone?"
+msgstr "你是否确定要删除这个独立冒险？"
+
+msgid "Delete standalone"
+msgstr "删除独立冒险"
+
+msgid "Don't see your favorite Standalone scenario here? Let me know at arkhamcards@gmail.com, and I'll see about including it in a future release."
+msgstr "找不到你最喜欢的独立冒险吗？请联系arkhamcards@gmail.com，我会尽可能在未来的更新中加入。"
+
+msgid "New Standalone"
+msgstr "新独立冒险"
+
+msgid "Create Standalone"
+msgstr "建立独立冒险"
+
+msgid "Asset Filters"
+msgstr "支援卡筛选"
+
+msgid "Sanity"
+msgstr "神智值"
+
+msgid "Assets: All"
+msgstr "支援: 全部"
+
+#, javascript-format
+msgid "Assets: ${ searchParts }"
+msgstr "支援: ${ searchParts }"
+
+msgid "Asset"
+msgstr "支援"
+
+msgid "Act"
+msgstr "场景"
+
+msgid "Agenda"
+msgstr "密谋"
+
+msgid "Enemy"
+msgstr "敌人"
+
+msgid "Treachery"
+msgstr "诡计"
+
+msgid "Location"
+msgstr "地点"
+
+msgid "Actions"
+msgstr "行动"
+
+#. This is a deck upgrade action.
+msgid "Undo deck upgrade?"
+msgstr "复原牌组升级？"
+
+msgid "<b>Additional Options</b>: When you upgrade a [[Spell]], you may instead pay the full experience cost on the higher level version and leave the lower level version in your deck (it does not count towards your deck size or the number of copies of that card in your deck)."
+msgstr "<b>额外选项</b>: 当你升级一个[[法术]]卡牌时，你可以选择支付较高等卡牌的全额经验，并且将低等级卡牌留在你的牌组中(不计入卡牌张数限制或同名卡牌张数上限)。"
+
+#, javascript-format
+msgid "${ spentXP } of ${ _adjustedXp } XP spent"
+msgstr "${ spentXP } / ${ _adjustedXp }点经验已花费"
+
+msgid "Upgrading"
+msgstr "升级中"
+
+msgid "Editing"
+msgstr "编辑中"
+
+msgid "Uploading deck"
+msgstr "牌组上传中"
+
+msgid "If you have just completed a scenario, use the 'Upgrade' button which will track changes."
+msgstr "如果你刚完成一场冒险，使用“升级”的按钮来追踪变化。"
+
+msgid "XP earned"
+msgstr "获得经验"
+
+msgid "Adjustment:"
+msgstr "调整:"
+
+msgid "Adjust XP"
+msgstr "调整经验"
+
+msgid "Select Taboo List"
+msgstr "选择禁卡表"
+
+#, javascript-format
+msgid "${ size } Card"
+msgid_plural "${ size } Cards"
+msgstr[0] "${ size }张卡牌"
+
+msgid "Select Parallel Investigator"
+msgstr "选择平行调查员"
+
+msgid "Upgrade experience"
+msgstr "升级经验"
+
+msgid "Upgrading deck"
+msgstr "升级牌组中"
+
+msgid "Editing deck"
+msgstr "编辑牌组中"
+
+#, javascript-format
+msgid "${ normalCards } card"
+msgid_plural "${ normalCards } cards"
+msgstr[0] "${ normalCards }张卡牌"
+
+msgid "Add scenario XP"
+msgstr "新增冒险经验"
+
+msgid "Draw simulator"
+msgstr "抽牌模拟器"
+
+msgid "Upgrade with XP"
+msgstr "使用经验升级"
+
+msgid "Unknown campaign"
+msgstr "未知的剧本"
+
+msgid "Deck name"
+msgstr "牌组名称"
+
+#, javascript-format
+msgid "Not enough cards (${ drawDeckSize } / ${ size })."
+msgstr "卡牌张数不足(${ drawDeckSize } / ${ size })。"
+
+#, javascript-format
+msgid "Too many cards (${ drawDeckSize } / ${ size })."
+msgstr "卡牌张数太多(${ drawDeckSize } / ${ size })。"
+
+msgid "Draw Random Basic Weakness"
+msgstr "抽取随机弱点卡"
+
+#. This is a deck upgrade action.
+msgid "Undo deck change?"
+msgstr "复原牌组的变化？"
+
+#. This is a deck upgrade action.
+msgid ""
+"Looks like you are trying to undo a deck save.\n"
+"\n"
+"The app will NOT be able to undo these changes, so if you proceed again the changes might be applied twice. You should view the deck and manually undo the edits before reapplying the changes."
+msgstr ""
+"尝试复原储存的牌组。\n"
+"\n"
+"此APP无法复原这些变化，当你再次按下继续时，这些变化可能会重复被计算。在重新改变牌组之前请先手动检验牌组。"
+
+#. This is a deck upgrade action.
+msgid "Undo anyway"
+msgstr "仍要复原"
+
+msgid "Save deck changes"
+msgstr "储存牌组变化"
+
+msgid "It looks like one or more deck changes are unsaved."
+msgstr "牌组变化尚未储存。"
+
+#, javascript-format
+msgid "${ handle }'s Friends"
+msgstr "${ handle }的朋友"
+
+msgid "Friends"
+msgstr "朋友"
+
+#, javascript-format
+msgid "Search for ${ searchTerm }"
+msgstr "搜寻${ searchTerm }"
+
+msgid "Friend Requests"
+msgstr "交友邀请"
+
+msgid "Pending Friend Requests"
+msgstr "待回复的交友邀请"
+
+msgid "Search for friends to add"
+msgstr "搜寻要加入的朋友"
+
+msgid "Search Results"
+msgstr "搜寻结果"
+
+#, javascript-format
+msgid "No results found for search '${ searchResults.term }'."
+msgstr "找不到符合“${ searchResults.term }”的结果。"
+
+msgid "Clear search"
+msgstr "清除搜寻"
+
+msgid "Search friends"
+msgstr "搜寻朋友"
+
+#, javascript-format
+msgid "${ cycleCount } Cycle"
+msgid_plural "${ cycleCount } Cycles"
+msgstr[0] "${ cycleCount }循环"
+
+#, javascript-format
+msgid "${ standalonePackCount } Pack"
+msgid_plural "${ standalonePackCount } Packs"
+msgstr[0] "${ standalonePackCount }扩充包"
+
+msgid "Encounter Spoilers"
+msgstr "遭遇组剧透"
+
+msgid "Support"
+msgstr "支援"
+
+msgid "Account Name"
+msgstr "帐户名称"
+
+msgid "Choose a handle for your account"
+msgstr "为你的帐户选择一个名称"
+
+msgid "Your Friends"
+msgstr "你的朋友"
+
+msgid ""
+"This app works just fine without an account.\n"
+"But signing in will allow you to sync campaigns between devices, with more features planned for the future."
+msgstr ""
+"此APP不用登入帐户即可运作。\n"
+"登入可以允许你在不同装置间同步，将来也计划加入更多新功能。"
+
+#, javascript-format
+msgid "${ pendingFriendCount } pending request"
+msgid_plural "${ pendingFriendCount } pending requests"
+msgstr[0] "${ pendingFriendCount }笔待回复的请求"
+
+#, javascript-format
+msgid "${ friendCount } friend"
+msgid_plural "${ friendCount } friends"
+msgstr[0] "${ friendCount }位朋友"
+
+msgid "Account name"
+msgstr "帐户名称"
+
+msgid "Choose a handle"
+msgstr "选择一个名称"
+
+msgid "ArkhamDB Account"
+msgstr "ArkhamDB帐户"
+
+msgid "Arkham Cards Account"
+msgstr "Arkham Cards帐户"
+
+msgid "Looks like there is already an account registered with this email address."
+msgstr "已经有帐户使用此电子邮件信箱注册。"
+
+msgid "That doesn't look like a valid email address"
+msgstr "并非有效的电子邮件信箱"
+
+msgid "That password seems to be too weak."
+msgstr "密码强度不足。"
+
+msgid "Your account has been disabled."
+msgstr "你的帐户已经被关闭。"
+
+msgid "There doesn't appear to be an account with that email address."
+msgstr "找不到使用此电子邮件信箱的帐户。"
+
+msgid "Invalid password."
+msgstr "无效的密码。"
+
+msgid "Unknown error"
+msgstr "未知的错误"
+
+msgid "Email address"
+msgstr "电子邮件信箱"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Would you like to create a new account instead?"
+msgstr "你是否要创建新帐户？"
+
+msgid "Are you trying to sign in to an existing account?"
+msgstr "你是否尝试登入既有帐户？"
+
+#, javascript-format
+msgid ""
+"A password reset email has been sent to '${ emailAddress }'.\n"
+"\n"
+"Please follow the instructions and then return to the app to continue."
+msgstr ""
+"重设密码的电子邮件已寄至“${ emailAddress }”。\n"
+"\n"
+"请依照邮件上的指示操作，并返回此APP以继续。"
+
+msgid "Would you like to reset your password via email?"
+msgstr "你是否确定要通过电子邮件重设密码？"
+
+msgid "Sign up"
+msgstr "注册"
+
+msgid "Sign in"
+msgstr "登入"
+
+msgid ""
+"Using an Arkham Cards account will allow you to backup and sync your campaign data between devices.\n"
+"More features are in the works."
+msgstr ""
+"使用Arkham Cards帐户可允许你备份与在不同装置之间同步你的剧本资料。\n"
+"更多新功能敬请期待。"
+
+msgid "Sign in to your account"
+msgstr "登入你的帐户"
+
+msgid "Create a new account"
+msgstr "创建新帐户"
+
+msgid "Sign up with email"
+msgstr "使用email注册"
+
+msgid "Sign in with email"
+msgstr "使用email登入"
+
+msgid "Sign out"
+msgstr "登出"
+
+msgid "Sign in to app"
+msgstr "登入APP"
+
+msgid "Problem reading from ArkhamDB"
+msgstr "无法从ArkhamDB读取"
+
+msgid ""
+"If you are having trouble with your account you should try to reconnect.\n"
+"\n"
+"If the problem persists, you may sign out but campaigns will have ArkhamDB decks disconnected."
+msgstr ""
+"如果无法连结你的帐户，请重新连线。\n"
+"\n"
+"如果问题无法解决，你可以登出(剧本中ArkhamDB的牌组将中断连线)。"
+
+msgid "Authorization issues"
+msgstr "授权的问题"
+
+msgid "Reconnect"
+msgstr "重新连线"
+
+msgid "Logged in"
+msgstr "已登入"
+
+msgid "Synchronize decks"
+msgstr "同步牌组"
+
+msgid "Log out"
+msgstr "登出"
+
+msgid "Log in"
+msgstr "登入"
+
+msgid "ArkhamDB"
+msgstr "ArkhamDB"
+
+msgid "Narration enabled"
+msgstr "启用语音"
+
+msgid "Audio narration"
+msgstr "语音"
+
+msgid "Dissonant Voices"
+msgstr "Dissonant Voices"
+
+msgid "Notes"
+msgstr "注记"
+
+msgid "Free-form text records"
+msgstr "自由标注的文字"
+
+msgid "Achievements"
+msgstr "成就"
+
+msgid "Upload campaign"
+msgstr "上传剧本"
+
+msgid "Can't add side scenario right now."
+msgstr "目前无法加入支线剧情。"
+
+#, javascript-format
+msgid "Chaos Bag (${ tokenCount })"
+msgstr "混乱袋(${ tokenCount })"
+
+msgid "Save upgrade"
+msgstr "储存升级"
+
+msgid "Earned experience:"
+msgstr "获得经验:"
+
+msgid "Sign out of Arkham Cards?"
+msgstr "是否登出Arkham Cards？"
+
+msgid ""
+"Are you sure you want to sign out of Arkham Cards?\n"
+"\n"
+"Any campaigns you uploaded or have had shared with you will be removed from this device. They can be resynced if you sign in again.\n"
+"\n"
+"Note: if you have made recent changes while offline, they may be lost."
+msgstr ""
+"你确定要登出Arkham Cards？\n"
+"\n"
+"你上传的剧本或下载的剧本将从本装置中移除。再次登入时可以重新同步。\n"
+"\n"
+"注意: 未登入时所做的改变可能会遗失。"
+
+msgid "Name required"
+msgstr "必须输入名称"
+
+msgid "You must specify a name for custom campaigns."
+msgstr "自订的剧本必须要有名称。"
+
+msgid "Export diagnostic data"
+msgstr "汇出诊断资料"
+
+msgid "This feature is intended for advanced diagnostics. Just copy the data presented here and email it to arkhamcards@gmail.com"
+msgstr "这个功能将用于进阶诊断。请复制此处的资料并以电子邮件寄到arkhamcards@gmail.com"
+
+msgid "Database migration required"
+msgstr "需要搬移资料库"
+
+msgid "This should only take a few seconds and no network is required."
+msgstr "大约需要几秒钟，无须网路连线。"
+
+msgid "Migrate now"
+msgstr "搬移"
+
+msgid "Export Diagnostic Data"
+msgstr "汇出诊断资料"
+
+msgid "Agility"
+msgstr "敏捷"
+
+msgid "Combat"
+msgstr "战斗"
+
+msgid "Intellect"
+msgstr "智慧"
+
+msgid "Willpower"
+msgstr "力量"
+
+msgid "Boost"
+msgstr "提升"
+
+msgid "Skill Boosts"
+msgstr "技能提升"
+
+msgid "Skill Boosts: All"
+msgstr "技能提升: 全部"
+
+msgid "If you run into any problems with this migration, please contact arkhamcards@gmail.com."
+msgstr "如果本次这次搬移遇到任何问题，请联系arkhamcards@gmail.com。"
+
+msgid "Color blind friendly icons"
+msgstr "色觉辨认友善图标"
+
+msgid "Uploading"
+msgstr "上传中"
+
+msgid "Upload campaigns"
+msgstr "上传剧本"
+
+msgid "Campaigns can be uploaded to your Arkham Cards account."
+msgstr "剧本可上传至你的Arkham Cards帐户。"
+
+msgid "Uploaded campaigns will be synced between devices."
+msgstr "已上传的剧本会在不同装置之间同步。"
+
+msgid "Note campaign achievements"
+msgstr "记录剧本成就"
+
+msgid "Complete campaign setup"
+msgstr "请先完成剧本设置"
+
+msgid "Review and draw tokens"
+msgstr "检视并抽取标记"
+
+msgid "Spent experience"
+msgstr "已花费经验"
+
+msgid "Continue"
+msgstr "继续"
+
+msgid "Start"
+msgstr "开始"
+
+msgid "View results"
+msgstr "查看结果"
+
+msgid "Skipped"
+msgstr "已跳过"
+
+msgid "Locked"
+msgstr "未解锁"
+
+msgid "Add scenario result"
+msgstr "新增冒险结果"
+
+msgid "Record completed scenario"
+msgstr "记录完成的冒险"
+
+msgid "Add XP from scenario"
+msgstr "从冒险新增经验"
+
+msgid "Review scenario results"
+msgstr "查看冒险结果"
+
+msgid "Edit chaos bag"
+msgstr "编辑混乱袋"
+
+msgid "Scenario name"
+msgstr "冒险名称"
+
+#, javascript-format
+msgid "${ unspentXp } XP unspent"
+msgid_plural "${ unspentXp } XP unspent"
+msgstr[0] "剩余${ unspentXp }点经验"
+
+msgid "Tap to draw"
+msgstr "点击抽取"
+
+msgid "Draw another"
+msgstr "再抽一个"
+
+msgid "Return tokens"
+msgstr "返回混乱袋"
+
+msgid "Seal tokens"
+msgstr "封印标记"
+
+msgid "Release all"
+msgstr "释放所有标记"
+
+msgid "Remove all bless & curse tokens"
+msgstr "移除所有祝福与诅咒标记"
+
+msgid "do not remove"
+msgstr "不移除"
+
+msgid "View chaos bag"
+msgstr "检视混乱袋"
+
+msgid "Sealed tokens"
+msgstr "已封印标记"
+
+#, javascript-format
+msgid "${ _spentXp } of ${ _totalXp } spent"
+msgstr "已花费${ _spentXp } / ${ _totalXp }点经验"
+
+msgid "Decks with Ancestral Knowledge must include at least 10 skills."
+msgstr "包含Ancestral Knowledge的牌组必须含有至少10张技能。"
+
+#, javascript-format
+msgid "${ normalCardCount } / ${ deckSize } cards"
+msgstr "${ normalCardCount } / ${ deckSize }张卡牌"
+
+msgid "Ammo"
+msgstr "子弹"
+
+msgid "Bounties"
+msgstr "赏金"
+
+msgid "Charges"
+msgstr "充能"
+
+msgid "Keys"
+msgstr "钥匙"
+
+msgid "Locks"
+msgstr "锁头"
+
+msgid "Resources"
+msgstr "资源"
+
+msgid "Secrets"
+msgstr "秘密"
+
+msgid "Tickets"
+msgstr "车票"
+
+msgid "Tries"
+msgstr "次数"
+
+msgid "Whistles"
+msgstr "哨声"
+
+msgid "Loading..."
+msgstr "读取中…"
+
+msgid "Campaign players"
+msgstr "剧本玩家"
+
+msgid "Add friends to campaign"
+msgstr "加入朋友到剧本中"
+
+msgid "Add friends"
+msgstr "加入朋友"
+
+msgid "Access"
+msgstr "存取"
+
+msgid "Later"
+msgstr "稍后再说"
+
+msgid "Searching cards..."
+msgstr "搜寻卡牌…"
+
+msgid "This appears to be one of your decks from ArkhamDB, however you are not currently logged in. If you wish to make edits, please login through the app settings."
+msgstr "这似乎是你在ArkhamDB上的牌组之一，但你现在尚未登入。如果你想编辑牌组，请从'设置'处登入ArkhamDB。"
+
+msgid "Leave campaign"
+msgstr "离开剧本"
+
+msgid ""
+"Are you sure you want to leave this campaign?\n"
+"\n"
+"Your decks will be removed from the campaign, but you can rejoin it later."
+msgstr ""
+"你确定要离开这个剧本吗？\n"
+"\n"
+"你的牌组将从剧本中移除，但你之后可以再次加入。"
+
+msgid "Leave"
+msgstr "离开"
+
+msgid "Edit players"
+msgstr "编辑玩家"
+
+msgid "View players"
+msgstr "检视玩家"
+
+msgid "Clear card cache"
+msgstr "清除卡牌暂存"
+
+msgid "Uploading..."
+msgstr "上传中…"
+
+msgid "Leave standalone"
+msgstr "离开独立冒险"
+
+msgid ""
+"Are you sure you want to leave this standalone?\n"
+"\n"
+"Your decks will be removed from the standalone, but you can rejoin it later."
+msgstr ""
+"你确定要离开这场独立冒险吗？\n"
+"\n"
+"你的牌组将从独立冒险中移除，但你之后可以再次加入。"
+
+msgid "Upload standalone"
+msgstr "上传独立冒险"
+
+msgid "You must be online to upload"
+msgstr "你必须在线上才能上传"
+
+msgid "Adjust scenario XP and trauma"
+msgstr "调整冒险经验和创伤"
+
+msgid "Unspent XP"
+msgstr "未花费的经验"
+
+#, javascript-format
+msgid "${ unspentXp } saved"
+msgstr "${ unspentXp }已储存"
+
+#, javascript-format
+msgid "Scenario Card - ${ difficultyStr }"
+msgstr "冒险卡 - ${ difficultyStr }"
+
+msgid "Scenario Card"
+msgstr "冒险卡"
+
+msgid "This appears to be one of your decks from ArkhamDB, however you seem to be logged into a different ArkhamDB account? If you wish to make edits, please login through the app settings."
+msgstr "这似乎是你在ArkhamDB上的牌组之一，但你现在登入的帐户不符。如果你想编辑牌组，请从'设置'处登入ArkhamDB。"
+
+#, javascript-format
+msgid "${ tokens[0] } and ${ tokens[1] }"
+msgstr "${ tokens[0] }和${ tokens[1] }"
+
+msgid "Dark Matter"
+msgstr "黑暗物质"
+
+msgid "Impending Doom"
+msgstr ""
+
+msgid "Memories"
+msgstr "记忆"
+
+msgid "Fan-Made Campaigns"
+msgstr "非官方剧本"
+
+msgid "Fetching account details..."
+msgstr "取得帐户资料…"
+
+msgid ""
+"Thanks for signing up for Arkham Cards.\n"
+"\n"
+"First of all, you'll need to create a handle for your account."
+msgstr ""
+"感谢您登入Arkham Cards。\n"
+"\n"
+"首先，您需要为您的帐户创建一个名称。"
+
+msgid "People will be able to search for friends using their handle so you can join their campaigns."
+msgstr "玩家将透过名称搜寻好友，互相加入剧本。"
+
+msgid "Now that you are signed in, you should have access to your saved campaigns."
+msgstr "您已经登入，可以存取已储存的剧本。"
+
+msgid "Campaigns can now be 'uploaded' so they can be synced between devices or shared with friends."
+msgstr "剧本现在可以'上传'，在不同装置之间同步，或者与朋友共享。"
+
+msgid "Welcome"
+msgstr "欢迎"
+
+msgid "Download print and play cards"
+msgstr "下载可列印卡牌"
+
+#, javascript-format
+msgid "${ section.title } (from XP)"
+msgstr "${ section.title } (从XP)"
+
+msgid "Exiled story cards"
+msgstr "被放逐的故事卡"
+
+msgid "Exile story cards"
+msgstr "放逐故事卡"
+
+#, javascript-format
+msgid "Fan-made scenario by ${ custom.creator }"
+msgstr "${ custom.creator }制作的非官方剧本"
+
+msgid "If you are a custom content creator who has a \"finished\" campaign you'd like to see in the app, contact me at arkhamcards@gmail.com. Custom campaigns are a fair amount of work, but I'd love to support the community in anyway I can."
+msgstr "如果你是创作者，并且有\"已完成\"的剧本，希望APP能够支援，请通过arkhamcards@gmail.com联系我。非官方剧本的支援并不容易，但我会尽己所能的为社群提供支援。"
+
+msgid "Alice in Wonderland"
+msgstr "诡境梦游"
+
+msgid "Fragments of Alice"
+msgstr "爱丽丝的碎片"
+
+msgid "Wonderland Boons"
+msgstr "仙境的恩赐"
+
+msgid "Wonderland Banes"
+msgstr "仙境的祸害"
+
+msgid "Strength of Wonderland"
+msgstr "仙境的强度"
+
+msgid "Edge of the Earth"
+msgstr "暗与地球之界"
+
+msgid "You cannot have more than 5 cards that are not Guardian or Neutral"
+msgstr "你不能加入超过5张守卫者和中立以外的卡牌"
+
+msgid "You cannot have more than 5 cards that are not Seeker or Neutral"
+msgstr "你不能加入超过5张探求者和中立以外的卡牌"
+
+msgid "You cannot have more than 5 cards that are not Rogue or Neutral"
+msgstr "你不能加入超过5张流浪者和中立以外的卡牌"
+
+msgid "You cannot have more than 5 cards that are not Mystic or Neutral"
+msgstr "你不能加入超过5张潜修者和中立以外的卡牌"
+
+msgid "You cannot have more than 5 cards that are not Survivor or Neutral"
+msgstr "你不能加入超过5张求生者和中立以外的卡牌"
+
+msgid "You must have at least 7 cards from 3 different factions"
+msgstr "你必须加入3种不同职阶，每个职阶至少7张卡牌"
+
+msgid "You cannot have more than 15 level 0-1 Seeker and/or Mystic cards"
+msgstr "你不能加入超过15张等级0-1的探求者和潜修者卡牌"
+
+msgid "You cannot have more than 5 Guardian and/or Mystic cards"
+msgstr "你不能加入超过5张守卫者和潜修者以外的卡牌"
+
+msgid "You cannot have more than 5 level 0 Mystic cards"
+msgstr "你不能加入超过5张等级0的潜修者卡牌"
+
+msgid "Choose resolution"
+msgstr "选择结局"
+
+msgid "Choose investigator to record trauma"
+msgstr "选择要纪录创伤的调查员"
+
+msgid "Defeated"
+msgstr "被击败"
+
+msgid "Status of investigators"
+msgstr "调查员的状态"
+
+msgid "Social"
+msgstr "社交"
+
+msgid "Add new"
+msgstr "新增"
+
+msgid "Changes have been recorded."
+msgstr "变更已被记录。"
+
+msgid "No adjustments need saving."
+msgstr "没有变更。"
+
+msgid "When you have finished making adjustments, press the 'Save' button to record your changes."
+msgstr "调整完成时，按下'储存'按钮来记录你的变更。"
+
+msgid "This deck will be upgraded with XP and any new story cards will be added or removed as specified."
+msgstr "这副牌组将会记录获得经验值、卡牌升级以及任何故事卡的加入/移除。"
+
+#, javascript-format
+msgid "(new total: ${ total })"
+msgstr "(新的总数: ${ total })"
+
+msgid "Earned XP:"
+msgstr "已获得XP:"
+
+msgid "Saved"
+msgstr "已储存"
+
+msgid ""
+"This investigator does not have a deck associated with it.\n"
+"If you choose a deck, the app can help track spent experience, story asset changes, and deckbuilding requirements."
+msgstr ""
+"这位调查员没有相对应的牌组。\n"
+"如果你选择一副牌组，此APP可以协助你追踪花费过的经验、故事支援的变化以及牌组构建需求。"
+
+msgid "Now that your upgrade has been saved, when visiting the deck be sure to use the 'Edit' button when making card changes."
+msgstr "你的升级已经储存完毕，如果要变更卡牌，请使用'编辑'按钮。"
+
+msgid "What exactly does the app handle?"
+msgstr "这个APP能做哪些事情？"
+
+msgid ""
+"Generally speaking, the app handles anything that you see mentioned in the digital campaign log.\n"
+"If you are building your deck with the app, it will also handle cards like Arcane Research and Shrewd Analysis (if you allow the app to randomize your upgrades).\n"
+"If you find that you made a mistake after you upgraded your deck, you can 'adjust' the available experience when editing a deck."
+msgstr ""
+"具体来说，这个APP包含电子冒险日志的所有功能。\n"
+"如果你使用APP构建牌组，能够替你处理类似奥术研究和老练分析(如果你允许APP随机挑选你的升级)的卡牌效果。\n"
+"如果你升级完牌组后，发现有误，你也能在编辑牌组时'调整'可用的经验值。"
+
+msgid ""
+"The numbers below already include all the trauma, victory points, and story assets you may have earned during the resolution.\n"
+"\n"
+"If you have any other cards or effects that the app does not take care of, you can make adjustments below before saving each investigator."
+msgstr ""
+"以下数字已经包含了在结局中你可能获得的任何创伤、胜利点数和故事支援卡。\n"
+"\n"
+"如果你有任何其他APP没有处理到的卡牌或效果，你也能在下方储存每个调查员的结果之前做调整。"
+
+msgid "Learn more"
+msgstr "了解更多"
+
+msgid "Campaign log"
+msgstr "冒险日志"
+
+msgid "Record in campaign log"
+msgstr "记录在冒险日志中"
+
+msgid "Review and add records"
+msgstr "查看或新增纪录"
+
+msgid "Draw random"
+msgstr "随机抽取"
+
+msgid "Record"
+msgstr "纪录"
+
+msgid "Scenario effects"
+msgstr "冒险效果"
+
+msgid "Scenario Ended"
+msgstr "冒险结束"
+
+msgid "Proceed to Resolutions"
+msgstr "进入结局"
+
+msgid "Choose trauma type"
+msgstr "选择创伤的种类"
+
+msgid "Chosen trauma type"
+msgstr "选择创伤的种类"
+
+msgid "Random results"
+msgstr "随机结果"
+
+msgid "Select Traits"
+msgstr "选择属性"
+
+msgid "Random weaknesses will be drawn that match these traits."
+msgstr "抽取符合这些属性的随机弱点。"
+
+msgid "Edit selection"
+msgstr "编辑选择"
+
+#, javascript-format
+msgid "Check Campaign Log. <i>If ${ logEntry.text }</i>"
+msgstr "查看冒险日志。<i>如果${ logEntry.text }</i>"
+
+msgid "Discord"
+msgstr "Discord"
+
+msgid "VK"
+msgstr "VK"
+
+msgid "Telegram"
+msgstr "Telegram"
+
+#, javascript-format
+msgid "In your Campaign Log, under \"${ section }\", record #name#. "
+msgstr "在冒险日志中，\"${ section }\"下，纪录下#name#。"
+
+#, javascript-format
+msgid "In your Campaign Log, under \"${ logEntry.section }\", cross out <i>${ logEntry.text }</i>."
+msgstr "在冒险日志中，\"${ logEntry.section }\"下，划掉<i>${ logEntry.text }</i>。"
+
+#, javascript-format
+msgid "In your Campaign Log, under \"${ logEntry.section }\", record <i>${ logEntry.text }</i>"
+msgstr "在冒险日志中，\"${ logEntry.section }\"下，记录下<i>${ logEntry.text }</i>。"
+
+msgid "Unarchive campaign"
+msgstr "未归档剧本"
+
+msgid "Archive campaign"
+msgstr "归档剧本"
+
+msgid "Show archived campaigns"
+msgstr "显示已归档剧本"
+
+msgid "Return to The Circle Undone"
+msgstr "重返万象无终"
+
+msgid "Prologue: Return to Disappearance at the Twilight Estate"
+msgstr "序章：重返暮色庄园失踪事件"
+
+msgid "Return to The Witching Hour"
+msgstr "重返巫异时刻"
+
+msgid "Return to At Death's Doorstep"
+msgstr "重返死亡门前"
+
+msgid "Return to The Secret Name"
+msgstr "重返隐密之名"
+
+msgid "Return to The Wages of Sin"
+msgstr "重返恶罪报应"
+
+msgid "Return to For the Greater Good"
+msgstr "重返崇高利益"
+
+msgid "Return to Union and Disillusion"
+msgstr "重返聚合幻灭"
+
+msgid "Return to In the Clutches of Chaos"
+msgstr "重返混沌魔掌"
+
+msgid "Return to Before the Black Throne"
+msgstr "重返黑色王座"
+
+msgid "Loading account"
+msgstr "读取帐户"
+
+#, javascript-format
+msgid "Choose an investigator to add ${ card.name } to their deck:"
+msgstr "选择一位调查员，将${ card.name }加入其牌组:"
+
+msgid "Show card"
+msgstr "显示卡牌"
+
+msgid "Edit my spoiler settings"
+msgstr "编辑我的剧透设置"
+
+msgid "Crown of Egil"
+msgstr ""
+
+msgid "The Crown of Egil"
+msgstr ""
+
+msgid "Traces of Egil"
+msgstr ""
+
+#, javascript-format
+msgid "Fan-made campaign by ${ author }"
+msgstr "${ author }制作的非官方剧本"
+
+msgid "Sort ignores punctuation"
+msgstr "排序时忽略标点符号"
+
+msgid ""
+"Sorry, you don't seem to be a Mythos Buster patron.\n"
+"It can take up to 24hrs before Patreon updates your membership status. If you are still experiencing problems after 24hrs, please contact Mythos Busters via Patreon or on the Discord channel for help with this issue."
+msgstr ""
+"很抱歉，你似乎不是Mythos Buster的赞助者。\n"
+"你的Patreon会员状态可能要24小时更新。如果你在24小时之后，仍然遇到问题，请透过Patreon或在Discord频道上联络Mythos Busters以寻求帮助。"
+
+msgid "Skull"
+msgstr "骷颅"
+
+msgid "Cultist"
+msgstr "异教徒"
+
+msgid "Tablet"
+msgstr "碎石版"
+
+msgid "Elder Thing"
+msgstr "古神"
+
+msgid "Auto-Fail"
+msgstr "自动失败"
+
+msgid "Elder Sign"
+msgstr "远古印记"
+
+msgid "Number of [[Item]] assets you control"
+msgstr "你控制的[[道具]]支援的数量"
+
+msgid "Your investigator's modifier"
+msgstr "你调查员的修正值"
+
+#, javascript-format
+msgid ""
+"0: (original effect below)\n"
+"${ originalTokenText }"
+msgstr ""
+"0: (下方是原来效果)\n"
+"${ originalTokenText }"
+
+msgid "Easy difficulty"
+msgstr "简单"
+
+msgid "Standard difficulty"
+msgstr "普通"
+
+msgid "Hard difficulty"
+msgstr "困难"
+
+msgid "Expert difficulty"
+msgstr "专家"
+
+msgid "Scenario settings"
+msgstr "冒险设置"
+
+msgid "Test difficulty"
+msgstr "检定难度"
+
+msgid "Modified skill"
+msgstr "修正后技能值"
+
+#, javascript-format
+msgid "${ tokens }/${ total } token"
+msgid_plural "${ tokens }/${ total } tokens"
+msgstr[0] "${ tokens }/${ total }标记"
+
+msgid "Show all cards"
+msgstr "显示所有卡牌"
+
+msgid "Disable to choose individual packs to show"
+msgstr ""
+
+msgid "All cards are shown throughout the app"
+msgstr "APP会把所有的卡牌显示出来"
+
+msgid "Use these controls to limit which cards are visible while searching, building decks, or upgrading cards to those in your own collection."
+msgstr "使用这些选项来限制搜索、构建牌组或升级卡牌时(在你的收藏中)可用的卡片。"
+
+msgid "All Cycles and Packs"
+msgstr "所有的循环和扩充包"
+
+msgid "Record that..."
+msgstr "记录下……"
+
+msgid "Player card entries only"
+msgstr ""
+
+msgid "Accept friend request"
+msgstr "接受交友邀请"
+
+msgid "Send friend request"
+msgstr "送出交友邀请"
+
+msgid "Reject friend request"
+msgstr "拒绝交友邀请"
+
+msgid "Revoke friend request"
+msgstr "收回交友邀请"
+
+msgid "Show upgrades"
+msgstr "显示升级"
+
+msgid "Hide Bless/Curse Odds"
+msgstr "隐藏祝福/诅咒机率"
+
+msgid "Show Bless/Curse Odds"
+msgstr "显示祝福/诅咒机率"
+
+msgid "You cannot have more than 5 level 0 Survivor cards"
+msgstr "你不能加入超过5张等级0的求生者卡牌"
+
+msgid "You cannot have more than 5 level 0 Guardian cards"
+msgstr "你不能加入超过5张等级0的守卫者卡牌"
+
+msgid "You cannot have more than 5 level 0 Seeker cards"
+msgstr "你不能加入超过5张等级0的探求者卡牌"
+
+msgid "You cannot have more than 5 level 0 Rogue cards"
+msgstr "你不能加入超过5张等级0的流浪者卡牌"
+
+msgid "Sign into Arkham Cards on the Settings tab to enable"
+msgstr "在设置页面登入Arkham Cards以启用"
+
+#, javascript-format
+msgid "${ spent } of ${ supplyIcon } ${ total }"
+msgstr "${ supplyIcon } ${ total } 的 ${ spent }"
+
+msgid "Choose deck"
+msgstr "选择牌组"
+
+msgid "Frost"
+msgstr "冰霜"
+
+msgid "Database reset"
+msgstr "重置资料库"
+
+msgid "Please close and restart the app"
+msgstr "请关闭并重新打开此APP"
+
+msgid "Reset card database"
+msgstr "重置卡牌资料库"
+
+msgid "Mythos Busters"
+msgstr "Mythos Busters"
+
+#, javascript-format
+msgid "This app is made possible by the continued support of our fans on ${ patreonLink } and the ${ mythosBustersLink } podcast."
+msgstr "感谢${ patreonLink }和${ mythosBustersLink } podcast上的粉丝持续地提供支持，使这个APP成为可能。"
+
+msgid ""
+"The card database has been reset.\n"
+"\n"
+"Please close the app and restart it to trigger a full sync of card data."
+msgstr ""
+"卡牌资料库已重置。\n"
+"\n"
+"请关闭并重新打开此APP，以启动卡牌资料的完全同步。"
+
+#, javascript-format
+msgid "Sqlite version: ${ sqliteVersion }"
+msgstr "SQLite版本：${ sqliteVersion }"
+
+msgid "Beta testing"
+msgstr "Beta测试"
+
+msgid "Edit Weakness Cards"
+msgstr "编辑弱点卡"
+
+msgid "Narrate"
+msgstr ""
+
+msgid "Negative modifier"
+msgstr "负数修正值"
+
+#, javascript-format
+msgid "${ textModifier }, draws another"
+msgstr "${ textModifier }，揭示另一个标记"
+
+msgid "Fix duplicates"
+msgstr ""
+
+msgid "Do you want to use the app to choose a random partner?"
+msgstr "你是否要用APP随机帮你选择一个伙伴？"
+
+msgid "Select more"
+msgstr "选择更多"
+
+msgid "Record damage/horror:"
+msgstr "纪录伤害/恐惧："
+
+msgid "Expedition Team"
+msgstr "探险队"
+
+#, javascript-format
+msgid "In the ${ sectionName } section of the Campaign Log, cross out ${ partnerName },"
+msgstr "在剧本日志中${ sectionName }部分，划掉${ partnerName }。"
+
+#, javascript-format
+msgid "In the ${ sectionName } section of the Campaign Log, write \"MIA\" next to ${ partnerName }."
+msgstr "在剧本日志中${ sectionName }部分，在${ partnerName }的名字旁写下“失踪”。"
+
+#, javascript-format
+msgid "In the ${ sectionName } section of the Campaign Log, cross out \"MIA\" next to ${ partnerName }."
+msgstr "在剧本日志中${ sectionName }部分，将${ partnerName }旁的“失踪”划掉。"
+
+msgid "If the lead investigator was driven <b>insane</b>."
+msgstr "如果调查员队长<b>发疯</b>了。"
+
+msgid "If all investigators were driven <b>insane</b>."
+msgstr "如果所有调查员都<b>发疯</b>了。"
+
+msgid "If the lead investigator is still alive."
+msgstr "如果调查员队长仍存活。"
+
+msgid "If all investigatore are still alive."
+msgstr "如果所有调查员都仍存活。"
+
+msgid "The Entity"
+msgstr "实体"
+
+msgid "Resolute"
+msgstr "坚毅"
+
+msgid "MIA"
+msgstr "失踪"
+
+msgid ""
+"A side-story is a scenario that may be played between any two scenarios of an <i>Arkham Horror: The Card Game</i> campaign.\n"
+"- Playing a side-story costs each investigator in the campaign a certain amount of experience, which should be paid when you start the scenario.\n"
+"- Weaknesses, trauma, experience, and rewards granted by playing a side-story stay with the investigators for the remainder of the campaign.\n"
+"- Each side-story may only be played once per campaign.\n"
+"\n"
+"<b>Note:</b> When using this app, the experience required to play these scenarios will be deducted automatically at the <b>end of the scenario</b>, but you should be sure you have sufficient experience set aside to pay for it."
+msgstr ""
+"支线剧情是一种冒险，可在《诡镇奇谈：卡牌版》的任意两场冒险之间进行。\n"
+"- 参与剧本的每位调查员需要支付一定数量的经验值，才能进行支线剧情。\n"
+"- 调查员们保留在支线剧情中获得的弱点、创伤、经验、奖励，直到该剧本结束。\n"
+"- 在每个剧本中，每个支线剧情只能进行一次游戏。\n"
+"\n"
+"<b>注意：</b>使用此APP时，进行支线冒险所需要的经验值会自动在<b>冒险结束</b>时扣除，但你仍应该确保你能有足够的经验支付。"
+
+msgid "Ice and Death: Part 1"
+msgstr "亡命冰原：第1部分"
+
+msgid "Ice and Death: Part 2"
+msgstr "亡命冰原：第2部分"
+
+msgid "Ice and Death: Part 3"
+msgstr "亡命冰原：第3部分"
+
+msgid "Restful Night"
+msgstr "宁静夜晚"
+
+msgid "To the Forbidden Peaks"
+msgstr "失落之峰"
+
+msgid "Endless Night"
+msgstr "无尽夜晚"
+
+msgid "City of the Elder Things"
+msgstr "古老者之城"
+
+msgid "Final Night"
+msgstr "最后一夜"
+
+msgid "The Heart of Madness: Part 1"
+msgstr "疯狂之心：第1部分"
+
+msgid "The Heart of Madness: Part 2"
+msgstr "疯狂之心：第2部分"
+
+msgid "Fatal Mirage"
+msgstr "致命幻景"
+
+msgid "Fatal Mirage - Memories Discovered"
+msgstr "致命幻景 - 发现的记忆"
+
+msgid "Fatal Mirage - Memories Banished"
+msgstr "致命幻景 - 驱除的记忆"
+
+msgid "Ice and Death - Locations Revealed"
+msgstr "亡命冰原 - 已揭示的地点"
+
+msgid "Ice and Death - Supplies Recovered"
+msgstr "亡命冰原 - 已回收的补给品"
+
+msgid "The Heart of Madness - Seals Placed"
+msgstr "疯狂之心 - 放置的封印"
+
+msgid "The Heart of Madness - Seals Recovered"
+msgstr "疯狂之心 - 发现的封印"
+
+msgid "You may heal 1 physical or mental trauma <i>(your choice)</i>"
+msgstr "你可以治愈1点肉体或精神创伤<i>(你的选择)</i>"
+
+#, javascript-format
+msgid "In the ${ sectionName } section of the Campaign Log, draw a check mark next to ${ partnerName }."
+msgstr "在剧本日志中${ sectionName }部分，在${ partnerName }的名字旁打勾。"
+
+msgid "Choose heal type"
+msgstr "选择治愈类型"
+
+msgid "Chosen heal type"
+msgstr "选择的治愈类型"
+
+msgid "Review and draw weaknesses"
+msgstr "查看并抽取弱点"
+
+msgid "Choose expansions for basic weakness"
+msgstr "选择基础弱点来源的扩充包"
+
+msgid "Uploading campaign"
+msgstr "剧本上传中"
+
+#, javascript-format
+msgid "${ input.prompt } (choose ${ quantity })"
+msgid_plural "${ input.prompt } (choose ${ quantity })"
+msgstr[0] "${ input.prompt } (选择${ quantity })"
+
+msgid "This deck is owned by another player. You can record the upgrade now and they will be given an opportunity to save the changes to their deck when they next open the app."
+msgstr "这副牌组属放另一位玩家。你可以现在记录升级，他们下次使用APP时可以选择保存对他们牌组的变更。"
+
+msgid "Changes have been recorded. You can apply these changes to your deck on the main screen of the campaign under your investigator."
+msgstr "已记录变更。你可以在剧本主页面你的调查员下方套用这次变更。"
+
+msgid "Changes have been recorded. The owner of this deck can apply these changes to their deck on the main screen of the campaign under their investigator."
+msgstr "已记录变更。牌组的拥有者可以在剧本主页面他的调查员下方套用这次变更。"
+
+msgid "Tarot card"
+msgstr "塔罗牌"
+
+#, javascript-format
+msgid "Tarot card: ${ card }"
+msgstr "塔罗牌: ${ card }"
+
+msgid "Select tarot card"
+msgstr "选择塔罗牌"
+
+msgid "Which tarot card is impacting the chaos bag?"
+msgstr "哪一张塔罗牌对混乱袋造成影响？"
+
+msgid "Replace highest non-negative token with a skull."
+msgstr "将数值最大的非负值标记替换为[skull]标记。"
+
+msgid "Replace a skull with a 0 token."
+msgstr "将[skull]标记替换为0标记。"
+
+msgid "Judgement · XX"
+msgstr "审判·XX"
+
+msgid "Judgement · XX (Inverted)"
+msgstr "审判·XX(逆位)"
+
+msgid "The Fool · 0"
+msgstr "愚人·0"
+
+msgid "Each investigator not defeated during this game earns +2 experience during its resolution."
+msgstr "本局游戏期间未被击败的每位调查员在结局期间获得+2经验值。"
+
+msgid "Each investigator defeated during this game earns -2 experience during its resolution."
+msgstr "本局游戏期间被击败的每位调查员在结局期间获得-2经验值。"
+
+msgid "The Magician · I"
+msgstr "魔术师·I"
+
+msgid "Each investigator begins the game with 3 addititonal resources"
+msgstr "每位调查员开始游戏时获得额外3个资源。"
+
+msgid "Each investigator begins the game with 3 fewer resources, and cannot gain resources during their first turn."
+msgstr "每位调查员开始游戏时少3个资源，并且在其第一个回合期间不能获得资源。"
+
+msgid "The High Priestess · II"
+msgstr "女祭司·II"
+
+msgid "During the first [intellect] test each investigator performs each round, they get +1 [intellect]."
+msgstr "每位调查员每轮执行的第一次[intellect]检定期间，其获得+1[intellect]。"
+
+msgid "During the first [intellect] test each investigator performs each round, they get -1 [intellect]."
+msgstr "每位调查员每轮执行的第一次[intellect]检定期间，其获得-1[intellect]。"
+
+msgid "The Empress · III"
+msgstr "女皇·III"
+
+msgid "During the first [agility] test each investigator performs each round, they get +1 [agility]."
+msgstr "每位调查员每轮执行的第一次[agility]检定期间，其获得+1[agility]。"
+
+msgid "During the first [agility] test each investigator performs each round, they get -1 [agility]."
+msgstr "每位调查员每轮执行的第一次[agility]检定期间，其获得-1[agility]。"
+
+msgid "The Emperor · IV"
+msgstr "皇帝·IV"
+
+msgid "During the first [combat] test each investigator performs each round, they get +1 [combat]."
+msgstr "每位调查员每轮执行的第一次[combat]检定期间，其获得+1[combat]。"
+
+msgid "During the first [combat] test each investigator performs each round, they get -1 [combat]."
+msgstr "每位调查员每轮执行的第一次[combat]检定期间，其获得-1[combat]。"
+
+msgid "The Hierophant · V"
+msgstr "教皇·V"
+
+msgid "During the first [willpower] test each investigator performs each round, they get +1 [willpower]."
+msgstr "每位调查员每轮执行的第一次[willpower]检定期间，其获得+1[willpower]。"
+
+msgid "During the first [willpower] test each investigator performs each round, they get -1 [willpower]."
+msgstr "每位调查员每轮执行的第一次[willpower]检定期间，其获得-1[willpower]。"
+
+msgid "The Lovers · VI"
+msgstr "恋人·VI"
+
+msgid "When the game begins, each investigator searches their deck for an Ally asset, adds it to their hand, and shuffles their deck."
+msgstr "在游戏开始时，每位调查员查找自己的牌堆，找出1张[[盟友]]支援，将其加入自己手牌，并混洗自己的牌堆。"
+
+msgid "When the game begins, each investigator searches their deck for an Ally asset, removes it from the game, and shuffles their deck."
+msgstr "在游戏开始时，每位调查员查找自己的牌堆，找出1张[[盟友]]支援，将其从游戏中移除，并混洗自己的牌堆。"
+
+msgid "The Chariot · VII"
+msgstr "战车·VII"
+
+msgid "Each investigator begins the game with 2 additional cards in their opening hand."
+msgstr "每位调查员开始游戏时额外抽取2张起始手牌。"
+
+msgid "Each investigator begins the game with 2 fewer cards in their opening hand, and cannot draw cards during their first turn."
+msgstr "每位调查员开始游戏时少2张起始手牌，并且在其第一个回合期间不能抽取卡牌。"
+
+msgid "Strength · VIII"
+msgstr "力量·VIII"
+
+msgid "When the game begins, each investigator may play an asset from their hand at -2 cost."
+msgstr "在游戏开始时，每位调查员可以以-2费用从手牌中打出一张支援。"
+
+msgid "During the first round of the game, each investigator cannot play assets."
+msgstr "游戏第一轮期间，每位调查员不能打出支援。"
+
+msgid "The Hermit · IX"
+msgstr "隐士·IX"
+
+msgid "Increase each investigator's maximum hand size by 3."
+msgstr "每位调查员的手牌上限增加3张。"
+
+msgid "Decrease each investigator's maximum hand size by 3."
+msgstr "每位调查员的手牌上限减少3张。"
+
+msgid "Wheel of Fortune · X"
+msgstr "命运之轮·X"
+
+msgid "Once each act, when an investigator reveals an [auto_fail] token, thte investigator may cancel it and treat it as a 0 token instead."
+msgstr "每个场景一次，在任意调查员抽出[auto_fail]标记时，调查员团队可以改为取消它并将它视为1个0标记。"
+
+msgid "Once each agenda, the first time any investigator reveals an [elder_sign] token, cancel it and treat it as a -5 token instead."
+msgstr "每个密谋一次，第一次有调查员抽出[elder_sign]标记时，改为取消它并将它视为1个-5标记。"
+
+msgid "Justice · XI"
+msgstr "正义·XI"
+
+msgid "Cancel the first doom that would be placed on the final agenda of the game."
+msgstr "取消第一个将要被放置在游戏最后一个密谋上的毁灭标记。"
+
+msgid "The final agenda of the game enters play with 1 doom on it."
+msgstr "游戏最后一个密谋入场带有1个毁灭标记。"
+
+msgid "The Hanged Man · XII"
+msgstr "倒吊人·XII"
+
+msgid "During setup, each investigator may take up to 2 additional mulligans."
+msgstr "冒险设置期间，每位调查员可以获得最多2次额外换牌机会。"
+
+msgid "Each investigator cannot mulligan or replace weaknesses in their opening hand (resolve their revelation abilities when the game begins)."
+msgstr "每位调查员不能有换牌机会，也不能替换起始手牌中的弱点(在游戏开始时结算其显现能力)。"
+
+msgid "Death · XIII"
+msgstr "死亡·XIII"
+
+msgid "Each investigator gets +1 health."
+msgstr "每位调查员+1生命值。"
+
+msgid "Each investigator gets -1 health."
+msgstr "每位调查员-1生命值。"
+
+msgid "Temperance · XIV"
+msgstr "节制·XIV"
+
+msgid "Each investigator gets +1 sanity."
+msgstr "每位调查员+1神智值。"
+
+msgid "Each investigator gets -1 sanity."
+msgstr "每位调查员-1神智值。"
+
+msgid "The Devil · XV"
+msgstr "恶魔·XV"
+
+msgid "Each investigator has 1 additional slot of a type chosen by that investigattor when the game begins."
+msgstr "在游戏开始时，每位调查员选择1个槽位类型，该调查员拥有额外1个该类型槽位。"
+
+msgid "Each investigator has 3 fewer slots, each of a different type, chosen by that investigator when the game begins."
+msgstr "在游戏开始时，每位调查员选择3个不同的槽位类型，该调查员各失去1个选择类型的槽位。"
+
+msgid "The Tower · XVI"
+msgstr "高塔·XVI"
+
+msgid "Each investigator chooses 1 basic weakness in their deck and removes it from the game (return them after the game ends)."
+msgstr "每位调查员选择其牌堆中的1个基础弱点并将其从游戏中移除(游戏结束后将其返回)。"
+
+msgid "Add 1 random basic weakness to each investigator's deck. Remove them after the game ends."
+msgstr "在每位调查员的牌堆中加入1张随机基础弱点。游戏结束后将其移除。"
+
+msgid "The Star · XVII"
+msgstr "星星·XVII"
+
+msgid "After an investigator reveals an [elder_sign] token during a skill test, they may heal 1 damage or 1 horror."
+msgstr "调查员在技能检定期间抽出一个[elder_sign]标记后，该调查员可以治愈1点伤害或1点恐惧。"
+
+msgid "After an investigator reveals an [auto_fail] token during a skill test, they must either take 1 damage or 1 horror."
+msgstr "调查员在技能检定期间抽出一个[auto_fail]标记后，该调查员必须受到1点伤害或1点恐惧。"
+
+msgid "The Moon · XVIII"
+msgstr "月亮·XVIII"
+
+msgid "The first time each investigator's deck would run out of cards, they may shuffle the bottom 10 cards of their discard pile back into their deck."
+msgstr "每位调查员的牌堆第一次将要耗尽时，该调查员可以将其弃牌堆底的10张卡牌洗回其牌堆。"
+
+msgid "When the game begins, each investigator discards the top 5 cards of their deck. Shuffle each discarded weakness into its owner's deck."
+msgstr "在游戏开始时，每位调查员弃掉其牌堆顶的5张卡牌。将所有弃掉的弱点洗回其所有者的牌堆。"
+
+msgid "The Sun · XIX"
+msgstr "太阳·XIX"
+
+msgid "During each investigator's first turn, they may take 2 additional actions."
+msgstr "每位调查员的第一个回合期间，其可以执行额外2次行动。"
+
+msgid "During each investigator's first turn, they have 2 fewer actions to take."
+msgstr "每位调查员的第一个回合期间，其少执行2次行动。"
+
+msgid "When the game begins, replace a [skull] token in the chaos bag with a 0 token. Swap them back after the game ends."
+msgstr "在游戏开始时，将混乱袋中的1个[skull]标记替换为1个0标记。游戏结束后将其换回。"
+
+msgid "When the game begins, replace the highest non-negative token in the chaos bag with a [skull] token. Swap them back after the game ends."
+msgstr "在游戏开始时，将混乱袋中的1个数值最大的非负值标记替换为1个[skull]标记。游戏结束后将其换回。"
+
+msgid "The World · XXI"
+msgstr "世界·XXI"
+
+msgid "Each investigator not defeated during this game may remove 1 trauma of their choice during its resolution."
+msgstr "本局游戏期间未被击败的每位调查员在其结局期间可以移除任意1点创伤。"
+
+msgid "Each investigator defeated during this game suffers 1 trauma of their choice during its resolution."
+msgstr "本局游戏期间被击败的每位调查员在其结局期间受到任意1点创伤。"
+
+msgid "An app update is required to access this campaign."
+msgstr ""
+
+msgid "Note that this is an ArkhamCards account, which is separate from your ArkhamDB account."
+msgstr ""
+
+msgid "Side Deck"
+msgstr "副牌组"
+
+msgid "Edit Side Deck"
+msgstr "编辑副牌组"
+
+msgid "Creating campaign..."
+msgstr "建立剧本..."
+
+msgid "Creating standalone..."
+msgstr "建立独立冒险..."
+
+msgid "Campaign will be synced between devices and can be shared with friends"
+msgstr "剧本将会在装置之间同步，并且能够与朋友共享"
+
+msgid "Campaign will be local to this device, you can choose to upload it later"
+msgstr "剧本将会保存在本机装置，你可以选择稍后再上传"
+
+#, javascript-format
+msgid "(${ count } card)"
+msgid_plural "(${ count } cards)"
+msgstr[0] "(${ count }张卡牌)"
+
+msgid "Collection overlap"
+msgstr "收藏重叠"
+
+msgid "Deck overlap"
+msgstr "牌组重叠"
+
+msgid "Show collection overlap"
+msgstr "显示牌组重叠"
+
+msgid "Hide collection overlap"
+msgstr "隐藏牌组重叠"
+
+msgid "The total number of these cards among decks from this campaign exceeds your card collection."
+msgstr "本剧本中以下牌组使用的卡牌超出了你的收藏卡牌总数。"
+
+#, javascript-format
+msgid "After completion of ${ scenarionName }"
+msgstr "在${ scenarionName }结束后"
+
+msgid "Show decks from other campaigns"
+msgstr "显示其它剧本使用牌组"
+
+msgid "Trait Choice"
+msgstr "选择属性"
+
+msgid "Blessed"
+msgstr "祝福"
+
+msgid "Cursed"
+msgstr "诅咒萦绕"
+
+msgid "Blessed and Cursed"
+msgstr "祝福与诅咒萦绕"
+
+msgid "Select Option"
+msgstr ""
+
+msgid "Move to deck"
+msgstr "移至牌组"
+
+msgid "Unarchive standalone"
+msgstr "解除归档独立冒险"
+
+msgid "Archive standalone"
+msgstr "归档独立冒险"
+
+msgid "Bless / Curse"
+msgstr "祝福/诅咒"
+
+msgid "You appear to be offline. Tap to check for network."
+msgstr "你似乎没有网路连线。点击以确认网路连线。"
+
+msgid "Guardians of the Abyss"
+msgstr "深渊守护者"
+
+msgid "Two-part campaign variant"
+msgstr "2场冒险的剧本变体"
+
+msgid "Claim previous scenario XP"
+msgstr "取得上一场冒险获得经验"
+
+msgid "Apply changes from last completed scenario"
+msgstr "套用上一场已完成冒险的变更"
+
+msgid "Hide campaign decks"
+msgstr "隐藏冒险牌组"
+
+msgid "Select Standalone"
+msgstr "选择单场冒险"
+
+#, javascript-format
+msgid "Add ${ card.name }:"
+msgstr "加入${ card.name }:"
+
+#, javascript-format
+msgid "Select ${ name }"
+msgstr "选择${ name }"
+
+msgid "Note: This should only be selected at deck creation time, not between scenarios."
+msgstr "注意：此卡牌应该在构建牌组时选择，而不是在两场冒险之间。"
+
+#, javascript-format
+msgid ""
+"The information presented in this app about Arkham Horror: The Card Game, both literal and graphical, is copyrighted by Fantasy Flight Games. This app is not produced, endorsed, supported, or affiliated with Fantasy Flight Games.\n"
+"\n"
+"This application was created by Daniel Salinas as a fan project to help support the Arkham Horror: The Card Game community, with design from ${ visualDesigner } and additional development by ${ dissonantVoicesDeveloper }, ${ chaosBagDeveloper }, and ${ toolingDeveloper }. If you find yourself managing lots of decks and campaigns, I'm hoping it proves useful.\n"
+"\n"
+"Feedback and bug reports are welcome by email at [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)\n"
+"\n"
+"Many thanks to ArkhamDB.com for providing the structured data, API access and access to card images. Without their continued support, this project wouldn't be possible."
+msgstr ""
+"在这个APP中关于《诡镇奇谈: 卡牌版》的所有资讯，无论文字或图片，版权皆属于Fantasy Flight Games。此应用程序并非由Fantasy Flight Games创造、附属于Fantasy Flight Games、受Fantasy Flight Games认可或支持。\n"
+"\n"
+"此应用程序由Daniel Salinas创设，作为一个非官方计划，帮助贡献《诡镇奇谈: 卡牌版》社群。设计来自于${ visualDesigner }，以及${ dissonantVoicesDeveloper }、${ chaosBagDeveloper }和${ toolingDeveloper }的额外开发。如果你收藏管理著大量的牌组和剧本，我希望这个应用程序对你有帮助。\n"
+"\n"
+"欢迎通过电子邮件提供反馈和错误报告: [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)\n"
+"\n"
+"非常感谢ArkhamDB.com提供结构化的数据、API存取和卡片图像。没有他们的持续支持，这个计划就不可能实现。"
+
+#, javascript-format
+msgid ""
+"<b>Translation:</b>\n"
+"• Spanish: ${ spanishTranslators }\n"
+"• French: ${ frenchTranslators }\n"
+"• German: ${ germanTranslators }\n"
+"• Russian: ${ russianTranslators }\n"
+"• Korean: ${ koreanTranslators }"
+msgstr ""
+"<b>翻译: </b>\n"
+"• 西语: ${ spanishTranslators }\n"
+"• 法语: ${ frenchTranslators }\n"
+"• 德语: ${ germanTranslators }\n"
+"• 俄语: ${ russianTranslators }\n"
+"• 韩语: ${ koreanTranslators }"
+
+#, javascript-format
+msgid ""
+"<b>Additional Contributions:</b>\n"
+"• Visual Design: ${ visualDesigner }\n"
+"• Digital chaos bag + odds calculator: ${ chaosBagDeveloper }\n"
+"• Dissonant Voices audio integration: ${ dissonantVoicesDeveloper }\n"
+"• Tooling and build support: ${ toolingDeveloper }"
+msgstr ""
+"<b>其他贡献:</b>\n"
+"• 视觉设计: ${ visualDesigner }\n"
+"• 数位混乱袋 + 概率计算机: ${ chaosBagDeveloper }\n"
+"• Dissonant Voices audio integration: ${ dissonantVoicesDeveloper }\n"
+"• Tooling and build support: ${ toolingDeveloper }"
+
+#, javascript-format
+msgid ""
+"<b>Icon Attribution:</b>\n"
+"• Original icon designs: ${ visualDesigner }"
+msgstr ""
+"<b>图标来源:</b>\n"
+"• 原版图标设计: ${ visualDesigner }"
+
+msgid "Call of the Plaguebearer"
+msgstr ""
+
+msgid "Eliminated"
+msgstr "已退场"
+
+msgid "Locations"
+msgstr "地点"
+
+msgid "Reauthorize ArkhamDB"
+msgstr "重新授权ArkhamDB"
+
+msgid "Login required to save deck upgrade"
+msgstr "保存升级需要登入帐户"
+
+msgid "Note: this campaign is a fairly new addition to the app and may contain some mistakes."
+msgstr "注意：这个剧本新加入APP之中不久，可能还有许多错误。"
+
+msgid "Durability"
+msgstr "耐久"
+
+msgid "Leylines"
+msgstr "灵脉"
+
+msgid "Offerings"
+msgstr "贡品"
+
+msgid "Patrol"
+msgstr "巡逻"
+
+msgid "Consternation on the Constellation"
+msgstr ""
+
+msgid "Deck contains custom content"
+msgstr ""
+
+msgid "Player"
+msgstr "玩家"
+
+msgid "Barkham Horror"
+msgstr "狗镇奇谈"
+
+msgid "Show all available cards for parallel"
+msgstr "显示所有可用的平行卡牌"
+
+msgid "Show fan-made cards"
+msgstr "显示非官方卡牌"
+
+msgid "Reset onboarding"
+msgstr ""
+
+msgid "Signing into Arkham Cards will let you backup your campaigns between your devices and share in-progress campaigns with other friends."
+msgstr "登入Arkham Cards能让你可以在不同装置之间备份剧本，也可以与朋友共享进行中的剧本。"
+
+msgid "Recent updates"
+msgstr "近期更新"
+
+msgid "Learn about recently added features"
+msgstr "了解最近新增的功能"
+
+msgid ""
+"Using an Arkham Cards account will allow you to backup and sync your campaign data between devices.\n"
+"\n"
+"You can also upload in-progress campaigns and share them with friends and even share a synchronized chaos bag."
+msgstr ""
+"使用Arkham Cards帐户能让你在不同设备之间备份和同步你的剧本数据。\n"
+"\n"
+"你还可以上传正在进行的剧本并与朋友分享，甚至能分享同步的混乱袋。"
+
+msgid "Sync campaigns to share with friends"
+msgstr "同步剧本以与朋友分享"
+
+msgid "Sharing campaigns"
+msgstr "分享剧本"
+
+msgid "Sign up with Arkham Cards"
+msgstr "登入Arkham Cards"
+
+msgid "Upload a campaign"
+msgstr "上传剧本"
+
+msgid "Add a friend"
+msgstr "新增朋友"
+
+msgid "Enjoy the campaign"
+msgstr ""
+
+msgid "Did you know campaigns can be shared with friends using this app?"
+msgstr "你知道使用本APP可以让你在朋友之间共享剧本吗？"
+
+msgid ""
+"This deck contains new cards that the app hasn't seen before.\n"
+"\n"
+"Please go to the 'Settings' tab and choose 'Check ArkhamDB for updates.'\n"
+"\n"
+"When it is finished, you can try to load the deck again."
+msgstr ""
+
+msgid "Other investigator cards"
+msgstr "其它调查员卡"
+
+msgid "Ultimatum of Chaos"
+msgstr "混乱的究极试炼"
+
+msgid "Generate deck"
+msgstr "生成牌组"
+
+msgid "- Adjust your card collection in the app settings."
+msgstr "- 在APP设置调整你的卡牌收藏。"
+
+msgid "- Remove the parallel investigator choice, which might require a larger card collection."
+msgstr "- 排除平行调查员，你可能需要较多的卡牌收藏。"
+
+msgid "- Remove the taboo list, which removes some card options."
+msgstr "- 排除禁卡表，会减少一些卡牌选项。"
+
+#, javascript-format
+msgid ""
+"Unable to build a random deck for this investigator:\n"
+"${ remedy }"
+msgstr ""
+"无法为这位调查员生成一副随机牌组：\n"
+"${ remedy }"
+
+msgid "Starter deck"
+msgstr "起始牌组"
+
+msgid "Unable to generate deck"
+msgstr "无法生成牌组"
+
+msgid "Suggested starter deck for this investigator from FFG."
+msgstr "由FFG为这位调查员提供的起始牌组。"
+
+msgid "An empty deck."
+msgstr "一副空牌组。"
+
+msgid "Sorry, the app cannot generate random decks for this investigator yet."
+msgstr "抱歉，本APP目前无法为这位调查员生成一副随机牌组。"
+
+msgid "A fully randomized deck."
+msgstr "一副完全随机的牌组。"
+
+msgid "Special deck"
+msgstr "特别牌组"
+
+msgid "Re-generate deck"
+msgstr "重新生成牌组"
+
+msgid "Draft from card collection"
+msgstr "从收藏中抽选卡牌"
+
+msgid "Disable to choose which packs to draft from"
+msgstr "取消勾选以自订抽选卡牌的扩充包"
+
+msgid "Draft using your card collection"
+msgstr "在你的收藏中抽选卡牌"
+
+msgid "Draft Pool"
+msgstr "抽选牌池"
+
+msgid "Invalid deck"
+msgstr "无效牌组"
+
+msgid "This deck is currently invalid in some way. Please address the issues before continuing the draft."
+msgstr "该牌组目前在某些地方有冲突。在抽选卡牌之前请先解决这些问题。"
+
+msgid "Hand size:"
+msgstr "每批张数:"
+
+msgid "Choose packs"
+msgstr "选择扩充包"
+
+msgid "This tool lets you build a deck progressively, choosing one card at a time from a limited set of cards."
+msgstr "此工具可让你逐步构建牌组，从一组有限的卡片中一次选择一张卡片。"
+
+msgid "Each 'hand' of cards is taken at random from all possible cards that are allowed given the current investigator + deckbuilding option choices you have made."
+msgstr "根据你所选的调查员和其牌组构建选项，每批“手”牌都是从所有你可以用的牌之中随机选择的。"
+
+msgid "The drafting process will continue until your deck is full, but you can stop or change the settings at any time"
+msgstr "抽选卡牌程序会一直持续到你的牌组已满，你也可以随时停止或更改设定。"
+
+msgid "Begin draft"
+msgstr "开始抽选"
+
+msgid "Selection"
+msgstr "选择"
+
+msgid "Draft cards"
+msgstr "抽选卡牌"
+
+msgid "Please correct invalid deck issues"
+msgstr "请修正牌组有冲突的问题"
+
+msgid ""
+"This deck currently contains one or more forbidden cards.\n"
+"\n"
+"Please address these outstanding deck issues before drafting cards."
+msgstr ""
+"此牌组目前含有至少一张禁止的卡牌。\n"
+"\n"
+"在抽选卡牌之前，请先解决超出牌组限制的问题。"
+
+msgid "Deck is full"
+msgstr "牌组已满"
+
+msgid ""
+"This deck is full.\n"
+"\n"
+"Remove some cards or create a new deck if you would like to draft.\n"
+"\n"
+"At the moment it is only possible to draft level 0 cards using the app."
+msgstr ""
+"此牌组已满。\n"
+"\n"
+"如果你想抽选卡牌，请移除一些卡牌或构建一个新牌组。\n"
+"\n"
+"目前此APP仅支援等级0卡牌的抽选。"
+
+msgid "Draft Cards"
+msgstr "抽选卡牌"
+
+msgid "Deck id copied!"
+msgstr "已复制牌组id！"
+
+msgid "Link to deck copied!"
+msgstr "已复制牌组的连结！"
+
+msgid "Build a deck randomly"
+msgstr "随机构建牌组"
+
+msgid "Campaigns Cycles"
+msgstr "剧本循环"
+
+msgid "Take"
+msgstr ""
+
+msgid "If you are using the digital chaos bag in the app, be sure to enable the tarot option on the chaos bag screen."
+msgstr "如果你使用此APP的数位混乱袋，请记得在混乱袋页面将塔罗牌的选项打开。"
+
+msgid "Show deck ids on campaigns"
+msgstr "在剧本显示牌组ID"
+
+msgid "Tarot Reading"
+msgstr "塔罗解牌"
+
+msgid "Tarot Readings"
+msgstr "塔罗解牌"
+
+msgid "Perform readings with the tarot deck"
+msgstr "使用塔罗牌堆解牌"
+
+msgid "What is this?"
+msgstr "这是什么？"
+
+msgid "Choose two cards to reverse."
+msgstr "颠倒2张卡牌。"
+
+msgid "Reverse half of the cards (rounded up)."
+msgstr "颠倒一半卡牌(向上取整)。"
+
+msgid "Choose one card."
+msgstr "选择1张卡牌。"
+
+msgid "Draw and reverse cards however you like!"
+msgstr "随便抽取或颠倒卡牌！"
+
+msgid "Reveal"
+msgstr "翻开"
+
+#, javascript-format
+msgid "${ card.title } - Inverted"
+msgstr "${ card.title } - 逆位"
+
+msgid "Inverted"
+msgstr "逆位"
+
+msgid "Upright"
+msgstr "正位"
+
+msgid "A single card in a random position."
+msgstr "随机方向1张牌。"
+
+msgid "Two cards, one upright and one reversed."
+msgstr "2张牌，1张正位1张逆位。"
+
+msgid "Reveal three upright cards, choose two to reverse."
+msgstr "翻开3张牌，颠倒其中2张牌。"
+
+msgid "A reading for the full campaign."
+msgstr "为整个剧本解牌。"
+
+msgid "Choose from three upright cards."
+msgstr "从3张正位牌中选择1张。"
+
+msgid "A single reversed card."
+msgstr "1张逆位牌。"
+
+msgid "Draw cards in random positions."
+msgstr "随机方向抽取卡牌。"
+
+msgid "Choose reading type"
+msgstr "选择解牌方式"
+
+msgid "You must flip all cards to reveal your fate."
+msgstr "你必须翻开所有卡牌揭示你的命运。"
+
+#, javascript-format
+msgid "Too many card reversed (${ currentReversedCount } / ${ requiredReversedCount })"
+msgstr "颠倒太多牌 (${ currentReversedCount } / ${ requiredReversedCount })"
+
+#, javascript-format
+msgid "Not enough cards reversed (${ currentReversedCount } / ${ requiredReversedCount })"
+msgstr "颠倒牌不足 (${ currentReversedCount } / ${ requiredReversedCount })"
+
+msgid "Reject fate (redraw)"
+msgstr "拒绝命运 (重抽)"
+
+msgid "Deck Id"
+msgstr "牌组id"
+
+msgid "Symphony of Erich Zann"
+msgstr ""
+
+#, javascript-format
+msgid "${ card.title } (inverted)"
+msgstr ""
+"${ card.title } (逆位\n"
+")"
+
+msgid "Destiny Tarot Reading"
+msgstr "命运塔罗解牌"
+
+msgid "The Tatterdemalion"
+msgstr ""
+
+msgid "Electric Nightmare"
+msgstr ""
+
+msgid "Mission Briefing"
+msgstr ""
+
+msgid "Lost Quantum"
+msgstr ""
+
+msgid "In the Shadow of Earth"
+msgstr ""
+
+msgid "Strange Moons"
+msgstr ""
+
+msgid "Introspection"
+msgstr ""
+
+msgid "The Machine in Yellow"
+msgstr ""
+
+msgid "Fragment of Carcosa"
+msgstr ""
+
+msgid "Starfall"
+msgstr ""
+
+msgid "Arkham in Wonderland"
+msgstr "诡境仙镇"
+
+msgid "The Dodo"
+msgstr "渡渡鸟"
+
+msgid "A Sea of Troubles"
+msgstr "麻烦之海"
+
+msgid "The Caterpillar"
+msgstr "毛毛虫"
+
+msgid "Tempest in a Teapot"
+msgstr "壶中风暴"
+
+msgid "The Duchess"
+msgstr "公爵夫人"
+
+msgid "Bleeding Hearts"
+msgstr "淌血红心"
+
+msgid "Gryphon and Mock Turtle"
+msgstr "狮鹫和假海龟"
+
+msgid "Wild Snark Chase"
+msgstr "猎捕蛇鲨"
+
+msgid "Humpty Dumpty"
+msgstr "蛋头先生"
+
+msgid "Sibling Rivalry"
+msgstr "兄弟阋墙"
+
+msgid "The Lion and the Unicorn"
+msgstr "狮子和独角兽"
+
+msgid "Fool's Mate"
+msgstr "愚者弈局"
+
+msgid "The White Queen"
+msgstr "白棋王后"
+
+msgid "Lucid Nightmare"
+msgstr "清醒梦魇"
+
+msgid "Delete your account"
+msgstr "删除你的帐户"
+
+msgid "Loading account details..."
+msgstr "读取帐户资料……"
+
+msgid "Are you sure that you want to <b>permanently</b> delete your account? This <b>cannot be undone</b>."
+msgstr "你确定你要<b>永久</b>删除你的帐户？这么做<b>无法复原</b>。"
+
+#, javascript-format
+msgid "You are currently signed in as <b>${ handle }</b>."
+msgstr ""
+
+msgid "The friend's campaign that you have participated in will have your decks removed:"
+msgid_plural "The ${ joinedCampaignCount } campaigns from friends that you have participated in will have your decks removed:"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "I understand that all data will be deleted permanently."
+msgstr "我了解所有资料将被永久地删除。"
+
+msgid "Confirm account deletion"
+msgstr "确认删除帐户"
+
+msgid "Delete account"
+msgstr "删除帐户"
+
+msgid "If you choose to delete this account, the following data will be removed."
+msgstr "如果你删除这个帐户，以下的资料将被移除。"
+
+msgid "The campaign that you have uploaded to this account will be deleted:"
+msgid_plural "The ${ createdCampaignCount } campaigns that you have uploaded to this account will be deleted:"
+msgstr[0] "你上传到这个帐户的剧本资料将被删除："
+
+msgid "Beta"
+msgstr ""
+
+msgid "Check for card updates"
+msgstr "检查卡牌更新"
+
+msgid "Choose slot to remove"
+msgstr "选择移除槽位"
+
+msgid "Slot"
+msgstr "槽位"
+
+msgid ""
+"Sorry, the app cannot yet support customizable cards like this one, but we are working on it!\n"
+"\n"
+"Please check for pending app updates and try again later."
+msgstr ""
+
+msgid "Customizations"
+msgstr "升级"
+
+msgid "Show selected customizations"
+msgstr "显示已选升级"
+
+msgid "Show all customizations"
+msgstr "显示全部升级"
+
+#, javascript-format
+msgid "${ scenario.scenario } (${ resolution }, ${ scenarioXp } XP)"
+msgstr "${ scenario.scenario } (${ resolution }，${ scenarioXp }经验)"
+
+msgid "The Scarlet Keys"
+msgstr "绯红密钥"
+
+#, javascript-format
+msgid "Name ${ quantity } card"
+msgid_plural "Name ${ quantity } cards"
+msgstr[0] "指定${ quantity }张卡"
+
+msgid "Named card"
+msgid_plural "Named cards"
+msgstr[0] "指定的卡牌"
+
+msgid "In deck"
+msgstr "在牌组"
+
+msgid "Select additional cards"
+msgstr "选择更多卡牌"
+
+msgid "Map"
+msgstr "地图"
+
+#, javascript-format
+msgid "${ textModifier }, draws another ${ revealCount }"
+msgstr "${ textModifier }，再抽${ revealCount }"
+
+msgid "The Colour Out of Space"
+msgstr "星之彩"
+
+msgid "Remove trait"
+msgstr "移除属性"
+
+#, javascript-format
+msgid "Choose ${ quantity } trait"
+msgid_plural "Choose ${ quantity } traits"
+msgstr[0] "选择${ quantity }个属性"
+
+msgid "Chosen trait"
+msgid_plural "Chosen traits"
+msgstr[0] "已选择的属性"
+
+msgid "Add trait"
+msgstr "加入属性"
+
+msgid "Embark"
+msgstr "启程"
+
+#, javascript-format
+msgid "Depart from ${ currentLocation.name }"
+msgstr "从${ currentLocation.name }出发"
+
+msgid "Depart"
+msgstr "出发"
+
+msgid "Choose destination"
+msgstr "选择目的地"
+
+#, javascript-format
+msgid "${ investigator.name } Fan-Made Challenge Scenario by ${ scenario.custom.creator }"
+msgstr ""
+
+msgid "Cyclopean Foundations"
+msgstr ""
+
+msgid "Lost Moorings"
+msgstr ""
+
+msgid "Going Twice"
+msgstr ""
+
+msgid "Private Lives"
+msgstr ""
+
+msgid "Crumbling Masonry"
+msgstr ""
+
+msgid "A House Divided"
+msgstr ""
+
+msgid "Across Dreaful Waters"
+msgstr ""
+
+msgid "Blood From Stones"
+msgstr ""
+
+msgid "Pyroclastic Flow"
+msgstr ""
+
+msgid "Tomb of Dead Dreams"
+msgstr ""
+
+msgid "Cultists Alive"
+msgstr ""
+
+msgid "Cultists Killed"
+msgstr ""
+
+msgid "Notice"
+msgstr ""
+
+msgid "Jenny's Choice"
+msgstr ""
+
+msgid "The Fall of the House of Usher"
+msgstr ""
+
+msgid "Against the Wendigo"
+msgstr ""
+
+msgid "Non-canon Content"
+msgstr ""
+
+msgid "Fan-made Campaigns"
+msgstr "非官方剧本"
+
+msgid "Fan-made Scenarios"
+msgstr "非官方冒险"
+
+msgid "Currently here"
+msgstr "目前位置"
+
+msgid "Already visited"
+msgstr "已造访"
+
+msgid "Travel here"
+msgstr "旅行到此"
+
+msgid "Information"
+msgstr "资讯"
+
+#, javascript-format
+msgid "Departing from ${ location }"
+msgstr "离开${ location }"
+
+msgid "Customization upgrades"
+msgstr "特制升级"
+
+msgid "Special discounts"
+msgstr "经验折扣"
+
+#, javascript-format
+msgid "${ remainingFreeCards } additional level 0 card may be added to the deck without spending experience."
+msgid_plural "Up to ${ remainingFreeCards } level 0 cards may be added to the deck  without spending experience."
+msgstr[0] "可以无需花费经验加入${ remainingFreeCards }张0经卡牌到牌组。"
+
+msgid "Difficulty override"
+msgstr "覆盖难度"
+
+msgid "Easy / Standard"
+msgstr "简单 / 普通"
+
+msgid "Hard / Expert"
+msgstr "困难 / 专家"
+
+#, javascript-format
+msgid "Difficulty override: ${ msg[difficulty] }"
+msgstr "覆盖难度：${ msg[difficulty] }"
+
+msgid "Select scenario effects difficulty"
+msgstr "选择冒险效果难度"
+
+msgid "In order to support custom modes like \"Stan-hard\", you may choose to use either side of the scenario reference card to show token effects and odds calculations in the app."
+msgstr ""
+
+msgid "Disabled"
+msgstr "关闭"
+
+msgid "Use campaign setting"
+msgstr "使用剧本设定"
+
+#, javascript-format
+msgid "${ used } / ${ available } used"
+msgid_plural "${ used } / ${ available } used"
+msgstr[0] "已使用${ used } / ${ available }"
+
+msgid "You cannot have more than 15 level 0-1 Guardian and/or Survivor cards"
+msgstr "你不能加入超过15张等级0-1的守卫者和求生者卡牌"
+
+msgid "Note: this deck cannot be uploaded to ArkhamDB because it contains fan-made/preview content."
+msgstr "注意：这个牌组含有非官方卡牌，因此不能上传到ArkhamDB。"
+
+msgid ""
+"Sorry, this deck cannot be uploaded to ArkhamDB because it contains fan-made/preview content that ArkhamDB does not recognize.\n"
+"\n"
+"Please remove these cards from the deck list and try again."
+msgstr ""
+"很抱歉，这个牌组含有非官方卡牌，因此不能上传到ArkhamDB。\n"
+"请将非官方卡牌移出牌组后再试一次。"
+
+msgid "This card has not yet been released, and cannot be included in ArkhamDB decks at this time."
+msgstr "这张卡牌还未发布，暂时不能加入到ArkhamDB牌组中。"
+
+msgid "Recomputing deck changes..."
+msgstr ""
+
+#, javascript-format
+msgid "Cost: ${ card.cost }"
+msgstr "费用：${ card.cost }"
+
+msgid "Grants access to previewed player cards"
+msgstr "授予预览玩家卡的权限"
+
+msgid "Key"
+msgstr "密讑"
+
+msgid "Taboo Set"
+msgstr "禁卡表"
+
+#, javascript-format
+msgid "Taboo Set: ${ tabooSetName }"
+msgstr "禁卡表：${ tabooSetName }"
+
+msgid "Specific taboo set"
+msgstr "指定禁卡表"
+
+msgid "Deleteing ArkhamDB accounts"
+msgstr "删除ArkhamDB帐户"
+
+msgid ""
+"ArkhamDB is a third party website unaffiliated with ArkhamCards. This app only allows you to sign into existing ArkhamDB accounts.\n"
+"\n"
+"If you would like to delete your account, please contact the webmaster of ArkhamDB at arkhamdb@kamalisk.com"
+msgstr ""
+
+msgid "Requeset Account Deletion"
+msgstr ""
+
+msgid "Delete Account"
+msgstr "删除帐户"
+
+msgid "Choose a skill"
+msgstr "选择一个技能"
+
+msgid "Use the embark button below"
+msgstr "使用下方的启程按钮"
+
+msgid "Review the world map"
+msgstr "查看世界地图"
+
+msgid "Claim previous rewards"
+msgstr "取得之前的奖励"
+
+msgid "Apply changes from last completed scenario or interlude"
+msgstr "套用上一场已完成冒险或幕间故事的变更"
+
+msgid "This is a side-story location."
+msgstr "这是一个支线剧情地点。"
+
+#, javascript-format
+msgid "Travel cost: ${ travelDistance } time"
+msgid_plural "Travel cost: ${ travelDistance } time"
+msgstr[0] "旅行花费：${ travelDistance }时间"
+
+msgid "Do you want to use the app to randomize choices?"
+msgstr "你是否要让APP帮你随机选择？"
+
+#, javascript-format
+msgid "The cell travels from ${ departCityName } to ${ arriveCityName }."
+msgstr "从${ departCityName }旅行到${ arriveCityName }。"
+
+#, javascript-format
+msgid "Mark ${ time } <b>time</b> in your Campaign Log."
+msgid_plural "Mark ${ time } <b>time</b> in your Campaign Log."
+msgstr[0] "在剧本日志中标记${ time }<b>时间</b>。"
+
+msgid "This includes the cost of experience cost of playing the side-story."
+msgstr "这包括进行支线剧情所需花费经验。"
+
+msgid "This deck is owned by another player. You can record the changes now and they will be given an opportunity to save them to their deck when they next open the app."
+msgstr "这副牌组属放另一位玩家。你可以现在记录升级，他们下次使用APP时可以选择保存对他们牌组的变更。"
+
+msgid "Time Passed"
+msgstr "经过的时间"
+
+msgid "Bearer"
+msgstr "承受者"
+
+msgid "You cannot have more than 5 Seeker and/or Survivor cards"
+msgstr "你不能加入超过5张探求者和求生者卡牌"
+
+msgid "You cannot have more than 5 Mystic and/or Survivor cards"
+msgstr "你不能加入超过5张潜修者和求生者卡牌"
+
+msgid "Fan-made Investigators"
+msgstr "非官方调查员"
+
+msgid "Fortune and Folly"
+msgstr "时运与愚行"
+
+msgid "Challenge Scenarios"
+msgstr "挑战冒险"
+
+msgid "Choose an option"
+msgstr "选择一项"
+
+msgid "Choose weakness"
+msgstr "选择弱点"
+
+msgid "Do you want to use the app to draw random tarot cards?"
+msgstr "你是否想用此APP随机抽取塔罗牌？"
+
+msgid "Choose tarot card"
+msgstr "选择塔罗牌"
+
+msgid "Choose supplies:"
+msgstr "选择补给品："
+
+msgid "Asset Class Choice"
+msgstr "选择支援职阶"
+
+msgid "Skill Class Choie"
+msgstr "选择技能职阶"
+
+msgid "Event Class Choice"
+msgstr "选择事件职阶"
+
+msgid "If you wish to add a side-story to this campaign, you may travel to this location and spend additional time equal to the normal experience for playing that side story."
+msgstr "如果你想在剧本中加入支线剧情，你可以旅行到此地点并花费额外的时间，数量等同于正常进行该支线剧情时需要花费的经验值。"
+
+msgid "Use expedited ticket"
+msgstr "使用特快车票"
+
+#, javascript-format
+msgid "Time cost: ${ xpCost }"
+msgstr "时间费用：${ xpCost }"
+
+#, javascript-format
+msgid "Additional experience cost for ${ investigator.name }: ${ additionalXpCost }"
+msgstr "${ investigator.name }的额外经验花费：${ additionalXpCost }"
+
+msgid ""
+"A side-story is a scenario that may be played between any two scenarios of an <i>Arkham Horror: The Card Game</i> campaign.\n"
+"- Because you are playing <i>The Scarlet Keys</i> campaign, a side-story costs a certain amount of <b>time</b> instead of experience.\n"
+"- Weaknesses, trauma, experience, and rewards granted by playing a side-story stay with the investigators for the remainder of the campaign.\n"
+"- Each side-story may only be played once per campaign."
+msgstr ""
+"支线剧情是一种可以在《诡镇奇谈：卡牌版》的剧本中任意两场冒险之间进行的冒险。\n"
+"- 因为你正在进行《绯红密钥》剧本，支线剧情的费用改为使用<b>时间</b>，而不是经验值。\n"
+"- 进行支线剧情得到的弱点、创伤、经验值与奖励，在剩余的剧本中会跟著调查员。\n"
+"- 每个剧本中，每个支线剧情只能进行一次。"
+
+#, javascript-format
+msgid "Mark ${ travelDistance } time"
+msgid_plural "Mark ${ travelDistance } time"
+msgstr[0] "标记${ travelDistance }时间"
+
+msgid "Mark 1 time"
+msgstr "标记1时间"
+
+#, javascript-format
+msgid "Travel time: ${ travelDistance }"
+msgid_plural "Travel time: ${ travelDistance }"
+msgstr[0] "旅行时间：${ travelDistance }"
+
+msgid "Secret / Locked"
+msgstr "秘密/未解锁"
+
+msgid "Cannot stop here until unlocked"
+msgstr "在解锁之前不能停留于此"
+
+msgid "Select cards to exile"
+msgstr "选择要放逐的卡牌"
+
+msgid "Exile other cards"
+msgstr "放逐其它卡牌"
+
+msgid "Name of Paradimensional Artifact"
+msgstr "超次元神器名称"
+
+msgid "Prologue: Rain and Riddles"
+msgstr "序章：雨雾中的谜团"
+
+msgid "Dead Heat"
+msgstr "致命酷热"
+
+msgid "Sanguine Shadows"
+msgstr "讪笑阴影"
+
+msgid "Dealings in the Dark"
+msgstr "暗盘交易"
+
+msgid "Dancing Mad"
+msgstr "癫狂起舞"
+
+msgid "On Thin Ice"
+msgstr "如履薄冰"
+
+msgid "Dogs of War"
+msgstr "战争之犬"
+
+msgid "Shades of Suffering"
+msgstr "苦难形影"
+
+msgid "Without a Trace"
+msgstr "无痕异域"
+
+msgid "Congress of the Keys"
+msgstr "密钥峰会"
+
+msgid "Unlocked Locations"
+msgstr "未解锁地点"
+
+msgid "Each investigator who is the bearer of 1 or more key attaches those keys to their investigator card:"
+msgstr "每位是1个或更多密钥的承受者的调查员将密钥叠加到其调查员卡："
+
+msgid "Customizable"
+msgstr "特制"
+
+msgid "0 XP"
+msgstr "0经验"
+
+msgid "No campaign"
+msgstr "没有剧本"
+
+#, javascript-format
+msgid "×${ parsedDeck.totalCardCount }"
+msgstr ""
+
+msgid ""
+"Your ArkhamDB login has expired.\n"
+"\n"
+"You will need to login again on the Settings tab before you can save changes to this deck."
+msgstr ""
+"你在ArkhamDB的登入已过期。\n"
+"\n"
+"你需要在设定页面再次登入，才能储存这个牌组的修改。"
+
+msgid "Edit deck tags"
+msgstr "编辑牌组标签"
+
+msgid "Clear tags"
+msgstr "清除标签"
+
+msgid "Solo"
+msgstr "单人"
+
+msgid "Beginner"
+msgstr "新手"
+
+msgid "+ Add"
+msgstr "+新增"
+
+msgid "Deck tags"
+msgstr "牌组标签"
+
+msgid "Tags"
+msgstr "标签"
+
+#, javascript-format
+msgid "${ scenarioName }: Visit ${ attempt }"
+msgid_plural "${ scenarioName }: Visit ${ attempt }"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Search english card names"
+msgstr "搜寻英文卡牌名称"
+
+msgid "Include english results when searching"
+msgstr "搜寻时包含英文的结果"
+
+#, javascript-format
+msgid "${ xp } XP"
+msgid_plural "${ xp } XP"
+msgstr[0] "${ xp }点经验"
+
+msgid "This app is made possible by the continued support of our fans on Patreon and the Mythos Busters podcast."
+msgstr ""
+
+msgid "Travel here without stopping"
+msgstr "旅行到这里但不停留"
+
+#, javascript-format
+msgid "Read status report: ${ reportSymbols }"
+msgid_plural "Read status reports: ${ reportSymbols }"
+msgstr[0] "阅读近况报告：${ reportSymbols }"
+
+#, javascript-format
+msgid "Mark ${ time } <b>time</b> as the cell travels from ${ departCityName } to ${ arriveCityName } on the way to somewhere else."
+msgid_plural "Mark ${ time } <b>time</b> as the cell travels from ${ departCityName } to ${ arriveCityName } on the way to somewhere else."
+msgstr[0] "在去其他地方的旅途中从${ departCityName }旅行到${ arriveCityName }，标记${ time }<b>时间</b>。"
+
+msgid "You cannot have more than 5 cards that are not Seeker, Neutral, or Paradox traited."
+msgstr "你不能加入超过5张不是探求者、中立或悖论属性的卡牌。"
+
+msgid "Min"
+msgstr "最低"
+
+msgid "Max"
+msgstr "最高"
+
+msgid "EASY"
+msgstr "简单"
+
+msgid "STND"
+msgstr "普通"
+
+msgid "HARD"
+msgstr "困难"
+
+msgid "EXPT"
+msgstr "专家"
+
+msgid "Class Choice"
+msgstr "选择职阶"
+
+msgid "Class"
+msgstr "职阶"
+
+msgid "Selected"
+msgstr "已选择"
+
+#, javascript-format
+msgid "App language: ${ appLanguage }"
+msgstr "App语言：${ appLanguage }"
+
+msgid "Narration Language"
+msgstr "旁白语"
+
+msgid "Take the scenic route to mark time"
+msgstr "沿途风景优美，没有特别事情"
+
+msgid "Manual Backup"
+msgstr "手动备份"
+
+msgid "Automatic Backup"
+msgstr "自动备份"
+
+msgid "You must have at least 7 cards from each class"
+msgstr "你必须拥有每个职阶至少7张卡牌"
+
+msgid "More off-class card than the number of weaknesses in your deck and bonded cards."
+msgstr ""
+
+msgid "Concealed"
+msgstr "隐蔽"
+
+msgid "Parallel Cards"
+msgstr "平行卡牌"
+
+msgid "Heart of Darkness"
+msgstr ""
+
+msgid "Information on Kurtz"
+msgstr ""
+
+#, javascript-format
+msgid "Return, but ${ doNotRemove } ${ bless } / ${ curse } tokens"
+msgstr "返回混乱袋，但${ doNotRemove } ${ bless } / ${ curse }混乱标记"
+
+msgid "Recent token history"
+msgstr "最近标记抽取记录"
+
+msgid "The (Unofficial) Return to the Innsmouth Conspiracy"
+msgstr ""
+
+msgid "Return to The Pit of Despair"
+msgstr ""
+
+msgid "Return to The Vanishing of Elina Harper"
+msgstr ""
+
+msgid "Return to In Too Deep"
+msgstr ""
+
+msgid "Return to Devil Reef"
+msgstr ""
+
+msgid "Return to Horror in High Gear"
+msgstr ""
+
+msgid "Return to A Light in the Fog"
+msgstr ""
+
+msgid "Return to The Lair of Dagon"
+msgstr ""
+
+msgid "Return to Into the Maelstrom"
+msgstr ""
+
+msgid "Chained - "
+msgstr "拘束 - "
+
+msgid "Unchained - "
+msgstr "解束 - "
+
+msgid "Forbidden"
+msgstr "禁止"
+
+msgid "Mutated"
+msgstr "变异"
+
+msgid "Original card text"
+msgstr "原始卡牌文字"
+
+msgid "Original card text (back)"
+msgstr "原始卡牌文字(背面)"
+
+#, javascript-format
+msgid "Latest Taboo List: ${ currentTabooSet.name } - ${ currentTabooSet.date_start }"
+msgstr "最新禁卡表：${ currentTabooSet.name } - ${ currentTabooSet.date_start }"
+
+msgid "This card is no longer on the taboo list."
+msgstr "本卡牌已不在禁卡表。"
+
+msgid "See taboo list history"
+msgstr "查看禁卡表历史"
+
+msgid "Taboo list history:"
+msgstr "禁卡表历史："
+
+msgid "CHAOS BAG"
+msgstr "混乱袋"
+
+msgid "Just a bag. No strings attached."
+msgstr "一个没有绳子，普通的袋。"
+
+#, javascript-format
+msgid "Sealed (${ chaosBagResults.sealedTokens.length })"
+msgstr "封印(${ chaosBagResults.sealedTokens.length })"
+
+msgid "Spirit Deck"
+msgstr "灵魂牌组"
+
+msgid "Edit Spirit Deck"
+msgstr "编辑灵魂牌组"
+
+msgid "No permanents except story and signature permanents"
+msgstr "不能包括剧情或专属以外的永久卡牌"
+
+msgid "You cannot have more than 5 Survivor cards."
+msgstr "你不能加入超过5张求生者卡牌"
+
+msgid "You cannot have more than 5 Mystic cards."
+msgstr "你不能加入超过5张潜修者卡牌"
+
+msgid "The Feast of Hemlock Vale"
+msgstr "铁杉谷盛宴"
+
+msgid "The Dunwich Legacy Investigator Expansion"
+msgstr "敦威治遗产调查员扩展"
+
+msgid "The Dunwich Legacy Campaign Expansion"
+msgstr "敦威治遗产剧本扩展"
+
+msgid "The Path to Carcosa Investigator Expansion"
+msgstr "卡尔克萨之路调查员扩展"
+
+msgid "The Path to Carcosa Campaign Expansion"
+msgstr "卡尔克萨之路剧本扩展"
+
+msgid "The Forgotten Age Investigator Expansion"
+msgstr "失落的时代调查员扩展"
+
+msgid "The Forgotten Age Campaign Expansion"
+msgstr "失落的时代剧本扩展"
+
+msgid "The Circle Undone Investigator Expansion"
+msgstr "万象无终调查员扩展"
+
+msgid "The Circle Undone Campaign Expansion"
+msgstr "万象无终剧本扩展"
+
+msgid "The Dream-Eaters Investigator Expansion"
+msgstr "食梦者调查员扩展"
+
+msgid "The Dream-Eaters Campaign Expansion"
+msgstr "食梦者剧本扩展"
+
+msgid "The Innsmouth Conspiracy Investigator Expansion"
+msgstr "印斯茅斯暗潮调查员扩展"
+
+msgid "The Innsmouth Conspiracy Campaign Expansion"
+msgstr "印斯茅斯暗潮剧本扩展"
+
+msgid "Show original release packs"
+msgstr "显示原版扩充包"
+
+msgid "Non-Unique"
+msgstr "非独特"
+
+#, javascript-format
+msgid "Experience cost: ${ basicXpCost } for decks that include ${ investigator.name }, ${ challengeDiscountCost } for each other player"
+msgstr "经验花费: 牌组包括${ investigator.name }的玩家必须花费${ basicXpCost }经验，其他调查员则必须花费${ challengeDiscountCost }经验"
+
+msgid "Aether"
+msgstr "乙太"
+
+msgid "Campaign Rules & FAQ"
+msgstr "剧本规则与FAQ"
+
+msgid "Review campaign specific info"
+msgstr "查看剧本相关资讯"
+
+msgid "Campaign Rules"
+msgstr "剧本规则"
+
+msgid "Review campaign specific rules"
+msgstr "查看剧本相关规则"
+
+msgid "Campaign FAQ"
+msgstr "剧本FAQ"
+
+msgid "Review campaign specific clarifications"
+msgstr "查看剧本相关说明"
+
+#, javascript-format
+msgid "Q: ${ errata.question }"
+msgstr ""
+
+#, javascript-format
+msgid "A: ${ errata.answer }"
+msgstr ""
+
+msgid "Show FAQ"
+msgstr "显示FAQ"
+
+msgid "May contain light spoilers"
+msgstr "可能包含轻微剧透"
+
+msgid "Note: To avoid spoilers, scenario specific questions and clarifications can be found within each scenario guide."
+msgstr "注：为避免剧透，冒险相关问题与说明可以在每一场冒险引导中找到。"
+
+msgid "Rules & FAQ"
+msgstr "Rules & FAQ"
+
+msgid "Day / Time"
+msgstr "日期 / 时刻"
+
+msgid "Areas Surveyed"
+msgstr "已调查区域"
+
+msgid "Mother Rachel"
+msgstr "瑞秋主母"
+
+msgid "Leah Atwood"
+msgstr "莉亚．阿特伍德"
+
+msgid "Simeon Atwood"
+msgstr "西缅．阿特伍德"
+
+msgid "William Hemlock"
+msgstr "威廉．赫姆拉克"
+
+msgid "River Hawthorne"
+msgstr "芮福．霍桑"
+
+msgid "Gideon Mizrah"
+msgstr "吉迪恩．米兹拉"
+
+msgid "Judith Park"
+msgstr "茱蒂丝．朴"
+
+msgid "Theo Peters"
+msgstr "西奥．彼得斯"
+
+msgid "Relationship Level"
+msgstr "友好度"
+
+msgid "Image cache cleared"
+msgstr "图片缓存已清除"
+
+msgid "Clear image cache"
+msgstr "清除图片缓存"
+
+msgid "Unable to create campaign"
+msgstr ""
+
+msgid "Handle is already taken"
+msgstr ""
+
+msgid "Portents"
+msgstr ""
+
+msgid "Truths"
+msgstr ""
+
+msgid "Specialist"
+msgstr ""
+
+msgid "Enemy-Location"
+msgstr ""
+
+msgid "Incomplete card database"
+msgstr ""
+
+msgid "New cards available"
+msgstr ""
+
+msgid ""
+"Your most recent sync did not complete.\n"
+"\n"
+"When trying again, please keep the app open and in the foreground until it is finished."
+msgstr ""
+
+#, javascript-format
+msgid "It looks like your app is missing ${ updates.missingCardCount } card."
+msgid_plural "It looks like your app is missing ${ updates.missingCardCount } cards."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Some decks may not load fully and campaigns might appear incomplete until this is fixed."
+msgstr ""
+
+msgid "Download cards"
+msgstr ""
+
+msgid "It has been more than a week since you checked for new cards."
+msgstr ""
+
+#, javascript-format
+msgid "Chinese (Simplified): ${ simplifiedChineseTranslators }"
+msgstr ""
+
+msgid "Narration"
+msgstr ""
+
+msgid "These cards might have been updated, from a new taboo list, or contain minor corrections."
+msgstr ""
+
+msgid "Fatigue"
+msgstr ""
+
+msgid "The Colour Out of Oz"
+msgstr ""
+
+msgid "Preparations"
+msgstr ""
+
+msgid "Companions of Oz"
+msgstr ""
+
+msgid "Advantages"
+msgstr ""
+
+msgid "Order of Events"
+msgstr ""
+
+msgid "Ages Unwound"
+msgstr ""
+
+msgid "Create new deck"
+msgstr ""
+
+msgid "Timeline"
+msgstr ""
+
+msgid "Strange Assistance"
+msgstr ""
+
+msgid "Attachments"
+msgstr ""
+
+msgid "Bewitching"
+msgstr ""
+
+msgid "Hunch deck"
+msgstr ""
+
+msgid "Stick to the Plan"
+msgstr ""
+
+msgid "Market deck"
+msgstr ""
+
+msgid "Branded spell"
+msgstr ""
+
+msgid "Too many selected"
+msgstr ""
+
+msgid "Each card must be different"
+msgstr ""
+
+#, javascript-format
+msgid "Limit of ${ limit } card"
+msgid_plural "Limit of ${ limit } cards"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "${ total } of ${ attachment.targetSize }"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+#, javascript-format
+msgid "Act: ${ count }"
+msgid_plural "Acts: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Agenda: ${ count }"
+msgid_plural "Agendas: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Location: ${ count }"
+msgid_plural "Locations: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Enemy: ${ count }"
+msgid_plural "Enemies: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Enemy-Location: ${ count }"
+msgid_plural "Enemy-Locations: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Treachery: ${ count }"
+msgid_plural "Treacheries: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Story: ${ count }"
+msgid_plural "Stories: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Key: ${ count }"
+msgid_plural "Keys: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Asset: ${ count }"
+msgid_plural "Assets: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Scenario reference"
+msgid_plural "Scenario references: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+#, javascript-format
+msgid "Unknown: ${ count }"
+msgid_plural "Unknowns: ${ count }"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Campaign required"
+msgstr ""
+
+msgid "You must select a campaign."
+msgstr ""
+
+msgid "The Drowned City"
+msgstr ""
+
+msgid "Artifacts Earned"
+msgstr ""
+
+msgid "Alien Glyphs"
+msgstr ""
+
+msgid "Locations Explored"
+msgstr ""
+
+msgid "Task Progress"
+msgstr ""
+
+#, javascript-format
+msgid "Remove ${ investigator.card.name }?"
+msgstr ""
+
+#, javascript-format
+msgid ""
+"Are you sure you want to remove ${ investigator.card.name } from this campaign?\n"
+"\n"
+"Campaign log data associated with them may be lost."
+msgstr ""
+
+msgid "Draw random token"
+msgstr ""
+
+msgid "View or edit"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Review chaos bag"
+msgstr ""
+
+msgid "Change lead investigator"
+msgstr ""
+
+msgid "To handle resignation or elimination"
+msgstr ""
+
+msgid "Core set"
+msgstr ""
+
+msgid "Cycles"
+msgstr ""
+
+msgid "Starter decks"
+msgstr ""
+
+msgid "Fan-made Cycles"
+msgstr ""
+
+msgid "Legacy"
+msgstr ""
+
+msgid "Current"
+msgstr ""
+
+msgid "Limited"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Use all cards from any product"
+msgstr ""
+
+msgid "Use only cards from recent expansions"
+msgstr ""
+
+msgid "Use only cards from your choice of three expansions"
+msgstr ""
+
+msgid "Use a completely custom card pool"
+msgstr ""
+
+#, javascript-format
+msgid "Limited: ${ selectedPacks.size } packs selected"
+msgstr ""
+
+#, javascript-format
+msgid "Custom: ${ selectedPacks.size } packs selected"
+msgstr ""
+
+msgid "Card pool"
+msgstr ""
+
+msgid "This is an optional variant that push players to build their decks creatively using a smaller cardpool."
+msgstr ""
+
+msgid "Select packs"
+msgstr ""
+
+msgid "Choose a core set and three expansions to use for this limited pool."
+msgstr ""
+
+msgid "Choose any number of packs to use for this custom pool."
+msgstr ""
+
+msgid "Limited: Not enough cycles selected"
+msgstr ""
+
+msgid "Limited: Too many cycles selected"
+msgstr ""
+
+msgid "Limited:"
+msgstr ""
+
+msgid "Current:"
+msgstr ""
+
+msgid "Cycles (select 3)"
+msgstr ""
+
+msgid "When the World Screamed"
+msgstr ""
+
+msgid "Contains cards not in the selected card pool."
+msgstr ""
+
+msgid "Card"
+msgstr ""
+
+msgid "Edit Scenario Result"
+msgstr ""
+
+msgid "Merge Backup"
+msgstr ""
+
+msgid "Safe Mode"
+msgstr ""
+
+msgid "Choose Packs"
+msgstr ""
+
+msgid "Rule"
+msgstr ""
+
+msgid "Card Upgrade"
+msgstr ""
+
+msgid "Contains cards that are not in the selected card pool."
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Card Image"
+msgstr ""
+
+msgid "Taboos"
+msgstr ""
+
+msgid "Edit Name"
+msgstr ""
+
+msgid "Scenario results"
+msgstr ""
+
+msgctxt "investigator"
+msgid "Custom"
+msgstr "自订"
+
+msgctxt "slots"
+msgid "None"
+msgstr "无"
+
+msgctxt "trait"
+msgid "???"
+msgstr "???"
+
+msgctxt "trait"
+msgid "Abomination"
+msgstr "异形"
+
+msgctxt "trait"
+msgid "Abyss"
+msgstr "深渊"
+
+msgctxt "trait"
+msgid "Act 1"
+msgstr "第一幕"
+
+msgctxt "trait"
+msgid "Act 2"
+msgstr "第二幕"
+
+msgctxt "trait"
+msgid "Agency"
+msgstr "特工"
+
+msgctxt "trait"
+msgid "Ally"
+msgstr "盟友"
+
+msgctxt "trait"
+msgid "Altered"
+msgstr "幻境"
+
+msgctxt "trait"
+msgid "Ancient"
+msgstr "古代"
+
+msgctxt "trait"
+msgid "Ancient One"
+msgstr "古神"
+
+msgctxt "trait"
+msgid "Arkham"
+msgstr "阿卡姆"
+
+msgctxt "trait"
+msgid "Arkham Asylum"
+msgstr "阿卡姆疯人院"
+
+msgctxt "trait"
+msgid "Armor"
+msgstr "护甲"
+
+msgctxt "trait"
+msgid "Artist"
+msgstr "艺术家"
+
+msgctxt "trait"
+msgid "Assistant"
+msgstr "助理"
+
+msgctxt "trait"
+msgid "Attack"
+msgstr "攻击"
+
+msgctxt "trait"
+msgid "Augury"
+msgstr "预言"
+
+msgctxt "trait"
+msgid "Avatar"
+msgstr "化身"
+
+msgctxt "trait"
+msgid "Basement"
+msgstr "地下室"
+
+msgctxt "trait"
+msgid "Bayou"
+msgstr "河口"
+
+msgctxt "trait"
+msgid "Believer"
+msgstr "信徒"
+
+msgctxt "trait"
+msgid "Blessed"
+msgstr "祝福"
+
+msgctxt "trait"
+msgid "Blunder"
+msgstr "疏忽"
+
+msgctxt "trait"
+msgid "Boat"
+msgstr "船只"
+
+msgctxt "trait"
+msgid "Bold"
+msgstr "果断"
+
+msgctxt "trait"
+msgid "Boon"
+msgstr "福祉"
+
+msgctxt "trait"
+msgid "Bridge"
+msgstr "桥梁"
+
+msgctxt "trait"
+msgid "Brotherhood"
+msgstr "兄弟会"
+
+msgctxt "trait"
+msgid "Byakhee"
+msgstr "拜亚基"
+
+msgctxt "trait"
+msgid "Bystander"
+msgstr "旁人"
+
+msgctxt "trait"
+msgid "Cairo"
+msgstr "开罗"
+
+msgctxt "trait"
+msgid "Campsite"
+msgstr "营地"
+
+msgctxt "trait"
+msgid "Carnevale"
+msgstr "狂欢节"
+
+msgctxt "trait"
+msgid "Cave"
+msgstr "洞穴"
+
+msgctxt "trait"
+msgid "Central"
+msgstr "中心"
+
+msgctxt "trait"
+msgid "Charm"
+msgstr "守护"
+
+msgctxt "trait"
+msgid "Chosen"
+msgstr "天选"
+
+msgctxt "trait"
+msgid "Circle"
+msgstr "圆环"
+
+msgctxt "trait"
+msgid "City"
+msgstr "城市"
+
+msgctxt "trait"
+msgid "Civic"
+msgstr "公务员"
+
+msgctxt "trait"
+msgid "Clairvoyant"
+msgstr "预知"
+
+msgctxt "trait"
+msgid "Clothing"
+msgstr "服装"
+
+msgctxt "trait"
+msgid "Clover Club"
+msgstr "四叶草俱乐部"
+
+msgctxt "trait"
+msgid "Coastal"
+msgstr "海岸"
+
+msgctxt "trait"
+msgid "Composure"
+msgstr "沉稳"
+
+msgctxt "trait"
+msgid "Condition"
+msgstr "状态"
+
+msgctxt "trait"
+msgid "Connection"
+msgstr "人脉"
+
+msgctxt "trait"
+msgid "Conspirator"
+msgstr "同谋"
+
+msgctxt "trait"
+msgid "Construct"
+msgstr "构造物"
+
+msgctxt "trait"
+msgid "Covenant"
+msgstr "圣约"
+
+msgctxt "trait"
+msgid "Creature"
+msgstr "生物"
+
+msgctxt "trait"
+msgid "Crime Scene"
+msgstr "犯罪现场"
+
+msgctxt "trait"
+msgid "Criminal"
+msgstr "罪犯"
+
+msgctxt "trait"
+msgid "Cultist"
+msgstr "异教徒"
+
+msgctxt "trait"
+msgid "Curse"
+msgstr "诅咒"
+
+msgctxt "trait"
+msgid "Cursed"
+msgstr "诅咒萦绕"
+
+msgctxt "trait"
+msgid "Dark Young"
+msgstr "黑山羊幼崽"
+
+msgctxt "trait"
+msgid "Deep One"
+msgstr "深潜者"
+
+msgctxt "trait"
+msgid "Depths"
+msgstr "深海"
+
+msgctxt "trait"
+msgid "Desert"
+msgstr "沙漠"
+
+msgctxt "trait"
+msgid "Desperate"
+msgstr "绝望"
+
+msgctxt "trait"
+msgid "Detective"
+msgstr "侦探"
+
+msgctxt "trait"
+msgid "Developed"
+msgstr "熟练"
+
+msgctxt "trait"
+msgid "Dhole"
+msgstr "蠕虫"
+
+msgctxt "trait"
+msgid "Distortion"
+msgstr ""
+
+msgctxt "trait"
+msgid "Dreamer"
+msgstr "入梦者"
+
+msgctxt "trait"
+msgid "Dreamlands"
+msgstr "幻梦境"
+
+msgctxt "trait"
+msgid "Drifter"
+msgstr "漂泊者"
+
+msgctxt "trait"
+msgid "Dunwich"
+msgstr "敦威治"
+
+msgctxt "trait"
+msgid "Eldritch"
+msgstr "惊悚"
+
+msgctxt "trait"
+msgid "Elite"
+msgstr "精英"
+
+msgctxt "trait"
+msgid "Endtimes"
+msgstr "终结"
+
+msgctxt "trait"
+msgid "Evidence"
+msgstr "证据"
+
+msgctxt "trait"
+msgid "Exhibit"
+msgstr "展览"
+
+msgctxt "trait"
+msgid "Expedition"
+msgstr "探险"
+
+msgctxt "trait"
+msgid "Expert"
+msgstr "专家"
+
+msgctxt "trait"
+msgid "Extradimensional"
+msgstr "异次元"
+
+msgctxt "trait"
+msgid "Extraterrestrial"
+msgstr "异星"
+
+msgctxt "trait"
+msgid "Eztli"
+msgstr "埃兹特里"
+
+msgctxt "trait"
+msgid "Familiar"
+msgstr "魔宠"
+
+msgctxt "trait"
+msgid "Fated"
+msgstr "定命"
+
+msgctxt "trait"
+msgid "Favor"
+msgstr "恩惠"
+
+msgctxt "trait"
+msgid "Firearm"
+msgstr "枪械"
+
+msgctxt "trait"
+msgid "Flaw"
+msgstr "缺陷"
+
+msgctxt "trait"
+msgid "Flora"
+msgstr "植物"
+
+msgctxt "trait"
+msgid "Footwear"
+msgstr "鞋子"
+
+msgctxt "trait"
+msgid "Forbidden"
+msgstr "禁闭"
+
+msgctxt "trait"
+msgid "Forgotten"
+msgstr "失落"
+
+msgctxt "trait"
+msgid "Fortune"
+msgstr "幸运"
+
+msgctxt "trait"
+msgid "Future"
+msgstr "未来"
+
+msgctxt "trait"
+msgid "Gambit"
+msgstr "局势"
+
+msgctxt "trait"
+msgid "Geist"
+msgstr "灵怪"
+
+msgctxt "trait"
+msgid "Ghast"
+msgstr "噩妖"
+
+msgctxt "trait"
+msgid "Ghoul"
+msgstr "食尸鬼"
+
+msgctxt "trait"
+msgid "Government"
+msgstr "政府"
+
+msgctxt "trait"
+msgid "Grant"
+msgstr "拨款"
+
+msgctxt "trait"
+msgid "Graveyard"
+msgstr "墓地"
+
+msgctxt "trait"
+msgid "Ground Floor"
+msgstr "一楼"
+
+msgctxt "trait"
+msgid "Guest"
+msgstr "客人"
+
+msgctxt "trait"
+msgid "Gug"
+msgstr "古革巨人"
+
+msgctxt "trait"
+msgid "Hall"
+msgstr "厅堂"
+
+msgctxt "trait"
+msgid "Hazard"
+msgstr "危险"
+
+msgctxt "trait"
+msgid "Hex"
+msgstr "巫术"
+
+msgctxt "trait"
+msgid "Hideout"
+msgstr "窝点"
+
+msgctxt "trait"
+msgid "Historical Society"
+msgstr "历史协会"
+
+msgctxt "trait"
+msgid "Humanoid"
+msgstr "类人"
+
+msgctxt "trait"
+msgid "Hunter"
+msgstr "猎手"
+
+msgctxt "trait"
+msgid "Hybrid"
+msgstr "混血"
+
+msgctxt "trait"
+msgid "Illicit"
+msgstr "违法"
+
+msgctxt "trait"
+msgid "Improvised"
+msgstr "临时制品"
+
+msgctxt "trait"
+msgid "Injury"
+msgstr "损伤"
+
+msgctxt "trait"
+msgid "Innate"
+msgstr "天性"
+
+msgctxt "trait"
+msgid "Innocent"
+msgstr "无辜"
+
+msgctxt "trait"
+msgid "Innsmouth"
+msgstr "印斯茅斯"
+
+msgctxt "trait"
+msgid "Insect"
+msgstr "昆虫"
+
+msgctxt "trait"
+msgid "Insight"
+msgstr "洞察"
+
+msgctxt "trait"
+msgid "Instrument"
+msgstr "乐器"
+
+msgctxt "trait"
+msgid "Island"
+msgstr "岛礁"
+
+msgctxt "trait"
+msgid "Item"
+msgstr "道具"
+
+msgctxt "trait"
+msgid "Job"
+msgstr "职业"
+
+msgctxt "trait"
+msgid "Jungle"
+msgstr "丛林"
+
+msgctxt "trait"
+msgid "Kadath"
+msgstr "卡达斯"
+
+msgctxt "trait"
+msgid "Key"
+msgstr "钥匙"
+
+msgctxt "trait"
+msgid "Lead"
+msgstr "迹象"
+
+msgctxt "trait"
+msgid "Leng"
+msgstr "冷原"
+
+msgctxt "trait"
+msgid "Lodge"
+msgstr "秘社"
+
+msgctxt "trait"
+msgid "Madness"
+msgstr "疯狂"
+
+msgctxt "trait"
+msgid "Manifold"
+msgstr "复体"
+
+msgctxt "trait"
+msgid "Mask"
+msgstr "面具"
+
+msgctxt "trait"
+msgid "Medic"
+msgstr "医师"
+
+msgctxt "trait"
+msgid "Melee"
+msgstr "近战"
+
+msgctxt "trait"
+msgid "Mexico City"
+msgstr "墨西哥城"
+
+msgctxt "trait"
+msgid "Mi-Go"
+msgstr "米戈"
+
+msgctxt "trait"
+msgid "Midtown"
+msgstr "城中"
+
+msgctxt "trait"
+msgid "Miskatonic"
+msgstr "米斯卡塔尼克"
+
+msgctxt "trait"
+msgid "Mnar"
+msgstr "米纳尔"
+
+msgctxt "trait"
+msgid "Monster"
+msgstr "怪物"
+
+msgctxt "trait"
+msgid "Montréal"
+msgstr "蒙特利尔"
+
+msgctxt "trait"
+msgid "Mountain"
+msgstr "山脉"
+
+msgctxt "trait"
+msgid "Mutated"
+msgstr "突变"
+
+msgctxt "trait"
+msgid "Mystery"
+msgstr "神秘"
+
+msgctxt "trait"
+msgid "New Orleans"
+msgstr "新纽奥良"
+
+msgctxt "trait"
+msgid "New York City"
+msgstr "纽约城"
+
+msgctxt "trait"
+msgid "Nightgaunt"
+msgstr "夜魇"
+
+msgctxt "trait"
+msgid "Obstacle"
+msgstr "屏障"
+
+msgctxt "trait"
+msgid "Occult"
+msgstr "密教"
+
+msgctxt "trait"
+msgid "Ocean"
+msgstr "海洋"
+
+msgctxt "trait"
+msgid "Omen"
+msgstr "征兆"
+
+msgctxt "trait"
+msgid "Ooth-Nargai"
+msgstr "欧斯-纳尔盖"
+
+msgctxt "trait"
+msgid "Ooze"
+msgstr "软泥"
+
+msgctxt "trait"
+msgid "Oozified"
+msgstr "软泥污染"
+
+msgctxt "trait"
+msgid "Oriab"
+msgstr "奥瑞巴"
+
+msgctxt "trait"
+msgid "Otherworld"
+msgstr "异界"
+
+msgctxt "trait"
+msgid "Pact"
+msgstr "契约"
+
+msgctxt "trait"
+msgid "Paradox"
+msgstr "悖论"
+
+msgctxt "trait"
+msgid "Paris"
+msgstr "巴黎"
+
+msgctxt "trait"
+msgid "Part 1"
+msgstr "第一章"
+
+msgctxt "trait"
+msgid "Passageway"
+msgstr "通道"
+
+msgctxt "trait"
+msgid "Patron"
+msgstr "赞助人"
+
+msgctxt "trait"
+msgid "Performer"
+msgstr "艺人"
+
+msgctxt "trait"
+msgid "Pnakotus"
+msgstr "纳克特"
+
+msgctxt "trait"
+msgid "Poison"
+msgstr "毒药"
+
+msgctxt "trait"
+msgid "Police"
+msgstr "警察"
+
+msgctxt "trait"
+msgid "Port"
+msgstr "港口"
+
+msgctxt "trait"
+msgid "Portal"
+msgstr "次元门"
+
+msgctxt "trait"
+msgid "Power"
+msgstr "力量"
+
+msgctxt "trait"
+msgid "Practiced"
+msgstr "精通"
+
+msgctxt "trait"
+msgid "Present-Day"
+msgstr "现代"
+
+msgctxt "trait"
+msgid "Prison"
+msgstr ""
+
+msgctxt "trait"
+msgid "Private"
+msgstr "私密"
+
+msgctxt "trait"
+msgid "Providence"
+msgstr "普罗维登斯"
+
+msgctxt "trait"
+msgid "Rail"
+msgstr "轨道沿线"
+
+msgctxt "trait"
+msgid "Ranged"
+msgstr "远程"
+
+msgctxt "trait"
+msgid "Relic"
+msgstr "遗物"
+
+msgctxt "trait"
+msgid "Reporter"
+msgstr "记者"
+
+msgctxt "trait"
+msgid "Research"
+msgstr "研究"
+
+msgctxt "trait"
+msgid "Return"
+msgstr "重返"
+
+msgctxt "trait"
+msgid "Ritual"
+msgstr "仪式"
+
+msgctxt "trait"
+msgid "Ritual Site"
+msgstr "仪式地"
+
+msgctxt "trait"
+msgid "River"
+msgstr "河流"
+
+msgctxt "trait"
+msgid "Riverside"
+msgstr "河畔"
+
+msgctxt "trait"
+msgid "Road"
+msgstr "道路"
+
+msgctxt "trait"
+msgid "Ruins"
+msgstr "遗迹"
+
+msgctxt "trait"
+msgid "Salem"
+msgstr "塞勒姆"
+
+msgctxt "trait"
+msgid "Sanctum"
+msgstr "圣堂"
+
+msgctxt "trait"
+msgid "Scheme"
+msgstr "阴谋"
+
+msgctxt "trait"
+msgid "Scholar"
+msgstr "学者"
+
+msgctxt "trait"
+msgid "Science"
+msgstr "科学"
+
+msgctxt "trait"
+msgid "Script"
+msgstr ""
+
+msgctxt "trait"
+msgid "Second Floor"
+msgstr "二楼"
+
+msgctxt "trait"
+msgid "Sentinel Hill"
+msgstr "哨兵山"
+
+msgctxt "trait"
+msgid "Serpent"
+msgstr "蛇族"
+
+msgctxt "trait"
+msgid "Service"
+msgstr "服务"
+
+msgctxt "trait"
+msgid "Servitor"
+msgstr "仆从"
+
+msgctxt "trait"
+msgid "Shantak"
+msgstr "夏塔克鸟"
+
+msgctxt "trait"
+msgid "Shattered"
+msgstr "破碎"
+
+msgctxt "trait"
+msgid "Ship"
+msgstr "船舶"
+
+msgctxt "trait"
+msgid "Shoggoth"
+msgstr "修格斯"
+
+msgctxt "trait"
+msgid "Silver Twilight"
+msgstr "银暮秘社"
+
+msgctxt "trait"
+msgid "Skai"
+msgstr "斯凯"
+
+msgctxt "trait"
+msgid "Socialite"
+msgstr "社会名流"
+
+msgctxt "trait"
+msgid "Song"
+msgstr "歌曲"
+
+msgctxt "trait"
+msgid "Sorcerer"
+msgstr "法师"
+
+msgctxt "trait"
+msgid "Spectral"
+msgstr "幽灵"
+
+msgctxt "trait"
+msgid "Spell"
+msgstr "法术"
+
+msgctxt "trait"
+msgid "Spider"
+msgstr "蜘蛛"
+
+msgctxt "trait"
+msgid "Spirit"
+msgstr "勇气"
+
+msgctxt "trait"
+msgid "St Mary's"
+msgstr "圣玛丽医院"
+
+msgctxt "trait"
+msgid "Staff"
+msgstr "职工"
+
+msgctxt "trait"
+msgid "Steps"
+msgstr "台阶"
+
+msgctxt "trait"
+msgid "Summon"
+msgstr "召唤"
+
+msgctxt "trait"
+msgid "Supply"
+msgstr "供给"
+
+msgctxt "trait"
+msgid "Surface"
+msgstr "月面"
+
+msgctxt "trait"
+msgid "Suspect"
+msgstr "嫌犯"
+
+msgctxt "trait"
+msgid "Syndicate"
+msgstr "犯罪团伙"
+
+msgctxt "trait"
+msgid "Tactic"
+msgstr "策略"
+
+msgctxt "trait"
+msgid "Talent"
+msgstr "才能"
+
+msgctxt "trait"
+msgid "Tarot"
+msgstr "塔罗"
+
+msgctxt "trait"
+msgid "Task"
+msgstr "任务"
+
+msgctxt "trait"
+msgid "Temple"
+msgstr "神庙"
+
+msgctxt "trait"
+msgid "Tenochtitlán"
+msgstr "特诺奇蒂特兰"
+
+msgctxt "trait"
+msgid "Tentacle"
+msgstr "触手"
+
+msgctxt "trait"
+msgid "Terror"
+msgstr "恐怖"
+
+msgctxt "trait"
+msgid "Third Floor"
+msgstr "三楼"
+
+msgctxt "trait"
+msgid "Tindalos"
+msgstr "廷达洛斯"
+
+msgctxt "trait"
+msgid "Tome"
+msgstr "书籍"
+
+msgctxt "trait"
+msgid "Tool"
+msgstr "工具"
+
+msgctxt "trait"
+msgid "Town"
+msgstr "城镇"
+
+msgctxt "trait"
+msgid "Train"
+msgstr "火车"
+
+msgctxt "trait"
+msgid "Trap"
+msgstr "陷阱"
+
+msgctxt "trait"
+msgid "Trick"
+msgstr "技巧"
+
+msgctxt "trait"
+msgid "Unhallowed"
+msgstr "不洁"
+
+msgctxt "trait"
+msgid "Upgrade"
+msgstr "升级"
+
+msgctxt "trait"
+msgid "Vale"
+msgstr "山谷"
+
+msgctxt "trait"
+msgid "Vehicle"
+msgstr "载具"
+
+msgctxt "trait"
+msgid "Venice"
+msgstr "威尼斯"
+
+msgctxt "trait"
+msgid "Veteran"
+msgstr "老兵"
+
+msgctxt "trait"
+msgid "Void"
+msgstr "虚空"
+
+msgctxt "trait"
+msgid "Warden"
+msgstr "监守"
+
+msgctxt "trait"
+msgid "Wastes"
+msgstr "废土"
+
+msgctxt "trait"
+msgid "Wayfarer"
+msgstr "旅人"
+
+msgctxt "trait"
+msgid "Weapon"
+msgstr "武器"
+
+msgctxt "trait"
+msgid "Wilderness"
+msgstr "荒地"
+
+msgctxt "trait"
+msgid "Witch"
+msgstr "女巫"
+
+msgctxt "trait"
+msgid "Witch House"
+msgstr "巫宅"
+
+msgctxt "trait"
+msgid "Woods"
+msgstr "树林"
+
+msgctxt "trait"
+msgid "Y'ha-nthlei"
+msgstr "伊哈·恩斯雷"
+
+msgctxt "trait"
+msgid "Yithian"
+msgstr "伊斯"
+
+msgctxt "trait"
+msgid "Yoth"
+msgstr "幽嘶"
+
+msgctxt "trait"
+msgid "Zoog"
+msgstr "祖格鼠"
+
+msgctxt "trait"
+msgid "Broken"
+msgstr "破功"
+
+msgctxt "trait"
+msgid "Entrepreneur"
+msgstr "经营者"
+
+msgctxt "trait"
+msgid "Falcon Point"
+msgstr "猎鹰岬"
+
+msgctxt "trait"
+msgid "Lair"
+msgstr "巢穴"
+
+msgctxt "trait"
+msgid "Synergy"
+msgstr "协作"
+
+msgctxt "trait"
+msgid "Unbroken"
+msgstr "运功"
+
+msgctxt "trait"
+msgid "Resolute"
+msgstr "坚毅"
+
+msgctxt "trait"
+msgid "Coterie"
+msgstr "合伙"
+
+msgctxt "trait"
+msgid "Dilemma"
+msgstr "困境"
+
+msgctxt "trait"
+msgid "Eidolon"
+msgstr "幻灵"
+
+msgctxt "trait"
+msgid "Elder Thing"
+msgstr "古老者"
+
+msgctxt "trait"
+msgid "Glacier"
+msgstr "冰川"
+
+msgctxt "trait"
+msgid "Mainland"
+msgstr "陆地"
+
+msgctxt "trait"
+msgid "Mirage"
+msgstr "幻景"
+
+msgctxt "trait"
+msgid "Mountains"
+msgstr "山脉"
+
+msgctxt "trait"
+msgid "Past"
+msgstr ""
+
+msgctxt "trait"
+msgid "Possessed"
+msgstr "附身"
+
+msgctxt "trait"
+msgid "Present"
+msgstr ""
+
+msgctxt "trait"
+msgid "Scientist"
+msgstr ""
+
+msgctxt "trait"
+msgid "Uncharted"
+msgstr "未勘之地"
+
+msgctxt "trait"
+msgid "Casino"
+msgstr "赌场"
+
+msgctxt "trait"
+msgid "Double"
+msgstr "双倍"
+
+msgctxt "trait"
+msgid "AI"
+msgstr ""
+
+msgctxt "trait"
+msgid "Abandoned"
+msgstr "废弃"
+
+msgctxt "trait"
+msgid "Access"
+msgstr ""
+
+msgctxt "trait"
+msgid "Alexandria"
+msgstr "亚历山卓"
+
+msgctxt "trait"
+msgid "Ally? Creature"
+msgstr ""
+
+msgctxt "trait"
+msgid "Ancient One?"
+msgstr ""
+
+msgctxt "trait"
+msgid "Bad dog"
+msgstr ""
+
+msgctxt "trait"
+msgid "Bazaar"
+msgstr "市集"
+
+msgctxt "trait"
+msgid "Blessed?"
+msgstr ""
+
+msgctxt "trait"
+msgid "Bokor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Book"
+msgstr ""
+
+msgctxt "trait"
+msgid "Buenos Aires"
+msgstr "布宜诺斯艾利斯"
+
+msgctxt "trait"
+msgid "Card"
+msgstr ""
+
+msgctxt "trait"
+msgid "Case"
+msgstr ""
+
+msgctxt "trait"
+msgid "Castle"
+msgstr ""
+
+msgctxt "trait"
+msgid "Chair"
+msgstr ""
+
+msgctxt "trait"
+msgid "Chess"
+msgstr ""
+
+msgctxt "trait"
+msgid "Classy"
+msgstr ""
+
+msgctxt "trait"
+msgid "Collector"
+msgstr ""
+
+msgctxt "trait"
+msgid "Consort"
+msgstr ""
+
+msgctxt "trait"
+msgid "Corpse"
+msgstr ""
+
+msgctxt "trait"
+msgid "Corruption"
+msgstr "腐化"
+
+msgctxt "trait"
+msgid "Darkness"
+msgstr ""
+
+msgctxt "trait"
+msgid "Device"
+msgstr ""
+
+msgctxt "trait"
+msgid "Downtown"
+msgstr ""
+
+msgctxt "trait"
+msgid "Enigma"
+msgstr ""
+
+msgctxt "trait"
+msgid "Entrance"
+msgstr ""
+
+msgctxt "trait"
+msgid "Fellow Dogs"
+msgstr ""
+
+msgctxt "trait"
+msgid "Footwear, but not really"
+msgstr ""
+
+msgctxt "trait"
+msgid "Hardship"
+msgstr ""
+
+msgctxt "trait"
+msgid "Haunted"
+msgstr "闹鬼"
+
+msgctxt "trait"
+msgid "Havana"
+msgstr "哈瓦那"
+
+msgctxt "trait"
+msgid "Human"
+msgstr ""
+
+msgctxt "trait"
+msgid "Infection"
+msgstr ""
+
+msgctxt "trait"
+msgid "Istanbul"
+msgstr "伊斯坦堡"
+
+msgctxt "trait"
+msgid "Kuala Lumpur"
+msgstr "吉隆坡"
+
+msgctxt "trait"
+msgid "Local"
+msgstr ""
+
+msgctxt "trait"
+msgid "Locus Site"
+msgstr "护所地"
+
+msgctxt "trait"
+msgid "London"
+msgstr "伦敦"
+
+msgctxt "trait"
+msgid "Loyal"
+msgstr ""
+
+msgctxt "trait"
+msgid "Lunatic"
+msgstr ""
+
+msgctxt "trait"
+msgid "Machine"
+msgstr ""
+
+msgctxt "trait"
+msgid "Madness?"
+msgstr ""
+
+msgctxt "trait"
+msgid "Marrakesh"
+msgstr "马拉喀什"
+
+msgctxt "trait"
+msgid "Medical"
+msgstr ""
+
+msgctxt "trait"
+msgid "Music"
+msgstr ""
+
+msgctxt "trait"
+msgid "Musician"
+msgstr ""
+
+msgctxt "trait"
+msgid "Northside"
+msgstr ""
+
+msgctxt "trait"
+msgid "Nostalgia II"
+msgstr ""
+
+msgctxt "trait"
+msgid "Outsider"
+msgstr ""
+
+msgctxt "trait"
+msgid "Parasitic"
+msgstr ""
+
+msgctxt "trait"
+msgid "Plains"
+msgstr ""
+
+msgctxt "trait"
+msgid "Priestess"
+msgstr ""
+
+msgctxt "trait"
+msgid "Pup"
+msgstr ""
+
+msgctxt "trait"
+msgid "Resonant"
+msgstr ""
+
+msgctxt "trait"
+msgid "Restricted"
+msgstr ""
+
+msgctxt "trait"
+msgid "Retired"
+msgstr ""
+
+msgctxt "trait"
+msgid "Risen"
+msgstr ""
+
+msgctxt "trait"
+msgid "Row"
+msgstr ""
+
+msgctxt "trait"
+msgid "Royalty"
+msgstr ""
+
+msgctxt "trait"
+msgid "Saga"
+msgstr ""
+
+msgctxt "trait"
+msgid "Shadow"
+msgstr ""
+
+msgctxt "trait"
+msgid "Shapeshifter"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sheldon Gang"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sister"
+msgstr ""
+
+msgctxt "trait"
+msgid "Slope"
+msgstr ""
+
+msgctxt "trait"
+msgid "Soldier"
+msgstr ""
+
+msgctxt "trait"
+msgid "Stable"
+msgstr ""
+
+msgctxt "trait"
+msgid "Stop"
+msgstr ""
+
+msgctxt "trait"
+msgid "Table"
+msgstr ""
+
+msgctxt "trait"
+msgid "Tatterdemalion"
+msgstr ""
+
+msgctxt "trait"
+msgid "That's bad"
+msgstr ""
+
+msgctxt "trait"
+msgid "Tower"
+msgstr ""
+
+msgctxt "trait"
+msgid "Traitor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Tulgey Wood"
+msgstr ""
+
+msgctxt "trait"
+msgid "Underground"
+msgstr ""
+
+msgctxt "trait"
+msgid "Unstable"
+msgstr ""
+
+msgctxt "trait"
+msgid "Upper Floor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Virtual"
+msgstr ""
+
+msgctxt "trait"
+msgid "Weather"
+msgstr ""
+
+msgctxt "trait"
+msgid "What? No"
+msgstr ""
+
+msgctxt "trait"
+msgid "Wonderland"
+msgstr ""
+
+msgctxt "trait"
+msgid "Yuggoth"
+msgstr ""
+
+msgctxt "trait"
+msgid "Blight"
+msgstr ""
+
+msgctxt "trait"
+msgid "Colour"
+msgstr ""
+
+msgctxt "trait"
+msgid "Crew"
+msgstr ""
+
+msgctxt "trait"
+msgid "Delta"
+msgstr ""
+
+msgctxt "trait"
+msgid "Emissary"
+msgstr ""
+
+msgctxt "trait"
+msgid "Game"
+msgstr ""
+
+msgctxt "trait"
+msgid "Inconspicuous"
+msgstr ""
+
+msgctxt "trait"
+msgid "Miasma"
+msgstr ""
+
+msgctxt "trait"
+msgid "Public"
+msgstr ""
+
+msgctxt "trait"
+msgid "Resident"
+msgstr ""
+
+msgctxt "trait"
+msgid "Role"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rot"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sub-Level"
+msgstr ""
+
+msgctxt "trait"
+msgid "Unpracticed"
+msgstr ""
+
+msgctxt "trait"
+msgid "Allied"
+msgstr ""
+
+msgctxt "trait"
+msgid "Bog"
+msgstr ""
+
+msgctxt "trait"
+msgid "Cart"
+msgstr ""
+
+msgctxt "trait"
+msgid "Dark"
+msgstr ""
+
+msgctxt "trait"
+msgid "Dormant"
+msgstr ""
+
+msgctxt "trait"
+msgid "Fairy"
+msgstr ""
+
+msgctxt "trait"
+msgid "Farm"
+msgstr ""
+
+msgctxt "trait"
+msgid "Field"
+msgstr ""
+
+msgctxt "trait"
+msgid "Forest"
+msgstr ""
+
+msgctxt "trait"
+msgid "Hemlock Vale"
+msgstr ""
+
+msgctxt "trait"
+msgid "Kingsport"
+msgstr ""
+
+msgctxt "trait"
+msgid "Lantern Club"
+msgstr ""
+
+msgctxt "trait"
+msgid "Leader"
+msgstr ""
+
+msgctxt "trait"
+msgid "Lit"
+msgstr ""
+
+msgctxt "trait"
+msgid "Machination"
+msgstr ""
+
+msgctxt "trait"
+msgid "Manor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Misfortune"
+msgstr ""
+
+msgctxt "trait"
+msgid "Oz"
+msgstr ""
+
+msgctxt "trait"
+msgid "Plot"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rival"
+msgstr ""
+
+msgctxt "trait"
+msgid "Room"
+msgstr ""
+
+msgctxt "trait"
+msgid "Scion"
+msgstr ""
+
+msgctxt "trait"
+msgid "Station"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sunken"
+msgstr ""
+
+msgctxt "trait"
+msgid "Unlit"
+msgstr ""
+
+msgctxt "trait"
+msgid "Adrift"
+msgstr ""
+
+msgctxt "trait"
+msgid "Arkham?"
+msgstr ""
+
+msgctxt "trait"
+msgid "Artifact"
+msgstr ""
+
+msgctxt "trait"
+msgid "Brand"
+msgstr ""
+
+msgctxt "trait"
+msgid "Completed"
+msgstr ""
+
+msgctxt "trait"
+msgid "Cretaceous"
+msgstr ""
+
+msgctxt "trait"
+msgid "Egypt"
+msgstr ""
+
+msgctxt "trait"
+msgid "France"
+msgstr ""
+
+msgctxt "trait"
+msgid "Glyph"
+msgstr ""
+
+msgctxt "trait"
+msgid "Headgear"
+msgstr ""
+
+msgctxt "trait"
+msgid "Incomplete"
+msgstr ""
+
+msgctxt "trait"
+msgid "Monsters"
+msgstr ""
+
+msgctxt "trait"
+msgid "Posture"
+msgstr ""
+
+msgctxt "trait"
+msgid "Prosthesis"
+msgstr ""
+
+msgctxt "trait"
+msgid "R'lyeh"
+msgstr ""
+
+msgctxt "trait"
+msgid "Rome"
+msgstr ""
+
+msgctxt "trait"
+msgid "Sailor"
+msgstr ""
+
+msgctxt "trait"
+msgid "Star Spawn"
+msgstr ""
+
+msgctxt "trait"
+msgid "Stowaway"
+msgstr ""
+
+msgctxt "trait"
+msgid "Student"
+msgstr ""
+
+msgctxt "trait"
+msgid "Symbiote"
+msgstr ""
+
+msgctxt "trait"
+msgid "Tandem"
+msgstr ""
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } is driven <b>insane</b>."
+msgstr "${ investigator.name }已<b>发疯</b>。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } is <b>killed</b>."
+msgstr "${ investigator.name }已<b>阵亡</b>。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } suffers 1 physical or mental trauma <i>(their choice)</i>."
+msgstr "${ investigator.name }受到1点肉体或精神创伤<i>(自行选择)</i>。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤和${ effect.physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } heals ${ mental } mental trauma."
+msgid_plural "${ investigator.name } heals ${ mental } mental trauma."
+msgstr[0] "${ investigator.name }治愈${ mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } heals ${ physical } physical trauma."
+msgid_plural "${ investigator.name } heals ${ physical } physical trauma."
+msgstr[0] "${ investigator.name }治愈${ physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.physical }点肉体创伤。"
+
+msgctxt "masculine"
+msgid "Alive"
+msgstr "幸存"
+
+msgctxt "masculine"
+msgid "Resigned"
+msgstr "已撤退"
+
+msgctxt "masculine"
+msgid "Defeated: physical trauma"
+msgstr "被击败: 肉体创伤"
+
+msgctxt "masculine"
+msgid "Defeated: mental trauma"
+msgstr "被击败: 精神创伤"
+
+msgctxt "masculine"
+msgid "Defeated: no trauma"
+msgstr "被击败: 没有创伤"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "${ investigator.name } reads <b>${ sectionName }</b>"
+msgstr "${ investigator.name }阅读<b>${ sectionName }</b>"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "If <i>${ card.name }</i> is not listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>不在冒险日志中的‘${ entry.section }’底下。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "If <i>${ card.name }</i> is listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>在冒险日志中的‘${ entry.section }’底下。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "Since ${ list } has a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } all have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+#, javascript-format
+msgctxt "masculine"
+msgid "Since ${ list } does not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } do not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中没有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+msgctxt "masculine"
+msgid "Killed"
+msgstr ""
+
+msgctxt "masculine"
+msgid "Insane"
+msgstr ""
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } is driven <b>insane</b>."
+msgstr "${ investigator.name }已<b>发疯</b>。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } is <b>killed</b>."
+msgstr "${ investigator.name }已<b>阵亡</b>。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } suffers 1 physical or mental trauma <i>(their choice)</i>."
+msgstr "${ investigator.name }受到1点肉体或精神创伤<i>(自行选择)</i>。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤和${ effect.physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } heals ${ mental } mental trauma."
+msgid_plural "${ investigator.name } heals ${ mental } mental trauma."
+msgstr[0] "${ investigator.name }治愈${ mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } heals ${ physical } physical trauma."
+msgid_plural "${ investigator.name } heals ${ physical } physical trauma."
+msgstr[0] "${ investigator.name }治愈${ physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.physical }点肉体创伤。"
+
+msgctxt "feminine"
+msgid "Alive"
+msgstr "幸存"
+
+msgctxt "feminine"
+msgid "Resigned"
+msgstr "已撤退"
+
+msgctxt "feminine"
+msgid "Defeated: physical trauma"
+msgstr "被击败: 肉体创伤"
+
+msgctxt "feminine"
+msgid "Defeated: mental trauma"
+msgstr "被击败: 精神创伤"
+
+msgctxt "feminine"
+msgid "Defeated: no trauma"
+msgstr "被击败: 没有创伤"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "${ investigator.name } reads <b>${ sectionName }</b>"
+msgstr "${ investigator.name }阅读<b>${ sectionName }</b>"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "If <i>${ card.name }</i> is not listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>不在冒险日志中的‘${ entry.section }’底下。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "If <i>${ card.name }</i> is listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>在冒险日志中的‘${ entry.section }’底下。"
+
+msgctxt "feminine"
+msgid "Physical trauma"
+msgstr "肉体创伤"
+
+msgctxt "feminine"
+msgid "Mental trauma"
+msgstr "精神创伤"
+
+msgctxt "feminine"
+msgid "Defeated"
+msgstr "被击败"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "Since ${ list } has a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } all have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+#, javascript-format
+msgctxt "feminine"
+msgid "Since ${ list } does not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } do not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中没有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+msgctxt "feminine"
+msgid "Killed"
+msgstr ""
+
+msgctxt "feminine"
+msgid "Insane"
+msgstr ""
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } is driven <b>insane</b>."
+msgstr "${ investigator.name }已<b>发疯</b>。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } is <b>killed</b>."
+msgstr "${ investigator.name }已<b>阵亡</b>。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } suffers 1 physical or mental trauma <i>(their choice)</i>."
+msgstr "${ investigator.name }受到1点肉体或精神创伤<i>(自行选择)</i>。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental and ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤和${ effect.physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } heals ${ mental } mental trauma."
+msgid_plural "${ investigator.name } heals ${ mental } mental trauma."
+msgstr[0] "${ investigator.name }治愈${ mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.mental } mental trauma."
+msgstr[0] "${ investigator.name }受到${ effect.mental }点精神创伤。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } heals ${ physical } physical trauma."
+msgid_plural "${ investigator.name } heals ${ physical } physical trauma."
+msgstr[0] "${ investigator.name }治愈${ physical }点肉体创伤。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgid_plural "${ investigator.name } suffers ${ effect.physical } physical trauma."
+msgstr[0] "${ investigator.name }受到${ effect.physical }点肉体创伤。"
+
+msgctxt "nonbinary"
+msgid "Alive"
+msgstr "幸存"
+
+msgctxt "nonbinary"
+msgid "Resigned"
+msgstr "已撤退"
+
+msgctxt "nonbinary"
+msgid "Defeated: physical trauma"
+msgstr "被击败: 肉体创伤"
+
+msgctxt "nonbinary"
+msgid "Defeated: mental trauma"
+msgstr "被击败: 精神创伤"
+
+msgctxt "nonbinary"
+msgid "Defeated: no trauma"
+msgstr "被击败: 没有创伤"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "${ investigator.name } reads <b>${ sectionName }</b>"
+msgstr "${ investigator.name }阅读<b>${ sectionName }</b>"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "If <i>${ card.name }</i> is not listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>不在冒险日志中的‘${ entry.section }’底下。"
+
+#, javascript-format
+msgctxt "nonbinary"
+msgid "If <i>${ card.name }</i> is listed under ‘${ entry.section }’ in your Campaign Log."
+msgstr "如果<i>${ card.name }</i>在冒险日志中的‘${ entry.section }’底下。"
+
+msgctxt "nonbinary"
+msgid "Physical trauma"
+msgstr "肉体创伤"
+
+msgctxt "nonbinary"
+msgid "Mental trauma"
+msgstr "精神创伤"
+
+msgctxt "nonbinary"
+msgid "Defeated"
+msgstr "被击败"
+
+msgctxt "nonbinary"
+msgid "Killed"
+msgstr ""
+
+msgctxt "nonbinary"
+msgid "Insane"
+msgstr ""
+
+msgctxt "Traits"
+msgid "All"
+msgstr "全部"
+
+msgctxt "releaseNotes"
+msgid "Fan-made cards + Barkham Horror"
+msgstr "非官方卡牌 + 狗镇奇谈"
+
+msgctxt "releaseNotes"
+msgid "Starting with this release, there is a new setting to unlock some 'unofficial' content when searching for cards and building decks. While fan-made campaigns have been available for some time, the cards associated with them have not been searchable. To start, this includes the cards released as part of the <i>Barkham Horror</i> promotional set, as well as the excellent <i>Alice in Wonderland</i> campaign by The Beard."
+msgstr "从这个版本开始，有一个新设置可以在搜寻卡牌和构建牌组时解锁一些“非官方”内容。虽然非官方剧本的支援已经有一段时间了，但与之相关的卡片还无法搜寻。作为开始，首先会加入 《狗镇奇谈》推广扩充之中的卡牌，以及The Beard杰出的《诡境梦游》剧本之中的卡牌。"
+
+msgctxt "releaseNotes"
+msgid "- To enable this feature, simply check the box for <b>Show Fan-made cards</b> under <i>Settings</i>. If you aren't interested in fan-made content, you don't have to change anything, by default you won't see these cards in the app."
+msgstr "- 要启用此功能，只需勾选<i>设置</i>底下的<b>显示非官方卡牌</b>。如果你对非官方制作的内容不感兴趣，则无需更改任何设定，默认情况下你不会在APP中看到这些卡片。"
+
+msgctxt "releaseNotes"
+msgid "- Decks containing 'fan-made' cards (including <i>Barkham Horror</i>), cannot be uploaded or saved to ArkhamDB. When editing an ArkhamDB deck, these custom cards will be hidden."
+msgstr "- 含有“非官方”卡牌（包括《狗镇奇谈》）的牌组不能上传或保存到ArkhamDB。编辑ArkhamDB的牌组时，这些自定义卡片将被隐藏。"
+
+msgctxt "releaseNotes"
+msgid "- Fan-made cards are shown with a small watermark icon indicating what set they came from, so you can tell they are unofficial."
+msgstr "- 非官方卡片带有一个小的浮水印图标，标示它们来自哪个系列，因此你可以分辨出它们是非官方的内容。"
+
+msgctxt "releaseNotes"
+msgid "Have some fan-made content you'd like to see in the app, let me know at [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)."
+msgstr "如果你希望APP中能加入其他非官方制作的内容，请通过[arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)告诉我。"
+
+msgctxt "releaseNotes"
+msgid "Campaign sharing released!"
+msgstr "剧本分享功能发布！"
+
+msgctxt "releaseNotes"
+msgid "At long last, the ability to share campaigns has been released on both iOS and Android! This has been one of the most requested features from the start, but as it required a completely new set of servers to be written (and paid for), it took me some time to get it right. You can of course continue using the app exactly as it is, but if you find yourself using multiple devices or want to share an in-progress campaign with friends so everyone can collaborate on it, this is the feature for you."
+msgstr "终于，分享剧本的功能已经在 iOS和Android上发布了！这是自始至终就有最多人要求的功能之一，但由于它需要编写一组全新的伺服器(而且要付费)，所以我花了一些时间才完成。当然你可以照原本的方式继续使用此APP，但如果你想要使用多个装置或想与朋友分享进行中的剧本，以便每个人都可以协作，这就是你需要的功能。"
+
+msgctxt "releaseNotes"
+msgid "- First sign up for an <b>Arkham Cards</b> account via the <i>Settings</i> tab, to unlock these features. Don't forget to set your handle so your friends can find you on the app."
+msgstr "- 首先在<i>设置</i>页面注册一个<b>Arkham Cards</b>帐户，以解锁这些功能。不要忘记设定你的名称，以便你的朋友可以在APP上找到你。"
+
+msgctxt "releaseNotes"
+msgid "- On the main screen of every campaign (or when creating a new one), there is a new option to 'Upload' the campaign to the cloud. This will cause the campaign to be synced between all of your devices."
+msgstr "- 在每个剧本的主画面上(或创建新剧本时)，有一个新选项可将活动“上传”到云端。这将使剧本在你的所有装置之间同步。"
+
+msgctxt "releaseNotes"
+msgid "- After uploading the campaign, you'll find a new option on the campaign to <b>Edit players</b>. Simply select your friends and the campaign will pop up in their app as well."
+msgstr "- 在上传剧本资料后，你会在剧本页面找到一个新选项，用于<b>编辑玩家</b>。只需选择你的朋友，剧本就会出现在他们的APP中。"
+
+msgctxt "releaseNotes"
+msgid "- Then just use the campaign as normal -- decisions and changes that you make will be synced automatically with everyone, including the chaos bag."
+msgstr "- 然后，如往常一样使用该剧本——你所做的决定和变更将自动与所有人同步，包括混乱袋。"
+
+msgctxt "releaseNotes"
+msgid "- If someone else saves your deck for you at the end of a scenario, you'll need to open the campaign to <b>Claim the previous scneario's XP</b> for yourself."
+msgstr "- 如果其他人在冒险结束时替你储存牌组，你需要自己打开剧本页面以<b>取得前一场冒险的经验</b>。"
+
+msgctxt "releaseNotes"
+msgid "If you like to make changes to your decks on ArkhamDB as well as in the app, just pop open the app and make sure you see your latest deck updates there. After opening the app it should remain in sync, but if you use the app infrequently the ArkhamDB login might expire and need to be authorized."
+msgstr "如果你想在ArkhamDB和APP中更改您的套牌，只需打开APP，确定你在看到的是最新更新的牌组。打开APP后，它应该会保持同步，但如果你不经常使用此APP，ArkhamDB的登入可能会过期并需要重新授权。"
+
+msgctxt "releaseNotes"
+msgid "Find overlap between decks"
+msgstr "找出牌组之间的重复"
+
+msgctxt "releaseNotes"
+msgid "If you build decks for multiple players from a single card collection, this release is for you. By adding the decks to a shared campaign, the app will calculate which cards are included in too many decks (based on your collection)."
+msgstr "如果你在某个卡牌收藏中为多位玩家构建牌组，则此更新能解决你的问题。借由将牌组加入到共享剧本中，此APP能够计算出哪些卡片出现在太多牌组中(根据你的收藏)。"
+
+msgctxt "releaseNotes"
+msgid "If the deck has been added to a campaign, you'll also see this on the bottom of each deck in that campaign."
+msgstr "如果牌组已加入到剧本中，你也能在该剧本中每个牌组的底部看到此资讯。"
+
+msgctxt "releaseNotes"
+msgid "Edge of the Earth campaign is now out"
+msgstr "暗与地球之界剧本释出"
+
+msgctxt "releaseNotes"
+msgid "The full setup instructions for Edge of the Earth campaigns are now available in the app! This was the largest single drop of campaign content in the history of the game and a large group of volunteers helped prepare the story text so I could focus on the new mechanics to get this out as close to release date as possible."
+msgstr "现在APP中已提供《暗与地球之界》剧本的完整设置说明！这是游戏历年来最大的一次剧本内容释出，许多志愿者帮助准备了故事文本，使我能专注于新机制上，才能尽量在官方发布日期后不久更新。"
+
+msgctxt "releaseNotes"
+msgid "Frost tokens ([frost]) are also now available in the digital chaos bags for all Edge of the Earth campaigns."
+msgstr "冰霜标记([frost])现在也能在《暗与地球之界》剧本的数位混乱袋中使用。"
+
+msgctxt "releaseNotes"
+msgid "Stay warm out there!"
+msgstr "记得保暖！"
+
+msgctxt "releaseNotes"
+msgid "Newly designed chaos odds calculator"
+msgstr "新设计的混乱概率计算机"
+
+msgctxt "releaseNotes"
+msgid "<center>\"Never tell me the odds!\" - Han Solo</center>"
+msgstr "<center>\"永远别跟我说几率！\" - 韩·索罗</center>"
+
+msgctxt "releaseNotes"
+msgid "Sorry Han, this isn't the feature for you. When it came time to try to work [bless] and [curse] tokens into the existing odds calculator, this app's visual designer (Eugene Sarnetsky) worked hard to reimagine how to present the mathy information in a more intuitive and visual manner."
+msgstr "抱歉了，韩。这功能不适合你。在尝试将[bless]和[curse]标记加入现有的概率计算机时，此APP的视觉设计师(Eugene Sarnetsky)努力重新构想如何以更直观的方式呈现数学信息。"
+
+msgctxt "releaseNotes"
+msgid "As you can see below, the results are incredible:"
+msgstr "正如你在底下看到的，结果超棒："
+
+msgctxt "releaseNotes"
+msgid "In addition to giving you the numeric pass/fail rate as before, the new visual stacking of tokens based on their current modifiers lets you quickly intuit how much you stand to gain with an extra +1 to your skill value, without having to mess with the difficulty controls at all."
+msgstr "除了像以前一样给你数字的成功/失败机率，新的标记视觉堆叠让你可以快速直观地得知：根据其当前修正值，当你的技能值额外+1时，可以增加多少胜率，而不用弄乱难度控制。"
+
+msgctxt "releaseNotes"
+msgid "You'll also see small bands of color to represent [bless] and [curse] worked into the display. These are spaced to show how much your odds of passing changes if you draw a single [bless] or [curse] token: in the above picture a single [curse] token draw will cause 47% of the tokens in the bag to now result in a failure -- not great!"
+msgstr "你还会在画面中看到代表[bless]和[curse]的小色带。这些区域显示如果你抽出1个[bless]或[curse]标记，你成功机率的变化：在上图中，抽出1个[curse]标记将导致混乱袋中47%的标记结算结果从成功改为失败——这可不妙！"
+
+msgctxt "releaseNotes"
+msgid "Down below you can also see the odds of drawing a [bless]/[curse] token based on the current bag contents. Here the adjustment to your success odds is shown as a range, the first number being drawing one token, the second if you were to draw multiple."
+msgstr "在下方，你还可以看到根据当前混乱袋内容，抽到[bless]/[curse]标记的机率。在这里，你成功机率的调整是一个范围，前面的数字是抽到一个标记的调整值，后面的数字是抽到多个。"
+
+msgctxt "releaseNotes"
+msgid "Support for fan-made campaigns"
+msgstr "支援非官方剧本"
+
+msgctxt "releaseNotes"
+msgid "Did you know that this game has a thriving community of homebrew content creators? Well it does, and starting today, you'll start to find some of these campaigns and side-scenarios in the app."
+msgstr "你知道这个游戏有一个蓬勃发展的自制内容创作者社群吗？没错，从今天开始，你将能在APP中找到其中一些剧本和独立冒险。"
+
+msgctxt "releaseNotes"
+msgid "Adding more campaigns will be an ongoing effort, but as of now we the following campaigns are available:"
+msgstr "我们将会持续加入更多剧本，截至目前为止，我们提供以下剧本:"
+
+msgctxt "releaseNotes"
+msgid "- Alice in Wonderland by The Beard"
+msgstr "- The Beard，《诡境梦游》"
+
+msgctxt "releaseNotes"
+msgid "- Dark Matter by Axolotl"
+msgstr "- Axolotl，《黑暗物质》"
+
+msgctxt "releaseNotes"
+msgid "- Crown of Egil by The Mad Juggler"
+msgstr ""
+
+msgctxt "releaseNotes"
+msgid "- Call of the Plaguebearer by Walker Graves"
+msgstr ""
+
+msgctxt "releaseNotes"
+msgid "As for standalone scenarios:"
+msgstr "独立冒险部分:"
+
+msgctxt "releaseNotes"
+msgid "- Consternation on the Constellation - by The Mythos Busters"
+msgstr ""
+
+msgctxt "releaseNotes"
+msgid "If you are a content creator who is interested in getting your (completed) campaign into the app, you can reach me at [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)."
+msgstr "如果你是内容创建者，并且有兴趣将你(已完成的)的剧本加入APP，你可以通过[arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)与我联系。"
+
+msgctxt "releaseNotes"
+msgid "Drafting player decks"
+msgstr "抽选玩家牌"
+
+msgctxt "releaseNotes"
+msgid "As a follow up to the earlier Ultimatum of Chaos release, the app now supports building a deck via a set of drafting rules. Choose what packs you want to pull from and how big each draft 'hand' should be, and build your deck one card at a time."
+msgstr "作为先前“混乱的究极试炼”版本的后续，此APP现在支持透过一组抽选规则构建套牌。选择你想抽牌的扩充包以及每一批“手牌”的大小，一次抽选一张牌，构建你的牌组。"
+
+msgctxt "releaseNotes"
+msgid "- You can find this feature on the deck edit screen in the menu."
+msgstr "- 您可以在牌组编辑画面的选单上找到此功能。"
+
+msgctxt "releaseNotes"
+msgid "- Only level cards / decks can be drafted."
+msgstr "- 只能抽选等级0卡牌/牌组。"
+
+msgctxt "releaseNotes"
+msgid "- Given their unique deck-building restrictions, the app does not yet support generating random decks for Lola Hayes or Joe Diamond. This is something that I will try to address in a future release."
+msgstr "- 由于萝拉·海耶斯和乔·戴蒙德有独特的牌组规则，这个APP还无法替他们建立随机牌组或抽选卡牌。这是我将在未来版本中尝试解决的问题。"
+
+msgctxt "releaseNotes"
+msgid "Ultimatum of Chaos"
+msgstr "混乱的究极试炼"
+
+msgctxt "releaseNotes"
+msgid "The app now supports building random decks following the steps set out by the optional 'Ultimatum of Chaos' rule. When constructing a new deck, a new option lets you choose a 'special deck', which can be used to either create the FFG suggested starter deck or a fully randomly generated one."
+msgstr "此APP现在支援(可选的)“混乱的究极试炼”规则，按照规定的步骤构建随机牌组。在构建新牌组时，一个新选项可让你选择“特殊套牌”，可用来构建FFG建议的入门套牌或完全随机生成的套牌。"
+
+msgctxt "releaseNotes"
+msgid "- The app will use your defined collection to try to generate the deck."
+msgstr "- 此APP将使用你定义的收藏来尝试生成牌组。"
+
+msgctxt "releaseNotes"
+msgid "- Support the deckbuilding focused permanents included in the Edge of the Earth Investigator expansion (Underworld Support/Forced Learning)."
+msgstr "- 支援构建牌组用的永久卡(地下支持/强制学习)(包含在暗与地球之界调查员扩充包)。"
+
+msgctxt "releaseNotes"
+msgid "- Shows the deck before you actully save it, so you can re-roll if it produced something particularly unviable."
+msgstr "- 在实际储存之前，显示牌组，因此如果产生了特别不可行的东西，你可以重骰。"
+
+msgctxt "releaseNotes"
+msgid "Note: You might need to refresh the cards once (using <b>Check for card updates</b>)."
+msgstr "注意：你可能需要重新读取一次卡牌资料(使用<b>检查卡牌更新</b>)。"
+
+msgctxt "releaseNotes"
+msgid "Settings synchronization"
+msgstr "设置档同步"
+
+msgctxt "releaseNotes"
+msgid "Good news for players who use Arkham Cards with more than one device, if you sign into your Arkham Cards account your settings will now sync between devices automatically!"
+msgstr "好消息！在超过一个装置上使用Arkham Cards APP的玩家们，如果你登入Arkham Cards的帐户，你的设置资料现在会自动在所有装置之间同步了！"
+
+msgctxt "releaseNotes"
+msgid "- This includes your collection + spoiler settings, as well as many general app preferences."
+msgstr "- 包括你的收藏 + 防据透设定，以及其他的app偏好设定。"
+
+msgctxt "releaseNotes"
+msgid "I've had some reports of slower performance on some devices, and have a new <i>\"Low Memory Mode\"</i> setting to try out."
+msgstr "我收到一些在某些装置上效能降低的报告，因此尝试新增了<i>“低记忆体模式”</i>的设定。"
+
+msgctxt "releaseNotes"
+msgid "- If you've been experiencing slow app behavior in anyway, please try it out."
+msgstr "- 如果你曾经感到APP有任何卡顿，请尝试看看。"
+
+msgctxt "releaseNotes"
+msgid "- And if you try it out, send me an email at arkhamcards@gmail.com, I would love to hear how it is working in the wild."
+msgstr "- 如果你尝试了，请寄封email给我，寄到arkhamcards@gmail.com，我很想知道这个模式广泛的运作状况。"
+
+msgctxt "releaseNotes"
+msgid "BTW, support for the newly announced mechanic from The Scarlet Keys is in the works, so stay tuned."
+msgstr "顺带一提，在绯红密钥中最新发表的新机制的支援已经在开发中了，敬请期待。"
+
+msgctxt "releaseNotes"
+msgid "Cyclopean Foundations"
+msgstr ""
+
+msgctxt "releaseNotes"
+msgid "This release adds the newly finished fan-made Cyclopean Foundations campaign by The Beard."
+msgstr "这次更新加入了刚完成的，由The Beard制作的Cyclopean Foundations非官方剧本。"
+
+msgctxt "releaseNotes"
+msgid "- Includes a fully guided mode, with all setup and resolution text accounted for."
+msgstr "- 加入了完整的剧本模式，包含所有冒险设置和结局文字。"
+
+msgctxt "releaseNotes"
+msgid "This update also adds support for \"The Colour Out of Space\", a fan-made standalone scenario."
+msgstr "这次更新也加入了一个非官方的独立冒险\"The Colour Out of Space\"。"
+
+msgctxt "releaseNotes"
+msgid "Preview Cards"
+msgstr "卡牌预览"
+
+msgctxt "releaseNotes"
+msgid "This release introduces faster access to previewed cards."
+msgstr "这次更新提供更快速的卡牌预览。"
+
+msgctxt "releaseNotes"
+msgid "- Includes the previewed <b>Customizable</b> cards from The Scarlet Keys investigator expansion."
+msgstr "- 包括能预览绯红密钥调查员扩展之中的<b>Customizable</b>卡牌。"
+
+msgctxt "releaseNotes"
+msgid "- In order to maintain compatibility with ArkhamDB, these cards are not shown by default. You can opt into them by enabling the <b>Show Fan-made cards</b> under <i>Settings</i>."
+msgstr "- 为了维持与ArkhamDB的相容性，这些卡牌预设不会显示。你可以启用<i>设置</i>底下的<b>显示非官方卡牌</b>来调整这些卡牌。"
+
+msgctxt "releaseNotes"
+msgid "The Scarlet Keys Campaign"
+msgstr "绯红密钥剧本"
+
+msgctxt "releaseNotes"
+msgid "This release adds support for the newly released Scarlet Keys campaign expansion."
+msgstr "这次更新增加了对新发售的绯红密钥剧本扩展的支援"
+
+msgctxt "releaseNotes"
+msgid "- As you may know (or will soon find out), this is by far the most ambitious campaign we've ever seen in Arkham. I've done my best to handle the new features as faithfully as I can in the app, and am pretty pleased with the implementation."
+msgstr "- 众所皆知(或你很快就会知道)，这是有史以来在诡镇里最盛大的剧本。我已尽我所能在此APP中呈现这些新的功能，我自认做得还不错。"
+
+msgctxt "releaseNotes"
+msgid "- I've done my best to test the corners of this campaign, but it is quite possible there will be some mistakes or bugs in the implementation still - if you find any please let me know at [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com) and I will try to fix them as quickly as possible. But given the expansive nature of the campaign, it is possible in a worst case scenario that some progress might need to be re-entered."
+msgstr "- 我已经尽我所能测试了此剧本中可能遇到的所有状况，但仍然可能会有一些我没有测试到的地方 - 如果你找到任何错误或漏洞，请联系我[arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)，我将尽快修正。鉴于这个剧本的广泛性，最糟的状况下可能需要花很多功夫修正。"
+
+msgctxt "releaseNotes"
+msgid "- I've also taken the liberty of including some small story reminders when map locations become unlocked through the course of play. I tried my best to capture the story text, and hope you find it helpful (in case like me you sometimes go weeks between game sessions)."
+msgstr "- 游戏进程中，在地图上的地点解锁时，我也加入了一些小的剧情提醒。我尽力抓住剧情文本的精随，希望你能觉得实用(例如你和我一样有时候隔了好几周才能继续游戏)。"
+
+msgctxt "releaseNotes"
+msgid "As always, many thanks to my many supporters on Patreon -- I appreciate your support which helps make all of this possible."
+msgstr "我要对Patreon上我的赞助者们献上无尽的感谢 -- 我很感激你们的支持，使这一切都得以实现。"
+
+msgctxt "releaseNotes"
+msgid "Feast of Hemlock Vale Campaign"
+msgstr "铁杉谷盛宴剧本"
+
+msgctxt "releaseNotes"
+msgid "This release adds support for the newly released Feast of Hemlock Vale campaign expansion."
+msgstr "这次更新新增支援新发布铁杉谷盛宴剧本扩展。"
+
+msgctxt "releaseNotes"
+msgid "- I've done my best to test the corners of this campaign, but it is quite possible there will be some mistakes or bugs in the implementation still. If you find any please let me know at [arkhamcards@gmail.com](mailto:arkhamcards@gmail.com) and I will work to fix them as quickly as possible."
+msgstr "- 我已经尽我所能测试了此剧本中可能遇到的所有状况，但仍然可能会有一些我没有测试到的地方 - 如果你找到任何错误或漏洞，请联系我[arkhamcards@gmail.com](mailto:arkhamcards@gmail.com)，我将尽快修正。"
+
+msgctxt "releaseNotes"
+msgid "Also just a friendly plug to upload campaigns and share them with your friends using your Arkham Cards account -- it makes it easier for everyone to keep up with progress while managing their own decks."
+msgstr "此外，您还可以使用您的 Arkham Cards 帐户上传活动并与您的朋友分享，这样大家可以在管理自己的卡组的同时更轻松地跟上进度。"
+
+msgctxt "releaseNotes"
+msgid "And as always, many thanks to my many supporters on Patreon -- I appreciate your support which helps keep the servers running."
+msgstr "我要对Patreon上我的赞助者们献上无尽的感谢 -- 我很感激你们的支持，让伺服器得以继续运行。"
+
+#, javascript-format
+msgctxt "filter"
+msgid "${ cycleNames[cycle_position] } Cycle"
+msgstr "${ cycleNames[cycle_position] }循环"
+
+msgctxt "Types"
+msgid "All"
+msgstr "全部"
+
+msgctxt "card-type"
+msgid "Investigator"
+msgstr "调查员"
+
+msgctxt "SubTypes"
+msgid "All"
+msgstr "全部"
+
+msgctxt "cost"
+msgid "Even"
+msgstr "单数"
+
+msgctxt "cost"
+msgid "Odd"
+msgstr "双数"
+
+msgctxt "Actions"
+msgid "All"
+msgstr "全部"
+
+msgctxt "action"
+msgid "Fight"
+msgstr "攻击"
+
+msgctxt "action"
+msgid "Engage"
+msgstr "交战"
+
+msgctxt "action"
+msgid "Investigate"
+msgstr "调查"
+
+msgctxt "action"
+msgid "Play"
+msgstr "打出"
+
+msgctxt "action"
+msgid "Draw"
+msgstr "抽牌"
+
+msgctxt "action"
+msgid "Move"
+msgstr "移动"
+
+msgctxt "action"
+msgid "Evade"
+msgstr "躲避"
+
+msgctxt "action"
+msgid "Resource"
+msgstr "资源"
+
+msgctxt "parley"
+msgid "Parley"
+msgstr "谈判"
+
+msgctxt "Encounter Sets"
+msgid "All"
+msgstr "全部"
+
+msgctxt "Illustrators"
+msgid "All"
+msgstr "全部"
+
+msgctxt "Taboo List"
+msgid "None"
+msgstr "无"
+
+#, javascript-format
+msgctxt "Taboo List"
+msgid "Current - ${ latestTabooSet.name }"
+msgstr "当前 - ${ latestTabooSet.name }"
+
+msgctxt "Taboo List"
+msgid "Current"
+msgstr "当前"
+
+msgctxt "fan-made-uses"
+msgid "Blame"
+msgstr "怪罪"
+
+msgctxt "fan-made-uses"
+msgid "Poems"
+msgstr "诗文"
+
+msgctxt "fan-made-uses"
+msgid "Portions"
+msgstr "茶点"
+
+msgctxt "uses"
+msgid "Supplies"
+msgstr "补给"
+
+msgctxt "uses"
+msgid "Evidence"
+msgstr "证据"
+
+msgctxt "uses"
+msgid "Time"
+msgstr "次数"
+
+msgctxt "uses"
+msgid "Treats"
+msgstr ""
+
+msgctxt "Slots"
+msgid "All"
+msgstr "全部"
+
+msgctxt "Uses"
+msgid "All"
+msgstr "全部"
+
+msgctxt "Draw Cards"
+msgid "All"
+msgstr "全部"
+
+msgctxt "header"
+msgid "Asset"
+msgid_plural "Assets"
+msgstr[0] "支援"
+
+msgctxt "header"
+msgid "Event"
+msgid_plural "Events"
+msgstr[0] "事件"
+
+msgctxt "header"
+msgid "Skill"
+msgid_plural "Skills"
+msgstr[0] "技能"
+
+msgctxt "header"
+msgid "Treachery"
+msgid_plural "Treacheries"
+msgstr[0] "诡计"
+
+msgctxt "header"
+msgid "Enemy"
+msgid_plural "Enemies"
+msgstr[0] "敌人"
+
+msgctxt "header"
+msgid "Location"
+msgid_plural "Locations"
+msgstr[0] "地点"
+
+msgctxt "header"
+msgid "Story"
+msgid_plural "Stories"
+msgstr[0] "故事"
+
+msgctxt "header"
+msgid "Act"
+msgid_plural "Acts"
+msgstr[0] "场景"
+
+msgctxt "header"
+msgid "Agenda"
+msgid_plural "Agendas"
+msgstr[0] "密谋"
+
+msgctxt "header"
+msgid "Investigator"
+msgid_plural "Investigators"
+msgstr[0] "调查员"
+
+msgctxt "header"
+msgid "Scenario"
+msgid_plural "Scenarios"
+msgstr[0] "冒险"
+
+msgctxt "header"
+msgid "Key"
+msgid_plural "Keys"
+msgstr[0] "密钥"
+
+msgctxt "header"
+msgid "Enemy-Location"
+msgid_plural "Enemy-Locations"
+msgstr[0] ""
+msgstr[1] ""
+
+msgctxt "tags"
+msgid "Add"
+msgstr "新增"
+
+msgctxt "tags"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "tags"
+msgid "None"
+msgstr "无"
+
+msgctxt "Tarot Card"
+msgid "None"
+msgstr "无"
+
+msgctxt "Tarot Card"
+msgid "Judgement · XX"
+msgstr "审判·XX"
+
+msgctxt "Tarot Card"
+msgid "Judgement · XX (Inverted)"
+msgstr "审判·XX(逆位)"
+
+msgctxt "versus abbreviation"
+msgid "VS"
+msgstr "VS"
+
+msgctxt "sort"
+msgid "Type"
+msgstr "类型"
+
+msgctxt "sort"
+msgid "Class"
+msgstr "职阶"
+
+msgctxt "sort"
+msgid "Cost"
+msgstr "费用"
+
+msgctxt "sort"
+msgid "Pack"
+msgstr "扩充包"
+
+msgctxt "sort"
+msgid "Cycle"
+msgstr "循环"
+
+msgctxt "sort"
+msgid "Title"
+msgstr "标题"
+
+msgctxt "sort"
+msgid "Encounter Set"
+msgstr "遭遇组"
+
+msgctxt "sort"
+msgid "Level"
+msgstr "等级"
+
+msgctxt "sort"
+msgid "Card number"
+msgstr "卡牌号"
+
+msgctxt "sort"
+msgid "Slot"
+msgstr "槽位"
+
+msgctxt "card-chooser"
+msgid "Choose additional"
+msgstr ""
+
+msgctxt "lead-investigator"
+msgid "Lead"
+msgstr "队长"
+
+msgctxt "narration"
+msgid "Pause"
+msgstr "暂停"
+
+msgctxt "narration"
+msgid "Play"
+msgstr "播放"
+
+msgctxt "narration"
+msgid "Jump back"
+msgstr "倒回"
+
+msgctxt "narration"
+msgid "Playing audio"
+msgstr "播放语音"
+
+#, javascript-format
+msgctxt "narration"
+msgid "Audio speed: ${ rate }"
+msgstr "语音速度: ${ rate }"
+
+msgctxt "campaign_log_entry"
+msgid "Other."
+msgstr "其他。"
+
+msgctxt "Weakness Card"
+msgid "All"
+msgstr "全部"
+
+#, javascript-format
+msgctxt "mixed"
+msgid "Since ${ list } has a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } all have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+#, javascript-format
+msgctxt "mixed"
+msgid "Since ${ list } does not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgid_plural "Since ${ list } do not have a ${ supplyName }, they must read <b>${ sectionName }</b>."
+msgstr[0] "由于${ list }之中没有${ supplyName }，玩家必须阅读<b>${ sectionName }</b>。"
+
+msgctxt "tarot-reading"
+msgid "Chaos"
+msgstr "混乱"
+
+msgctxt "tarot-reading"
+msgid "Balance"
+msgstr "平衡"
+
+msgctxt "tarot-reading"
+msgid "Choice"
+msgstr "选择"
+
+msgctxt "tarot-reading"
+msgid "Destiny"
+msgstr "命运"
+
+msgctxt "tarot-reading"
+msgid "Observed"
+msgstr "观测"
+
+msgctxt "tarot-reading"
+msgid "Damned"
+msgstr "诅咒缠身"
+
+msgctxt "tarot-reading"
+msgid "Custom"
+msgstr "自定义"
+
+msgctxt "trauma"
+msgid "None"
+msgstr "无"
+
+msgctxt "campaign"
+msgid "Custom"
+msgstr "自订"
+
+msgctxt "new_campaign_type"
+msgid "Campaigns"
+msgstr "剧本"
+
+msgctxt "new_campaign_type"
+msgid "Standalones"
+msgstr "独立冒险"
+
+msgctxt "scenario"
+msgid "Custom"
+msgstr "自订"

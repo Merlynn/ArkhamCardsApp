@@ -3,10 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { find } from 'lodash';
 import { Brackets } from 'typeorm/browser';
 import RegexEscape from 'regex-escape';
-import { Navigation } from 'react-native-navigation';
+
 import { t } from 'ttag';
 
-import { SORT_BY_ENCOUNTER_SET, SortType, DeckId } from '@actions/types';
+import { SORT_BY_ENCOUNTER_SET, SortType, DeckId, Slots } from '@actions/types';
 import ArkhamSwitch from '@components/core/ArkhamSwitch';
 import CollapsibleSearchBox from '@components/core/CollapsibleSearchBox';
 import FilterBuilder, { FilterState } from '@lib/filters';
@@ -21,27 +21,28 @@ import {
   combineQueries,
   combineQueriesOpt,
 } from '@data/sqlite/query';
-import Card, { searchNormalize } from '@data/types/Card';
+import { InvestigatorChoice, searchNormalize } from '@data/types/Card';
 import { s, xs } from '@styles/space';
 import ArkhamButton from '@components/core/ArkhamButton';
 import StyleContext from '@styles/StyleContext';
 import DbCardResultList from './DbCardResultList';
 import DeckNavFooter, { PreLoadedDeckNavFooter } from '@components/deck/DeckNavFooter';
-import ActionButton from 'react-native-action-button';
 import AppIcon from '@icons/AppIcon';
 import { useFilterButton } from '../hooks';
-import { NOTCH_BOTTOM_PADDING } from '@styles/sizes';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import useDebouncedEffect from 'use-debounced-effect-hook';
 import { useSettingValue } from '@components/core/hooks';
 import { useParsedDeck } from '@components/deck/hooks';
+import { ParsedDeckContextProvider } from '@components/deck/DeckEditContext';
+import SimpleFab from '@components/core/SimpleFab';
+import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DIGIT_REGEX = /^[0-9]+$/;
 
 interface Props {
-  componentId: string;
   deckId?: DeckId;
-  baseQuery?: (filters: FilterState | undefined) => Brackets;
+  baseQuery?: (filters: FilterState | undefined, slots: Slots | undefined) => Brackets;
   mythosToggle?: boolean;
   showNonCollection?: boolean;
   selectedSorts?: SortType[];
@@ -51,7 +52,7 @@ interface Props {
   toggleMythosMode: () => void;
   clearSearchFilters: () => void;
 
-  investigator?: Card;
+  investigator?: InvestigatorChoice;
   headerItems?: React.ReactNode[];
   headerHeight?: number;
   mode?: 'story' | 'side' | 'extra';
@@ -224,7 +225,6 @@ function useExpandSearchButtons({
 const EMPTY_SEARCH_STATE: SearchState = {};
 
 export default function({
-  componentId,
   deckId,
   baseQuery,
   mythosToggle,
@@ -242,6 +242,7 @@ export default function({
   includeDuplicates,
   filterId,
 }: Props) {
+  const navigation = useNavigation();
   const { fontScale, colors } = useContext(StyleContext);
   const { lang, useCardTraits } = useContext(LanguageContext);
   const [searchText, setSearchText] = useState(false);
@@ -280,7 +281,7 @@ export default function({
     if (searchTerm === '' || !searchTerm) {
       return combineQueriesOpt(parts, 'and');
     }
-    const safeSearchTerm = `%${searchNormalize(searchTerm, lang)}%`;
+    const safeSearchTerm = `%${searchNormalize(searchTerm.trim(), lang)}%`;
     const searchRealName = lang !== 'en' && searchEnglish;
     parts.push(where(
       searchRealName ?
@@ -330,9 +331,15 @@ export default function({
     />
   );
 
-  const query = useMemo(() => {
+  const query = useCallback((slots: Slots | undefined) => {
     const queryParts: Brackets[] = [];
     const actuallyIncludeDuplicates = includeDuplicates;
+    // const specialtyBuilder = new FilterBuilder("specialty");
+    // return specialtyBuilder.illegalSpecialistFilter(
+    //   ["#drifter#", "#homeless#"],
+    //   ["survivor"]
+    // );
+
     if (mythosToggle) {
       if (mythosMode) {
         queryParts.push(MYTHOS_CARDS_QUERY);
@@ -345,7 +352,7 @@ export default function({
       }
     }
     if (baseQuery) {
-      queryParts.push(baseQuery(filters));
+      queryParts.push(baseQuery(filters, slots));
     }
     if (find(selectedSorts, s => s === SORT_BY_ENCOUNTER_SET)) {
       // queryParts.push(where(`c.encounter_code is not null OR linked_card.encounter_code is not null`));
@@ -363,14 +370,14 @@ export default function({
     );
   }, [baseQuery, filters, mythosToggle, selectedSorts, mythosMode, includeDuplicates, showCustomContent]);
   const filterQuery = useMemo(() => filters && FILTER_BUILDER.filterToQuery(filters, useCardTraits), [filters, useCardTraits]);
-  const [hasFilters, showFiltersPress] = useFilterButton({ componentId, filterId, baseQuery });
-  const renderFabIcon = useCallback(() => (
+  const [hasFilters, showFiltersPress] = useFilterButton({ filterId, baseQuery });
+  const renderFabIcon = useMemo(() => (
     <View style={styles.relative}>
       <AppIcon name="filter" color={colors.L30} size={24} />
       { hasFilters && <View style={styles.chiclet} /> }
     </View>
   ), [colors, hasFilters]);
-  const backPressed = useCallback(() => Navigation.pop(componentId), [componentId]);
+  const backPressed = useCallback(() => navigation.goBack(), [navigation]);
   const [expandSearchControls, expandSearchControlsHeight] = useExpandSearchButtons({
     hasFilters: !!filterQuery,
     mythosToggle,
@@ -384,64 +391,67 @@ export default function({
     toggleSearchText,
     toggleSearchBack,
   });
-  const parsedDeck = useParsedDeck(deckId, componentId);
+  const parsedDeck = useParsedDeck(deckId);
+  const insets = useSafeAreaInsets();
   return (
-    <CollapsibleSearchBox
-      prompt={t`Search for a card`}
-      advancedOptions={{
-        controls,
-        height: searchOptionsHeight(fontScale),
-      }}
-      searchTerm={searchTerm || ''}
-      onSearchChange={setSearchTerm}
-    >
-      { (handleScroll, showHeader) => (
-        <>
-          <DbCardResultList
-            componentId={componentId}
-            parsedDeck={parsedDeck}
-            filterId={filterId}
-            query={query}
-            filters={filters}
-            filterQuery={filterQuery || undefined}
-            textQuery={textQuery}
-            searchTerm={searchTerm}
-            sorts={selectedSorts}
-            investigator={investigator}
-            handleScroll={handleScroll}
-            showHeader={showHeader}
-            expandSearchControls={expandSearchControls}
-            expandSearchControlsHeight={expandSearchControlsHeight * ArkhamButton.computeHeight(fontScale, lang)}
-            headerItems={headerItems}
-            headerHeight={headerHeight}
-            showNonCollection={showNonCollection}
-            storyOnly={mode === 'story'}
-            specialMode={(mode === 'side' || mode === 'extra') ? mode : undefined}
-            mythosToggle={mythosToggle}
-            initialSort={initialSort}
-            footerPadding={deckId !== undefined ? DeckNavFooter.height : undefined}
-          />
-          { !!deckId && (
-            <>
-              <PreLoadedDeckNavFooter
-                componentId={componentId}
-                parsedDeckObj={parsedDeck}
-                control="fab"
-                onPress={backPressed}
-                mode={mode === 'extra' ? 'extra' : undefined}
-              />
-              <ActionButton
-                buttonColor={colors.D10}
-                renderIcon={renderFabIcon}
-                onPress={showFiltersPress}
-                offsetX={s + xs}
-                offsetY={NOTCH_BOTTOM_PADDING + s + xs}
-              />
-            </>
-          ) }
-        </>
-      ) }
-    </CollapsibleSearchBox>
+    <ParsedDeckContextProvider parsedDeckObj={parsedDeck}>
+      <CollapsibleSearchBox
+        prompt={t`Search for a card`}
+        advancedOptions={{
+          controls,
+          height: searchOptionsHeight(fontScale),
+        }}
+        searchTerm={searchTerm || ''}
+        onSearchChange={setSearchTerm}
+      >
+        { (handleScroll, showHeader) => (
+          <>
+            <DbCardResultList
+              deck={parsedDeck.deckT}
+              filterId={filterId}
+              query={query}
+              filters={filters}
+              filterQuery={filterQuery || undefined}
+              textQuery={textQuery}
+              searchTerm={searchTerm}
+              sorts={selectedSorts}
+              investigator={investigator}
+              handleScroll={handleScroll}
+              showHeader={showHeader}
+              expandSearchControls={expandSearchControls}
+              expandSearchControlsHeight={expandSearchControlsHeight * ArkhamButton.computeHeight(fontScale, lang)}
+              headerItems={headerItems}
+              headerHeight={headerHeight}
+              showNonCollection={showNonCollection}
+              storyOnly={mode === 'story'}
+              specialMode={(mode === 'side' || mode === 'extra') ? mode : undefined}
+              mythosToggle={mythosToggle}
+              initialSort={initialSort}
+              footerPadding={deckId !== undefined ? DeckNavFooter.height : undefined}
+            />
+            { !!deckId && (
+              <>
+                <PreLoadedDeckNavFooter
+                  parsedDeckObj={parsedDeck}
+                  control="fab"
+                  onPress={backPressed}
+                  mode={mode === 'extra' ? 'extra' : undefined}
+                />
+                <SimpleFab
+                  color={colors.D10}
+                  icon={renderFabIcon}
+                  onPress={showFiltersPress}
+                  accessiblityLabel={t`Filters`}
+                  position="right"
+                  offsetX={s + xs}
+                  offsetY={insets.bottom + s + xs}
+                />
+              </>
+            ) }
+          </>
+        ) }
+      </CollapsibleSearchBox>
+    </ParsedDeckContextProvider>
   );
 }
 

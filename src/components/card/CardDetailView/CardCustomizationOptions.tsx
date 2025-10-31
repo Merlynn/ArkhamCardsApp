@@ -10,7 +10,6 @@ import StyleContext from '@styles/StyleContext';
 import CardTextComponent from '../CardTextComponent';
 import RoundedFactionHeader from '@components/core/RoundedFactionHeader';
 import space, { s } from '@styles/space';
-import { DeckId } from '@actions/types';
 import { useCounter, useEffectUpdate, useFlag } from '@components/core/hooks';
 import RoundedFooterButton from '@components/core/RoundedFooterButton';
 import DeckPickerStyleButton from '@components/deck/controls/DeckPickerStyleButton';
@@ -21,10 +20,9 @@ import AppIcon from '@icons/AppIcon';
 import useCardList from '../useCardList';
 import LoadingCardSearchResult from '@components/cardlist/LoadingCardSearchResult';
 import { DeckOptionQueryBuilder } from '@data/types/DeckOption';
-import { Navigation } from 'react-native-navigation';
-import { CardSelectorProps } from '@components/campaignguide/CardSelectorView';
+
 import LanguageContext from '@lib/i18n/LanguageContext';
-import { useSimpleDeckEdits, xpString } from '@components/deck/hooks';
+import { xpString } from '@components/deck/hooks';
 import CardSearchResult from '@components/cardlist/CardSearchResult';
 import ArkhamButton from '@components/core/ArkhamButton';
 import CardSectionHeader from '@components/core/CardSectionHeader';
@@ -33,17 +31,16 @@ import RoundButton from '@components/core/RoundButton';
 import DeckButton from '@components/deck/controls/DeckButton';
 import { ArkhamSlimIcon } from '@icons/ArkhamIcon';
 import { MAX_WIDTH } from '@styles/sizes';
+import { DeckEditContext } from '@components/deck/DeckEditContext';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   card: Card;
   customizationOptions: CustomizationOption[];
   customizationChoices: CustomizationChoice[] | undefined;
   width: number;
   editable: boolean;
-  deckId: DeckId | undefined;
   setChoice: (code: string, choice: CustomizationChoice) => void;
-  mode?: 'edit' | 'upgrade' | 'view';
 }
 
 function XpBox({ small, checked, margin, disabled }: { disabled?: boolean; small?: boolean; checked?: boolean; margin?: boolean }) {
@@ -297,16 +294,14 @@ function ToggleCard({ card, selectedCodes, selectedCards, quantity, setSelection
   );
 }
 
-function ChooseCardAdvancedControl({ componentId, deckId, choice, editable, setChoice }: {
-  componentId: string;
+function ChooseCardAdvancedControl({ choice, editable, setChoice }: {
   card: Card;
-  deckId?: DeckId;
   setChoice: (choice: ChooseCardCustomizationChoice) => void;
   editable: boolean;
   choice: ChooseCardCustomizationChoice;
 }) {
   const { listSeperator } = useContext(LanguageContext);
-  const deckEditState = useSimpleDeckEdits(deckId);
+  const { deckEdits: deckEditState } = useContext(DeckEditContext);
   const inDeckCodes = useMemo(() => {
     const codes: string[] = [];
     forEach(deckEditState?.slots || {}, (count, code) => {
@@ -329,7 +324,7 @@ function ChooseCardAdvancedControl({ componentId, deckId, choice, editable, setC
       encodedChoice: codes.join('^'),
     })
   }, [choice, setSelected, setChoice]);
-  const [inDeckCards, loadingDeck] = useCardList(inDeckCodes, 'player');
+  const [inDeckCards, loadingDeck] = useCardList(inDeckCodes, 'player', false);
   const query = useMemo(() =>{
     if (!choice.option.card) {
       return undefined;
@@ -337,34 +332,20 @@ function ChooseCardAdvancedControl({ componentId, deckId, choice, editable, setC
     const builder = new DeckOptionQueryBuilder(choice.option.card, 0, 'custom');
     return builder.toQuery();
   }, [choice.option]);
-  const setDialogVisibleRef = useRef<(visible: boolean) => void>();
+  const navigation = useNavigation();
+  const setDialogVisibleRef = useRef<(visible: boolean) => void>(null);
   const showCardPicker = useCallback(() => {
     setDialogVisibleRef.current?.(false);
-    Navigation.push<CardSelectorProps>(componentId, {
-      component: {
-        name: 'Guide.CardSelector',
-        passProps: {
-          query,
-          selection,
-          selectedCards,
-          onSelect,
-          includeStoryToggle: true,
-          uniqueName: false,
-          max: choice.option.quantity || 1,
-        },
-        options: {
-          topBar: {
-            title: {
-              text: t`Select Cards`,
-            },
-            backButton: {
-              title: t`Back`,
-            },
-          },
-        },
-      },
+    navigation.navigate('Guide.CardSelector', {
+      query,
+      selection,
+      selectedCards,
+      onSelect,
+      includeStoryToggle: true,
+      uniqueName: false,
+      max: choice.option.quantity || 1,
     });
-  }, [onSelect, componentId, query, choice, selection, selectedCards]);
+  }, [navigation, onSelect, query, choice, selection, selectedCards]);
   const selectedText = useMemo(() => map(selectedCards, c => c.name).join(listSeperator), [selectedCards, listSeperator])
   const quantity = choice.option.quantity || 1;
   const title = editable ?
@@ -471,7 +452,6 @@ function TraitLine({ trait, editable, onRemove, index }: { trait: string; index:
 }
 
 function ChooseTraitAdvancedControl({ choice, editable, setChoice }: {
-  componentId: string;
   card: Card;
   setChoice: (choice: ChooseTraitCustomizationChoice) => void;
   editable: boolean;
@@ -486,7 +466,7 @@ function ChooseTraitAdvancedControl({ choice, editable, setChoice }: {
       choice: selectedTraits,
     });
   }, [selectedTraits]);
-  const setDialogVisibleRef = useRef<(visible: boolean) => void>();
+  const setDialogVisibleRef = useRef<(visible: boolean) => void>(null);
   const selectedText = useMemo(() => selectedTraits.join(listSeperator), [selectedTraits, listSeperator])
   const quantity = choice.option.quantity || 1;
   const title = editable ?
@@ -573,9 +553,7 @@ function ChooseTraitAdvancedControl({ choice, editable, setChoice }: {
   );
 }
 
-function AdvancedControl({ componentId, deckId, card, editable, choice, setChoice, allChoices }: {
-  componentId: string;
-  deckId?: DeckId;
+function AdvancedControl({ card, editable, choice, setChoice, allChoices }: {
   card: Card;
   editable: boolean;
   choice: AdvancedCustomizationChoice;
@@ -596,18 +574,15 @@ function AdvancedControl({ componentId, deckId, card, editable, choice, setChoic
     case 'choose_card':
       return (
         <ChooseCardAdvancedControl
-          componentId={componentId}
           card={card}
           editable={editable}
           choice={choice}
           setChoice={setChoice}
-          deckId={deckId}
         />
       );
     case 'choose_trait':
       return (
         <ChooseTraitAdvancedControl
-          componentId={componentId}
           card={card}
           editable={editable}
           choice={choice}
@@ -633,9 +608,7 @@ function AdvancedControl({ componentId, deckId, card, editable, choice, setChoic
 }
 
 interface LineProps {
-  componentId: string;
   card: Card;
-  deckId?: DeckId;
   option: CustomizationOption;
   showAll: boolean;
   mode?: 'edit' | 'upgrade' | 'view'
@@ -645,7 +618,7 @@ interface LineProps {
   setChoice: (code: string, choice: CustomizationChoice) => void;
 }
 
-function CustomizationLine({ componentId, card, option, deckId, editable, mode, choices, showAll, last, setChoice }: LineProps) {
+function CustomizationLine({ card, option, editable, mode, choices, showAll, last, setChoice }: LineProps) {
   const { borderStyle } = useContext(StyleContext);
   const choice = find(choices, o => o.option.index === option.index);
   const onXpChange = useCallback((index: number, xp: number) => {
@@ -706,10 +679,8 @@ function CustomizationLine({ componentId, card, option, deckId, editable, mode, 
       </View>
       { !!option.choice && !!choice?.unlocked && !!choice.type && (
         <AdvancedControl
-          componentId={componentId}
           card={card}
           editable={editable && choice.editable}
-          deckId={deckId}
           choice={choice}
           setChoice={onChoiceChange}
           allChoices={choices}
@@ -719,7 +690,11 @@ function CustomizationLine({ componentId, card, option, deckId, editable, mode, 
   );
 }
 
-export default function CardCustomizationOptions({ setChoice, mode, deckId, customizationChoices, card, customizationOptions, width, editable, componentId }: Props) {
+export default function CardCustomizationOptions({ setChoice, customizationChoices, card, customizationOptions, width, editable: propsEditable }: Props) {
+  const { deckId, deckEdits } = useContext(DeckEditContext);
+  const mode = deckEdits?.mode;
+  const deckEditable = deckEdits?.editable;
+  const editable = !!(deckEditable && propsEditable);
   const { typography, backgroundStyle, colors, shadow } = useContext(StyleContext);
   const [showAll, toggleShowAll] = useFlag(false);
   const xp = useMemo(() => sumBy(customizationChoices, c => c.xp_spent) || 0, [customizationChoices]);
@@ -727,7 +702,7 @@ export default function CardCustomizationOptions({ setChoice, mode, deckId, cust
     <View style={[{ width }, styles.container, space.paddingSideS, space.marginBottomL]}>
       <View style={{ maxWidth: MAX_WIDTH }}>
         <View style={[{ borderRadius: 8 }, backgroundStyle, shadow.large]}>
-          <RoundedFactionHeader faction={card.factionCode()} width={width - s * 2} dualFaction={!!card.faction2_code}>
+          <RoundedFactionHeader faction={card.factionCode()} width={Math.min(MAX_WIDTH, width - s * 2)} dualFaction={!!card.faction2_code}>
             <View style={[styles.row, space.marginLeftS, space.paddingTopXs]}>
               <Text style={[typography.cardName, { color: '#FFFFFF', flex: 1 }]}>
                 { t`Customizations`}
@@ -744,14 +719,12 @@ export default function CardCustomizationOptions({ setChoice, mode, deckId, cust
               <View style={space.paddingSideS}>
                 { map(customizationOptions, (option, index) => (
                   <CustomizationLine
-                    componentId={componentId}
                     key={option.index}
                     card={card}
                     option={option}
                     mode={mode}
                     choices={customizationChoices}
                     showAll={showAll}
-                    deckId={deckId}
                     editable={editable}
                     setChoice={setChoice}
                     last={index === customizationOptions.length - 1}

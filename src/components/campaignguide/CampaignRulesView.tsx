@@ -1,9 +1,8 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { map } from 'lodash';
 import { t } from 'ttag';
 
-import { NavigationProps } from '@components/nav/types';
 import StyleContext from '@styles/StyleContext';
 import { CampaignId } from '@actions/types';
 import { useScenarioGuideContext } from './withScenarioGuideContext';
@@ -14,14 +13,22 @@ import { ProcessedCampaign } from '@data/scenario';
 import { CampaignRule, Question } from '@data/scenario/types';
 import RuleTitleComponent from '@components/settings/RuleTitleComponent';
 import space, { s } from '@styles/space';
-import { useFlag } from '@components/core/hooks';
+import { useFlag, useTabooSetId } from '@components/core/hooks';
 import ScenarioGuideContext from './ScenarioGuideContext';
 import StepsComponent from './StepsComponent';
 import CampaignHeader from './CampaignHeader';
 import DeckButton from '@components/deck/controls/DeckButton';
 import CampaignGuideTextComponent from './CampaignGuideTextComponent';
 import { CAMPAIGN_SETUP_ID } from '@data/scenario/CampaignGuide';
+import { openUrl } from '@components/nav/helper';
+import DatabaseContext from '@data/sqlite/DatabaseContext';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { useDismissOnCampaignDeleted } from '@data/remote/campaigns';
+
 export interface CampaignRulesProps {
+  header?: string;
   campaignId: CampaignId;
   rules: CampaignRule[];
   campaignErrata: Question[];
@@ -31,16 +38,14 @@ export interface CampaignRulesProps {
   processedCampaign?: ProcessedCampaign;
 }
 
-type Props = CampaignRulesProps & NavigationProps;
-
-function RuleComponent({ rule, componentId }: { rule: CampaignRule; componentId: string }) {
+function RuleComponent({ rule }: { rule: CampaignRule }) {
   const [expanded, toggleExpanded] = useFlag(false);
   const { width } = useContext(StyleContext);
   const scenarioContext = useContext(ScenarioGuideContext);
   const steps = useMemo(() => {
     const { processedScenario, scenarioState } = scenarioContext;
     return processedScenario.scenarioGuide.expandSteps(rule.steps, scenarioState, processedScenario.latestCampaignLog);
-  }, [scenarioContext]);
+  }, [scenarioContext, rule.steps]);
   return (
     <View style={space.paddingVerticalXs}>
       <TouchableOpacity onPress={toggleExpanded} style={[space.paddingVerticalXs, space.paddingSideS]}>
@@ -51,9 +56,7 @@ function RuleComponent({ rule, componentId }: { rule: CampaignRule; componentId:
       { !!expanded && (
         <StepsComponent
           steps={steps}
-          componentId={componentId}
           width={width - s * 2}
-          switchCampaignScenario={() => {}}
           noTitle
         />
       )}
@@ -63,32 +66,42 @@ function RuleComponent({ rule, componentId }: { rule: CampaignRule; componentId:
 
 function ErrataComponent({ errata }: { errata: Question }) {
   const { colors } = useContext(StyleContext);
+  const navigation = useNavigation();
+  const tabooSetId = useTabooSetId();
+  const { db } = useContext(DatabaseContext);
+  const linkPressed = useCallback(async(url: string) => {
+    await openUrl(navigation, url, db, colors, tabooSetId);
+  }, [navigation, tabooSetId, db, colors]);
+
   return (
     <View style={[space.paddingTopXs, space.paddingBottomS]}>
       <View style={space.paddingSideS}>
-        <CampaignGuideTextComponent text={t`Q: ${errata.question}`} flavor />
-        <CampaignGuideTextComponent text={t`A: ${errata.answer}`}  />
+        <CampaignGuideTextComponent text={t`Q: ${errata.question}`} flavor onLinkPress={linkPressed} />
+        <CampaignGuideTextComponent text={t`A: ${errata.answer}`} />
       </View>
-      <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, space.marginTopS]}>
+      <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, space.marginTopS]}>
         <View style={{ height: 1, width: '40%', backgroundColor: colors.divider }} />
       </View>
-   </View>
+    </View>
   );
 }
 
-
-export default function CampaignRulesView({
-  campaignId,
-  scenarioId,
-  componentId,
-  rules,
-  campaignErrata,
-  scenarioErrata,
-  standalone,
-  processedCampaign: initialProcessedCampaign,
-}: Props) {
+export default function CampaignRulesView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Guide.Rules'>>();
+  const {
+    campaignId,
+    scenarioId,
+    rules,
+    campaignErrata,
+    scenarioErrata,
+    standalone,
+    processedCampaign: initialProcessedCampaign,
+  } = route.params;
   const { backgroundStyle, typography } = useContext(StyleContext);
-  const [campaignContext, scenarioContext, _, processedCampaignError] = useScenarioGuideContext(campaignId, scenarioId, false, standalone, initialProcessedCampaign);
+  const [campaignContext, scenarioContext, , processedCampaignError] = useScenarioGuideContext(campaignId, scenarioId, false, standalone, initialProcessedCampaign);
+  const navigation = useNavigation();
+  useDismissOnCampaignDeleted(navigation, campaignContext?.campaign);
+
   const [showFAQ, toggleShowFAQ] = useFlag(false);
   const hasFAQ = !!(campaignErrata.length || scenarioErrata?.length);
   if (!campaignContext || !scenarioContext) {
@@ -105,7 +118,7 @@ export default function CampaignRulesView({
             <>
               <CampaignHeader title={t`Campaign Rules`} style={space.paddingTopM} />
               <View style={space.paddingTopXs} />
-              { map(rules, (r, idx) => <RuleComponent key={idx} rule={r} componentId={componentId} />) }
+              { map(rules, (r, idx) => <RuleComponent key={idx} rule={r} />) }
             </>
           ) }
           { ((campaignErrata.length > 0) || scenarioId === CAMPAIGN_SETUP_ID) && (
@@ -115,7 +128,7 @@ export default function CampaignRulesView({
             </>
           ) }
           { !!hasFAQ && (
-             <>
+            <>
               { !showFAQ ? (
                 <View style={space.paddingS}>
                   <DeckButton
@@ -127,17 +140,17 @@ export default function CampaignRulesView({
                 </View>
               ) : (
                 <>
-                  { map(campaignErrata, (question, idx) => <ErrataComponent errata={question} key={idx} />) }
+                  { map(campaignErrata, (question, idx) => <ErrataComponent key={idx} errata={question} />) }
                   { !!scenarioErrata?.length && (
                     <>
                       <CampaignHeader title={t`Scenario FAQ`} style={space.paddingTopM} />
                       <View style={space.paddingTopXs} />
-                      { map(scenarioErrata, (question, idx) => <ErrataComponent errata={question} key={idx} />) }
+                      { map(scenarioErrata, (question, idx) => <ErrataComponent key={idx} errata={question} />) }
                     </>
                   )}
                 </>
               )}
-             </>
+            </>
           ) }
           { scenarioId === CAMPAIGN_SETUP_ID && (
             <View style={space.paddingS}>
@@ -151,3 +164,10 @@ export default function CampaignRulesView({
     </CampaignGuideContext.Provider>
   );
 }
+
+function options<T extends BasicStackParamList>({ route }: { route: RouteProp<T, 'Guide.Rules'> }): NativeStackNavigationOptions {
+  return {
+    title: route.params?.header ?? t`Campaign Rules`,
+  };
+};
+CampaignRulesView.options = options;

@@ -21,12 +21,14 @@ interface Props {
   eliminated?: boolean;
   transparent?: boolean;
   color?: 'dark' | 'light';
+  isCardHeader?: boolean;
 }
 
 const HEIGHT = 48;
 
-function RoundedFactionHeader({ faction, width, dualFaction, children, fullRound, eliminated, transparent, ...props }: Props) {
-  const { colors, fontScale } = useContext(StyleContext);
+function RoundedFactionHeader({ isCardHeader, faction, width, dualFaction, children, fullRound, eliminated, transparent, ...props }: Props) {
+  const { colors, typography } = useContext(StyleContext);
+  const height = s + (isCardHeader ? s : 0) + typography.cardHeaderHeight;
   const fadeAnim = useCallback((props: any) => {
     return <Fade {...props} style={{ backgroundColor: colors.M }} duration={1000} />;
   }, [colors]);
@@ -39,7 +41,7 @@ function RoundedFactionHeader({ faction, width, dualFaction, children, fullRound
             fullRound ? styles.fullRound : undefined,
             {
               width: width - 2,
-              height: 30 + 18 * fontScale,
+              height,
             },
           ]} color={colors.D10} />
         </Placeholder>
@@ -49,18 +51,24 @@ function RoundedFactionHeader({ faction, width, dualFaction, children, fullRound
   }
   const color = colors.faction[dualFaction ? 'dual' : faction][props.color === 'dark' ? 'darkBackground' : 'background'];
   return (
-    <View style={[
-      styles.cardTitle,
-      fullRound ? styles.fullRound : undefined,
-      !transparent ? {
-        backgroundColor: color,
-        borderColor: color,
-      } : undefined,
-    ]} opacity={eliminated ? 0.6 : undefined}>
+    <View
+      style={[
+        styles.cardTitle,
+        fullRound ? styles.fullRound : undefined,
+        !transparent ? {
+          backgroundColor: color,
+          borderColor: color,
+        } : undefined,
+        {
+          opacity: eliminated ? 0.6 : undefined,
+          height,
+        },
+      ]}
+    >
       <FactionPattern
         faction={dualFaction ? 'dual' : faction}
         width={width}
-        height={30 + 18 * fontScale}
+        height={height}
         transparent={transparent}
         fullRound={fullRound}
       />

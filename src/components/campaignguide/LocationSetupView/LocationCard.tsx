@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { withAnchorPoint } from 'react-native-anchor-point';
-import { map, range, transform } from 'lodash';
-import FastImage from 'react-native-blasted-image';
+import { map, range } from 'lodash';
+import { Image as FastImage } from 'expo-image';
 
 import { s } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
@@ -15,6 +15,7 @@ import ArkhamIcon from '@icons/ArkhamIcon';
 import CardTextComponent from '@components/card/CardTextComponent';
 
 const PLAYER_BACK = require('../../../../assets/player-back.png');
+const ENCOUNTER_BACK = require('../../../../assets/encounter-back.png');
 const ATLACH = require('../../../../assets/atlach.jpg');
 const RAIL_SIZE = 25;
 interface Props {
@@ -41,15 +42,15 @@ interface Props {
 function TextCard({ name, placeholder }: { name: string; placeholder?: boolean; }) {
   const { colors, borderStyle, typography } = useContext(StyleContext);
   return (
-      <View style={[
-        styles.singleCardWrapper,
-        placeholder ? undefined : borderStyle,
-        placeholder ? undefined : { borderWidth: 1, borderRadius: 8, backgroundColor: colors.darkText },
-      ]}>
-        <Text style={[typography.text, { color: placeholder ? colors.darkText : colors.background }, typography.center]}>
-          { name }
-        </Text>
-      </View>
+    <View style={[
+      styles.singleCardWrapper,
+      placeholder ? undefined : borderStyle,
+      placeholder ? undefined : { borderWidth: 1, borderRadius: 8, backgroundColor: colors.darkText },
+    ]}>
+      <Text style={[typography.text, { color: placeholder ? colors.darkText : colors.background }, typography.center]}>
+        { name }
+      </Text>
+    </View>
   );
 }
 
@@ -74,8 +75,8 @@ function LocationCardImage({ code, back, name, width, height, placeholder, toggl
       <TextCard name={name || code} placeholder={placeholder} />
     );
   }
-  const uri = back ? card.backImageUri() : card.imageUri();
-  if (!uri) {
+  const url = back ? card.backImageUri() : card.imageUri();
+  if (!url) {
     return (
       <TextCard
         name={(back && card.back_name) || card.name}
@@ -84,11 +85,11 @@ function LocationCardImage({ code, back, name, width, height, placeholder, toggl
     );
   }
   return (
-    <ToolTip label={(back && card.back_name) || card.name} height={height} width={width} toggle={toggle} setToggle={setToggle}>
+    <ToolTip title={(back && card.back_name) || card.name} height={height} width={width} toggle={toggle} setToggle={setToggle}>
       <FastImage
-        style={[styles.verticalCardImage, { width, height }]}
+        style={{ width, height }}
         source={{
-          uri,
+          uri: url,
         }}
         resizeMode="contain"
       />
@@ -98,10 +99,9 @@ function LocationCardImage({ code, back, name, width, height, placeholder, toggl
 
 function annotationPosition(
   annotation: LocationAnnotation,
-  { height, width, left, top, fontScale, lines, rowWidth, hasResourceDividers,  }: {
+  { height, width, left, top, fontScale, lines, rowWidth }: {
     height: number; width: number; left: number; top: number; fontScale: number; lines: number;
     rowWidth: number; rowHeight: number;
-    hasResourceDividers: boolean;
  },
 ): {
   top?: number;
@@ -148,12 +148,12 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
   const { borderStyle, colors } = useContext(StyleContext);
   const mini = code.indexOf('_mini') !== -1;
 
-  const transformStyle = useMemo(() => {
+  const transformStyle = useMemo((): ViewStyle | undefined => {
     switch (rotate) {
       case 'left':
-        return withAnchorPoint({ transform: [{ rotate: '-90deg' }] }, { x: 0, y: 1 }, { width, height });
+        return withAnchorPoint({ transform: [{ rotate: '-90deg' }] }, { x: 0, y: 1 }, { width, height }) as any;
       case 'right':
-        return withAnchorPoint({ transform: [{ rotate: '90deg' }] }, { x: 1, y: 0 }, { width, height });
+        return withAnchorPoint({ transform: [{ rotate: '90deg' }] }, { x: 1, y: 0 }, { width, height }) as any;
       case 'invert':
         return { transform: [{ rotate: '-180deg' }] };
       default:
@@ -186,6 +186,14 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
             resizeMode="contain"
           />
         );
+      case 'encounter_back':
+        return (
+          <Image
+            style={styles.verticalCardImage}
+            source={ENCOUNTER_BACK}
+            resizeMode="contain"
+          />
+        );
       case 'atlach':
         return (
           <Image
@@ -197,11 +205,11 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
       default:
         return (
           <View style={mini ? {
-              paddingTop: height * 0.1,
-              paddingBottom: height * 0.1,
-              paddingLeft: width * 0.1,
-              paddingRight: width * 0.1,
-            } : undefined
+            paddingTop: height * 0.1,
+            paddingBottom: height * 0.1,
+            paddingLeft: width * 0.1,
+            paddingRight: width * 0.1,
+          } : undefined
           }>
             <LocationCardImage
               name={name}
@@ -216,7 +224,7 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
           </View>
         );
     }
-  }, [colors, toggle, setToggle, borderStyle, mini, theHeight, theWidth, code, name, height, rotate, width]);
+  }, [colors, toggle, setToggle, borderStyle, mini, theHeight, theWidth, code, name, height, width, placeholder]);
   const rails = useMemo(() => {
     const match = RAIL_REGEX.exec(code)?.[1];
     if (!match) {
@@ -226,31 +234,31 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
       <>
         { match.indexOf('N') !== -1 && (
           <View key="N" style={[styles.rail, { top: top, left: left + width - RAIL_SIZE * 2 }]}>
-            <AppIcon name='rail' size={RAIL_SIZE} color={colors.M} />
+            <AppIcon name="rail" size={RAIL_SIZE} color={colors.M} />
           </View>
         ) }
         { match.indexOf('S') !== -1 && (
-          <View key="S" style={[styles.rail, { top: top + height - RAIL_SIZE, left: left + width - RAIL_SIZE * 2}]}>
-            <AppIcon name='rail' size={RAIL_SIZE} color={colors.M} />
+          <View key="S" style={[styles.rail, { top: top + height - RAIL_SIZE, left: left + width - RAIL_SIZE * 2 }]}>
+            <AppIcon name="rail" size={RAIL_SIZE} color={colors.M} />
           </View>
         ) }
         { match.indexOf('E') !== -1 && (
           <View key="E" style={[styles.rail, { top: top + height - RAIL_SIZE * 2, left: left + width - RAIL_SIZE }]}>
-            <View style={{transform: [{ rotate: "90deg"}] }}>
-              <AppIcon name='rail' size={RAIL_SIZE} color={colors.M} />
+            <View style={{ transform: [{ rotate: '90deg' }] }}>
+              <AppIcon name="rail" size={RAIL_SIZE} color={colors.M} />
             </View>
           </View>
         ) }
         { match.indexOf('W') !== -1 && (
           <View key="W" style={[styles.rail, { top: top + height - RAIL_SIZE * 2, left: left }]}>
-            <View style={{transform: [{ rotate: "90deg"}] }}>
-              <AppIcon name='rail' size={RAIL_SIZE} color={colors.M} />
+            <View style={{ transform: [{ rotate: '90deg' }] }}>
+              <AppIcon name="rail" size={RAIL_SIZE} color={colors.M} />
             </View>
           </View>
         ) }
       </>
     );
-  }, [code]);
+  }, [code, width, colors, height, left, top]);
   const resourceDividers = useMemo(() => {
     if (!resource_dividers) {
       return null;
@@ -307,14 +315,13 @@ export default function LocationCard({ keyProp, rowWidth, rowHeight, annotations
           rowHeight={rowHeight}
           top={top}
           left={left}
-          hasResourceDividers={!!resourceDividers}
         />
       ))}
     </>
   );
 }
 
-function AnnotationComponent({ annotation, width, height, left, top, rowWidth, rowHeight, hasResourceDividers }: {
+function AnnotationComponent({ annotation, width, height, left, top, rowWidth, rowHeight }: {
   annotation: LocationAnnotation;
   width: number;
   height: number;
@@ -322,7 +329,6 @@ function AnnotationComponent({ annotation, width, height, left, top, rowWidth, r
   rowHeight: number;
   left: number;
   top: number;
-  hasResourceDividers: boolean;
 }) {
   const { typography, fontScale } = useContext(StyleContext);
   let textAlignment: TextStyle;
@@ -362,7 +368,6 @@ function AnnotationComponent({ annotation, width, height, left, top, rowWidth, r
         rowWidth,
         rowHeight,
         lines: annotation.text.split('\n').length,
-        hasResourceDividers,
       }),
     }]}>
       { annotation.style === 'description' ? (

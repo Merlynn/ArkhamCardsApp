@@ -28,6 +28,7 @@ import useSingleCard from '@components/card/useSingleCard';
 import ArkhamSwitch from '@components/core/ArkhamSwitch';
 import { useDialog } from './dialogs';
 import LanguageContext from '@lib/i18n/LanguageContext';
+import { useNavigation } from '@react-navigation/native';
 
 interface SelectDeckSwitchPropsProps {
   deckId: DeckId;
@@ -115,12 +116,13 @@ export default function useCopyDeckDialog({ campaign, deckId, signedIn, actions 
     return deck?.deck;
   }, [baseDeck, deck, latestDeck, selectedDeckId]);
   const [investigator] = useSingleCard(deck?.deck.investigator_code, 'player', deck?.deck.taboo_id);
+  const navigation = useNavigation();
 
   const showNewDeck = useCallback((deck: Deck) => {
     setSaving(false);
     // Change the deck options for required cards, if present.
-    showDeckModal(getDeckId(deck), deck, campaign?.id, colors, investigator);
-  }, [campaign, investigator, setSaving, colors]);
+    showDeckModal(navigation, colors, getDeckId(deck), deck, campaign?.id, investigator);
+  }, [campaign, investigator, setSaving, navigation, colors]);
   const saveCopy = useCallback((isRetry: boolean) => {
     if (!selectedDeck) {
       return;
@@ -160,7 +162,7 @@ export default function useCopyDeckDialog({ campaign, deckId, signedIn, actions 
       ...keys(d.ignoreDeckLimitSlots),
       ...keys(d.slots),
     ])
-  ), [deck, baseDeck, latestDeck], deck?.deck.taboo_id || 0);
+  ), [deck, baseDeck, latestDeck], false, deck?.deck.taboo_id || 0);
   const { listSeperator } = useContext(LanguageContext);
   const parsedCurrentDeck = useMemo(() => cards && deck && parseBasicDeck(deck?.deck, cards, listSeperator), [cards, deck, listSeperator]);
   const parsedBaseDeck = useMemo(() => cards && baseDeck && parseBasicDeck(baseDeck, cards, listSeperator), [cards, baseDeck, listSeperator]);

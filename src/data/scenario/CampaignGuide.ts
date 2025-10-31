@@ -1,7 +1,7 @@
-import { find, findIndex, filter, flatMap, forEach, reverse, slice, sortBy, orderBy } from 'lodash';
+import { find, findIndex, filter, flatMap, forEach, reverse, slice } from 'lodash';
 import { ngettext, msgid, t } from 'ttag';
 
-import { GuideStartCustomSideScenarioInput } from '@actions/types';
+import { GuideStartCustomSideScenarioInput, OZ } from '@actions/types';
 import { PlayedScenario, ProcessedCampaign, ProcessedScenario, ScenarioId } from '@data/scenario';
 import { createInvestigatorStatusStep, PLAY_SCENARIO_STEP_ID, PROCEED_STEP_ID, UPGRADE_DECKS_STEP_ID } from './fixedSteps';
 import GuidedCampaignLog from './GuidedCampaignLog';
@@ -116,6 +116,10 @@ export default class CampaignGuide {
     });
   }
 
+  includeParallelInvestigators() {
+    return this.campaignCycleCode() === OZ;
+  }
+
   scenarioSetupStepIds(): string[] {
     return this.campaign.campaign.scenario_setup || [];
   }
@@ -133,12 +137,14 @@ export default class CampaignGuide {
   }
 
   scenarioFaq(scenario: string): Question[] {
-    const scenarioFaq = find(this.errata.faq, faq => faq.scenario_code === scenario);
+    const scenarioFaq = find(this.errata.faq, faq => faq.scenario_code === scenario && (
+      !faq.campaign_code || faq.campaign_code === this.campaign.campaign.id
+    ));
     return scenarioFaq?.questions ?? [];
   }
 
   campaignRules(lang: string): CampaignRule[] {
-    return stable(this.campaign.campaign.rules ?? [],  (a, b) => a.title.localeCompare(b.title, lang));
+    return stable(this.campaign.campaign.rules ?? [], (a, b) => a.title.localeCompare(b.title, lang));
   }
 
   scenarioRules(lang: string, scenario: string | undefined): CampaignRule[] {
@@ -688,7 +694,7 @@ export default class CampaignGuide {
     };
   }
 
-  logEntry(sectionId: string, id: string): LogEntry {
+  logEntry(sectionId: string, id: string, hack?: boolean): LogEntry {
     const section = find(
       this.campaign.campaign.campaign_log,
       logSection => logSection.id === sectionId
@@ -707,7 +713,7 @@ export default class CampaignGuide {
         supply,
       };
     }
-    if (section.type === 'investigator_count') {
+    if (section.type === 'investigator_count' && !hack) {
       return {
         type: 'investigator_count',
         section: section.title,

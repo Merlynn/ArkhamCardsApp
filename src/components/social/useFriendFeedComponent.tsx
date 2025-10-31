@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
 import { forEach, map } from 'lodash';
-import { Navigation } from 'react-native-navigation';
+
 import { t } from 'ttag';
 
 import { TouchableOpacity } from '@components/core/Touchables';
@@ -19,6 +19,7 @@ import { ArkhamButtonIconType } from '@icons/ArkhamButtonIcon';
 import { FriendStatus, SearchResults } from '@data/remote/api';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import ArkhamLargeList from '@components/core/ArkhamLargeList';
+import { useNavigation } from '@react-navigation/native';
 
 interface FriendControls {
   type: 'friend';
@@ -188,7 +189,7 @@ function AccessControlsComponent({ user, hasAccess, inviteUser, removeUser }: {
 }
 
 const userRowHeight = (fontScale: number, lang: string) => {
-  return m * 2 + StyleSheet.hairlineWidth + (lang === 'zh' ? 22 : 20) * fontScale;
+  return m * 2 + StyleSheet.hairlineWidth + (lang === 'zh' || lang === 'zh-cn' ? 22 : 20) * fontScale;
 };
 
 function UserRow({ user, showUser, status, controls, refetchMyProfile }: {
@@ -258,7 +259,6 @@ function UserRow({ user, showUser, status, controls, refetchMyProfile }: {
 UserRow.computeHeight = userRowHeight;
 
 interface Props {
-  componentId: string;
   userId?: string;
   handleScroll?: (...args: any[]) => void;
   searchResults?: SearchResults;
@@ -270,8 +270,9 @@ interface Props {
   ) => FriendFeedItem[]
 }
 
-export default function useFriendFeedComponent({ componentId, userId, handleScroll, error, searchResults, toFeed }: Props): [React.ReactNode, () => void] {
+export default function useFriendFeedComponent({ userId, handleScroll, error, searchResults, toFeed }: Props): [React.ReactNode, () => void] {
   const { borderStyle, colors, fontScale, typography } = useContext(StyleContext);
+  const navigation = useNavigation();
   const { userId: currentUserId } = useContext(ArkhamCardsAuthContext);
   const { lang } = useContext(LanguageContext);
   const [myProfile, loadingMyProfile, refetchMyProfile] = useMyProfile(true);
@@ -293,22 +294,8 @@ export default function useFriendFeedComponent({ componentId, userId, handleScro
     return status;
   }, [myProfile]);
   const showUser = useCallback((userId: string, handle?: string) => {
-    Navigation.push(componentId, {
-      component: {
-        name: 'Friends',
-        passProps: {
-          userId: userId,
-        },
-        options: {
-          topBar: {
-            title: {
-              text: handle ? t`${handle}'s Friends` : t`Friends`,
-            },
-          },
-        },
-      },
-    });
-  }, [componentId]);
+    navigation.navigate('Friends', { userId, title: handle ? t`${handle}'s Friends` : t`Friends` });
+  }, [navigation]);
   const heightItem = useCallback((item: FriendFeedItem) => {
     switch (item.type) {
       case 'user':
@@ -331,7 +318,6 @@ export default function useFriendFeedComponent({ componentId, userId, handleScro
       case 'user':
         return (
           <UserRow
-            key={item.id}
             user={item.user}
             refetchMyProfile={refetchMyProfile}
             controls={item.controls}
@@ -341,11 +327,11 @@ export default function useFriendFeedComponent({ componentId, userId, handleScro
         );
       case 'header':
         return (
-          <CardSectionHeader key={item.id} section={{ title: item.header }} />
+          <CardSectionHeader section={{ title: item.header }} />
         );
       case 'button':
         return (
-          <ArkhamButton key={item.id} onPress={item.onPress} title={item.title} icon={item.icon} />
+          <ArkhamButton onPress={item.onPress} title={item.title} icon={item.icon} />
         );
       case 'placeholder':
         return (
@@ -407,6 +393,7 @@ export default function useFriendFeedComponent({ componentId, userId, handleScro
       data={data}
       renderItem={renderItem}
       heightForItem={heightItem}
+      estimatedItemSize={UserRow.computeHeight(fontScale, lang)}
     />
   ), doRefresh];
 }

@@ -1,12 +1,11 @@
 import React, { useCallback, useContext, useMemo, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Navigation } from 'react-native-navigation';
-import { findIndex, filter, find, map, flatMap } from 'lodash';
+
+import { findIndex, find, map, flatMap } from 'lodash';
 import { t } from 'ttag';
 
 import BranchButton from './BranchButton';
 import ScenarioStepContext from '@components/campaignguide/ScenarioStepContext';
-import { ScenarioFaqProps } from '@components/campaignguide/ScenarioFaqView';
 import { BinaryConditionalChoice, PlayScenarioInput } from '@data/scenario/types';
 import { PlayingScenarioBranch } from '@data/scenario/fixedSteps';
 import ScenarioGuideContext from '@components/campaignguide/ScenarioGuideContext';
@@ -22,10 +21,11 @@ import { calculateBinaryConditionResult } from '@data/scenario/inputHelper';
 import StyleContext from '@styles/StyleContext';
 import StoryButton from './StoryButton';
 import { MAX_WIDTH } from '@styles/sizes';
+import { showGuideDrawChaosBag } from '@components/campaign/nav';
+import { useNavigation } from '@react-navigation/native';
 
 
 interface Props {
-  componentId: string;
   campaignId: CampaignId;
   id: string;
   input: PlayScenarioInput;
@@ -36,7 +36,8 @@ interface ConditionalBranch {
   visible: boolean;
 }
 
-export default function PlayOptionsComponent({ input, componentId, campaignId, id }: Props) {
+export default function PlayOptionsComponent({ input, campaignId, id }: Props) {
+  const navigation = useNavigation();
   const { campaign, campaignGuide } = useContext(CampaignGuideContext);
   const { scenarioState, processedScenario, processedCampaign } = useContext(ScenarioGuideContext);
   const { campaignLog } = useContext(ScenarioStepContext);
@@ -45,13 +46,13 @@ export default function PlayOptionsComponent({ input, componentId, campaignId, i
     () => input.fixed_resolution ? [] : processedScenario.latestCampaignLog.investigators(false),
     [input.fixed_resolution, processedScenario.latestCampaignLog]
   );
-  const setChaosBagDialogVisibleRef = useRef<(visible: boolean) => void>();
+  const setChaosBagDialogVisibleRef = useRef<(visible: boolean) => void>(null);
   const standalone = !!campaign.standaloneId;
 
   const branchPress = useCallback((index: number) => {
     scenarioState.setChoice(id, index);
   }, [scenarioState, id]);
-  const setCampaignLogDialogVisibleRef = useRef<(visible: boolean) => void>();
+  const setCampaignLogDialogVisibleRef = useRef<(visible: boolean) => void>(null);
 
   const editCampaignLogPressed = useCallback(() => {
     setCampaignLogDialogVisibleRef.current?.(false);
@@ -80,8 +81,12 @@ export default function PlayOptionsComponent({ input, componentId, campaignId, i
       branchPress(chaosBagIndex);
     }
   }, [chaosBagIndex, branchPress]);
+  const drawChaosBagPressed = useCallback(() => {
+    showGuideDrawChaosBag(navigation, campaignId, map(allInvestigators, c => c.code),
+      processedScenario.id.scenarioId,
+      !!standalone);
+  }, [navigation, campaignId, allInvestigators, processedScenario, standalone]);
   const [chaosBagDialog, showChaosBagDialog, setChaosBagDialogVisible] = useChaosBagDialog({
-    componentId,
     allInvestigators,
     campaignId,
     chaosBag: processedScenario.latestCampaignLog.chaosBag,
@@ -100,7 +105,6 @@ export default function PlayOptionsComponent({ input, componentId, campaignId, i
     content: (
       <CampaignLogComponent
         hideChaosBag
-        componentId={componentId}
         campaignId={campaignId}
         campaignGuide={campaignGuide}
         campaignLog={processedScenario.latestCampaignLog}
@@ -130,18 +134,15 @@ export default function PlayOptionsComponent({ input, componentId, campaignId, i
   const recordTraumaPressed = useCallback(() => {
     branchPress(PlayingScenarioBranch.RECORD_TRAUMA);
   }, [branchPress]);
-
+  const changeLeadInvestigatorPressed = useCallback(() => {
+    branchPress(PlayingScenarioBranch.CHANGE_LEAD_INVESTIGATOR);
+  }, [branchPress]);
   const showScenarioFaq = useCallback(() => {
-    Navigation.push<ScenarioFaqProps>(componentId, {
-      component: {
-        name: 'Guide.ScenarioFaq',
-        passProps: {
-          scenario: processedScenario.id.scenarioId,
-          campaignId,
-        },
-      },
+    navigation.navigate('Guide.ScenarioFaq', {
+      scenario: processedScenario.id.scenarioId,
+      campaignId,
     });
-  }, [componentId, campaignId, processedScenario]);
+  }, [navigation, campaignId, processedScenario]);
   const hasFaq = processedScenario.scenarioGuide.campaignGuide.scenarioFaq(processedScenario.id.scenarioId).length;
   return (
     <>
@@ -153,11 +154,28 @@ export default function PlayOptionsComponent({ input, componentId, campaignId, i
           onPress={showCampaignLogDialog}
           bottomMargin={s}
         />
+        <View style={[styles.row, space.paddingBottomS]}>
+          <DeckButton
+            icon="chaos_bag"
+            title={t`Draw`}
+            detail={t`Draw random token`}
+            onPress={drawChaosBagPressed}
+            rightMargin={xs}
+          />
+          <DeckButton
+            icon="chaos_bag"
+            title={chaosBagIndex !== undefined ? t`View or edit` : t`View`}
+            detail={t`Review chaos bag`}
+            onPress={showChaosBagDialog}
+          />
+        </View>
         <DeckButton
-          icon="chaos_bag"
-          title={t`Chaos bag`}
-          detail={t`Review and simulate draw`}
-          onPress={showChaosBagDialog}
+          icon="per_investigator"
+          color="dark_gray"
+          title={t`Change lead investigator`}
+          noShadow
+          onPress={changeLeadInvestigatorPressed}
+          detail={t`To handle resignation or elimination`}
           bottomMargin={s}
         />
         { !input.fixed_resolution && (

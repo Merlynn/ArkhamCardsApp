@@ -43,14 +43,15 @@ export default function PartnerChoiceComponent({ id, input }: Props) {
     const quantity = input.quantity ? Math.min(getOperand(input.quantity, campaignLog), selectedPartners.length) : undefined;
     return [selectedPartners, quantity, selection];
   }, [input, campaignLog]);
-  const [cards] = useCardList(codes, 'encounter');
+  const [cards] = useCardList(codes, 'encounter', false);
 
   const items: ListItem[] = useMemo(() => map(partners, p => {
+    const card = find(cards, c => c.code === p.code);
     return {
       code: p.code,
       name: p.name,
       description: p.description,
-      investigator: find(cards, c => c.code === p.code),
+      investigator: card ? { code: p.code, card, alternate_code: undefined } : undefined,
     };
   }), [partners, cards]);
   const { scenarioState } = useContext(ScenarioGuideContext);

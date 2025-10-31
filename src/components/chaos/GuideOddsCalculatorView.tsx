@@ -5,11 +5,13 @@ import OddsCalculatorComponent from './OddsCalculatorComponent';
 import { ChaosBag } from '@app_constants';
 import Card from '@data/types/Card';
 import { useCycleScenarios, useInvestigators } from '@components/core/hooks';
-import { useCampaign } from '@data/hooks';
+import { useCampaign, useChaosBagResults } from '@data/hooks';
 import { CampaignId } from '@actions/types';
 import useGuideChaosBag from '../campaignguide/useGuideChaosBag';
 import LoadingSpinner from '@components/core/LoadingSpinner';
 import { ProcessedCampaign } from '@data/scenario';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
 
 export interface GuideOddsCalculatorProps {
   campaignId: CampaignId;
@@ -20,8 +22,17 @@ export interface GuideOddsCalculatorProps {
   processedCampaign: ProcessedCampaign | undefined;
 }
 
-export default function GuideOddsCalculatorView({ campaignId, investigatorIds, chaosBag, scenarioId, standalone, processedCampaign }: GuideOddsCalculatorProps) {
-  const [loading, scenarioCard, scenarioCardText, difficulty, liveChaosBag, scenarioName, scenarioCode] = useGuideChaosBag({ campaignId, scenarioId, standalone, processedCampaign });
+export default function GuideOddsCalculatorView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Guide.OddsCalculator'>>();
+  const { campaignId, investigatorIds, chaosBag, scenarioId, standalone, processedCampaign } = route.params;
+  const chaosBagResults = useChaosBagResults(campaignId);
+  const { loading, scenarioCard, scenarioCardText, difficulty, liveChaosBag, scenarioName, scenarioIcon, scenarioCode } = useGuideChaosBag({
+    campaignId,
+    scenarioId,
+    standalone,
+    processedCampaign,
+    difficultyOverride: chaosBagResults.difficulty,
+  });
 
   const campaign = useCampaign(campaignId);
   const cycleScenarios = useCycleScenarios(campaign?.cycleCode);
@@ -41,9 +52,11 @@ export default function GuideOddsCalculatorView({ campaignId, investigatorIds, c
       allInvestigators={allInvestigators}
       scenarioCard={scenarioCard}
       scenarioCode={scenarioCode}
+      scenarioIcon={scenarioIcon}
       scenarioName={scenarioName}
       scenarioCardText={scenarioCardText}
       difficulty={difficulty}
+      chaosBagResults={chaosBagResults}
     />
   );
 }

@@ -1,38 +1,28 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import { Keyboard, View } from 'react-native';
 import { map } from 'lodash';
-import { Navigation, Options } from 'react-native-navigation';
-import { t } from 'ttag';
 
 import { STANDALONE } from '@actions/types';
-import { iconsMap } from '@app/NavIcons';
 import CampaignItem from './CampaignItem';
-import { CampaignDetailProps } from '@components/campaign/CampaignDetailView';
-import { CampaignGuideProps } from '@components/campaignguide/CampaignGuideView';
-import { StandaloneGuideProps } from '@components/campaignguide/StandaloneGuideView';
-import { LinkedCampaignGuideProps } from '@components/campaignguide/LinkedCampaignGuideView';
-import COLORS from '@styles/colors';
 import StandaloneItem from './StandaloneItem';
 import StyleContext from '@styles/StyleContext';
 import MiniCampaignT from '@data/interfaces/MiniCampaignT';
 import useConnectionProblemBanner from '@components/core/useConnectionProblemBanner';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
-import useNetworkStatus from '@components/core/useNetworkStatus';
-import { NetInfoStateType } from '@react-native-community/netinfo';
 import ArkhamLargeList from '@components/core/ArkhamLargeList';
 import ArkhamButton from '@components/core/ArkhamButton';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { useDeckActions } from '@data/remote/decks';
 import { useMyDecks } from '@data/hooks';
 import withLoginState, { LoginStateProps } from '@components/core/withLoginState';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
   onScroll: (...args: any[]) => void;
-  componentId: string;
   campaigns: MiniCampaignT[];
   footer: JSX.Element;
   footerHeight?: number;
-  standalonesById: { [campaignId: string]: { [scenarioId: string]: string } };
+  standalonesById: { [campaignId: string]: { [scenarioId: string]: string | undefined } | undefined };
   onRefresh?: () => void;
   refreshing?: boolean;
   header?: JSX.Element;
@@ -56,8 +46,9 @@ interface FooterType {
 
 type ItemType = CampaignItemType | ButtonItemType | FooterType;
 
-function CampaignList({ onScroll, header, componentId, campaigns, footer, footerHeight, standalonesById, onRefresh, refreshing, buttons, login }: Props & LoginStateProps) {
+function CampaignList({ onScroll, header, campaigns, footer, footerHeight, standalonesById, onRefresh, refreshing, buttons, login }: Props & LoginStateProps) {
   const { fontScale, width } = useContext(StyleContext);
+  const navigation = useNavigation();
   const reLogin = useCallback(() => {
     login();
   }, [login]);
@@ -66,79 +57,35 @@ function CampaignList({ onScroll, header, componentId, campaigns, footer, footer
   const { userId } = useContext(ArkhamCardsAuthContext);
   const onPress = useCallback((id: string, campaign: MiniCampaignT) => {
     Keyboard.dismiss();
-    const options: Options = {
-      topBar: {
-        title: {
-          text: campaign.name,
-        },
-        backButton: {
-          title: t`Back`,
-        },
-        rightButtons: [
-          {
-            icon: iconsMap.edit,
-            id: 'edit',
-            color: COLORS.M,
-            accessibilityLabel: t`Edit name`,
-          },
-        ],
-      },
-    };
     if (campaign.cycleCode === STANDALONE) {
       const standaloneId = campaign.standaloneId;
       if (standaloneId) {
-        Navigation.push<StandaloneGuideProps>(componentId, {
-          component: {
-            name: 'Guide.Standalone',
-            passProps: {
-              campaignId: campaign.id,
-              scenarioId: standaloneId.scenarioId,
-              standalone: true,
-            },
-            options,
-          },
+        navigation.navigate('Guide.Standalone', {
+          campaignId: campaign.id,
+          scenarioId: standaloneId.scenarioId,
+          standalone: true,
         });
       }
     } else if (campaign.guided) {
       const link = campaign.linked;
       if (link) {
-        Navigation.push<LinkedCampaignGuideProps>(componentId, {
-          component: {
-            name: 'Guide.LinkedCampaign',
-            passProps: {
-              campaignId: campaign.id,
-              campaignIdA: link.campaignIdA,
-              campaignIdB: link.campaignIdB,
-            },
-            options,
-          },
+        navigation.navigate('Guide.LinkedCampaign', {
+          campaignId: campaign.id,
+          campaignIdA: link.campaignIdA,
+          campaignIdB: link.campaignIdB,
         });
       } else {
-        Navigation.push<CampaignGuideProps>(componentId, {
-          component: {
-            name: 'Guide.Campaign',
-            passProps: {
-              campaignId: campaign.id,
-            },
-            options,
-          },
+        navigation.navigate('Guide.Campaign', {
+          campaignId: campaign.id,
         });
       }
     } else {
-      Navigation.push<CampaignDetailProps>(componentId, {
-        component: {
-          name: 'Campaign',
-          passProps: {
-            campaignId: campaign.id,
-          },
-          options,
-        },
+      navigation.navigate('Campaign', {
+        campaignId: campaign.id,
       });
     }
-  }, [componentId]);
+  }, [navigation]);
 
-  const [{ networkType, isConnected }] = useNetworkStatus();
-  const offline = !isConnected || networkType === NetInfoStateType.none;
   const deckActions = useDeckActions();
   const [{ refreshing: decksRefreshing, error }, refreshDecks] = useMyDecks(deckActions);
   const [connectionProblemBanner] = useConnectionProblemBanner({ width, arkhamdbState: { error, reLogin } });
@@ -210,16 +157,14 @@ function CampaignList({ onScroll, header, componentId, campaigns, footer, footer
         const standaloneId = campaign.standaloneId;
         return standaloneId ? (
           <StandaloneItem
-            key={campaign.uuid}
             campaign={campaign}
             onPress={onPress}
-            scenarioName={standalonesById[standaloneId.campaignId][standaloneId.scenarioId]}
+            scenarioName={standalonesById[standaloneId.campaignId]?.[standaloneId.scenarioId]}
           />
         ) : <View />;
       }
       return (
         <CampaignItem
-          key={campaign.uuid}
           campaign={campaign}
           onPress={onPress}
         />
@@ -242,6 +187,7 @@ function CampaignList({ onScroll, header, componentId, campaigns, footer, footer
       heightForItem={heightForItem}
       renderItem={renderItem}
       renderHeader={renderHeader}
+      estimatedItemSize={CampaignItem.computeHeight(fontScale)}
     />
   );
 }

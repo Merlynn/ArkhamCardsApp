@@ -1,6 +1,5 @@
 import { Alert } from 'react-native';
 import { t } from 'ttag';
-import uuid from 'react-native-uuid';
 
 import {
   GuideStartSideScenarioInput,
@@ -21,19 +20,24 @@ import {
 import { ScenarioId, StepId } from '@data/scenario';
 import Card, { CardsMap } from '@data/types/Card';
 import CampaignGuideStateT from '@data/interfaces/CampaignGuideStateT';
+import LatestDeckT from '@data/interfaces/LatestDeckT';
+import { find } from 'lodash';
+import { CampaignInvestigator } from './GuidedCampaignLog';
+import { generateUuid } from '@lib/uuid';
 
 export interface CampaignGuideActions {
-  showChooseDeck: (singleInvestigator?: Card, callback?: (code: string) => Promise<void>) => void;
+  showChooseDeck: (singleInvestigator?: CampaignInvestigator, callback?: (code: string) => Promise<void>) => void;
   removeDeck: (deckId: DeckId, investigator: string) => void;
   addInvestigator: (code: string, deckId?: DeckId) => void;
-  removeInvestigator: (investigator: Card) => void;
+  removeInvestigator: (investigator: CampaignInvestigator) => void;
   setDecision: (id: string, value: boolean, scenarioId?: string) => void;
   setCount: (id: string, value: number, scenarioId?: string) => void;
   setSupplies: (id: string, supplyCounts: SupplyCounts, scenarioId?: string) => void;
   setNumberChoices: (id: string, choices: NumberChoices, deckId?: DeckId, deckEdits?: DelayedDeckEdits, scenarioId?: string) => Promise<void>;
   setStringChoices: (id: string, choices: StringChoices, scenarioId?: string) => void;
   setChoice: (id: string, choice: number, scenarioId?: string) => void;
-  setText: (id: string, text: string, scenarioId?: string) => void;
+  setText: (id: string, text: string, scenarioId: string | undefined, inputId: string | undefined) => void;
+  updateText: (id: string, text: string, scenarioId: string | undefined, inputId: string | undefined) => void;
   setCampaignLink: (id: string, value: string, scenarioId?: string) => void;
   setInterScenarioData: (investigatorData: InvestigatorTraumaData, scenarioId: undefined | string, campaignLogEntries: string[] | undefined) => void;
   startScenario: (scenarioId: string, embarkData: EmbarkData | undefined) => void;
@@ -47,28 +51,21 @@ export interface CampaignGuideActions {
 }
 
 export default class CampaignStateHelper {
-  state: CampaignGuideStateT;
-  investigators: CardsMap;
-  actions: CampaignGuideActions;
-  tarotReading: TarotReading | undefined;
-
-  linkedState?: CampaignGuideStateT;
-  guideVersion: number;
-
   constructor(
-    state: CampaignGuideStateT,
-    tarotReading: TarotReading | undefined,
-    investigators: CardsMap,
-    actions: CampaignGuideActions,
-    guideVersion: number,
-    linkedState?: CampaignGuideStateT
-  ) {
-    this.guideVersion = guideVersion;
-    this.state = state;
-    this.tarotReading = tarotReading;
-    this.investigators = investigators;
-    this.actions = actions;
-    this.linkedState = linkedState;
+    public state: CampaignGuideStateT,
+    public tarotReading: TarotReading | undefined,
+    public investigators: CardsMap,
+    public actions: CampaignGuideActions,
+    public guideVersion: number,
+    public latestDecks: LatestDeckT[] | undefined,
+    public parallelInvestigators: CardsMap | undefined,
+    public linkedState?: CampaignGuideStateT,
+  ) {}
+
+  investigatorCard(code: string): Card | undefined {
+    const deck = find(this.latestDecks || [], deck => deck.investigator === code);
+    const investigatorCode = deck?.deck.meta?.alternate_front ?? code;
+    return this.parallelInvestigators?.[investigatorCode] ?? this.investigators[investigatorCode] ?? this.investigators[code];
   }
 
   lastUpdated(): Date {
@@ -86,7 +83,7 @@ export default class CampaignStateHelper {
     };
   }
 
-  showChooseDeck(singleInvestigator?: Card, callback?: (code: string) => Promise<void>) {
+  showChooseDeck(singleInvestigator?: CampaignInvestigator, callback?: (code: string) => Promise<void>) {
     this.actions.showChooseDeck(singleInvestigator, callback);
   }
 
@@ -98,7 +95,7 @@ export default class CampaignStateHelper {
     this.actions.removeDeck(deckId, investigator);
   }
 
-  removeInvestigator(investigator: Card) {
+  removeInvestigator(investigator: CampaignInvestigator) {
     this.actions.removeInvestigator(investigator);
   }
 
@@ -149,7 +146,7 @@ export default class CampaignStateHelper {
       type: 'start_side_scenario',
       previousScenarioId: previousScenarioId.encodedScenarioId,
       sideScenarioType: 'custom',
-      scenario: uuid.v4(),
+      scenario: generateUuid(),
       name,
       xpCost,
       step: undefined,
@@ -165,8 +162,8 @@ export default class CampaignStateHelper {
     this.actions.setChoice(id, value, scenarioId);
   }
 
-  setText(id: string, value: string, scenarioId?: string) {
-    this.actions.setText(id, value, scenarioId);
+  setText(id: string, value: string, scenarioId: string | undefined, inputId: string | undefined) {
+    this.actions.setText(id, value, scenarioId, inputId);
   }
 
   setNumberChoices(id: string, value: NumberChoices, deckId?: DeckId, deckEdits?: DelayedDeckEdits, scenarioId?: string) {
@@ -252,6 +249,13 @@ export default class CampaignStateHelper {
       );
     } else {
       this.actions.undo(scenarioId);
+    }
+  }
+
+  replaceTextInput(inputId: string, text: string) {
+    const textInput = this.state.findInput((input) => input.type === 'text' && input.inputId === inputId);
+    if (textInput && textInput.type === 'text') {
+      this.actions.updateText(textInput.step, text, textInput.scenario, inputId);
     }
   }
 

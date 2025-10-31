@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import { find, forEach, flatMap, reverse } from 'lodash';
 import {
   ScrollView,
@@ -12,16 +12,19 @@ import { t } from 'ttag';
 import Card from '@data/types/Card';
 import TabooSet from '@data/types/TabooSet';
 import CardTextComponent from './CardTextComponent';
-import { NavigationProps } from '@components/nav/types';
-import space, { l, m, xs, s } from '@styles/space';
+import space, { m, xs, s } from '@styles/space';
 import StyleContext from '@styles/StyleContext';
 import useDbData from '@components/core/useDbData';
 import { useSelector } from 'react-redux';
 import { AppState } from '@reducers/index';
 import DeckButton from '@components/deck/controls/DeckButton';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { BasicStackParamList } from '@navigation/types';
+import HeaderTitle from '@components/core/HeaderTitle';
 
 export interface CardTabooProps {
   id: string;
+  cardName: string;
 }
 
 interface TabooSetMap {
@@ -33,8 +36,6 @@ interface TabooData {
   taboos: Card[];
   tabooSets: TabooSetMap;
 }
-
-type Props = NavigationProps & CardTabooProps;
 
 async function fetchTabooData(db: Database, id: string): Promise<TabooData> {
   const cardsQuery = await db.cardsQuery();
@@ -116,8 +117,9 @@ function TabooSection({ id }: { id: string }) {
   const [showPastVersions, setShowPastVersions] = useState(false);
   const fetch = useCallback((db: Database) => fetchTabooData(db, id), [id]);
   const currentTabooSetId = useSelector((appState: AppState) => appState.settings.currentTabooSetId);
-
+  const onSeePastVersions = useCallback(() => setShowPastVersions(true), [setShowPastVersions]);
   const tabooData = useDbData(fetch);
+
   if (!tabooData) {
     return null;
   }
@@ -142,7 +144,7 @@ function TabooSection({ id }: { id: string }) {
       { !!find(taboos, taboo => taboo.taboo_set_id !== currentTaboo && !taboo.taboo_placeholder) && (
         <View style={space.paddingTopL}>
           { !showPastVersions ?
-            <DeckButton icon="taboo" title={t`See taboo list history`} onPress={() => setShowPastVersions(true)} />
+            <DeckButton icon="taboo" title={t`See taboo list history`} onPress={onSeePastVersions} />
             : <Text style={typography.large}>{t`Taboo list history:`}</Text>
           }
           { !!showPastVersions &&
@@ -154,13 +156,22 @@ function TabooSection({ id }: { id: string }) {
   );
 }
 
-export default function CardTabooView({ id }: Props) {
-  const { backgroundStyle } = useContext(StyleContext);
+export default function CardTabooView() {
+  const route = useRoute<RouteProp<BasicStackParamList, 'Card.Taboo'>>();
+  const { id, cardName } = route.params;
+  const { backgroundStyle, colors } = useContext(StyleContext);
   const text = useMemo(() => [
     t`The List of Taboos is a list of Arkham Horror: The Card Game cards with optional deckbuilding restrictions or text changes. This list is designed to craft a healthy balance between investigator power and scenario difficulty, and to enforce shifts in deckbuilding environments over time.`,
     t`Adhering to The List of Taboos is completely optional. Investigators are not forced to adhere to the restrictions on this list, but if an investigator chooses to do so, they must do so in full (an investigator cannot pick and choose which restrictions to use).`,
     t`You can opt-in to always seeing taboos and buiding decks with them in Settings.`,
   ].join('\n\n'), []);
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle title={cardName} subtitle={t`Taboos`} color={colors.darkText} />,
+    });
+  }, [navigation, cardName, colors]);
+
   return (
     <ScrollView contentContainerStyle={[styles.container, backgroundStyle]}>
       <TabooSection id={id} />
@@ -172,10 +183,6 @@ export default function CardTabooView({ id }: Props) {
 const styles = StyleSheet.create({
   container: {
     margin: m,
-  },
-  header: {
-    marginTop: l,
-    marginBottom: m,
   },
   gameTextBlock: {
     borderLeftWidth: 4,

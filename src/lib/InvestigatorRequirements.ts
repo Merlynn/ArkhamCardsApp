@@ -1,45 +1,115 @@
-import { flatMap, map } from 'lodash';
+import { dropRightWhile, find, flatMap } from 'lodash';
 import { Brackets } from 'typeorm/browser';
 
-import { DeckMeta } from '@actions/types';
-import Card from '@data/types/Card';
-import { DeckOptionQueryBuilder } from '@data/types/DeckOption';
-import { combineQueries, combineQueriesOpt, where } from '@data/sqlite/query';
-import { FilterState } from './filters';
+import { DeckMeta, Slots } from '@actions/types';
+import Card, { InvestigatorChoice } from '@data/types/Card';
+import DeckOption, { DeckOptionQueryBuilder } from '@data/types/DeckOption';
+import { combineQueries, combineQueriesOpt, STORY_CARDS_QUERY, where } from '@data/sqlite/query';
+import FilterBuilder, { FilterState } from './filters';
+import DeckValidation from './DeckValidation';
+import { expandPackCode } from '@app_constants';
 
 interface DeckOptionsContext {
+  filters?: FilterState,
   isUpgrade?: boolean;
   hideSplash?: boolean;
+  hideVersatile?: boolean;
   extraDeck?: boolean;
   side?: boolean;
+  allOptions?: boolean;
+  includeStory?: boolean;
 }
 
-export function negativeQueryForInvestigator(investigator: Card, meta?: DeckMeta, isUpgrade?: boolean, isExtraDeck?: boolean, isSideDeck?: boolean): Brackets | undefined {
-  const inverted = flatMap(
-    isExtraDeck ? investigator.side_deck_options : investigator.deck_options,
-    (option, index) => {
+function negativeQueryForInvestigator(
+  investigator: InvestigatorChoice,
+  allOptions: DeckOption[],
+  meta?: DeckMeta,
+  context?: DeckOptionsContext
+
+): Brackets | undefined {
+  // We keep taking options until we find the first negative option.
+  const options = dropRightWhile(
+    allOptions,
+    (option) => {
+      return !option.not;
+    }
+  );
+  const foundNegative = !!find(options, option => !!option.not);
+  const inverted = foundNegative
+    ? flatMap(options, (option, index) => {
       if (!option.not) {
-        return [];
+        return (
+          new DeckOptionQueryBuilder(option, index).toQuery(
+            meta,
+            context?.isUpgrade || context?.side,
+            true
+          ) || []
+        );
       }
-      return new DeckOptionQueryBuilder(option, index).toQuery(meta, isUpgrade || isSideDeck) || [];
-    });
-  if (!inverted.length) {
-    return undefined;
+      return (
+        new DeckOptionQueryBuilder(option, index).toQuery(
+          meta,
+          context?.isUpgrade || context?.side,
+          false
+        ) || []
+      );
+    })
+    : [];
+
+  const invertedClause: Brackets[] = [];
+  if (inverted.length) {
+    const [firstInverted, ...otherInverted] = inverted;
+    invertedClause.push(combineQueries(firstInverted, otherInverted, 'and'));
   }
-  return combineQueriesOpt(inverted, 'and');
+
+  const specialtyBuilder = new FilterBuilder('specialty');
+  invertedClause.push(
+    specialtyBuilder.illegalSpecialistFilter(
+      investigator.front.real_traits_normalized?.split(',') ?? [],
+      [investigator.front.faction_code ?? 'neutral']
+    )
+  );
+  return combineQueriesOpt(invertedClause, 'or', true);
+}
+/**
+ * Turn the given realm card into a sqlite string, for use with investigators deckbuilding where.
+ * There are no story
+ */
+export function queryForInvestigatorWithoutDeck(
+  investigator: InvestigatorChoice,
+  meta: DeckMeta | undefined,
+  context?: DeckOptionsContext
+) {
+  return queryForInvestigator(investigator, {} , meta, [], context);
 }
 
 /**
- * Turn the given realm card into a realm-query string.
+ * Turn the given realm card into a sqlite string.
  */
 export function queryForInvestigator(
-  investigator: Card,
-  meta?: DeckMeta,
-  filters?: FilterState,
+  investigator: InvestigatorChoice,
+  slots: Slots | undefined,
+  meta: DeckMeta | undefined,
+  cards: Card[],
   context?: DeckOptionsContext
 ): Brackets {
-  const invertedClause = negativeQueryForInvestigator(investigator, meta, context?.isUpgrade, context?.extraDeck, context?.side);
-  const deck_options = context?.extraDeck ? investigator.side_deck_options : investigator.deck_options;
+  const validation = new DeckValidation(investigator, slots ?? {}, meta, {
+    extra_deck: context?.extraDeck,
+    all_options: context?.allOptions,
+    all_customizations: context?.allOptions,
+    hide_versatile: context?.hideVersatile,
+    for_query: true,
+  });
+  const deck_options = validation.deckOptions(cards);
+  // const [on_your_own, deck_options] = partition(all_options, option => option.dynamic_id === ON_YOUR_OWN_CODE);
+  const invertedClause = negativeQueryForInvestigator(
+    investigator,
+    deck_options,
+    meta,
+    context,
+  );
+
+  const limitedCardPool = meta?.card_pool?.split(',');
   // We assume that there is always at least one normalClause.
   const normalQuery = combineQueriesOpt(
     flatMap(deck_options, (option, index) => {
@@ -49,48 +119,64 @@ export function queryForInvestigator(
       if (option.limit && context?.hideSplash) {
         return [];
       }
-      if (option.level && filters?.levelEnabled) {
-        if (option.level.max < filters.level[0]) {
+      if (option.level && context?.filters?.levelEnabled) {
+        if (option.level.max < context?.filters.level[0]) {
           return [];
         }
-        if (option.level.min > filters.level[1]) {
+        if (option.level.min > context?.filters.level[1]) {
           return [];
         }
       }
-      return new DeckOptionQueryBuilder(option, index).toQuery(meta, context?.isUpgrade || context?.side) || [];
+      return (
+        new DeckOptionQueryBuilder(option, index).toQuery(
+          meta,
+          context?.isUpgrade || context?.side
+        ) || []
+      );
     }),
     'or'
   );
-  const mainClause = combineQueriesOpt([
-    ...(invertedClause ? [invertedClause] : []),
-    ...(normalQuery ? [normalQuery] : []),
-  ], 'and');
-  return combineQueries(
-    context?.extraDeck ?
-      where(
-        'c.code IN (:...values)',
-        {
-          values: flatMap(investigator.side_deck_requirements?.card ?? [], card => [
-            ...(card.code ? [card.code] : []),
-            ...(card.alternates ?? []),
-          ]),
-        }
-      ) : where(
-        'c.restrictions_investigator IN (:...values) OR c.alternate_required_code IN (:...values)',
-        {
-          values: [
-            investigator.code,
-            ...(investigator.alternate_of_code ? [investigator.alternate_of_code] : []),
-          ],
-        }
+  const card_pool_filter = new FilterBuilder('card_pool');
+  const mainClause = combineQueriesOpt(
+    [
+      ...(invertedClause ? [invertedClause] : []),
+      ...(normalQuery ? [normalQuery] : []),
+      ...(limitedCardPool?.length ?
+        card_pool_filter.packCodes(
+          flatMap(limitedCardPool, expandPackCode)
+        ) : []),
+    ],
+    'and'
+  );
+
+  const requiredCardsQuery = context?.extraDeck ?
+    where('c.code IN (:...values)', {
+      values: flatMap(
+        investigator.back.side_deck_requirements?.card ?? [],
+        (card) => [
+          ...(card.code ? [card.code] : []),
+          ...(card.alternates ?? []),
+        ]
       ),
-      mainClause ? [mainClause] : [],
+    })
+    : where(
+      'c.restrictions_investigator IN (:...values) OR c.alternate_required_code IN (:...values)',
+      {
+        values: [
+          investigator.back.code,
+          ...(investigator.back.alternate_of_code
+            ? [investigator.back.alternate_of_code]
+            : []),
+        ],
+      }
+    );
+  let combined = combineQueries(
+    requiredCardsQuery,
+    mainClause ? [mainClause] : [],
     'or'
   );
+  if (!context?.extraDeck && context?.includeStory) {
+    combined = combineQueries(STORY_CARDS_QUERY, [combined], 'or');
+  }
+  return combined;
 }
-
-
-export default {
-  negativeQueryForInvestigator,
-  queryForInvestigator,
-};

@@ -27,10 +27,11 @@ export default function ItemContent({ packCode, text, disabled, description }: P
           encounter_code={packCode}
           size={36 * fontScale}
           color={colors.darkText}
+          pack
         />
       </View>
       <View style={styles.column}>
-        <Text style={[typography.mediumGameFont, styles.campaignText]}>
+        <Text style={[typography.mediumGameFont, styles.campaignText]} numberOfLines={1}>
           { text }
         </Text>
         { !!description && (

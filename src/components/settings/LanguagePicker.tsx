@@ -99,6 +99,13 @@ function dialogStrings(lang: string): DialogStrings {
         confirmButton: '開始下載',
         cancelButton: '取消',
       };
+    case 'zh-cn':
+      return {
+        title: '确认',
+        description: '更改APP语言需要从ArkhamDB下载翻译过的卡牌，需要网路连线与一点时间。',
+        confirmButton: '开始下载',
+        cancelButton: '取消',
+      };
     case 'pt':
       return {
         title: 'Confirmar',
@@ -204,12 +211,11 @@ export default function LanguagePicker({ first, last, showAlert }: { first?: boo
 
 
 export function NarrationLanguagePicker({ first, last }: { first?: boolean; last?: boolean; }) {
-  const { lang } = useContext(LanguageContext);
   const langChoice = useSelector(getAudioLangChoice);
   const dispatch = useDispatch();
   const appLang = useSelector((state: AppState) => !state.settings.lang || state.settings.lang === 'system' ? getSystemLanguage() : state.settings.lang);
   const useAppLang = useSelector((state: AppState) => state.settings.audioLang === 'system');
-  const items = useMemo(() => audioLanguages(appLang), [lang]);
+  const items = useMemo(() => audioLanguages(appLang), [appLang]);
   const onLanguageChange = useCallback((newLang: string) => {
     dispatch(setAudioLanguageChoice(newLang));
   }, [dispatch]);

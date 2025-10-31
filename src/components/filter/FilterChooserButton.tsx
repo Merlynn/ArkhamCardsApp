@@ -5,9 +5,9 @@ import { Brackets } from 'typeorm';
 import { BASIC_QUERY, combineQueries, NO_CUSTOM_CARDS_QUERY } from '@data/sqlite/query';
 import { useSettingValue } from '@components/core/hooks';
 import { FilterState } from '@lib/filters';
+import { Slots } from '@actions/types';
 
 interface Props {
-  componentId: string;
   title: string;
   all: string;
   selection?: string[];
@@ -16,7 +16,7 @@ interface Props {
   onFilterChange: (setting: string, selection: string[]) => void;
   indent?: boolean;
   processValue?: (value: string) => string[];
-  query?: (filters: FilterState | undefined) => Brackets;
+  query?: (filters: FilterState | undefined, slots: Slots | undefined) => Brackets;
   tabooSetId?: number;
   capitalize?: boolean;
   fixedTranslations?: {
@@ -26,7 +26,6 @@ interface Props {
 }
 
 export default function FilterChooserButton({
-  componentId,
   title,
   all,
   field,
@@ -49,13 +48,12 @@ export default function FilterChooserButton({
     BASIC_QUERY,
     [
       ...(!showCustomContent ? [NO_CUSTOM_CARDS_QUERY] : []),
-      ...(query ? [query(undefined)] : []),
+      ...(query ? [query(undefined, undefined)] : []),
     ],
     'and'
   ), [query, showCustomContent]);
   return (
     <DbChooserButton
-      componentId={componentId}
       title={title}
       all={all}
       field={field}

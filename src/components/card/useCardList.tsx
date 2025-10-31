@@ -6,12 +6,13 @@ import { combineQueriesOpt } from '@data/sqlite/query';
 import FilterBuilder from '@lib/filters';
 import useCardsFromQuery from './useCardsFromQuery';
 import { usePlayerCards } from '@components/core/hooks';
+import { Brackets } from 'typeorm/browser';
 
 const FILTER_BUILDER = new FilterBuilder('clw');
 const EMPTY_CODES: string[] = [];
 const EMPTY_CARDS: Card[] = [];
 
-export default function useCardList(codes: string[], type: 'player' | 'encounter', tabooSetOverride?: number): [Card[], boolean] {
+export default function useCardList(codes: string[], type: 'player' | 'encounter', store: boolean, tabooSetOverride?: number): [Card[], boolean] {
   const [playerCodes, query] = useMemo(() => {
     if (type === 'player') {
       return [codes, undefined];
@@ -21,7 +22,7 @@ export default function useCardList(codes: string[], type: 'player' | 'encounter
       'and'
     )];
   }, [codes, type]);
-  const [playerCards, playerCardsLoading] = usePlayerCards(playerCodes, tabooSetOverride);
+  const [playerCards] = usePlayerCards(playerCodes, store, tabooSetOverride);
   const [queryCards, queryCardsLoading] = useCardsFromQuery({ query, tabooSetOverride });
   return useMemo(() => {
     if (!codes.length) {
@@ -38,14 +39,22 @@ export default function useCardList(codes: string[], type: 'player' | 'encounter
   }, [codes, type, playerCards, queryCards, queryCardsLoading]);
 }
 
-export function useCardMap(codes: string[], type: 'player' | 'encounter', tabooSetOverride?: number): [CardsMap, boolean] {
-  const [cards, loading] = useCardList(codes, type, tabooSetOverride);
-  const cardMap = useMemo(() => {
-    const r: CardsMap = {};
-    forEach(cards, c => {
-      r[c.code] = c;
-    });
-    return r;
-  }, [cards]);
+function toCardMap(cards: Card[]): CardsMap {
+  const r: CardsMap = {};
+  forEach(cards, c => {
+    r[c.code] = c;
+  });
+  return r;
+}
+
+export function useCardMap(codes: string[], type: 'player' | 'encounter', store: boolean, tabooSetOverride?: number): [CardsMap, boolean] {
+  const [cards, loading] = useCardList(codes, type, store, tabooSetOverride);
+  const cardMap = useMemo(() => toCardMap(cards), [cards]);
+  return [cardMap, loading];
+}
+
+export function useCardMapFromQuery(query: Brackets): [CardsMap, boolean] {
+  const [cards, loading] = useCardsFromQuery({ query });
+  const cardMap = useMemo(() => toCardMap(cards), [cards]);
   return [cardMap, loading];
 }

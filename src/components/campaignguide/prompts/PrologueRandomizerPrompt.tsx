@@ -17,6 +17,7 @@ import Card from '@data/types/Card';
 import InvestigatorButton from '../InvestigatorButton';
 import BinaryPrompt from './BinaryPrompt';
 import { usePickerDialog } from '@components/deck/dialogs';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 
 interface Props {
   id: string;
@@ -40,13 +41,14 @@ function PrologueRow({ item, setChoice, options, decision, editable, card, rando
     setChoice(item);
   }, [item, setChoice]);
   const selection = useMemo(() => (decision && find(options, o => o.condition === decision)) || undefined, [decision, options]);
-  if (!card) {
+  const investigator = useMemo(() => card ? ({ code: card.code, card, alternate_code: undefined }) : undefined, [card]);
+  if (!investigator) {
     return null;
   }
   return (
     <View style={space.paddingVerticalXs}>
       <InvestigatorButton
-        investigator={card}
+        investigator={investigator}
         color="dark"
         onPress={onPress}
         disabled={!editable}
@@ -64,7 +66,7 @@ export default function PrologueRandomizerPrompt({ id, input }: Props) {
   const choices = useMemo(() => chooseOneInputChoices(input.choices, campaignLog), [input.choices, campaignLog]);
   const decision = scenarioState.stringChoices(id);
   const codes = useMemo(() => map(choices, c => c.id), [choices]);
-  const [cards, loading] = useCardList(codes, 'encounter');
+  const [cards, loading] = useCardList(codes, 'encounter', false);
   const [liveChoices, setChoices] = useState<Results>({});
   const setRandomChoice = useCallback((item: DisplayChoiceWithId) => {
     const alreadyChosen = new Set(values(liveChoices));
@@ -113,7 +115,7 @@ export default function PrologueRandomizerPrompt({ id, input }: Props) {
     scenarioState.setStringChoices(id, toSave);
   }, [liveChoices, scenarioState, id]);
   const disabled = useMemo(() => !!find(choices, c => !results[c.id]), [choices, results]);
-  const [dialogInvestigator, setDialogInvestigator] = useState<Card | undefined>();
+  const [dialogInvestigator, setDialogInvestigator] = useState<CampaignInvestigator | undefined>();
   const items = useMemo(() => {
     return map(input.options, o => {
       return {
@@ -137,7 +139,8 @@ export default function PrologueRandomizerPrompt({ id, input }: Props) {
     onValueChange: onDialogChange,
   })
   const showInvestigatorDialog = useCallback((item: DisplayChoiceWithId) => {
-    setDialogInvestigator(find(cards, card => card.code === item.id));
+    const card = find(cards, card => card.code === item.id);
+    setDialogInvestigator(card ? { code: card.code, card, alternate_code: undefined } : undefined);
     showDialog();
   }, [setDialogInvestigator, cards, showDialog]);
   return (

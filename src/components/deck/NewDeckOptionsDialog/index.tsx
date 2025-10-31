@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useReducer, useState } from 'react';
 import {
   Text,
   ScrollView,
@@ -6,29 +6,28 @@ import {
   View,
   SafeAreaView,
 } from 'react-native';
-import { Navigation } from 'react-native-navigation';
-import { find, flatMap, forEach, map, sumBy, throttle, uniqBy } from 'lodash';
+
+import { dropWhile, find, flatMap, forEach, map, reverse, sumBy, throttle, uniqBy } from 'lodash';
 import { Action } from 'redux';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { NetInfoStateType } from '@react-native-community/netinfo';
 import { t } from 'ttag';
 
 import { TouchableOpacity } from '@components/core/Touchables';
 import RequiredCardSwitch from './RequiredCardSwitch';
-import { showCard, showCardSwipe, showDeckModal } from '@components/nav/helper';
+import { showCard, showCardSwipe, getDeckScreenOptions } from '@components/nav/helper';
 import useNetworkStatus from '@components/core/useNetworkStatus';
 import withLoginState, { LoginStateProps } from '@components/core/withLoginState';
 import { saveNewDeck } from '@components/deck/actions';
-import { NavigationProps } from '@components/nav/types';
-import { CampaignId, Deck, DeckMeta, getDeckId, Slots } from '@actions/types';
+import { CampaignId, Deck, DeckMeta, EditDeckState, getDeckId, ParsedDeck, Slots } from '@actions/types';
 import { BASIC_WEAKNESS_CHOICE, CUSTOM_INVESTIGATOR, RANDOM_BASIC_WEAKNESS } from '@app_constants';
-import Card from '@data/types/Card';
-import { AppState } from '@reducers';
-import space, { m, s } from '@styles/space';
+import Card, { CardsMap } from '@data/types/Card';
+import { AppState, makeCardPoolSelector } from '@reducers';
+import space, { s } from '@styles/space';
 import COLORS from '@styles/colors';
 import starterDecks from '@data/deck/starterDecks';
 import StyleContext from '@styles/StyleContext';
-import { useFlag, useParallelInvestigators, useSettingValue, useTabooSetId } from '@components/core/hooks';
+import { useFlag, useParallelInvestigator, useSettingValue, useTabooSetId } from '@components/core/hooks';
 import { ThunkDispatch } from 'redux-thunk';
 import DeckMetadataControls from '../controls/DeckMetadataControls';
 import DeckPickerStyleButton from '../controls/DeckPickerStyleButton';
@@ -39,7 +38,6 @@ import LoadingSpinner from '@components/core/LoadingSpinner';
 import { Item, useAlertDialog, usePickerDialog, useSimpleTextDialog } from '@components/deck/dialogs';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import InvestigatorSummaryBlock from '@components/card/InvestigatorSummaryBlock';
-import { NOTCH_BOTTOM_PADDING } from '@styles/sizes';
 import { useDeckActions } from '@data/remote/decks';
 import useSingleCard from '@components/card/useSingleCard';
 import { useCardMap } from '@components/card/useCardList';
@@ -48,16 +46,19 @@ import useChaosDeckGenerator from '../useChaosDeckGenerator';
 import { parseDeck } from '@lib/parseDeck';
 import useParsedDeckComponent from '../useParsedDeckComponent';
 import LanguageContext from '@lib/i18n/LanguageContext';
+import { DeckEditContextProvider } from '../DeckEditContext';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '@navigation/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface NewDeckOptionsProps {
   investigatorId: string;
   campaignId: CampaignId | undefined;
-  onCreateDeck: (deck: Deck) => void;
+  onCreateDeck?: (deck: Deck) => void;
+  isModal?: boolean;
+  alternateInvestigatorId?: string;
+  headerBackgroundColor?: string;
 }
-
-type Props = NavigationProps &
-  NewDeckOptionsProps &
-  LoginStateProps;
 
 type DeckDispatch = ThunkDispatch<AppState, unknown, Action<string>>;
 
@@ -71,14 +72,28 @@ function specialDeckModeLabel(mode: SpecialDeckMode): string {
   }
 }
 
+
+function ChaosDeckPreview({ parsedDeck, meta, cards, tabooSetId }: {
+  meta: DeckMeta; parsedDeck: ParsedDeck; cards: CardsMap; tabooSetId: number | undefined }) {
+  const [parsedDeckComponent] = useParsedDeckComponent({
+    meta,
+    parsedDeck,
+    mode: 'view',
+    cards,
+    tabooSetId,
+    visible: true,
+  });
+  return <>{parsedDeckComponent}</>;
+}
+
 function NewDeckOptionsDialog({
-  investigatorId,
-  onCreateDeck,
-  campaignId,
-  componentId,
   signedIn,
   login,
-}: Props) {
+}: LoginStateProps) {
+  const route = useRoute<RouteProp<RootStackParamList, 'Deck.NewOptions'>>();
+  const { investigatorId, onCreateDeck, campaignId, isModal, alternateInvestigatorId } = route.params;
+  const cardPoolSelector = useMemo(makeCardPoolSelector, []);
+  const { cardPoolMode: defaultCardPoolMode, cardPoolPacks: defaultCardPoolPacks } = useSelector(cardPoolSelector);
   const deckActions = useDeckActions();
   const defaultTabooSetId = useTabooSetId();
   const { userId } = useContext(ArkhamCardsAuthContext);
@@ -109,7 +124,12 @@ function NewDeckOptionsDialog({
       delete newMeta[key];
     }
     return newMeta;
-  }, {});
+  }, {
+    alternate_back: alternateInvestigatorId,
+    alternate_front: alternateInvestigatorId,
+    card_pool: defaultCardPoolMode !== 'legacy' ? defaultCardPoolPacks.join(',') : undefined,
+  });
+
   const setTabooSetId = useCallback((tabooSetId: number) => {
     actuallySetTabooSetId(tabooSetId);
     setSlots(undefined);
@@ -117,6 +137,7 @@ function NewDeckOptionsDialog({
   const setMeta = useCallback((key: keyof DeckMeta, value?: string) => {
     setMetaField({ key, value });
   }, [setMetaField]);
+
   const updateMeta = useCallback((key: keyof DeckMeta, value?: string) => {
     setMetaField({ key, value });
     setSlots(undefined);
@@ -135,7 +156,7 @@ function NewDeckOptionsDialog({
     investigatorId.startsWith('z') ||
     !!investigator?.custom()
   ), [investigator, investigatorId]);
-  const [parallelInvestigators] = useParallelInvestigators(investigatorId, tabooSetId);
+  const [parallelInvestigators] = useParallelInvestigator(investigatorId, tabooSetId);
 
   const [investigatorFront, investigatorBack] = useMemo(() => [
     metaState.alternate_front && metaState.alternate_back !== investigatorId ? find(parallelInvestigators, c => c.code === metaState.alternate_front) : investigator,
@@ -206,14 +227,14 @@ function NewDeckOptionsDialog({
       RANDOM_BASIC_WEAKNESS,
       ...(investigator?.deck_requirements?.choice?.find(choice => choice.target === 'subtype' && choice.value === 'basicweakness') ? [BASIC_WEAKNESS_CHOICE] : []),
       ...flatMap(investigator?.deck_requirements?.card || [], cardRequirement => {
-      return [
-        ...(cardRequirement.code ? [cardRequirement.code] : []),
-        ...(cardRequirement.alternates || []),
-      ];
-    }),
-  ];
+        return [
+          ...(cardRequirement.code ? [cardRequirement.code] : []),
+          ...(cardRequirement.alternates || []),
+        ];
+      }),
+    ];
   }, [investigator]);
-  const [cards] = useCardMap(requiredCardCodes, 'player', tabooSetId);
+  const [cards] = useCardMap(requiredCardCodes, 'player', false, tabooSetId);
   const requiredCardOptions = useMemo(() => {
     if (!cards || !investigator) {
       return [];
@@ -250,7 +271,10 @@ function NewDeckOptionsDialog({
     }
     return map(result, r => uniqBy(r, x => x.code));
   }, [cards, investigator]);
-  const randomWeaknessCount = useMemo(() => sumBy(investigator?.deck_requirements?.random, t => t.target === 'subtype' && t.value === 'basicweakness' ? 1 : 0) ?? 0, [investigator]);
+  const randomWeaknessCount = useMemo(
+    () => sumBy(investigator?.deck_requirements?.random, t => t.target === 'subtype' && t.value === 'basicweakness' ? 1 : 0) ?? 0,
+    [investigator]
+  );
 
   const meta = useMemo((): DeckMeta =>{
     if (specialDeckMode === 'starter') {
@@ -332,12 +356,43 @@ function NewDeckOptionsDialog({
     return result;
   }, [cards, meta, investigatorId, optionSelected, requiredCardOptions, investigator, investigatorBack, specialDeckMode]);
   const dispatch: DeckDispatch = useDispatch();
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  useLayoutEffect(() => {
+    navigation.setOptions(getDeckScreenOptions(colors, { title: t`New Deck`, modal: isModal }, investigator));
+  }, [investigator, colors, navigation, isModal]);
+
   const showNewDeck = useCallback((deck: Deck) => {
     // Change the deck options for required cards, if present.
     onCreateDeck && onCreateDeck(deck);
-    showDeckModal(getDeckId(deck), deck, campaignId, colors, investigator);
+
+    // Get the current navigation state and remove Deck.New and Deck.NewOptions from the top of the stack
+    const state = navigation.getState();
+    const routes = dropWhile(
+      reverse([...state?.routes ?? []]),
+      r => r.name === 'Deck.New' || r.name === 'Deck.NewOptions'
+    ).reverse();
+
+    navigation.reset({
+      index: routes.length,
+      routes: [
+        ...routes as any,
+        {
+          name: 'Deck',
+          params: {
+            id: getDeckId(deck),
+            modal: true,
+            campaignId,
+            title: investigator ? investigator.name : t`Deck`,
+            subtitle: deck.name,
+            headerBackgroundColor: investigator ? colors.faction[investigator.factionCode()].background : undefined,
+          },
+        },
+      ],
+    });
     setSaving(false);
-  }, [campaignId, onCreateDeck, colors, investigator, setSaving]);
+  }, [campaignId, colors, onCreateDeck, navigation, investigator, setSaving]);
   const createDeck = useCallback((isRetry?: boolean) => {
     const deckName = deckNameChange || defaultDeckName;
     if (investigator && (!saving || isRetry)) {
@@ -387,7 +442,7 @@ function NewDeckOptionsDialog({
     showErrorDialog(t`Unable to generate deck`, error);
   }, [showErrorDialog])
 
-  const items: Item<SpecialDeckMode>[] = useMemo(() => {
+  const specialDeckItems: Item<SpecialDeckMode>[] = useMemo(() => {
     const hasStarterDeck = !!investigatorId && starterDecks.cards[investigatorId] !== undefined;
     const starterDeckItem: Item<SpecialDeckMode>[] = hasStarterDeck ? [{
       title: specialDeckModeLabel('starter'),
@@ -412,7 +467,7 @@ function NewDeckOptionsDialog({
   }, [investigatorId]);
   const [specialDeckDialog, showSpecialDeckDialog] = usePickerDialog({
     title: t`Special deck`,
-    items,
+    items: specialDeckItems,
     selectedValue: specialDeckMode,
     onValueChange: setSpecialDeckMode,
   });
@@ -438,12 +493,12 @@ function NewDeckOptionsDialog({
         />
       </>
     );
-  }, [deckNameChange, defaultDeckName, showNameDialog, showSpecialDeckDialog, specialDeckMode]);
+  }, [deckNameChange, defaultDeckName, specialDeckMode, showNameDialog, showSpecialDeckDialog]);
 
   const onCardPress = useCallback((card: Card) => {
     if (singleCardView) {
       showCard(
-        componentId,
+        navigation,
         card.code,
         card,
         colors,
@@ -464,11 +519,11 @@ function NewDeckOptionsDialog({
       });
     });
     showCardSwipe(
-      componentId,
+      navigation,
+      colors,
       map(visibleCards, card => card.code),
       undefined,
       index,
-      colors,
       visibleCards,
       false,
       tabooSetId,
@@ -476,7 +531,7 @@ function NewDeckOptionsDialog({
       investigator,
       false
     );
-  }, [componentId, requiredCardOptions, colors, investigator, singleCardView, tabooSetId]);
+  }, [requiredCardOptions, navigation, investigator, colors, singleCardView, tabooSetId]);
   const [generateChaosDeck, chaosDeckLoading, chaosCards] = useChaosDeckGenerator({
     investigatorCode: investigatorId,
     meta, tabooSetId,
@@ -496,16 +551,22 @@ function NewDeckOptionsDialog({
     };
     return parseDeck(investigatorBack.code, meta, slots, {}, {}, chaosCards, listSeperator);
   }, [investigatorBack, meta, chaosSlots, requiredSlots, chaosCards, specialDeckMode, listSeperator]);
+  const chaosEditState = useMemo(() => {
+    if (!parsedChaosDeck) {
+      return undefined;
+    }
+    const edits: EditDeckState = {
+      xpAdjustment: 0,
+      slots: parsedChaosDeck.slots,
+      ignoreDeckLimitSlots: parsedChaosDeck.ignoreDeckLimitSlots,
+      side: {},
+      meta,
+      mode: 'view',
+      editable: false,
+    };
+    return edits;
+  }, [parsedChaosDeck, meta]);
 
-  const [parsedDeckComponent] = useParsedDeckComponent({
-    componentId,
-    meta,
-    parsedDeck: parsedChaosDeck,
-    mode: 'view',
-    cards: chaosCards,
-    tabooSetId,
-    visible: true,
-  });
   const formContent = useMemo(() => {
     return (
       <>
@@ -556,7 +617,11 @@ function NewDeckOptionsDialog({
         ) }
         { !!find(requiredCardOptions, option => option.length > 0) && (
           <View style={[space.paddingSideS, space.paddingBottomS]}>
-            { specialDeckMode === 'chaos' && !!chaosSlots && parsedDeckComponent }
+            { specialDeckMode === 'chaos' && !!chaosSlots && !!parsedChaosDeck && !!chaosEditState && (
+              <DeckEditContextProvider deckEdits={chaosEditState} investigator={investigatorId} deckId={undefined}>
+                <ChaosDeckPreview parsedDeck={parsedChaosDeck} meta={meta} cards={chaosCards} tabooSetId={tabooSetId} />
+              </DeckEditContextProvider>
+            )}
             { specialDeckMode !== 'starter' && (
               <DeckSectionBlock title={t`Required Cards`} faction="neutral">
                 { map(requiredCardOptions, (requiredCards, index) => {
@@ -582,21 +647,24 @@ function NewDeckOptionsDialog({
       </>
     );
   }, [investigatorId, signedIn, isCustomContent, randomWeaknessCount, cards,
-    networkType, isConnected, chaosSlots, specialDeckMode, parsedDeckComponent,
+    networkType, isConnected, chaosSlots, specialDeckMode, chaosEditState, chaosCards,
+    parsedChaosDeck,
     offlineDeck, optionSelected, tabooSetId, requiredCardOptions, meta, typography,
     setTabooSetId, onCardPress, toggleOptionsSelected,toggleOfflineDeck,
     login, refreshNetworkStatus, renderNamePicker, setParallel, updateMeta]);
 
   const cancelPressed = useCallback(() => {
-    Navigation.pop(componentId);
-  }, [componentId]);
+    navigation.goBack();
+  }, [navigation]);
 
   if (!investigator) {
     return null;
   }
   const okDisabled = saving || !(specialDeckDialog === 'starter' || !!find(optionSelected, selected => selected));
   const showRegenerateButton = specialDeckMode === 'chaos' && chaosSlots !== undefined;
-  const footerSize = m + NOTCH_BOTTOM_PADDING + (s + 54 * fontScale) * (showRegenerateButton ? 2 : 1);
+  const footerSize = insets.bottom + (s + 54 * fontScale) * (showRegenerateButton ? 2 : 1);
+
+
   if (saving) {
     return (
       <LoadingSpinner large />
@@ -610,6 +678,7 @@ function NewDeckOptionsDialog({
             investigator={investigatorFront || investigator}
             tabooSetId={tabooSetId}
             investigatorBack={investigatorBack}
+            navEnabled={false}
           />
         </View>
         { formContent }
@@ -666,7 +735,7 @@ function NewDeckOptionsDialog({
   );
 }
 
-export default withLoginState<NavigationProps & NewDeckOptionsProps>(
+export default withLoginState(
   NewDeckOptionsDialog,
   { noWrapper: true }
 );
@@ -676,7 +745,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     paddingTop: s,
-    paddingBottom: m + NOTCH_BOTTOM_PADDING,
     left: 0,
   },
   row: {

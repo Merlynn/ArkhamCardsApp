@@ -1,4 +1,6 @@
-import React, { MutableRefObject, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { RefObject, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useRoute, RouteProp, useNavigation, usePreventRemove } from '@react-navigation/native';
+import { RootStackParamList } from '@navigation/types';
 import { find, forEach, flatMap, uniqBy, keys, map, filter, sortBy } from 'lodash';
 import {
   Linking,
@@ -7,47 +9,40 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { useDispatch } from 'react-redux';
-import { Navigation, OptionsTopBarButton } from 'react-native-navigation';
+import { useDispatch, useSelector } from 'react-redux';
 import { ngettext, msgid, t, c } from 'ttag';
 import SideMenu from 'react-native-side-menu-updated';
-import ActionButton from 'react-native-action-button';
+import { FloatingAction } from 'react-native-floating-action';
 import { format } from 'date-fns';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import MenuButton from '@components/core/MenuButton';
 import BasicButton from '@components/core/BasicButton';
 import withLoginState, { LoginStateProps } from '@components/core/withLoginState';
 import useCopyDeckDialog from '@components/deck/useCopyDeckDialog';
-import { iconsMap } from '@app/NavIcons';
 import { deleteDeckAction } from '@components/deck/actions';
 import { CampaignId, CardId, DeckId, DEFAULT_SORT, EditDeckState, getDeckId, INVESTIGATOR_PROBLEM, TOO_FEW_CARDS, UPDATE_DECK_EDIT } from '@actions/types';
-import { DeckChecklistProps } from '@components/deck/DeckChecklistView';
 import Card from '@data/types/Card';
-import { EditDeckProps } from '@components/deck/DeckEditView';
-import { UpgradeDeckProps } from '@components/deck/DeckUpgradeDialog';
-import { DeckHistoryProps } from '@components/deck/DeckHistoryView';
-import { EditSpecialCardsProps } from '@components/deck/EditSpecialDeckCardsView';
 import DeckViewTab from './DeckViewTab';
-import DeckNavFooter, { PreLoadedDeckNavFooter } from '@components/deck/DeckNavFooter';
-import { AppState } from '@reducers';
+import { PreLoadedDeckNavFooter } from '@components/deck/DeckNavFooter';
+import { AppState, getShowCustomContent } from '@reducers';
 import space, { xs, s } from '@styles/space';
 import COLORS from '@styles/colors';
-import { getDeckOptions, showCardCharts, showDrawSimulator } from '@components/nav/helper';
+import { showCardCharts, showDrawSimulator } from '@components/nav/helper';
 import StyleContext from '@styles/StyleContext';
 import { useParsedDeckWithFetch, useShowDrawWeakness } from '@components/deck/hooks';
 import { useAdjustXpDialog, AlertButton, useAlertDialog, useBasicDialog, useSaveDialog, useSimpleTextDialog, useUploadLocalDeckDialog, useDialog } from '@components/deck/dialogs';
-import { Toggles, useBackButton, useCopyAction, useEffectUpdate, useFlag, useNavigationButtonPressed, useRequiredCards, useSettingValue, useTabooSet, useToggles } from '@components/core/hooks';
-import { NavigationProps } from '@components/nav/types';
+import { Toggles, useBackButton, useCopyAction, useEffectUpdate, useFlag, useRequiredCards, useSettingValue, useTabooSet, useToggles } from '@components/core/hooks';
 import DeckBubbleHeader from '@components/deck/section/DeckBubbleHeader';
 import { CUSTOM_INVESTIGATOR } from '@app_constants';
 import AppIcon from '@icons/AppIcon';
 import LoadingSpinner from '@components/core/LoadingSpinner';
-import { NOTCH_BOTTOM_PADDING } from '@styles/sizes';
+import HeaderButton from '@components/core/HeaderButton';
 import DeckButton from '@components/deck/controls/DeckButton';
-import { CardUpgradeDialogProps } from '@components/deck/CardUpgradeDialog';
 import DeckProblemBanner from '@components/deck/DeckProblemBanner';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import { useCampaign, useMyDecks } from '@data/hooks';
@@ -57,12 +52,12 @@ import { useBondedFromCards } from '@components/card/CardDetailView/BondedCardsC
 import FilterBuilder from '@lib/filters';
 import useCardsFromQuery from '@components/card/useCardsFromQuery';
 import ArkhamButton from '@components/core/ArkhamButton';
-import { DeckDraftProps } from '@components/deck/DeckDraftView';
 import { localizeTag } from '@components/deck/TagChiclet';
 import LatestDeckT from '@data/interfaces/LatestDeckT';
 import useTagPile from '@components/deck/useTagPile';
 import { PARALLEL_JIM_CODE } from '@data/deck/specialMetaSlots';
-import { getExtraDeckSlots } from '@lib/parseDeck';
+import { parseMetaSlots } from '@lib/parseDeck';
+import { ParsedDeckContextProvider } from '../DeckEditContext';
 
 export interface DeckDetailProps {
   id: DeckId;
@@ -72,13 +67,12 @@ export interface DeckDetailProps {
   campaignId: CampaignId | undefined;
   modal?: boolean;
   fromCampaign?: boolean;
+  headerBackgroundColor?: string;
 }
 
 const SHOW_DRAFT_CARDS = true;
 
-type Props = NavigationProps &
-  DeckDetailProps &
-  LoginStateProps;
+// Props no longer needed since we get everything from route params
 type DeckDispatch = ThunkDispatch<AppState, unknown, Action<string>>;
 
 function formatTabooStart(date_start: string | undefined, locale: string) {
@@ -108,7 +102,7 @@ function useUpgradeCardsByName(cards: Card[], tabooSetOverride?: number): [Card[
 
 function useTagsDialog(
   deck: LatestDeckT | undefined,
-  deckEditsRef: MutableRefObject<EditDeckState | undefined>,
+  deckEditsRef: RefObject<EditDeckState | undefined>,
   deckActions: DeckActions,
   editable: boolean
 ): [React.ReactNode, string, () => void] {
@@ -200,26 +194,24 @@ function useTagsDialog(
 
 
 function DeckDetailView({
-  componentId,
-  id,
-  title,
-  subtitle,
-  campaignId,
-  modal,
   signedIn,
   login,
-  initialMode,
-  fromCampaign,
-}: Props) {
+}: LoginStateProps) {
+  const route = useRoute<RouteProp<RootStackParamList, 'Deck'>>();
+  const navigation = useNavigation();
+
+  // Extract all params from route
+  const { id, title, subtitle, campaignId, modal, initialMode, fromCampaign } = route.params;
+
   const { lang, arkhamDbDomain } = useContext(LanguageContext);
-  const { backgroundStyle, colors, darkMode, typography, shadow, width } = useContext(StyleContext);
+  const { backgroundStyle, colors, darkMode, typography, width } = useContext(StyleContext);
   const deckActions = useDeckActions();
   const campaign = useCampaign(campaignId);
   const dispatch = useDispatch();
   const deckDispatch: DeckDispatch = useDispatch();
   const { userId, arkhamDbUser, arkhamDb } = useContext(ArkhamCardsAuthContext);
   const singleCardView = useSettingValue('single_card');
-  const parsedDeckObj = useParsedDeckWithFetch(id, componentId, deckActions, initialMode);
+  const parsedDeckObj = useParsedDeckWithFetch(id, deckActions, initialMode);
   const [xpAdjustmentDialog, showXpAdjustmentDialog] = useAdjustXpDialog(parsedDeckObj);
   const {
     deck,
@@ -252,7 +244,7 @@ function DeckDetailView({
   }, [cardsMissing, cardsMissingMessage]);
 
   const deckId = useMemo(() => deck ? getDeckId(deck) : id, [deck, id]);
-  const { savingDialog, saveEdits, handleBackPress, addedBasicWeaknesses, hasPendingEdits, mode } = useSaveDialog(parsedDeckObj);
+  const { savingDialog, saveEdits, handleBackPress, addedBasicWeaknesses, hasPendingEdits, mode, confirmedRef } = useSaveDialog(parsedDeckObj, navigation);
   const [
     deletingDialog,
     deleting,
@@ -265,16 +257,16 @@ function DeckDetailView({
   const extraProblem = parsedDeck?.problem;
   const name = deckEdits?.nameChange !== undefined ? deckEdits.nameChange : deck?.name;
   const flatDeckCards = useMemo(() => {
-    const extraDeckSlots = parsedDeck?.investigatorBack.code === PARALLEL_JIM_CODE ? getExtraDeckSlots(deckEdits?.meta ?? {}) : {};
+    const extraDeckSlots = parsedDeck?.investigator.back.code === PARALLEL_JIM_CODE ? parseMetaSlots(deckEdits?.meta.extra_deck) : {};
     return [
-      ...(parsedDeck?.investigator ? [parsedDeck.investigator] : []),
+      ...(parsedDeck?.investigator ? [parsedDeck.investigator.front, parsedDeck.investigator.back] : []),
       ...flatMap(deckCards, c =>
         c && ((deckEdits?.slots[c.code] || 0) > 0 || (deckEdits?.ignoreDeckLimitSlots[c.code] || 0) > 0 || (extraDeckSlots[c.code] || 0) > 0) ? c : []),
-      ];
+    ];
   }, [deckCards, deckEdits, parsedDeck?.investigator]);
   const [possibleUpgradeCards] = useUpgradeCardsByName(flatDeckCards, tabooSetId)
   const [bondedCards] = useBondedFromCards(flatDeckCards, DEFAULT_SORT, tabooSetId);
-  const [requiredCards] = useRequiredCards(parsedDeck?.investigatorFront, parsedDeck?.investigatorBack, tabooSetId);
+  const [requiredCards] = useRequiredCards(parsedDeck?.investigator, tabooSetId);
   const cards = useMemo(() => {
     const r = {
       ...deckCards,
@@ -305,12 +297,16 @@ function DeckDetailView({
     });
     return r;
   }, [bondedCards]);
+  const showCustomContent = useSelector(getShowCustomContent);
   const cardsByName = useMemo(() => {
     const cardsByName: {
       [name: string]: Card[];
     } = {};
     forEach(possibleUpgradeCards, card => {
       if (card) {
+        if (card.custom() && !showCustomContent) {
+          return;
+        }
         const real_name = card.real_name.toLowerCase();
         if (cardsByName[real_name]) {
           cardsByName[real_name].push(card);
@@ -320,7 +316,7 @@ function DeckDetailView({
       }
     });
     return cardsByName;
-  }, [possibleUpgradeCards]);
+  }, [showCustomContent, possibleUpgradeCards]);
 
   const setMode = useCallback((mode: 'view' | 'edit' | 'upgrade') => {
     dispatch({
@@ -333,18 +329,24 @@ function DeckDetailView({
   }, [dispatch, id]);
   const [alertDialog, showAlert] = useAlertDialog();
 
-  useNavigationButtonPressed(({ buttonId }) => {
-    if (buttonId === 'back' || buttonId === 'androidBack') {
-      handleBackPress();
-    } else if (buttonId === 'save') {
-      saveEdits();
-    } else if (buttonId === 'menu') {
-      toggleMenuOpen();
+  // Handle back button/gesture with usePreventRemove hook
+  usePreventRemove(true, ({ data }) => {
+    // Only intercept back/pop actions, not forward navigation
+    if (data.action.type === 'POP' || data.action.type === 'GO_BACK') {
+      if (!handleBackPress()) {
+        // handleBackPress returned false, allow navigation
+        navigation.dispatch(data.action);
+      }
+      // handleBackPress returned true (intercepted), do nothing
+    } else {
+      // Allow other navigation actions
+      navigation.dispatch(data.action);
     }
-  }, componentId, [saveEdits, toggleMenuOpen, handleBackPress]);
+  });
+
   useBackButton(handleBackPress);
   const hasInvestigator = !!parsedDeck?.investigator;
-  const factionColor = useMemo(() => colors.faction[parsedDeck?.investigator.factionCode() || 'neutral'].background, [parsedDeck, colors.faction]);
+  const factionColor = useMemo(() => colors.faction[parsedDeck?.faction ?? 'neutral'].background, [parsedDeck, colors.faction]);
   useEffect(() => {
     if (hasInvestigator) {
       const textColors = {
@@ -364,53 +366,61 @@ function DeckDetailView({
         upgrade: 'dark',
       };
       const backgroundColor = backgroundColors[mode];
+      const statusBarStyle = statusBarStyles[mode];
       const titles = {
         view: title,
         upgrade: t`Upgrading deck`,
         edit: t`Editing deck`,
       };
-      const rightButtons: OptionsTopBarButton[] = [{
-        id: 'menu',
-        icon: iconsMap.menu,
-        color: textColor,
-        accessibilityLabel: t`Menu`,
-      }];
+
       const leftButtons = modal ? [
         Platform.OS === 'ios' ? {
           text: t`Done`,
           id: 'back',
           color: textColor,
         } : {
-          icon: iconsMap['arrow-left'],
+          icon: 'arrow-left',
           id: 'androidBack',
           color: textColor,
         },
       ] : [];
 
 
-      Navigation.mergeOptions(componentId, {
-        statusBar: {
-          style: statusBarStyles[mode],
+      navigation.setOptions({
+        title: titles[mode],
+        headerStyle: {
           backgroundColor,
         },
-        topBar: {
-          title: {
-            text: titles[mode],
-            color: textColor,
-          },
-          subtitle: {
-            text: name || subtitle,
-            color: textColor,
-          },
-          background: {
-            color: backgroundColor,
-          },
-          leftButtons,
-          rightButtons,
+        headerTitleStyle: {
+          color: textColor,
         },
+        headerTintColor: textColor,
+        statusBarStyle,
+        headerLeft: leftButtons.length > 0 ? () => (
+          leftButtons[0].text ? (
+            <TouchableOpacity onPress={handleBackPress}>
+              <Text style={{ color: textColor, fontSize: 16 }}>{leftButtons[0].text}</Text>
+            </TouchableOpacity>
+          ) : (
+            <HeaderButton
+              iconName="arrow_back"
+              onPress={handleBackPress}
+              color={textColor}
+              accessibilityLabel={t`Back`}
+            />
+          )
+        ) : undefined,
+        headerRight: () => (
+          <HeaderButton
+            iconName="menu"
+            onPress={toggleMenuOpen}
+            color={textColor}
+            accessibilityLabel={t`Menu`}
+          />
+        ),
       });
     }
-  }, [modal, hasInvestigator, darkMode, componentId, mode, colors, factionColor, name, subtitle, title]);
+  }, [modal, hasInvestigator, darkMode, navigation, mode, colors, factionColor, name, subtitle, title, handleBackPress, toggleMenuOpen]);
   const [uploadLocalDeckDialog, uploadLocalDeck] = useUploadLocalDeckDialog(deckActions, deck, parsedDeck);
   useEffect(() => {
     if (!deck) {
@@ -421,7 +431,8 @@ function DeckDetailView({
           [{
             text: t`Okay`,
             onPress: () => {
-              Navigation.dismissAllModals();
+              confirmedRef.current = true;
+              navigation.goBack();
             },
           }],
         );
@@ -435,11 +446,12 @@ function DeckDetailView({
       setDeleting(true);
 
       deckDispatch(deleteDeckAction(userId, deckActions, id, deleteAllVersions)).then(() => {
-        Navigation.dismissAllModals();
+        confirmedRef.current = true;
+        navigation.goBack();
         setDeleting(false);
       });
     }
-  }, [id, deleting, userId, deckActions, setDeleting, deckDispatch]);
+  }, [id, deleting, userId, deckActions, setDeleting, deckDispatch, confirmedRef, navigation]);
 
   const deleteAllDecks = useCallback(() => {
     deleteDeck(true);
@@ -454,11 +466,12 @@ function DeckDetailView({
       setDeleting(true);
 
       deckDispatch(deleteDeckAction(userId, deckActions, id, false)).then(() => {
-        Navigation.dismissAllModals();
+        confirmedRef.current = true;
+        navigation.goBack();
         setDeleting(false);
       });
     }
-  }, [id, deckDispatch, deckActions, deleting, userId, setDeleting]);
+  }, [id, deckDispatch, deckActions, deleting, userId, setDeleting, navigation, confirmedRef]);
   const deleteBrokenDeck = useCallback(() => {
     showAlert(
       t`Delete broken deck`,
@@ -471,28 +484,20 @@ function DeckDetailView({
   }, [actuallyDeleteBrokenDeck, showAlert]);
 
   const onChecklistPressed = useCallback(() => {
-    if (!deck || !cards || !deckEditsRef.current) {
+    if (!deckEditsRef.current) {
       return;
     }
     setFabOpen(false);
     setMenuOpen(false);
-    const investigator = cards[deck.investigator_code];
-    Navigation.push<DeckChecklistProps>(componentId, {
-      component: {
-        name: 'Deck.Checklist',
-        passProps: {
-          id: deckId,
-          slots: deckEditsRef.current.slots,
-          tabooSetOverride: tabooSetId,
-          campaignId,
-        },
-        options: getDeckOptions(colors, { title: t`Checklist`, noTitle: true }, investigator),
-      },
+    navigation.navigate('Deck.Checklist', {
+      id: deckId,
+      slots: deckEditsRef.current.slots,
+      tabooSetOverride: tabooSetId,
+      campaignId,
     });
-  }, [componentId, campaignId, deck, deckId, cards, tabooSetId, deckEditsRef, colors, setFabOpen, setMenuOpen]);
+  }, [navigation, campaignId, deckId, tabooSetId, deckEditsRef, setFabOpen, setMenuOpen]);
 
   const showDrawWeakness = useShowDrawWeakness({
-    componentId,
     deck: deckT,
     id,
     campaignId,
@@ -502,46 +507,18 @@ function DeckDetailView({
   });
 
   const onEditSpecialPressed = useCallback(() => {
-    if (!deck || !cards) {
-      return;
-    }
     if (!deckEditsRef.current?.mode || deckEditsRef.current.mode === 'view') {
       setMode('edit');
     }
     setFabOpen(false);
     setMenuOpen(false);
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<EditSpecialCardsProps>(componentId, {
-      component: {
-        name: 'Deck.EditSpecial',
-        passProps: {
-          campaignId: campaign?.id,
-          id,
-          assignedWeaknesses: addedBasicWeaknesses,
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Edit Special Cards`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.EditSpecial', {
+      campaignId: campaign?.id,
+      id,
+      assignedWeaknesses: addedBasicWeaknesses,
+      headerBackgroundColor: parsedDeck ? colors.faction[parsedDeck.faction ?? 'neutral'].background : undefined,
     });
-  }, [componentId, setFabOpen, setMenuOpen, id, deck, cards, campaign, colors, addedBasicWeaknesses, deckEditsRef, setMode]);
+  }, [navigation, setFabOpen, setMenuOpen, id, campaign, addedBasicWeaknesses, deckEditsRef, setMode, parsedDeck, colors]);
 
   const onEditExtraPressed = useCallback(() => {
     if (!deck || !cards) {
@@ -552,82 +529,26 @@ function DeckDetailView({
     }
     setFabOpen(false);
     setMenuOpen(false);
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<EditDeckProps>(componentId, {
-      component: {
-        name: 'Deck.EditAddCards',
-        passProps: {
-          id,
-          deckType: 'extra',
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Edit Spirit Deck`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.EditAddCards', {
+      id,
+      deckType: 'extra',
+      title: t`Edit Spirit Deck`,
     });
-  }, [componentId, deck, id, colors, setFabOpen, setMenuOpen, cards, deckEditsRef, setMode]);
+  }, [deck, cards, deckEditsRef, setMode, setFabOpen, setMenuOpen, navigation, id]);
 
   const onEditSidePressed = useCallback(() => {
-    if (!deck || !cards) {
-      return;
-    }
     if (!deckEditsRef.current?.mode || deckEditsRef.current.mode === 'view') {
       setMode('edit');
     }
     setFabOpen(false);
     setMenuOpen(false);
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<EditDeckProps>(componentId, {
-      component: {
-        name: 'Deck.EditAddCards',
-        passProps: {
-          id,
-          deckType: 'side',
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Edit Side Deck`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.EditAddCards', {
+      id,
+      deckType: 'side',
+      title: t`Edit Side Deck`,
     });
-  }, [componentId, deck, id, colors, setFabOpen, setMenuOpen, cards, deckEditsRef, setMode]);
+  }, [deckEditsRef, setMode, setFabOpen, setMenuOpen, navigation, id]);
   const onDraftCards = useCallback(() => {
-    if (!deck || !cards) {
-      return;
-    }
     setFabOpen(false);
     setMenuOpen(false);
     if (problem && problem.reason !== TOO_FEW_CARDS && problem.reason !== INVESTIGATOR_PROBLEM) {
@@ -648,42 +569,14 @@ function DeckDetailView({
     if (!deckEditsRef.current?.mode || deckEditsRef.current.mode === 'view') {
       setMode('edit');
     }
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<DeckDraftProps>(componentId, {
-      component: {
-        name: 'Deck.DraftCards',
-        passProps: {
-          id,
-          campaignId,
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Draft Cards`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.DraftCards', {
+      id,
+      campaignId,
+      headerBackgroundColor: parsedDeck ? colors.faction[parsedDeck.faction ?? 'neutral'].background : undefined,
     });
-  }, [componentId, campaignId, problem, deck, id, colors, setFabOpen, setMenuOpen, showAlert, cards, deckEditsRef, setMode]);
+  }, [campaignId, problem, setFabOpen, setMenuOpen, showAlert, deckEditsRef, setMode, navigation, id, parsedDeck, colors]);
 
   const onDraftExtraCards = useCallback(() => {
-    if (!deck || !cards) {
-      return;
-    }
     setFabOpen(false);
     setMenuOpen(false);
     if (extraProblem && extraProblem.reason !== TOO_FEW_CARDS) {
@@ -704,116 +597,35 @@ function DeckDetailView({
     if (!deckEditsRef.current?.mode || deckEditsRef.current.mode === 'view') {
       setMode('edit');
     }
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<DeckDraftProps>(componentId, {
-      component: {
-        name: 'Deck.DraftCards',
-        passProps: {
-          id,
-          campaignId,
-          mode: 'extra',
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Draft Cards`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.DraftCards', {
+      id,
+      campaignId,
+      mode: 'extra',
+      headerBackgroundColor: parsedDeck ? colors.faction[parsedDeck.faction ?? 'neutral'].background : undefined,
     });
-  }, [componentId, campaignId, extraProblem, deck, id, colors, setFabOpen, setMenuOpen, showAlert, cards, deckEditsRef, setMode]);
+  }, [campaignId, extraProblem, setFabOpen, setMenuOpen, showAlert, deckEditsRef, setMode, navigation, id, parsedDeck, colors]);
 
   const onAddCardsPressed = useCallback(() => {
-    if (!deck || !cards) {
-      return;
-    }
     if (!deckEditsRef.current?.mode || deckEditsRef.current.mode === 'view') {
       setMode('edit');
     }
     setFabOpen(false);
     setMenuOpen(false);
-    const investigator = cards[deck.investigator_code];
-    const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
-    Navigation.push<EditDeckProps>(componentId, {
-      component: {
-        name: 'Deck.EditAddCards',
-        passProps: {
-          id,
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Edit Deck`,
-              color: 'white',
-            },
-            backButton: {
-              title: t`Back`,
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.EditAddCards', {
+      id,
     });
-  }, [componentId, deck, id, colors, setFabOpen, setMenuOpen, cards, deckEditsRef, setMode]);
+  }, [deckEditsRef, setMode, setFabOpen, setMenuOpen, navigation, id]);
 
   const onUpgradePressed = useCallback(() => {
-    if (!deck) {
-      return;
-    }
     setFabOpen(false);
     setMenuOpen(false);
-    const backgroundColor = colors.faction[parsedDeck ? parsedDeck.investigator.factionCode() : 'neutral'].background;
-    Navigation.push<UpgradeDeckProps>(componentId, {
-      component: {
-        name: 'Deck.Upgrade',
-        passProps: {
-          id: deckId,
-          showNewDeck: true,
-          campaignId: campaign?.id,
-        },
-        options: {
-          statusBar: {
-            style: 'light',
-            backgroundColor,
-          },
-          topBar: {
-            title: {
-              text: t`Upgrade Deck`,
-              color: 'white',
-            },
-            subtitle: {
-              text: parsedDeck ? parsedDeck.investigator.name : '',
-              color: 'white',
-            },
-            background: {
-              color: backgroundColor,
-            },
-          },
-        },
-      },
+    navigation.navigate('Deck.Upgrade', {
+      id: deckId,
+      showNewDeck: true,
+      campaignId: campaign?.id,
+      headerBackgroundColor: colors.upgrade,
     });
-  }, [componentId, deck, deckId, campaign, colors, parsedDeck, setFabOpen, setMenuOpen]);
+  }, [deckId, campaign, navigation, setFabOpen, setMenuOpen, colors]);
   const [copyDialog, showCopyDialog] = useCopyDeckDialog({ campaign, deckId: id, signedIn, actions: deckActions })
   const toggleCopyDialog = useCallback(() => {
     setFabOpen(false);
@@ -842,20 +654,14 @@ function DeckDetailView({
   }, [dispatch, id]);
   const showDescription = useCallback(() => {
     if (parsedDeck) {
-      Navigation.push(componentId, {
-        component: {
-          name: 'Deck.Description',
-          passProps: {
-            componentId,
-            id,
-          },
-          options: getDeckOptions(colors, { title: t`Notes` }, parsedDeck.investigator),
-        },
+      navigation.navigate('Deck.Description', {
+        id,
+        headerBackgroundColor: colors.faction[parsedDeck.faction ?? 'neutral'].background,
       });
     }
     setFabOpen(false);
     setMenuOpen(false);
-  }, [componentId, parsedDeck, colors, id, setFabOpen, setMenuOpen]);
+  }, [parsedDeck, navigation, id, setFabOpen, setMenuOpen, colors]);
   const [editNameDialog, showEditNameDialog] = useSimpleTextDialog({
     title: t`Deck name`,
     onValueChange: updateDeckName,
@@ -914,20 +720,14 @@ function DeckDetailView({
     if (!parsedDeck) {
       return;
     }
-    Navigation.push<CardUpgradeDialogProps>(componentId, {
-      component: {
-        name: 'Dialog.CardUpgrade',
-        passProps: {
-          componentId,
-          id,
-          cardsByName: cardsByName[card.real_name.toLowerCase()] || [],
-          investigator: parsedDeck.investigator,
-          mode,
-        },
-        options: getDeckOptions(colors, { title: card.name }, parsedDeck.investigator),
-      },
+    navigation.navigate('Dialog.CardUpgrade', {
+      id,
+      cardsByName: cardsByName[card.real_name.toLowerCase()] || [],
+      investigator: parsedDeck.investigator,
+      mode,
+      cardName: card.name,
     });
-  }, [componentId, cardsByName, parsedDeck, id, colors]);
+  }, [cardsByName, parsedDeck, id, navigation]);
 
   const customContent = parsedDeck?.customContent;
   const uploadToArkhamDB = useCallback(() => {
@@ -1022,35 +822,30 @@ function DeckDetailView({
     setFabOpen(false);
     setMenuOpen(false);
     if (parsedDeck) {
-      showCardCharts(componentId, parsedDeck, colors);
+      showCardCharts(navigation, colors, parsedDeck);
     }
-  }, [componentId, parsedDeck, colors, setFabOpen, setMenuOpen]);
+  }, [parsedDeck, navigation, colors, setFabOpen, setMenuOpen]);
 
   const showUpgradeHistoryPressed = useCallback(() => {
     setFabOpen(false);
     setMenuOpen(false);
     if (parsedDeck) {
-      Navigation.push<DeckHistoryProps>(componentId, {
-        component: {
-          name: 'Deck.History',
-          passProps: {
-            id,
-            campaign,
-            investigator: parsedDeck.investigator.code,
-          },
-          options: getDeckOptions(colors, { title: t`Upgrade History` }, parsedDeck.investigator),
-        },
+      navigation.navigate('Deck.History', {
+        id,
+        campaign,
+        investigator: parsedDeck.investigator.front,
+        headerBackgroundColor: colors.faction[parsedDeck.faction ?? 'neutral'].background,
       });
     }
-  }, [componentId, id, campaign, colors, parsedDeck, setFabOpen, setMenuOpen]);
+  }, [id, campaign, navigation, parsedDeck, colors, setFabOpen, setMenuOpen]);
 
   const showDrawSimulatorPressed = useCallback(() => {
     setFabOpen(false);
     setMenuOpen(false);
     if (parsedDeck) {
-      showDrawSimulator(componentId, parsedDeck, colors);
+      showDrawSimulator(navigation, colors, parsedDeck);
     }
-  }, [componentId, parsedDeck, colors, setFabOpen, setMenuOpen]);
+  }, [parsedDeck, navigation, colors, setFabOpen, setMenuOpen]);
   const copyDeckId = useCopyAction(`${deckId.id}`, t`Deck id copied!`);
   const onCopyDeckId = useCallback(() => {
     setMenuOpen(false);
@@ -1211,7 +1006,7 @@ function DeckDetailView({
           onPress={toggleCopyDialog}
           title={t`Clone deck`}
         />
-        { deck.local && !(deck.investigator_code === CUSTOM_INVESTIGATOR || deck.investigator_code.startsWith('z') || parsedDeck.investigator?.custom()) && editable && (
+        { deck.local && !(deck.investigator_code === CUSTOM_INVESTIGATOR || deck.investigator_code.startsWith('z') || parsedDeck.investigator?.front.custom() || parsedDeck.investigator?.back.custom()) && editable && (
           <MenuButton
             icon="world"
             onPress={uploadToArkhamDB}
@@ -1247,112 +1042,74 @@ function DeckDetailView({
     onShowTagsDialog,
   ]);
 
-  const fabIcon = useCallback(() => {
+  const fabIcon = useMemo(() => {
     return <AppIcon name="plus-button" color={colors.L30} size={32} />;
   }, [colors]);
 
-  const fab = useMemo(() => {
-    const actionLabelStyle = {
-      ...typography.small,
-      color: colors.L30,
-      paddingTop: 5,
-      paddingLeft: s,
-      paddingRight: s,
-    };
-    const actionContainerStyle = {
-      backgroundColor: colors.D20,
-      borderRadius: 16,
-      borderWidth: 0,
-      minHeight: 32,
-      marginTop: -3,
-    };
-    return (
-      <ActionButton
-        active={fabOpen}
-        buttonColor={(mode !== 'view' || fabOpen) ? colors.D10 : factionColor}
-        renderIcon={fabIcon}
-        onPress={toggleFabOpen}
-        offsetX={s + xs}
-        offsetY={NOTCH_BOTTOM_PADDING + s + xs}
-        shadowStyle={shadow.large}
-        fixNativeFeedbackRadius
-      >
-        <ActionButton.Item
-          buttonColor={factionColor}
-          textStyle={actionLabelStyle}
-          textContainerStyle={actionContainerStyle}
-          title={t`Draw simulator`}
-          onPress={showDrawSimulatorPressed}
-          shadowStyle={shadow.medium}
-          useNativeFeedback={false}
-        >
-          <AppIcon name="draw" color="#FFF" size={34} />
-        </ActionButton.Item>
-        <ActionButton.Item
-          buttonColor={factionColor}
-          textStyle={actionLabelStyle}
-          textContainerStyle={actionContainerStyle}
-          title={t`Charts`}
-          onPress={showCardChartsPressed}
-          shadowStyle={shadow.medium}
-          useNativeFeedback={false}
-        >
-          <AppIcon name="chart" color="#FFF" size={34} />
-        </ActionButton.Item>
-        { editable && mode === 'view' && (
-          <ActionButton.Item
-            buttonColor={factionColor}
-            textStyle={actionLabelStyle}
-            textContainerStyle={actionContainerStyle}
-            title={t`Upgrade with XP`}
-            onPress={onUpgradePressed}
-            useNativeFeedback={false}
-          >
-            <AppIcon name="upgrade"color="#FFF" size={32} />
-          </ActionButton.Item>
-        ) }
-        { editable && !!SHOW_DRAFT_CARDS && !deck?.previousDeckId && (
-          <ActionButton.Item
-            buttonColor={factionColor}
-            textStyle={actionLabelStyle}
-            textContainerStyle={actionContainerStyle}
-            title={t`Draft cards`}
-            onPress={onDraftCards}
-            shadowStyle={shadow.medium}
-            useNativeFeedback={false}
-          >
-            <AppIcon name="draft" color="#FFF" size={32} />
-          </ActionButton.Item>
-        ) }
-        { editable && (
-          <ActionButton.Item
-            buttonColor={factionColor}
-            textStyle={actionLabelStyle}
-            textContainerStyle={actionContainerStyle}
-            title={t`Add cards`}
-            onPress={onAddCardsPressed}
-            shadowStyle={shadow.medium}
-            useNativeFeedback={false}
-          >
-            <AppIcon name="addcard" color="#FFF" size={32} />
-          </ActionButton.Item>
-        ) }
-        { editable && mode === 'view' && (
-          <ActionButton.Item
-            buttonColor={factionColor}
-            textStyle={actionLabelStyle}
-            textContainerStyle={actionContainerStyle}
-            title={t`Edit`}
-            onPress={onEditPressed}
-            shadowStyle={shadow.medium}
-            useNativeFeedback={false}
-          >
-            <AppIcon name="edit" color="#FFF" size={32} />
-          </ActionButton.Item>
-        ) }
-      </ActionButton>
-    );
-  }, [factionColor, fabOpen, editable, mode, shadow, onDraftCards, fabIcon, colors, toggleFabOpen, onEditPressed, onAddCardsPressed, onUpgradePressed, showCardChartsPressed, showDrawSimulatorPressed, typography, deck]);
+  const items = useMemo(() => [{
+    text: t`Draw simulator`,
+    icon: <AppIcon name="draw" color="#FFF" size={34} />,
+    name: 'draw_simulator',
+    position: 1,
+  },
+  {
+    text: t`Charts`,
+    name: 'charts',
+    icon: <AppIcon name="chart" color="#FFF" size={34} />,
+    position: 2,
+  },
+  ...(editable && mode === 'view' ? [{
+    text: t`Upgrade with XP`,
+    name: 'upgrade',
+    icon: <AppIcon name="upgrade"color="#FFF" size={32} />,
+    position: 3,
+  }] : []),
+  ...(editable && !!SHOW_DRAFT_CARDS && !deck?.previousDeckId ? [{
+    position: 4,
+    text: t`Draft cards`,
+    name: 'draft',
+    icon: <AppIcon name="draft" color="#FFF" size={32} />,
+  }] : []),
+  ...(editable ? [{
+    position: 5,
+    text: t`Add cards`,
+    name: 'add_cards',
+    icon: <AppIcon name="addcard" color="#FFF" size={32} />,
+  }] : []),
+  ...(editable && mode === 'view' ? [{
+    position: 5,
+    text: t`Edit`,
+    name: 'edit',
+    icon: <AppIcon name="edit" color="#FFF" size={32} />,
+  }] : [])].map((item, idx) => ({
+    ...item,
+    position: idx + 1,
+    color: colors.D20,
+    margin: s,
+  })), [deck?.previousDeckId, colors, editable, mode]);
+  const onPressItem = useCallback((name?: string) => {
+    switch (name) {
+      case 'draw_simulator':
+        showDrawSimulatorPressed();
+        break;
+      case 'charts':
+        showCardChartsPressed();
+        break;
+      case 'upgrade':
+        onUpgradePressed();
+        break;
+      case 'draft':
+        onDraftCards();
+        break;
+      case 'add_cards':
+        onAddCardsPressed();
+        break;
+      case 'edit':
+        onEditPressed();
+        break;
+    }
+  }, [onUpgradePressed, onDraftCards, onAddCardsPressed, onEditPressed, showCardChartsPressed, showDrawSimulatorPressed]);
+  const insets = useSafeAreaInsets();
   const extraRequiredCards = useMemo(() => {
     if (mode === 'view' || !requiredCards) {
       return [];
@@ -1376,6 +1133,11 @@ function DeckDetailView({
       setShowDeleteBrokenDeck(true);
     }, 3000);
   }, [setShowDeleteBrokenDeck]);
+
+  const fabPosition = useMemo(() => ({
+    vertical: insets.bottom + s + xs,
+    horizontal: s + xs,
+  }), [insets]);
 
   if (!deck) {
     return (
@@ -1438,86 +1200,96 @@ function DeckDetailView({
   const menuWidth = Math.min(width * 0.60, 240);
   const showTaboo: boolean = !!(tabooSetId !== deck.taboo_id && (tabooSetId || deck.taboo_id));
   const theProblem = problem ?? extraProblem;
+
   return (
-    <View style={[styles.flex, backgroundStyle]}>
-      <SideMenu
-        isOpen={menuOpen}
-        onChange={setMenuOpen}
-        menu={sideMenu}
-        openMenuOffset={menuWidth}
-        autoClosing
-        menuPosition="right"
-      >
-        <View>
-          <View style={[styles.container, backgroundStyle] }>
-            <DeckViewTab
-              componentId={componentId}
-              campaignId={campaignId}
-              fromCampaign={fromCampaign}
-              visible={visible}
-              deckId={id}
-              suggestArkhamDbLogin={suggestArkhamDbLogin}
-              investigatorFront={parsedDeck.investigatorFront}
-              investigatorBack={parsedDeck.investigatorBack}
-              deck={deck}
-              editable={editable}
-              tabooSet={tabooSet}
-              tabooSetId={tabooSetId}
-              showTaboo={showTaboo}
-              tabooOpen={tabooOpen}
-              hideTabooPicker={hideTabooPicker}
-              singleCardView={singleCardView}
-              parsedDeck={parsedDeck}
-              problem={problem ?? extraProblem}
-              hasPendingEdits={hasPendingEdits}
-              cards={cards}
-              cardsByName={cardsByName}
-              bondedCardsByName={bondedCardsByName}
-              requiredCards={extraRequiredCards}
-              buttons={buttons}
-              showDrawWeakness={showDrawWeakness}
-              showDraftCards={SHOW_DRAFT_CARDS ? onDraftCards : undefined}
-              showDraftExtraCards={SHOW_DRAFT_CARDS ? onDraftExtraCards : undefined}
-              showEditCards={onAddCardsPressed}
-              showEditSpecial={deck.nextDeckId ? undefined : onEditSpecialPressed}
-              showEditSide={deck.nextDeckId ? undefined : onEditSidePressed}
-              showEditExtra={onEditExtraPressed}
-              showDeckHistory={showUpgradeHistoryPressed}
-              showXpAdjustmentDialog={showXpAdjustmentDialog}
-              showCardUpgradeDialog={showCardUpgradeDialog}
-              signedIn={signedIn}
-              login={login}
-              width={width}
-              deckEdits={deckEdits}
-              deckEditsRef={deckEditsRef}
-              mode={mode}
-            />
-            { !!theProblem && mode !== 'view' && (
-              <DeckProblemBanner
-                problem={theProblem}
+    <ParsedDeckContextProvider parsedDeckObj={parsedDeckObj}>
+      <View style={[styles.flex, backgroundStyle]}>
+        <SideMenu
+          isOpen={menuOpen}
+          onChange={setMenuOpen}
+          menu={sideMenu}
+          openMenuOffset={menuWidth}
+          autoClosing
+          menuPosition="right"
+        >
+          <View>
+            <View style={[styles.container, backgroundStyle] }>
+              <DeckViewTab
+                campaignId={campaignId}
+                fromCampaign={fromCampaign}
+                visible={visible}
+                deckId={id}
+                suggestArkhamDbLogin={suggestArkhamDbLogin}
+                investigator={parsedDeck.investigator}
+                deck={deck}
+                editable={editable}
+                tabooSet={tabooSet}
+                tabooSetId={tabooSetId}
+                showTaboo={showTaboo}
+                tabooOpen={tabooOpen}
+                hideTabooPicker={hideTabooPicker}
+                singleCardView={singleCardView}
+                parsedDeck={parsedDeck}
+                problem={problem ?? extraProblem}
+                hasPendingEdits={hasPendingEdits}
+                cards={cards}
+                cardsByName={cardsByName}
+                bondedCardsByName={bondedCardsByName}
+                requiredCards={extraRequiredCards}
+                buttons={buttons}
+                showDrawWeakness={showDrawWeakness}
+                showDraftCards={SHOW_DRAFT_CARDS ? onDraftCards : undefined}
+                showDraftExtraCards={SHOW_DRAFT_CARDS ? onDraftExtraCards : undefined}
+                showEditCards={onAddCardsPressed}
+                showEditSpecial={deck.nextDeckId ? undefined : onEditSpecialPressed}
+                showEditSide={deck.nextDeckId ? undefined : onEditSidePressed}
+                showEditExtra={onEditExtraPressed}
+                showDeckHistory={showUpgradeHistoryPressed}
+                showXpAdjustmentDialog={showXpAdjustmentDialog}
+                showCardUpgradeDialog={showCardUpgradeDialog}
+                signedIn={signedIn}
+                login={login}
+                width={width}
+                deckEdits={deckEdits}
+                deckEditsRef={deckEditsRef}
+                mode={mode}
               />
-            ) }
-            { mode !== 'view' && (
-              <PreLoadedDeckNavFooter
-                parsedDeckObj={parsedDeckObj}
-                componentId={componentId}
-                control="fab"
-                onPress={saveEdits}
+              { !!theProblem && mode !== 'view' && (
+                <DeckProblemBanner
+                  problem={theProblem}
+                />
+              ) }
+              { mode !== 'view' && (
+                <PreLoadedDeckNavFooter
+                  parsedDeckObj={parsedDeckObj}
+                  control="fab"
+                  onPress={saveEdits}
+                />
+              ) }
+              <FloatingAction
+                color={(mode !== 'view' || fabOpen) ? colors.D10 : factionColor}
+                floatingIcon={fabIcon}
+                onPressMain={toggleFabOpen}
+                onPressItem={onPressItem}
+                position="right"
+                distanceToEdge={fabPosition}
+                // shadowStyle={shadow.large}
+                // fixNativeFeedbackRadius
+                actions={items}
               />
-            ) }
-            { fab }
+            </View>
           </View>
-        </View>
-      </SideMenu>
-      { editNameDialog }
-      { xpAdjustmentDialog }
-      { savingDialog }
-      { uploadLocalDeckDialog }
-      { deletingDialog }
-      { copyDialog }
-      { alertDialog }
-      { tagsDialog }
-    </View>
+        </SideMenu>
+        { editNameDialog }
+        { xpAdjustmentDialog }
+        { savingDialog }
+        { uploadLocalDeckDialog }
+        { deletingDialog }
+        { copyDialog }
+        { alertDialog }
+        { tagsDialog }
+      </View>
+    </ParsedDeckContextProvider>
   );
 }
 

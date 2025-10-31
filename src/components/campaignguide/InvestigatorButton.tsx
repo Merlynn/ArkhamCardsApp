@@ -2,21 +2,22 @@ import React, { useCallback, useContext } from 'react';
 import { Text, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Card from '@data/types/Card';
 import StyleContext from '@styles/StyleContext';
 import CompactInvestigatorRow from '@components/core/CompactInvestigatorRow';
-import space, { s } from '@styles/space';
+import space from '@styles/space';
 import COLORS from '@styles/colors';
 import { TouchableShrink } from '@components/core/Touchables';
+import { StepPaddingContext } from './StepPaddingContext';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
 
 interface Props {
-  investigator: Card;
+  investigator: CampaignInvestigator;
   value: string | undefined;
   detail?: string;
   widget?: 'shuffle';
   disabled?: boolean;
   color?: 'dark' | 'light';
-  onPress: (investigator: Card) => void;
+  onPress: (investigator: CampaignInvestigator) => void;
   gameFont?: boolean,
 }
 
@@ -30,16 +31,18 @@ export default function InvestigatorButton({
   gameFont,
   disabled,
 }: Props) {
-  const { typography, width } = useContext(StyleContext);
+  const { typography, width: fullWidth } = useContext(StyleContext);
+  const { side } = useContext(StepPaddingContext);
   const onTouchablePress = useCallback(() => {
     onPress(investigator);
   }, [onPress, investigator]);
+  const width = fullWidth - side * 2;
   return (
-    <TouchableShrink onPress={onTouchablePress} disabled={disabled}>
+    <TouchableShrink style={{ width }} onPress={onTouchablePress} disabled={disabled}>
       <CompactInvestigatorRow
-        investigator={investigator}
+        investigator={investigator.card}
         color={color}
-        width={width - s * (disabled ? 2 : 4)}
+        width={width}
       >
         { !!value && (
           <View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>

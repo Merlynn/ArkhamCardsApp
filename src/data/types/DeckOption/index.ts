@@ -5,9 +5,9 @@ import { t } from 'ttag';
 import { DeckMeta } from '@actions/types';
 import DeckAtLeastOption from './DeckAtLeastOption';
 import DeckOptionLevel from './DeckOptionLevel';
-import { FactionCodeType, TypeCodeType } from '@app_constants';
+import { FactionCodeType, ON_YOUR_OWN_CODE, TypeCodeType } from '@app_constants';
 import FilterBuilder from '@lib/filters';
-import { combineQueries, combineQueriesOpt, where } from '@data/sqlite/query';
+import { combineQueries, combineQueriesOpt, ON_YOUR_OWN_RESTRICTION, where } from '@data/sqlite/query';
 
 export function localizeDeckOptionError(error?: string): undefined | string {
   if (!error) {
@@ -39,7 +39,6 @@ export function localizeDeckOptionError(error?: string): undefined | string {
   };
   return LOCALIZED_OPTIONS[error] || error;
 }
-
 
 export function localizeOptionName(real_name: string): string {
   switch (real_name) {
@@ -135,7 +134,7 @@ export default class DeckOption {
   @Column('integer', { nullable: true })
   public size?: number;
 
-  public dynamic?: boolean;
+  public dynamic_id?: string;
 
   static optionName(option: DeckOption) {
     return localizeOptionName(option.real_name || '');
@@ -151,6 +150,8 @@ export default class DeckOption {
 
   static parse(json: any): DeckOption {
     const deck_option = new DeckOption();
+
+    deck_option.dynamic_id = json.dynamic_id ?? undefined;
     deck_option.faction = json.faction || [];
     deck_option.faction_select = json.faction_select || [];
     deck_option.deck_size_select = json.deck_size_select || [];
@@ -172,7 +173,7 @@ export default class DeckOption {
     deck_option.ignore_match = json.ignore_match ? true : undefined;
     deck_option.real_name = json.name || json.real_name || undefined;
     if (json.option_select) {
-      deck_option.option_select = map(json.option_select, o => {
+      deck_option.option_select = map(json.option_select, (o) => {
         return {
           ...omit(o, ['name', 'id']),
           id: o.id,
@@ -224,14 +225,19 @@ export class DeckOptionQueryBuilder {
   private selectedFactionFilter(meta?: DeckMeta): Brackets[] {
     if (this.option.faction_select && this.option.faction_select.length) {
       if (meta) {
-        const selection = this.option.id ? (meta[this.option.id] as FactionCodeType) : meta.faction_selected;
-        if (selection && indexOf(this.option.faction_select, selection) !== -1) {
+        const selection = this.option.id
+          ? (meta[this.option.id] as FactionCodeType)
+          : meta.faction_selected;
+        if (
+          selection &&
+          indexOf(this.option.faction_select, selection) !== -1
+        ) {
           // If we have a deck select ONLY the ones they specified.
           // If not select them all.
-          return this.filterBuilder.factionFilter([selection]);
+          return this.filterBuilder.factionFilter({ factions: [selection] });
         }
       }
-      return this.filterBuilder.factionFilter(this.option.faction_select);
+      return this.filterBuilder.factionFilter({ factions: this.option.faction_select });
     }
     return [];
   }
@@ -239,7 +245,9 @@ export class DeckOptionQueryBuilder {
   private permanentFilter() {
     if (this.option.permanent !== null && this.option.permanent !== undefined) {
       return [
-        where('c.permanent = :permanent', { permanent: this.option.permanent ? 1 : 0}),
+        where('c.permanent = :permanent', {
+          permanent: this.option.permanent ? 1 : 0,
+        }),
       ];
     }
     return [];
@@ -247,39 +255,80 @@ export class DeckOptionQueryBuilder {
 
   private selectedOptionFilter(meta?: DeckMeta): Brackets[] {
     if (this.option.option_select && this.option.option_select.length) {
-      const option = find(this.option.option_select, o => o.id === meta?.option_selected) || this.option.option_select[0];
-      const query = new DeckOptionQueryBuilder(DeckOption.parse(option), this.index).toQuery(meta);
+      const option =
+        find(
+          this.option.option_select,
+          (o) => o.id === meta?.option_selected
+        ) || this.option.option_select[0];
+      const query = new DeckOptionQueryBuilder(
+        DeckOption.parse(option),
+        this.index
+      ).toQuery(meta);
       return query ? [query] : [];
     }
     return [];
   }
   private textClause(): Brackets[] {
-    if ((this.option.tag?.length && this.option.tag[0] === 'hh') || (
-      this.option.text && this.option.text.length && (
-        this.option.text[0] === '[Hh]eals? (that much )?((\\d+|all) damage (and|or) )?((\\d+|all) )?horror' ||
-        this.option.text[0] === '[Hh]eals? (that much )?((\\d+|all) damage (from that asset )?(and|or) )?((\\d+|all) )?horror' ||
-        this.option.text[0] === '[Hh]eals? (that much )?((\\d+|all|(X total)) damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
-        this.option.text[0] === '[Hh]eals? (that much )?((\\d+|all|(X total) )?damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
-        this.option.text[0] === '[Hh]eals? (that much )?(((\\d+|all|(X total)) )?damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
-        this.option.text[0] === '[Hh]eals?( that much)?( (\\+?\\d+|all|(X total)))?( damage)?( from that asset)?( (and|or))?( (\\d+|all|(X total)))?(\\s|\\/)horror'
-      )
-    )) {
+    if (
+      (this.option.tag?.length && this.option.tag[0] === 'hh') ||
+      (this.option.text &&
+        this.option.text.length &&
+        (this.option.text[0] ===
+          '[Hh]eals? (that much )?((\\d+|all) damage (and|or) )?((\\d+|all) )?horror' ||
+          this.option.text[0] ===
+            '[Hh]eals? (that much )?((\\d+|all) damage (from that asset )?(and|or) )?((\\d+|all) )?horror' ||
+          this.option.text[0] ===
+            '[Hh]eals? (that much )?((\\d+|all|(X total)) damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
+          this.option.text[0] ===
+            '[Hh]eals? (that much )?((\\d+|all|(X total) )?damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
+          this.option.text[0] ===
+            '[Hh]eals? (that much )?(((\\d+|all|(X total)) )?damage (from that asset )?(and|or) )?((\\d+|all|(X total)) )?horror' ||
+          this.option.text[0] ===
+            '[Hh]eals?( that much)?( (\\+?\\d+|all|(X total)))?( damage)?( from that asset)?( (and|or))?( (\\d+|all|(X total)))?(\\s|\\/)horror'))
+    ) {
       return [where('c.heals_horror is not null AND c.heals_horror = 1')];
     }
 
-    if ((this.option.tag?.length && this.option.tag[0] === 'hd') || (
-      this.option.text && this.option.text.length && (
-        this.option.text[0] === '[Hh]eals? (that much )?((((\\d+)|(all)|(X total)) )?horror (from that asset )?(and|or) )?(((\\d+)|(all)|(X total)) )?damage' ||
-        this.option.text[0] === '[Hh]eals? (that much )?((((\\+?\\d+)|(all)|(X total)) )?horror (from that asset )?(and|or) )?(((\\+?\\d+)|(all)|(X total)) )?damage'
-      )
-    )) {
+    if (
+      (this.option.tag?.length && this.option.tag[0] === 'hd') ||
+      (this.option.text &&
+        this.option.text.length &&
+        (this.option.text[0] ===
+          '[Hh]eals? (that much )?((((\\d+)|(all)|(X total)) )?horror (from that asset )?(and|or) )?(((\\d+)|(all)|(X total)) )?damage' ||
+          this.option.text[0] ===
+            '[Hh]eals? (that much )?((((\\+?\\d+)|(all)|(X total)) )?horror (from that asset )?(and|or) )?(((\\+?\\d+)|(all)|(X total)) )?damage'))
+    ) {
       return [where('c.heals_damage is not null AND c.heals_damage = 1')];
     }
-    if (this.option.text?.length && this.option.text[0] === '<b>Parley\\.<\\/b>') {
-      return [where(`c.real_text LIKE '%Parley.%' or linked_card.real_text LIKE '%Parley.%'`)]
+    if (
+      (this.option.tag?.length && this.option.tag[0] === 'pa') ||
+      (this.option.text?.length && this.option.text[0] === '<b>Parley\\.<\\/b>')
+    ) {
+      return [
+        where(
+          `c.real_text LIKE '%Parley.%' or linked_card.real_text LIKE '%Parley.%' or c.tags LIKE '%pa%'`
+        ),
+      ];
     }
-    if (this.option.text?.length && this.option.text[0] === '<b>Fight\\.<\\/b>') {
-      return [where(`c.real_text LIKE '%Fight.%' or linked_card.real_text LIKE '%Fight.%'`)]
+    if (
+      (this.option.tag?.length && this.option.tag[0] === 'in') ||
+      (this.option.text?.length && this.option.text[0] === 'investigate')
+    ) {
+      return [
+        where(
+          `c.real_text LIKE '%investigate%' or linked_card.real_text LIKE '%investigate%' or c.tags LIKE '%in%'`
+        ),
+      ];
+    }
+    if (
+      this.option.text?.length &&
+      this.option.text[0] === '<b>Fight\\.<\\/b>'
+    ) {
+      return [
+        where(
+          `c.real_text LIKE '%Fight.%' or linked_card.real_text LIKE '%Fight.%'`
+        ),
+      ];
     }
     return [];
   }
@@ -287,18 +336,32 @@ export class DeckOptionQueryBuilder {
     if (!this.option.level) {
       return [];
     }
-    const level = (!this.option.base_level || isUpgrade) ? this.option.level : this.option.base_level;
-    return !this.option.not ? [
+    const level =
+      !this.option.base_level || isUpgrade
+        ? this.option.level
+        : this.option.base_level;
+    return !this.option.not
+      ? [
         combineQueries(
           where('c.customization_options is not null'),
           this.filterBuilder.rangeFilter('xp', [level.min, level.max], true),
           'or'
-        )] : this.filterBuilder.rangeFilter('xp', [level.min, level.max], true);
+        ),
+      ]
+      : this.filterBuilder.rangeFilter('xp', [level.min, level.max], true);
   }
 
-  toQuery(meta?: DeckMeta, isUpgrade?: boolean): Brackets | undefined {
+  toQuery(
+    meta?: DeckMeta,
+    isUpgrade?: boolean,
+    negate?: boolean
+  ): Brackets | undefined {
+    // Special logic since the stuff can be removed on this one.
+    if (this.option.dynamic_id === ON_YOUR_OWN_CODE) {
+      return combineQueriesOpt([ON_YOUR_OWN_RESTRICTION], 'and', negate ?? !!this.option.not);
+    }
     const clauses: Brackets[] = [
-      ...this.filterBuilder.factionFilter(this.option.faction || []),
+      ...this.filterBuilder.factionFilter({ factions: this.option.faction || [] }),
       ...this.textClause(),
       ...this.levelFilter(isUpgrade),
       ...this.selectedFactionFilter(meta),
@@ -307,9 +370,14 @@ export class DeckOptionQueryBuilder {
       ...this.filterBuilder.equalsVectorClause(this.option.uses || [], 'uses'),
       ...this.permanentFilter(),
       ...this.filterBuilder.traitFilter(this.option.trait || [], false),
-      ...this.filterBuilder.equalsVectorClause(this.option.type_code || [], 'type_code'),
-      ...(this.option.text?.length ? [] : this.filterBuilder.tagFilter(this.option.tag ?? [])),
+      ...this.filterBuilder.equalsVectorClause(
+        this.option.type_code || [],
+        'type_code'
+      ),
+      ...(this.option.text?.length
+        ? []
+        : this.filterBuilder.tagFilter(this.option.tag ?? [])),
     ];
-    return combineQueriesOpt(clauses, 'and', !!this.option.not);
+    return combineQueriesOpt(clauses, 'and', negate ?? !!this.option.not);
   }
 }

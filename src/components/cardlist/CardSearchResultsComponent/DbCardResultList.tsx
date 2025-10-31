@@ -23,7 +23,7 @@ import {
 } from 'react-native';
 import { Brackets } from 'typeorm/browser';
 import { useSelector } from 'react-redux';
-import { Navigation } from 'react-native-navigation';
+
 import { msgid, ngettext, t } from 'ttag';
 import useDebouncedEffect from 'use-debounced-effect-hook';
 
@@ -32,20 +32,18 @@ import { addDbFilterSet } from '@components/filter/actions';
 import CardSearchResult from '@components/cardlist/CardSearchResult';
 import { rowHeight } from '@components/cardlist/CardSearchResult/constants';
 import CardSectionHeader, { CardSectionHeaderData, cardSectionHeaderHeight } from '@components/core/CardSectionHeader';
-import { SortType, Slots, DeckId, Customizations, DEFAULT_SORT } from '@actions/types';
+import { SortType, Slots, Customizations, DEFAULT_SORT } from '@actions/types';
 import { combineQueries, where } from '@data/sqlite/query';
 import { getPacksInCollection, makeTabooSetSelector, AppState, getPackSpoilers } from '@reducers';
-import Card, { cardInCollection, CardsMap, PartialCard } from '@data/types/Card';
+import Card, { cardInCollection, CardsMap, InvestigatorChoice, PartialCard } from '@data/types/Card';
 import { showCard, showCardSwipe } from '@components/nav/helper';
 import space, { m } from '@styles/space';
 import ArkhamButton from '@components/core/ArkhamButton';
 import { searchBoxHeight } from '@components/core/SearchBox';
 import StyleContext from '@styles/StyleContext';
-import { ParsedDeckResults, useLiveCustomizations, useSimpleDeckEdits } from '@components/deck/hooks';
-import { useDeck } from '@data/hooks';
+import { useLiveCustomizations } from '@components/deck/hooks';
 import { useCards, useEffectUpdate, useSettingValue, useToggles } from '@components/core/hooks';
 import LoadingCardSearchResult from '../LoadingCardSearchResult';
-import { ControlType } from '../CardSearchResult/ControlComponent';
 import { ArkhamButtonIconType } from '@icons/ArkhamButtonIcon';
 import ArkhamLargeList from '@components/core/ArkhamLargeList';
 import LanguageContext from '@lib/i18n/LanguageContext';
@@ -54,13 +52,14 @@ import { useAppDispatch } from '@app/store';
 import { FilterState } from '@lib/filters';
 import DeckValidation from '@lib/DeckValidation';
 import { THE_INSANE_CODE } from '@data/deck/specialCards';
-import { getExtraDeckSlots } from '@lib/parseDeck';
+import { DeckEditContext, useDeckDeltas, useCurrentDeckTabooSet } from '@components/deck/DeckEditContext';
+import LatestDeckT from '@data/interfaces/LatestDeckT';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
-  parsedDeck?: ParsedDeckResults;
+  deck?: LatestDeckT;
   currentDeckOnly?: boolean;
-  query?: Brackets;
+  query?: (deckEdits: Slots | undefined) => Brackets;
   filterQuery?: Brackets;
   filters?: FilterState;
   textQuery?: Brackets;
@@ -70,7 +69,7 @@ interface Props {
   searchTerm?: string;
   expandSearchControls?: ReactNode;
   expandSearchControlsHeight?: number;
-  investigator?: Card;
+  investigator?: InvestigatorChoice;
   cardPressed?: (card: Card) => void;
   renderCard?: (card: Card, id: string, onPressId: (id: string, card: Card) => void) => JSX.Element;
   headerItems?: React.ReactNode[];
@@ -198,6 +197,7 @@ function useCardFetcher(visibleCards: PartialCard[], partialCardsLoading: boolea
   const fetchedOne = useRef(false);
   useEffect(() => {
     fetchedOne.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleCards, ...deps]);
   useEffect(() => {
     if (visibleCards.length) {
@@ -222,7 +222,16 @@ function useCardFetcher(visibleCards: PartialCard[], partialCardsLoading: boolea
   };
 }
 
-function useDeckQuery(deckCardCounts?: Slots, originalDeckSlots?: Slots): [Brackets | undefined, boolean, () => void] {
+function useDeckQuery(
+  deckCardCounts?: Slots,
+  originalDeckSlots?: Slots,
+  toQuery?: (slots: Slots | undefined) => Brackets
+): {
+  deckQuery: Brackets | undefined;
+  hasDeckChanges: boolean;
+  query: Brackets | undefined;
+  refreshDeck: () => void;
+} {
   const [{ refreshCounter, updateCounter }, updateRefreshCounts] = useReducer((
     { refreshCounter, updateCounter }: { refreshCounter: number; updateCounter: number },
     action: 'update' | 'refresh'
@@ -250,19 +259,22 @@ function useDeckQuery(deckCardCounts?: Slots, originalDeckSlots?: Slots): [Brack
   }, [deckCardCounts]);
 
   const hasDeckChanges = (updateCounter > refreshCounter);
-  const deckCodes = useMemo(() => {
+  const [deckCodes, query] = useMemo(() => {
     if (!originalDeckSlots && !deckCardCounts) {
-      return [];
+      return [[], toQuery?.(undefined)];
     }
-    return filter(
-      uniq(concat(keys(originalDeckSlots), keys(deckCardCounts))),
-      code => !!(
-        (originalDeckSlots && originalDeckSlots[code] > 0) ||
-        (deckCardCounts && deckCardCounts[code] > 0)
-      )
-    );
+    return [
+      filter(
+        uniq(concat(keys(originalDeckSlots), keys(deckCardCounts))),
+        code => !!(
+          (originalDeckSlots && originalDeckSlots[code] > 0) ||
+          (deckCardCounts && deckCardCounts[code] > 0)
+        )
+      ),
+      toQuery?.(deckCardCounts),
+    ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshCounter]);
+  }, [refreshCounter, toQuery]);
   const deckQuery = useMemo(() => {
     if (!deckCodes.length) {
       return undefined;
@@ -270,12 +282,11 @@ function useDeckQuery(deckCardCounts?: Slots, originalDeckSlots?: Slots): [Brack
     return where(`c.code in (:...codes)`, { codes: deckCodes });
   }, [deckCodes]);
 
-  return [deckQuery, hasDeckChanges, refreshDeck];
+  return { deckQuery, hasDeckChanges, query, refreshDeck };
 }
 
 interface SectionFeedProps {
-  componentId: string;
-  query?: Brackets;
+  toQuery?: (deckEdits: Slots | undefined) => Brackets;
   sorts?: SortType[];
   tabooSetId?: number;
   filterQuery?: Brackets;
@@ -288,7 +299,7 @@ interface SectionFeedProps {
   storyOnly?: boolean;
   mode?: 'extra' | 'side';
   hasHeader?: boolean;
-  investigator?: Card;
+  investigator?: InvestigatorChoice;
   footerPadding?: number;
   includeBonded?: boolean;
   expandSearchControlsHeight?: number;
@@ -303,6 +314,7 @@ interface SectionFeed {
   fetchMore?: () => void;
   showSpoilerCards: boolean;
   refreshDeck?: () => void;
+  query: Brackets | undefined;
 }
 
 interface LoadedState {
@@ -312,9 +324,8 @@ interface LoadedState {
 }
 
 function useSectionFeed({
-  componentId,
   hasHeader,
-  query,
+  toQuery,
   investigator,
   sorts,
   tabooSetId,
@@ -332,6 +343,7 @@ function useSectionFeed({
   expandSearchControlsHeight = 0,
   customizations,
 }: SectionFeedProps): SectionFeed {
+  const navigation = useNavigation();
   const { db } = useContext(DatabaseContext);
   const { listSeperator } = useContext(LanguageContext);
   const { fontScale } = useContext(StyleContext);
@@ -341,8 +353,8 @@ function useSectionFeed({
   const packInCollection = useSelector(getPacksInCollection);
   const ignore_collection = useSettingValue('ignore_collection');
   const [showNonCollection, , setShowNonCollection, clearShowNonCollection] = useToggles({});
+  const { deckQuery, hasDeckChanges, query, refreshDeck } = useDeckQuery(deckCardCounts, originalDeckSlots, toQuery);
   const storyQuery = storyOnly ? query : undefined;
-  const [deckQuery, hasDeckChanges, refreshDeck] = useDeckQuery(deckCardCounts, originalDeckSlots);
   const [{ cards: deckCards, textQuery: deckCardsTextQuery, loading: deckCardsLoading }, setDeckCards] = useState<LoadedState>({
     cards: [],
     loading: !!deckQuery,
@@ -389,22 +401,11 @@ function useSectionFeed({
   }, [db, storyQuery, filters, textQuery, filterQuery, deckQuery, sortIgnoreQuotes, theTabooSetId, sorts]);
   const [partialCards, partialCardsLoading] = textQuery ? [textQueryCards, textQueryCardsLoading] : [mainQueryCards, mainQueryCardsLoading];
   const [showSpoilers, setShowSpoilers] = useState(false);
-  const expandSectionRef = useRef<(sectionId: string) => void>();
+  const expandSectionRef = useRef<(sectionId: string) => void>(null);
   const editCollectionSettings = useCallback(() => {
     Keyboard.dismiss();
-    Navigation.push(componentId, {
-      component: {
-        name: 'My.Collection',
-        options: {
-          topBar: {
-            title: {
-              text: t`Edit Collection`,
-            },
-          },
-        },
-      },
-    });
-  }, [componentId]);
+    navigation.navigate('My.Collection', {});
+  }, [navigation]);
   const [visibleCards, partialItems, spoilerCardsCount] = useMemo(() => {
     const items: PartialItem[] = [];
     const result: PartialCard[] = [];
@@ -520,7 +521,7 @@ function useSectionFeed({
   );
 
   const theInsaneStuff = useMemo(() => {
-    if (investigator?.code !== THE_INSANE_CODE || !deckCardCounts) {
+    if (investigator?.back.code !== THE_INSANE_CODE || !deckCardCounts) {
       return undefined;
     }
     const deckValidation = new DeckValidation(investigator, deckCardCounts, undefined);
@@ -529,7 +530,7 @@ function useSectionFeed({
       if (!card) {
         return [];
       }
-      return map(range(0, deckCardCounts[key] ?? 0), (_) => card);
+      return map(range(0, deckCardCounts[key] ?? 0), () => card);
     });
     return {
       deckValidation,
@@ -640,22 +641,8 @@ function useSectionFeed({
 
   const editSpoilerSettings = useCallback(() => {
     Keyboard.dismiss();
-    Navigation.push(componentId, {
-      component: {
-        name: 'My.Spoilers',
-        options: {
-          topBar: {
-            title: {
-              text: t`Spoiler Settings`,
-            },
-            backButton: {
-              title: t`Back`,
-            },
-          },
-        },
-      },
-    });
-  }, [componentId]);
+    navigation.navigate('My.Spoilers')
+  }, [navigation]);
   // tslint:disable-next-line: strict-comparisons
 
   const refreshingSearch = (!!deckQuery && (deckCardsTextQuery !== textQuery || deckCardsLoading)) || (textQueryCardsTextQuery !== textQuery);
@@ -854,6 +841,7 @@ function useSectionFeed({
     fetchMore,
     showSpoilerCards: showSpoilers,
     refreshDeck: deckQuery ? doRefresh : undefined,
+    query,
   };
 }
 
@@ -877,59 +865,47 @@ function itemHeight(item: Item, fontScale: number, headerHeight: number, lang: s
   }
 }
 
-export default function({
-  componentId,
-  parsedDeck,
-  currentDeckOnly,
-  query,
-  filterQuery,
-  filters,
-  textQuery,
-  sorts,
-  initialSort,
-  searchTerm,
-  expandSearchControls,
-  expandSearchControlsHeight,
-  investigator,
-  renderCard,
-  cardPressed,
-  noSearch,
-  headerItems,
-  headerHeight,
-  handleScroll,
-  showHeader,
-  storyOnly,
-  specialMode,
-  showNonCollection,
-  footerPadding,
-  filterId,
-}: Props) {
+export default function DbCardResultList(props: Props) {
+  const {
+    deck,
+    currentDeckOnly,
+    query: toQuery,
+    filterQuery,
+    filters,
+    textQuery,
+    sorts,
+    initialSort,
+    searchTerm,
+    expandSearchControls,
+    expandSearchControlsHeight,
+    investigator,
+    renderCard,
+    cardPressed,
+    noSearch,
+    headerItems,
+    headerHeight,
+    handleScroll,
+    showHeader,
+    storyOnly,
+    specialMode,
+    showNonCollection,
+    footerPadding,
+    filterId,
+  } = props;
   const { db } = useContext(DatabaseContext);
-  const deck = parsedDeck?.deckT;
-  const deckEdits = parsedDeck?.deckEdits;
-  const deckId = deck?.id;
-  const customizations = useLiveCustomizations(deck, deckEdits);
-  const { colors, borderStyle, fontScale, typography, width } = useContext(StyleContext);
-  const tabooSetOverride = parsedDeck?.deck !== undefined ? ((deckEdits?.tabooSetChange || deck?.deck.taboo_id) || 0) : undefined;
+  const { deckId } = useContext(DeckEditContext);
+  const navigation = useNavigation();
+  // const deck = parsedDeck?.deckT;
+  // const { deckEdits, deckId } = useContext(DeckEditContext);
+  const customizations = useLiveCustomizations(deck);
+  const { borderStyle, colors, fontScale, typography, width } = useContext(StyleContext);
+  const tabooSetOverride = useCurrentDeckTabooSet();
   const tabooSetSelctor = useMemo(makeTabooSetSelector, []);
   const tabooSetId = useSelector((state: AppState) => tabooSetSelctor(state, tabooSetOverride));
   const singleCardView = useSettingValue('single_card');
   const packInCollection = useSelector(getPacksInCollection);
   const ignore_collection = useSettingValue('ignore_collection');
-  const [deckCardCounts, originalDeckSlots, mode] = useMemo((): [Slots | undefined, Slots | undefined, 'side' | 'extra' | undefined] => {
-    switch(specialMode) {
-      case 'side':
-        return [deckEdits?.side, deck?.deck.sideSlots, 'side'];
-      case 'extra':
-        return [
-          deckEdits ? getExtraDeckSlots(deckEdits.meta ?? {}) : undefined,
-          deck ? getExtraDeckSlots(deck.deck.meta ?? {}) : undefined,
-          'extra',
-        ];
-      default:
-        return [deckEdits?.slots, deck?.deck.slots, undefined];
-    }
-  }, [specialMode, deckEdits, deck]);
+  const { deckCardCounts, originalDeckSlots, mode } = useDeckDeltas(specialMode);
   const {
     feed,
     fullFeed,
@@ -938,10 +914,10 @@ export default function({
     fetchMore,
     showSpoilerCards,
     refreshDeck,
-  } = useSectionFeed({
-    componentId,
-    investigator,
     query,
+  } = useSectionFeed({
+    investigator,
+    toQuery,
     sorts,
     hasHeader: (headerItems?.length || 0) > 0,
     tabooSetId,
@@ -973,7 +949,7 @@ export default function({
   const feedValues = useRef<{
     feed: Item[];
     fullFeed: PartialCard[];
-  }>();
+  }>(null);
   useEffect(() => {
     feedValues.current = {
       feed,
@@ -984,11 +960,11 @@ export default function({
     cardPressed && cardPressed(card);
     if (singleCardView) {
       showCard(
-        componentId,
+        navigation,
         card.code,
         card,
         colors,
-        { showSpoilers: true, deckId, initialCustomizations: customizations, tabooSetId: tabooSetOverride }
+        { showSpoilers: true, deckId, deckInvestigatorId: investigator?.main.code, initialCustomizations: customizations, tabooSetId: tabooSetOverride }
       );
       return;
     }
@@ -1006,28 +982,26 @@ export default function({
     });
     const cards = flatMap(feed, item => item.type === 'card' ? item.card : []);
     showCardSwipe(
-      componentId,
+      navigation,
+      colors,
       codes,
       specialMode,
       index,
-      colors,
       cards,
       showSpoilerCards,
       tabooSetOverride,
       deckId,
-      investigator,
+      investigator?.front,
       true,
       customizations
     );
-  }, [customizations, feedValues, showSpoilerCards, tabooSetOverride, singleCardView, colors, deckId, investigator, componentId, specialMode, cardPressed]);
+  }, [navigation, colors, customizations, feedValues, showSpoilerCards, tabooSetOverride, singleCardView, deckId, investigator, specialMode, cardPressed]);
   const { lang } = useContext(LanguageContext);
-  const lockedPermanents = parsedDeck?.parsedDeck?.lockedPermanents;
   const renderItem = useCallback((item: Item) => {
     switch (item.type) {
       case 'button':
         return (
           <ArkhamButton
-            key={item.id}
             title={item.title}
             onPress={item.onPress}
             icon={item.icon}
@@ -1041,15 +1015,12 @@ export default function({
         const deck_limit: number = card.collectionDeckLimit(packInCollection, ignore_collection);
         return (
           <CardSearchResult
-            key={item.id}
             card={card}
             onPressId={cardOnPressId}
             id={item.id}
             backgroundColor="transparent"
             control={deckId !== undefined ? ({
               type: 'deck',
-              deckId,
-              min: lockedPermanents?.[card.code],
               limit: deck_limit,
               mode,
             }) : undefined}
@@ -1059,18 +1030,17 @@ export default function({
       case 'header':
         return (
           <CardSectionHeader
-            key={item.id}
             section={item.header}
-            investigator={investigator}
+            investigator={investigator?.front}
           />
         );
       case 'loading':
         return (
-          <LoadingCardSearchResult key={item.id} />
+          <LoadingCardSearchResult />
         );
       case 'text':
         return (
-          <View key={item.id} style={[
+          <View style={[
             item.border ? styles.emptyText : space.paddingM,
             item.border ? borderStyle : undefined,
             item.paddingTop ? { paddingTop: item.paddingTop } : undefined,
@@ -1081,10 +1051,10 @@ export default function({
           </View>
         )
       case 'padding':
-        return <View key={item.id} style={{ height: item.size }} />;
+        return <View style={{ height: item.size }} />;
       case 'list_header':
         return (
-          <View key={item.id} style={[styles.column, { width: width }]}>
+          <View style={[styles.column, { width: width }]}>
             { headerItems }
           </View>
         );
@@ -1100,7 +1070,10 @@ export default function({
       default:
         return <View />;
     }
-  }, [lockedPermanents, headerItems, expandSearchControls, footerPadding, width, cardOnPressId, deckId, packInCollection, ignore_collection, investigator, renderCard, typography, borderStyle]);
+  }, [mode, deckId, packInCollection, ignore_collection, width, typography, borderStyle,
+    headerItems, expandSearchControls, footerPadding, investigator,
+    cardOnPressId, renderCard,
+  ]);
   const heightForItem = useCallback((item: Item): number => {
     return itemHeight(item, fontScale, headerHeight || 0, lang);
   }, [fontScale, headerHeight, lang]);
@@ -1114,6 +1087,8 @@ export default function({
       onRefresh={refreshDeck}
       refreshing={refreshing || refreshingSearch}
       noSearch={noSearch}
+      estimatedItemSize={rowHeight(fontScale)}
+      onEndReachedThreshold={0.7}
     />
   );
 }

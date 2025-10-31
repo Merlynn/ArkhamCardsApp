@@ -3,24 +3,27 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { Navigation } from 'react-native-navigation';
-import { map, sortBy } from 'lodash';
+
+import { groupBy, map, mapValues, sortBy } from 'lodash';
 import { msgid, ngettext, t } from 'ttag';
 
 import { stringList } from '@lib/stringHelper';
 import SetupStepWrapper from '../SetupStepWrapper';
 import { BorderColor, EncounterSetsStep } from '@data/scenario/types';
 import EncounterIcon from '@icons/EncounterIcon';
-import { EncounterCardErrataProps } from '@components/campaignguide/EncounterCardErrataView';
 import CampaignGuideTextComponent from '../CampaignGuideTextComponent';
 import space from '@styles/space';
 import CampaignGuide from '@data/scenario/CampaignGuide';
 import StyleContext from '@styles/StyleContext';
-import { CampaignId } from '@actions/types';
 import ArkhamButton from '@components/core/ArkhamButton';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import { useSettingValue } from '@components/core/hooks';
 import ToolTip from '@components/core/ToolTip';
+import useCardsFromQuery from '@components/card/useCardsFromQuery';
+import { where } from '@data/sqlite/query';
+import { Brackets } from 'typeorm/browser';
+import { QuerySort } from '@data/sqlite/types';
+import { useNavigation } from '@react-navigation/native';
 
 const CORE_SET_ICONS = new Set([
   'torch', 'arkham', 'cultists', 'tentacles', 'rats', 'ghouls', 'striking_fear',
@@ -29,8 +32,6 @@ const CORE_SET_ICONS = new Set([
 ]);
 
 interface Props {
-  componentId: string;
-  campaignId: CampaignId;
   step: EncounterSetsStep;
   campaignGuide: CampaignGuide
   color?: BorderColor;
@@ -38,41 +39,77 @@ interface Props {
 
 function EncounterSetIcon({ set }: { set: { code: string; name: string | undefined }}) {
   const { colors } = useContext(StyleContext);
+  const request = useMemo((): { query: Brackets, sort: QuerySort[]} => (
+    {
+      query: where('c.encounter_code = :value AND c.hidden IS NULL', { value: set.code }),
+      sort: [{ s: 'c.position', direction: 'ASC' }],
+    }
+  ), [set.code]);
+  const [encounterSetCards] = useCardsFromQuery(request);
   const [toggle, setToggle] = useState(false);
+  const label = useMemo(() => {
+    const byType = mapValues(groupBy(encounterSetCards, c => c.type_code), c => c.length);
+    if (byType.act || byType.agenda) {
+      const entries = sortBy(Object.entries(byType).map(([type, count]) => {
+        switch (type) {
+          case 'act':
+            return ngettext(msgid`Act: ${count}`, `Acts: ${count}`, count);
+          case 'agenda':
+            return ngettext(msgid`Agenda: ${count}`, `Agendas: ${count}`, count);
+          case 'location':
+            return ngettext(msgid`Location: ${count}`, `Locations: ${count}`, count);
+          case 'enemy':
+            return ngettext(msgid`Enemy: ${count}`, `Enemies: ${count}`, count);
+          case 'enemy_location':
+            return ngettext(msgid`Enemy-Location: ${count}`, `Enemy-Locations: ${count}`, count);
+          case 'treachery':
+            return ngettext(msgid`Treachery: ${count}`, `Treacheries: ${count}`, count);
+          case 'story':
+            return ngettext(msgid`Story: ${count}`, `Stories: ${count}`, count);
+          case 'key':
+            return ngettext(msgid`Key: ${count}`, `Keys: ${count}`, count);
+          case 'asset':
+            return ngettext(msgid`Asset: ${count}`, `Assets: ${count}`, count);
+          case 'scenario':
+            return ngettext(msgid`Scenario reference`, `Scenario references: ${count}`, count);
+          default:
+            return ngettext(msgid`Unknown: ${count}`, `Unknowns: ${count}`, count);
+        }
+      }), s => s);
+      return entries.join('\n');
+    }
+    return encounterSetCards
+      .filter(c => c.type_code === 'treachery' || c.type_code === 'enemy')
+      .map(card => card.quantity ?? 0 > 1 ? `${card.name} x${card.quantity}` : card.name).join('\n');
+  }, [encounterSetCards]);
+
 
   return (
     <ToolTip
       height={48}
-      width={48}
-      label={set.name}
+      width={60}
+      title={set.name}
+      label={label}
       toggle={toggle}
       setToggle={setToggle}
     >
       <EncounterIcon
-          encounter_code={set.code}
-          size={48}
-          color={CORE_SET_ICONS.has(set.code) ? colors.skill.combat.icon : colors.darkText}
+        encounter_code={set.code}
+        size={48}
+        color={CORE_SET_ICONS.has(set.code) ? colors.skill.combat.icon : colors.darkText}
       />
     </ToolTip>
   );
 }
 
-export default function EncounterSetStepComponent({ componentId, color, campaignId, step, campaignGuide }: Props) {
+export default function EncounterSetStepComponent({ color, step, campaignGuide }: Props) {
   const alphabetizeEncounterSets = useSettingValue('alphabetize');
-  const { colors } = useContext(StyleContext);
   const { lang, listSeperator } = useContext(LanguageContext);
-
+  const navigation = useNavigation();
   const errata = useMemo(() => campaignGuide.cardErrata(step.encounter_sets), [campaignGuide, step.encounter_sets]);
   const _viewEncounterErrata = useCallback(() => {
-    Navigation.push<EncounterCardErrataProps>(componentId, {
-      component: {
-        name: 'Guide.CardErrata',
-        passProps: {
-          errata,
-        },
-      },
-    });
-  }, [errata, componentId]);
+    navigation.navigate('Guide.CardErrata', { errata });
+  }, [navigation, errata]);
 
   const rawEncounterSets = useMemo(() => map(
     step.encounter_sets,

@@ -24,12 +24,12 @@ import { syncCards } from '@lib/publicApi';
 import Database from '@data/sqlite/Database';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 
-const VERBOSE = false;
+const VERBOSE = true;
 function shouldFetchCards(state: AppState) {
   return !state.cards.loading;
 }
 
-function cardsCache(state: AppState, lang: string): undefined | CardCache {
+export function cardsCache(state: AppState, lang: string): undefined | CardCache {
   return getCardLang(state) === lang ? state.cards.cache : undefined;
 }
 

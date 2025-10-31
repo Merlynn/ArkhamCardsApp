@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState, useReducer, Reducer, ReducerWithoutAction } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState, useReducer } from 'react';
 import { flatMap, keys, map, sortBy } from 'lodash';
 import { StyleSheet, ListRenderItemInfo, View, Platform } from 'react-native';
 import { t } from 'ttag';
@@ -11,8 +11,7 @@ import CardFlavorTextComponent from '@components/card/CardFlavorTextComponent';
 import CardTextComponent from '@components/card/CardTextComponent';
 import { s, m } from '@styles/space';
 import DatabaseContext from '@data/sqlite/DatabaseContext';
-import { Navigation } from 'react-native-navigation';
-import { RuleViewProps } from './RuleView';
+
 import { searchBoxHeight } from '@components/core/SearchBox';
 import CollapsibleSearchBox from '@components/core/CollapsibleSearchBox';
 import { where } from '@data/sqlite/query';
@@ -21,39 +20,14 @@ import { searchNormalize } from '@data/types/Card';
 import StyleContext from '@styles/StyleContext';
 import { usePressCallback } from '@components/core/hooks';
 import ArkhamLoadingSpinner from '@components/core/ArkhamLoadingSpinner';
+import { useNavigation } from '@react-navigation/native';
 
-interface Props {
-  componentId: string;
-}
-
-function RuleComponent({ componentId, rule, level }: { componentId: string; rule: Rule; level: number }) {
+function RuleComponent({ rule, level }: { rule: Rule; level: number }) {
+  const navigation = useNavigation();
   const { listSeperator } = useContext(LanguageContext);
   const onPressRaw = useCallback(() => {
-    Navigation.push<RuleViewProps>(componentId, {
-      component: {
-        name: 'Rule',
-        passProps: {
-          rule,
-        },
-        options: {
-          topBar: {
-            title: {
-              component: {
-                name: 'RulesTitle',
-                alignment: 'center',
-                passProps: {
-                  title: rule.title,
-                },
-              },
-            },
-            backButton: {
-              title: t`Back`,
-            },
-          },
-        },
-      },
-    });
-  }, [componentId, rule]);
+    navigation.navigate('Rule', { rule });
+  }, [rule, navigation]);
   const onPress = usePressCallback(onPressRaw);
   return (
     <View key={rule.id} style={{ paddingLeft: s + s * (level + 1), paddingRight: m, marginTop: s }}>
@@ -84,7 +58,7 @@ interface SearchResults {
 }
 
 
-export default function RulesView({ componentId }: Props) {
+export default function RulesView() {
   const { db } = useContext(DatabaseContext);
   const { lang } = useContext(LanguageContext);
   const { fontScale, height } = useContext(StyleContext);
@@ -107,13 +81,13 @@ export default function RulesView({ componentId }: Props) {
     db.getRulesPaged(
       0,
       100,
-      where(`r.parentRule is null AND (r.s_title LIKE '%' || :titleSearchTerm || '%' OR r.text LIKE '%' || :searchTerm || '%' OR (sub_rules.s_title is not null AND sub_rules.s_title LIKE '%' || :titleSearchTerm || '%') OR (sub_rules.text is not null AND sub_rules.text LIKE '%' || :searchTerm || '%'))`, { searchTerm, titleSearchTerm: searchNormalize(searchTerm, lang) })
+      where(`r.parentRule is null AND (r.s_title LIKE '%' || :titleSearchTerm || '%' OR r.text LIKE '%' || :searchTerm || '%' OR (sub_rules.s_title is not null AND sub_rules.s_title LIKE '%' || :titleSearchTerm || '%') OR (sub_rules.text is not null AND sub_rules.text LIKE '%' || :searchTerm || '%'))`, { searchTerm, titleSearchTerm: searchNormalize(searchTerm.trim(), lang) })
     ).then((rules: Rule[]) => setSearchResults({
       term: searchTerm,
       rules,
     }), console.log);
   }, [db, lang, searchResults.term]);
-  const [rules, appendRules] = useReducer<Reducer<PagedRules, AppendPagedRules>>(
+  const [rules, appendRules] = useReducer(
     (state: PagedRules, action: AppendPagedRules): PagedRules => {
       return {
         rules: {
@@ -126,7 +100,7 @@ export default function RulesView({ componentId }: Props) {
       rules: {},
       endReached: false,
     });
-  const [, fetchPage] = useReducer<ReducerWithoutAction<number>>((page: number) => {
+  const [, fetchPage] = useReducer((page: number) => {
     if (!rules.endReached) {
       db.getRulesPaged(
         page,
@@ -149,8 +123,8 @@ export default function RulesView({ componentId }: Props) {
     }
   }, [rules.endReached, fetchPage]);
   const renderItem = useCallback(({ item, index }: ListRenderItemInfo<Rule>) => {
-    return <RuleComponent componentId={componentId} key={index} rule={item} level={0} />;
-  }, [componentId]);
+    return <RuleComponent key={index} rule={item} level={0} />;
+  }, []);
   const data = useMemo(() => searchTerm ? searchResults.rules : flatMap(
     sortBy(keys(rules.rules), parseInt),
     idx => rules.rules[idx]

@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Navigation } from 'react-native-navigation';
+
 import { msgid, ngettext, t } from 'ttag';
 
 import CollapsibleSearchBox, { SearchOptions } from '@components/core/CollapsibleSearchBox';
@@ -26,9 +26,9 @@ import CardDetailSectionHeader from '@components/card/CardDetailView/CardDetailS
 import FactionIcon from '@icons/FactionIcon';
 import ArkhamLargeList from '@components/core/ArkhamLargeList';
 import AppIcon from '@icons/AppIcon';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   hideDeckbuildingRules?: boolean;
   sort: SortType[];
   onPress: (investigator: Card) => void;
@@ -76,7 +76,7 @@ function headerForInvestigator(
     case SORT_BY_TITLE:
       return t`All Investigators`;
     case SORT_BY_PACK:
-      return investigator.pack_name || t`N/A`;
+      return (investigator.cycle_code === 'investigator' ? investigator.cycle_name : investigator.pack_name) || t`N/A`;
     default:
       return t`N/A`;
   }
@@ -84,7 +84,7 @@ function headerForInvestigator(
 
 function renderSectionHeader(item: HeaderItem) {
   return (
-    <View style={space.paddingS} key={item.title}>
+    <View style={space.paddingS}>
       <CardDetailSectionHeader title={item.title} color="dark" normalCase />
     </View>
   );
@@ -132,7 +132,6 @@ function CustomInvestigatorRow({ investigator, onInvestigatorPress, children, sh
 }
 
 export default function InvestigatorsListComponent({
-  componentId,
   sort,
   onPress,
   filterInvestigator,
@@ -142,6 +141,7 @@ export default function InvestigatorsListComponent({
   customFooter,
   includeParallelInvestigators,
 }: Props) {
+  const navigation = useNavigation();
   const { typography } = useContext(StyleContext);
   const [investigators, loading] = useAllInvestigators(undefined, sort);
   const in_collection = useSelector(getPacksInCollection);
@@ -154,12 +154,8 @@ export default function InvestigatorsListComponent({
   }, [onPress]);
 
   const showEditCollection = useCallback(() => {
-    Navigation.push(componentId, {
-      component: {
-        name: 'My.Collection',
-      },
-    });
-  }, [componentId]);
+    navigation.navigate('My.Collection', {});
+  }, [navigation]);
 
   const showNonCollectionCards = useCallback((id: string) => {
     Keyboard.dismiss();
@@ -195,7 +191,6 @@ export default function InvestigatorsListComponent({
           [i.name, i.faction_name || '', i.traits || '']
         );
       });
-
     const results: Item[] = [];
     let nonCollectionCards: Card[] = [];
     let currentBucket: Section | undefined = undefined;
@@ -304,7 +299,6 @@ export default function InvestigatorsListComponent({
       case 'card':
         return (
           <CustomInvestigatorRow
-            key={item.card.code}
             investigator={item.card}
             onInvestigatorPress={onInvestigatorPress}
             showFaction
@@ -346,6 +340,7 @@ export default function InvestigatorsListComponent({
           data={data}
           renderFooter={renderFooter}
           renderItem={renderItem}
+          estimatedItemSize={40}
         />
       ) }
     </CollapsibleSearchBox>

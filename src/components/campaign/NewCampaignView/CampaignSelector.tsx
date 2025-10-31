@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Navigation } from 'react-native-navigation';
+
 import { t } from 'ttag';
 
-import { CampaignSelection, SelectCampagaignProps } from '@components/campaign/SelectCampaignDialog';
-import { CUSTOM, CORE } from '@actions/types';
+import { CampaignSelection } from '@components/campaign/SelectCampaignDialog';
+import { CUSTOM } from '@actions/types';
 import DeckPickerStyleButton from '@components/deck/controls/DeckPickerStyleButton';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-  componentId: string;
   campaignChanged: (
     selection: CampaignSelection,
     campaignName: string,
@@ -22,29 +22,25 @@ interface CampaignState {
   hasGuide: boolean;
 }
 
-export default function CampaignSelector({ componentId, campaignChanged }: Props) {
-  const [campaignState, setCampaignState] = useState<CampaignState>({
-    hasGuide: true,
-    selectedCampaign: t`The Night of the Zealot`,
-    selection: {
-      type: 'campaign',
-      code: CORE,
-    },
-  });
+export default function CampaignSelector({ campaignChanged }: Props) {
+  const navigation = useNavigation();
+  const [campaignState, setCampaignState] = useState<CampaignState | undefined>();
   useEffect(() => {
-    const {
-      selectedCampaign,
-      selection,
-      customCampaign,
-      hasGuide,
-    } = campaignState;
-    campaignChanged(
-      selection,
-      (selection.type === 'campaign' && selection.code === CUSTOM) ?
-        (customCampaign || 'Custom Campaign') :
+    if (campaignState) {
+      const {
         selectedCampaign,
-      hasGuide
-    );
+        selection,
+        customCampaign,
+        hasGuide,
+      } = campaignState;
+      campaignChanged(
+        selection,
+        (selection.type === 'campaign' && selection.code === CUSTOM) ?
+          (customCampaign || 'Custom Campaign') :
+          selectedCampaign,
+        hasGuide
+      );
+    }
   }, [campaignState, campaignChanged]);
 
   const handleCampaignChanged = useCallback((selection: CampaignSelection, text: string, hasGuide: boolean) => {
@@ -56,34 +52,17 @@ export default function CampaignSelector({ componentId, campaignChanged }: Props
   }, [setCampaignState]);
 
   const campaignPressed = useCallback(() => {
-    Navigation.push<SelectCampagaignProps>(componentId, {
-      component: {
-        name: 'Dialog.Campaign',
-        passProps: {
-          selectionChanged: handleCampaignChanged,
-        },
-        options: {
-          topBar: {
-            backButton: {
-              title: t`Back`,
-            },
-          },
-        },
-      },
+    navigation.navigate('Dialog.Campaign', {
+      selectionChanged: handleCampaignChanged,
     });
-  }, [componentId, handleCampaignChanged]);
-
-  const {
-    selectedCampaign,
-    selection,
-  } = campaignState;
+  }, [navigation, handleCampaignChanged]);
 
   return (
     <DeckPickerStyleButton
       first
       editable
-      title={selection.type === 'campaign' ? t`Campaign` : t`Standalone`}
-      valueLabel={selectedCampaign}
+      title={!campaignState || campaignState.selection.type === 'campaign' ? t`Campaign` : t`Standalone`}
+      valueLabel={campaignState?.selectedCampaign}
       onPress={campaignPressed}
       icon="book"
     />

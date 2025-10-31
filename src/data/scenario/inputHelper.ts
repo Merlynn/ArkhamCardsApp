@@ -24,7 +24,7 @@ import {
   campaignDataStandaloneConditionResult,
   campaignDataInvestigatorStatusConditionResult,
 } from '@data/scenario/conditionHelper';
-import { PersonalizedChoices, UniversalChoices, DisplayChoiceWithId, BinaryConditionalChoiceWithId } from '@data/scenario';
+import { PersonalizedChoices, UniversalChoices, BinaryConditionalChoiceWithId } from '@data/scenario';
 
 export function chooseOneInputChoices(
   choices: BinaryConditionalChoice[],
@@ -68,8 +68,12 @@ export function investigatorChoiceInputChoices(
         switch (input.investigator) {
           case 'resigned':
             return campaignLog.resigned(code);
+          case 'defeated':
+            return campaignLog.isDefeated(code);
           case 'not_defeated':
             return !campaignLog.isDefeated(code);
+          case 'alive':
+            return campaignLog.isAlive(code);
           default:
             return true;
         }

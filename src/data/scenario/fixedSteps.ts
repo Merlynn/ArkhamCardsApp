@@ -27,6 +27,7 @@ export const enum PlayingScenarioBranch {
   RESOLUTION = -2,
   DRAW_WEAKNESS = -3,
   RECORD_TRAUMA = -4,
+  CHANGE_LEAD_INVESTIGATOR = -5,
 }
 
 const CHECK_INVESTIGATOR_DEFEAT_RESOLUTION_ID = '$check_investigator_defeat';
@@ -69,6 +70,7 @@ function chooseResolutionStep(resolutions: Resolution[]): InputStep {
             id: resolution.id,
             large: true,
             text: `<b>${resolution.title}</b>`,
+            condition: resolution.condition,
             description: resolution.description ? `<i>${resolution.description}</i>` : undefined,
             hidden: resolution.hidden,
             steps: [
@@ -252,6 +254,33 @@ function editCampaignLogStep(): InputStep {
   };
 }
 
+export const CHANGE_LEAD_INVESTIGATOR_STEP_ID = '$change_lead_investigator';
+function changeLeadInvestigatorStep(): InputStep {
+  return {
+    id: LEAD_INVESTIGATOR_STEP_ID,
+    type: 'input',
+    text: t`Choose lead investigator`,
+    input: {
+      type: 'investigator_choice',
+      investigator: 'any',
+      source: 'scenario',
+      choices: [
+        {
+          id: 'lead',
+          text: t`Lead Investigator`,
+          effects: [
+            {
+              type: 'scenario_data',
+              setting: 'lead_investigator',
+              investigator: '$input_value',
+            },
+          ],
+        },
+      ],
+    },
+  }
+}
+
 export const LEAD_INVESTIGATOR_STEP_ID = '$lead_investigator';
 function leadInvestigatorStep(): InputStep {
   return {
@@ -345,6 +374,24 @@ function statusToString(
   gender?: Gender_Enum
 ): string {
   switch (status) {
+    case 'killed':
+      if (gender) {
+        switch (gender) {
+          case Gender_Enum.M: return c('masculine').t`Killed`;
+          case Gender_Enum.F: return c('feminine').t`Killed`;
+          case Gender_Enum.Nb: return c('nonbinary').t`Killed`;
+        }
+      }
+      return t`Killed`;
+    case 'insane':
+      if (gender) {
+        switch (gender) {
+          case Gender_Enum.M: return c('masculine').t`Insane`;
+          case Gender_Enum.F: return c('feminine').t`Insane`;
+          case Gender_Enum.Nb: return c('nonbinary').t`Insane`;
+        }
+      }
+      return t`Insane`;
     case 'alive':
       if (gender) {
         switch (gender) {
@@ -395,6 +442,10 @@ function statusToString(
 
 function statusToSelectedString(status: InvestigatorStatus): string {
   switch (status) {
+    case 'killed':
+      return t`Killed`;
+    case 'insane':
+      return t`Insane`;
     case 'alive':
       return t`Alive`;
     case 'resigned':
@@ -411,6 +462,10 @@ function statusToSelectedString(status: InvestigatorStatus): string {
 
 function statusToSelectedFeminineString(status: InvestigatorStatus): string {
   switch (status) {
+    case 'killed':
+      return c('feminine').t`Killed`;
+    case 'insane':
+      return c('feminine').t`Insane`;
     case 'alive':
       return c('feminine').t`Alive`;
     case 'resigned':
@@ -427,6 +482,10 @@ function statusToSelectedFeminineString(status: InvestigatorStatus): string {
 
 function statusToSelectedNonBinaryString(status: InvestigatorStatus): string {
   switch (status) {
+    case 'killed':
+      return c('nonbinary').t`Killed`;
+    case 'insane':
+      return c('nonbinary').t`Insane`;
     case 'alive':
       return c('nonbinary').t`Alive`;
     case 'resigned':
@@ -466,6 +525,8 @@ const STATUS_ICON: {
   physical: 'physical',
   mental: 'mental',
   eliminated: 'dismiss',
+  killed: 'physical',
+  insane: 'mental',
 };
 
 export function createInvestigatorStatusStep(
@@ -496,6 +557,15 @@ export function createInvestigatorStatusStep(
           investigator: '$input_value',
           physical: status === 'physical' ? 1 : 0,
           mental: status === 'mental' ? 1 : 0,
+          hidden: true,
+        });
+      }
+      if (status === 'killed' || status === 'insane') {
+        effects.push({
+          type: 'trauma',
+          investigator: '$input_value',
+          killed: status === 'killed',
+          insane: status === 'insane',
           hidden: true,
         });
       }
@@ -627,6 +697,7 @@ export function getFixedStep(
     case DUMMY_END_SCENARIO_STEP_ID:
       return dummyEndScenarioStep;
     case CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID: {
+      const stepId = campaignLog.currentPlayScenarioStepId();
       const step: BranchStep = {
         id: CHECK_CONTINUE_PLAY_SCENARIO_STEP_ID,
         hidden: true,
@@ -641,7 +712,7 @@ export function getFixedStep(
             },
             {
               boolCondition: false,
-              steps: [iteration !== undefined ? `${PLAY_SCENARIO_STEP_ID}#${iteration}` : PLAY_SCENARIO_STEP_ID],
+              steps: [iteration !== undefined ? `${stepId}#${iteration}` : stepId],
             },
           ],
         },
@@ -654,6 +725,8 @@ export function getFixedStep(
       return upgradeDecksStep;
     case LEAD_INVESTIGATOR_STEP_ID:
       return leadInvestigatorStep();
+    case CHANGE_LEAD_INVESTIGATOR_STEP_ID:
+      return changeLeadInvestigatorStep();
     case SAVE_STANDALONE_DECKS_ID:
       return saveStandaloneDecksStep;
     case RECORD_TRAUMA_STEP_ID:

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState, useCallback, useContext, useRef } from 'react';
-import { find, forEach, map, throttle } from 'lodash';
+import React, { RefObject, useEffect, useMemo, useState, useCallback, useContext, useRef } from 'react';
+import { find, forEach, map, sumBy, throttle } from 'lodash';
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Navigation } from 'react-native-navigation';
+
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { t } from 'ttag';
@@ -27,6 +27,8 @@ import AppModal from '@components/core/AppModal';
 import CardTextComponent from '@components/card/CardTextComponent';
 import { parseDeck } from '@lib/parseDeck';
 import LanguageContext from '@lib/i18n/LanguageContext';
+import { CampaignInvestigator } from '@data/scenario/GuidedCampaignLog';
+import { ArkhamNavigation } from '@navigation/types';
 
 
 interface ModalOptions {
@@ -198,7 +200,7 @@ export function useDialog({
         { content }
       </NewDialog>
     );
-  }, [backgroundColor, forceVerticalButtons, maxHeightPercent, noPadding, title, dismiss, description, visible, alignment, customButtons, onDismiss, buttons, investigator, content, allowDismiss, avoidKeyboard]);
+  }, [noScroll, backgroundColor, forceVerticalButtons, maxHeightPercent, noPadding, title, dismiss, description, visible, alignment, customButtons, onDismiss, buttons, investigator, content, allowDismiss, avoidKeyboard]);
   const showDialog = useCallback(() => setVisible(true), [setVisible]);
   return {
     visible,
@@ -333,7 +335,7 @@ export function useSimpleTextDialog({
   onValidate,
   placeholder,
 }: SimpleTextDialogOptions): [React.ReactNode, () => void] {
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const [liveValue, setLiveValue] = useState(value);
   const [error, setError] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
@@ -432,6 +434,7 @@ interface PickerItem<T> {
   title: string;
   description?: string;
   disabled?: boolean;
+  selected?: boolean;
   value: T;
   icon?: string;
   iconNode?: React.ReactNode;
@@ -440,7 +443,7 @@ interface PickerItem<T> {
 export type Item<T> = PickerItemHeader | PickerItem<T>;
 interface PickerDialogOptions<T> {
   title: string;
-  investigator?: Card;
+  investigator?: CampaignInvestigator;
   description?: string | React.ReactNode;
   items: Item<T>[];
   selectedValue?: T;
@@ -457,7 +460,7 @@ export function usePickerDialog<T>({
   noIcons,
 }: PickerDialogOptions<T>): [React.ReactNode, () => void] {
   const { borderStyle, typography } = useContext(StyleContext);
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const onValuePress = useCallback((value: T) => {
     onValueChange(value);
     if (setVisibleRef.current) {
@@ -496,7 +499,7 @@ export function usePickerDialog<T>({
             indicator={noIcons ? 'none' : undefined}
             onValueChange={onValuePress}
             // tslint:disable-next-line
-            selected={selectedValue === item.value}
+            selected={item.selected ?? selectedValue === item.value}
             last={idx === items.length - 1 || items[idx + 1].type === 'header'}
           />
         )) }
@@ -505,7 +508,7 @@ export function usePickerDialog<T>({
   }, [items, onValuePress, descriptionSection, noIcons, selectedValue]);
   const { setVisible, dialog } = useDialog({
     title,
-    investigator,
+    investigator: investigator?.card,
     allowDismiss: true,
     content,
     alignment: 'bottom',
@@ -524,29 +527,42 @@ interface MultiPickerDialogOptions<T> {
   title: string;
   investigator?: Card;
   description?: string;
+  header?: React.ReactNode;
+  error?: string;
   items: Item<T>[];
   selectedValues?: Set<T>;
   onValueChange: (value: T, selected: boolean) => void;
+  max?: number;
 }
 export function useMultiPickerDialog<T>({
   title,
+  header,
   investigator,
   description,
+  error,
   items,
   selectedValues,
   onValueChange,
+  max,
 }: MultiPickerDialogOptions<T>): [React.ReactNode, () => void] {
   const { borderStyle, typography } = useContext(StyleContext);
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const onValuePress = useCallback((value: T) => {
     onValueChange(value, !selectedValues?.has(value));
   }, [onValueChange, selectedValues]);
+  const selectedCount = useMemo(() => sumBy(items, item => item.type !== 'header' && selectedValues?.has(item.value) ? 1 : 0), [selectedValues, items]);
   const content = useMemo(() => {
     return (
       <View>
+        { !!header && header }
         { !!description && (
           <View style={[space.marginS, space.paddingBottomS, { borderBottomWidth: StyleSheet.hairlineWidth }, borderStyle]}>
             <Text style={typography.text}>{ description } </Text>
+          </View>
+        )}
+        { !!error && (
+          <View style={[space.marginS, space.paddingBottomS, { borderBottomWidth: StyleSheet.hairlineWidth }, borderStyle]}>
+            <Text style={[typography.text, typography.error]}>{ error } </Text>
           </View>
         )}
         { map(items, (item, idx) => item.type === 'header' ? (
@@ -561,13 +577,15 @@ export function useMultiPickerDialog<T>({
             indicator="check"
             onValueChange={onValuePress}
             // tslint:disable-next-line
-            selected={!!selectedValues?.has(item.value)}
+            showDisabledIcons
+            selected={item.selected ?? !!selectedValues?.has(item.value)}
             last={idx === items.length - 1 || items[idx + 1].type === 'header'}
+            disabled={item.disabled || (!selectedValues?.has(item.value) && !!max && selectedCount >= max)}
           />
         )) }
       </View>
     );
-  }, [items, onValuePress, borderStyle, typography, description, selectedValues]);
+  }, [items, onValuePress, borderStyle, typography, description, selectedValues, max, selectedCount, error, header]);
   const { setVisible, dialog } = useDialog({
     title,
     investigator,
@@ -726,6 +744,8 @@ export function useAdjustXpDialog({
 export function useSaveAlert(
   parsedDeckResults: ParsedDeckResults,
   saveEditsAndDismiss: () => void,
+  navigation: ArkhamNavigation,
+  confirmedRef: RefObject<boolean>,
 ): [React.ReactNode, () => void] {
   const { typography } = useContext(StyleContext);
   const [visible, setVisible] = useState<boolean>(false);
@@ -740,7 +760,8 @@ export function useSaveAlert(
       text: t`Discard Changes`,
       style: 'destructive',
       onPress: () => {
-        Navigation.dismissAllModals();
+        confirmedRef.current = true;
+        navigation.goBack();
       },
     }, {
       text: t`Save Changes`,
@@ -750,7 +771,7 @@ export function useSaveAlert(
         saveEditsAndDismiss();
       },
     }];
-  }, [parsedDeckResults, saveEditsAndDismiss]);
+  }, [parsedDeckResults, saveEditsAndDismiss, navigation, confirmedRef]);
   const buttons = useMemo(() => {
     return map(currentButtons, (button, idx) => {
       return (
@@ -786,12 +807,13 @@ export function useSaveAlert(
   return [dialog, showAlert];
 }
 
-export function useSaveDialog(parsedDeckResults: ParsedDeckResults): DeckEditState & {
+export function useSaveDialog(parsedDeckResults: ParsedDeckResults, navigation: ArkhamNavigation): DeckEditState & {
   saving: boolean;
   saveError: string | undefined;
   saveEdits: () => void;
   handleBackPress: () => boolean;
   savingDialog: React.ReactNode;
+  confirmedRef: RefObject<boolean>;
 } {
   const { slotDeltas, hasPendingEdits, addedBasicWeaknesses, mode } = useDeckEditState(parsedDeckResults);
   const {
@@ -806,6 +828,7 @@ export function useSaveDialog(parsedDeckResults: ParsedDeckResults): DeckEditSta
   const dispatch = useDispatch();
   const deckDispatch: DeckDispatch = useDispatch();
   const { userId } = useContext(ArkhamCardsAuthContext);
+  const confirmedRef = useRef<boolean>(false);
   const [
     savingDialog,
     saving,
@@ -865,7 +888,8 @@ export function useSaveDialog(parsedDeckResults: ParsedDeckResults): DeckEditSta
       }
 
       if (dismissAfterSave) {
-        Navigation.dismissAllModals();
+        confirmedRef.current = true;
+        navigation.goBack();
       } else {
         dispatch({
           type: UPDATE_DECK_EDIT,
@@ -874,28 +898,32 @@ export function useSaveDialog(parsedDeckResults: ParsedDeckResults): DeckEditSta
             mode: 'view',
           },
         });
-        setSaving(false);
       }
+      setSaving(false);
     } catch(e) {
       handleSaveError(e);
     }
   }, [deck, saving, cards, previousDeck, hasPendingEdits, parsedDeckRef, deckEditsRef, tabooSetId, userId, deckActions,
-    listSeperator, dispatch, deckDispatch, handleSaveError, setSaving]);
+    listSeperator, dispatch, deckDispatch, handleSaveError, setSaving, navigation]);
 
   const saveEdits = useMemo(() => throttle((isRetry?: boolean) => actuallySaveEdits(false, isRetry), 500), [actuallySaveEdits]);
   const saveEditsAndDismiss = useMemo((isRetry?: boolean) => throttle(() => actuallySaveEdits(true, isRetry), 500), [actuallySaveEdits]);
-  const [dialog, showAlert] = useSaveAlert(parsedDeckResults, saveEditsAndDismiss);
+  const [dialog, showAlert] = useSaveAlert(parsedDeckResults, saveEditsAndDismiss, navigation, confirmedRef);
   const handleBackPress = useCallback(() => {
+    if (confirmedRef.current) {
+      return false;
+    }
     if (!visible) {
       return false;
     }
     if (hasPendingEdits) {
       showAlert();
-    } else {
-      Navigation.dismissAllModals();
+      return true;
     }
+    confirmedRef.current = true;
+    navigation.goBack();
     return true;
-  }, [visible, hasPendingEdits, showAlert]);
+  }, [visible, hasPendingEdits, showAlert, navigation]);
   return {
     saving,
     saveEdits,
@@ -906,6 +934,7 @@ export function useSaveDialog(parsedDeckResults: ParsedDeckResults): DeckEditSta
     hasPendingEdits,
     addedBasicWeaknesses,
     mode,
+    confirmedRef,
   };
 }
 

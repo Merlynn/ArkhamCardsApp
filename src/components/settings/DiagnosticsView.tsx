@@ -3,16 +3,15 @@ import { forEach } from 'lodash';
 import {
   Alert,
   Keyboard,
-  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
 } from 'react-native';
 import database from '@react-native-firebase/database';
-import Crashes from 'appcenter-crashes';
+import * as Sentry from '@sentry/react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { t } from 'ttag';
-import BlastedImage from 'react-native-blasted-image';
+import { Image } from 'expo-image';
 
 import { CARD_SET_SCHEMA_VERSION, DISSONANT_VOICES_LOGIN, SYNC_DISMISS_ONBOARDING } from '@actions/types';
 import { clearDecks } from '@actions';
@@ -27,7 +26,6 @@ import LanguageContext from '@lib/i18n/LanguageContext';
 import useTextEditDialog from '@components/core/useTextEditDialog';
 import { useApolloClient } from '@apollo/client';
 import { useSimpleTextDialog } from '@components/deck/dialogs';
-import { ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID, ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA, ENABLE_ARKHAM_CARDS_ACCOUNT_IOS } from '@app_constants';
 import { useSettingFlag } from '@components/core/hooks';
 import { useUpdateOnboarding } from '@data/remote/settings';
 import { format } from 'date-fns';
@@ -160,8 +158,8 @@ export default function DiagnosticsView() {
   }, [apollo, dispatch]);
 
   const [imagesCleared, setImagesCleared] = useState(false);
-  const clearImageCache = useCallback(() => {
-    BlastedImage.clearAllCaches();
+  const clearImageCache = useCallback(async() => {
+    await Image.clearDiskCache();
     setImagesCleared(true);
   }, [setImagesCleared]);
 
@@ -172,7 +170,7 @@ export default function DiagnosticsView() {
   }, [clearDatabase, doSyncCards]);
 
   const crash = useCallback(() => {
-    Crashes.generateTestCrash();
+    Sentry.nativeCrash();
   }, []);
 
   const setDissonantVoicesToken = useCallback(() => {
@@ -234,8 +232,7 @@ export default function DiagnosticsView() {
           onPress={exportCampaignData}
           text={t`Export diagnostic data`}
         />
-        { ((Platform.OS === 'android' && ENABLE_ARKHAM_CARDS_ACCOUNT_ANDROID) ||
-          (Platform.OS === 'ios' && ENABLE_ARKHAM_CARDS_ACCOUNT_IOS && !ENABLE_ARKHAM_CARDS_ACCOUNT_IOS_BETA)) && (
+        { false && (
           <>
             <CardSectionHeader section={{ title: t`Beta testing` }} />
             <SettingsItem
@@ -252,7 +249,7 @@ export default function DiagnosticsView() {
         />
         <SettingsItem
           onPress={clearImageCache}
-          text={imagesCleared ? t`Image cache cleared` :t`Clear image cache`}
+          text={imagesCleared ? t`Image cache cleared` : t`Clear image cache`}
         />
         { !schemaCleared && (
           <SettingsItem

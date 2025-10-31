@@ -1,4 +1,4 @@
-import { filter, flatMap, groupBy, map, mapValues, range } from 'lodash';
+import { filter, forEach } from 'lodash';
 
 import {
   DELETE_DECK,
@@ -15,8 +15,11 @@ import {
   getDeckId,
   SYNC_DECK,
   Slots,
+  ChecklistSlots,
+  UpdateDeckEditCountsAction,
+  DeckMeta,
 } from '@actions/types';
-import { encodeExtraDeckSlots, getExtraDeckSlots } from '@lib/parseDeck';
+import { encodeMetaSlots, parseMetaSlots } from '@lib/parseDeck';
 
 interface DeckEditsState {
   edits: {
@@ -25,8 +28,8 @@ interface DeckEditsState {
   editting: {
     [id: string]: boolean | undefined;
   };
-  checklist: {
-    [id: string]: string[] | undefined;
+  checklist_counts?: {
+    [id: string]: ChecklistSlots | undefined;
   };
   deck_uploads?: {
     [uuid: string]: string[] | undefined;
@@ -36,17 +39,41 @@ interface DeckEditsState {
 const DEFAULT_DECK_EDITS_STATE: DeckEditsState = {
   edits: {},
   editting: {},
-  checklist: {},
+  checklist_counts: {},
   deck_uploads: {},
 };
 
-function getCurrentSlots(edits: EditDeckState, type: 'slots' | 'extra' | 'ignoreDeckLimitSlots' | 'side'): Slots {
-  switch (type) {
-    case 'slots': return { ...edits.slots };
-    case 'extra': return getExtraDeckSlots(edits.meta);
-    case 'ignoreDeckLimitSlots': return { ...edits.ignoreDeckLimitSlots };
-    case 'side': return { ...edits.side };
+function getCurrentSlots(edits: EditDeckState, action: UpdateDeckEditCountsAction): Slots {
+  switch (action.countType) {
+    case 'slots':
+      return { ...edits.slots };
+    case 'extra':
+      return parseMetaSlots(edits.meta.extra_deck);
+    case 'ignoreDeckLimitSlots':
+      return { ...edits.ignoreDeckLimitSlots };
+    case 'side':
+      return { ...edits.side };
+    case 'xpAdjustment':
+      return {};
+    case 'attachment':
+      return parseMetaSlots(edits.meta[`attachment_${action.attachment_code}`]);
   }
+}
+
+function cleanAttachmentCounts(meta: DeckMeta, code: string, count: number): DeckMeta {
+  const newMeta = { ...meta };
+  let changed = false;
+  forEach(Object.keys(meta), key => {
+    if (key.startsWith('attachment_')) {
+      const slots = parseMetaSlots(meta[key]);
+      if ((slots[code] ?? 0) > count) {
+        changed = true;
+        slots[code] = count;
+        newMeta[key] = encodeMetaSlots(slots);
+      }
+    }
+  });
+  return changed ? newMeta : meta;
 }
 
 export default function(
@@ -160,9 +187,15 @@ export default function(
     if (action.countType === 'xpAdjustment') {
       let xpAdjustment = currentEdits.xpAdjustment;
       switch (action.operation) {
-        case 'inc': xpAdjustment++; break;
-        case 'dec': xpAdjustment--; break;
-        case 'set': xpAdjustment = action.value; break;
+        case 'inc':
+          xpAdjustment++;
+          break;
+        case 'dec':
+          xpAdjustment--;
+          break;
+        case 'set':
+          xpAdjustment = action.value;
+          break;
       }
       return {
         ...state,
@@ -175,12 +208,12 @@ export default function(
         },
       };
     }
-    const currentSlots = getCurrentSlots(currentEdits, action.countType);
+    const currentSlots = getCurrentSlots(currentEdits, action);
     const updatedEdits = { ...currentEdits };
-
     switch (action.operation) {
       case 'set': {
         currentSlots[action.code] = action.value;
+        // Special logic for set related to ignoreDeckLimitSlots.
         switch (action.countType) {
           case 'ignoreDeckLimitSlots':
             if (currentSlots[action.code] > (currentEdits.slots[action.code] || 0)) {
@@ -203,6 +236,7 @@ export default function(
       }
       case 'dec': {
         currentSlots[action.code] = Math.max((currentSlots[action.code] || 0) - 1, 0);
+        // Special logic for dec related to ignoreDeckLimitSlots.
         switch (action.countType) {
           case 'slots':
             if (currentSlots[action.code] < (currentEdits.ignoreDeckLimitSlots[action.code] || 0)) {
@@ -216,7 +250,10 @@ export default function(
         break;
       }
       case 'inc': {
-        currentSlots[action.code] = Math.min((currentSlots[action.code] || 0) + 1, action.limit || 2);
+        if (action.countType !== 'attachment') {
+          currentSlots[action.code] = Math.min((currentSlots[action.code] || 0) + 1, action.limit ?? 2);
+        }
+        // Special logic for inc related to ignoreDeckLimitSlots.
         switch (action.countType) {
           case 'ignoreDeckLimitSlots':
             if (currentSlots[action.code] > (currentEdits.slots[action.code] || 0)) {
@@ -226,9 +263,20 @@ export default function(
               };
             }
             break;
+          case 'attachment': {
+            const newCount = (currentSlots[action.code] ?? 0) + 1;
+            if (newCount > (currentEdits.slots[action.code] ?? 0) || (action.limit && newCount > action.limit)) {
+              currentSlots[action.code] = 0;
+            } else {
+              currentSlots[action.code] = newCount;
+            }
+            break;
+          }
         }
         break;
       }
+    }
+    if (action.countType === 'slots') {
     }
     if (!currentSlots[action.code]) {
       delete currentSlots[action.code];
@@ -236,6 +284,8 @@ export default function(
 
     switch (action.countType) {
       case 'slots':
+        // When we manipulate the main deck, we need to check if any attachments need to be adjusted.
+        updatedEdits.meta = cleanAttachmentCounts(currentEdits.meta, action.code, currentSlots[action.code] ?? 0);
         updatedEdits.slots = currentSlots;
         break;
       case 'ignoreDeckLimitSlots':
@@ -247,7 +297,13 @@ export default function(
       case 'extra':
         updatedEdits.meta = {
           ...currentEdits.meta,
-          extra_deck: encodeExtraDeckSlots(currentSlots),
+          extra_deck: encodeMetaSlots(currentSlots),
+        };
+        break;
+      case 'attachment':
+        updatedEdits.meta = {
+          ...currentEdits.meta,
+          [`attachment_${action.attachment_code}`]: encodeMetaSlots(currentSlots),
         };
         break;
     }
@@ -263,37 +319,40 @@ export default function(
   if (action.type === RESET_DECK_CHECKLIST) {
     return {
       ...state,
-      checklist: {
-        ...(state.checklist || {}),
-        [action.id.uuid]: [],
+      checklist_counts: {
+        ...(state.checklist_counts ?? {}),
+        [action.id.uuid]: {},
       },
     };
   }
   if (action.type === SET_DECK_CHECKLIST_CARD) {
-    const currentChecklist = (state.checklist || {})[action.id.uuid] || [];
-    const checklist = action.value ? [
-      ...currentChecklist,
-      action.card,
-    ] : filter(currentChecklist, card => card !== action.card);
+    const checklist = {
+      ...(state.checklist_counts ?? {})[action.id.uuid] ?? {},
+    };
+    const counts = filter((checklist[action.card] ?? []), card => card !== action.value);
+    if (action.toggle) {
+      counts.push(action.value);
+    }
+    checklist[action.card] = counts;
     return {
       ...state,
-      checklist: {
-        ...(state.checklist || {}),
+      checklist_counts: {
+        ...(state.checklist_counts ?? {}),
         [action.id.uuid]: checklist,
       },
     };
   }
 
   if (action.type === DELETE_DECK) {
-    const checklist = {
-      ...(state.checklist || {}),
+    const checklist_counts = {
+      ...(state.checklist_counts ?? {}),
     };
-    if (checklist[action.id.uuid]) {
-      delete checklist[action.id.uuid];
+    if (checklist_counts[action.id.uuid]) {
+      delete checklist_counts[action.id.uuid];
     }
     return {
       ...state,
-      checklist,
+      checklist_counts,
     };
   }
   if (action.type === UPDATE_DECK) {
@@ -304,16 +363,16 @@ export default function(
       return {
         ...state,
         edits: {
-          ...(state.edits || {}),
+          ...(state.edits ?? {}),
           [action.id.uuid]: {
             nameChange: undefined,
             tagsChange: undefined,
             tabooSetChange: undefined,
-            slots: action.deck.slots || {},
-            side: action.deck.sideSlots || {},
-            ignoreDeckLimitSlots: action.deck.ignoreDeckLimitSlots || {},
-            meta: action.deck.meta || {},
-            xpAdjustment: action.deck.xp_adjustment || 0,
+            slots: action.deck.slots ?? {},
+            side: action.deck.sideSlots ?? {},
+            ignoreDeckLimitSlots: action.deck.ignoreDeckLimitSlots ?? {},
+            meta: action.deck.meta ?? {},
+            xpAdjustment: action.deck.xp_adjustment ?? 0,
             mode: 'view',
             editable: !action.deck.nextDeckId,
           },
@@ -324,16 +383,16 @@ export default function(
   }
 
   if (action.type === REPLACE_LOCAL_DECK) {
-    const checklist = {
-      ...(state.checklist || {}),
+    const checklist_counts = {
+      ...(state.checklist_counts ?? {}),
     };
-    if (checklist[action.localId.uuid]) {
-      checklist[getDeckId(action.deck).uuid] = checklist[action.localId.uuid];
-      delete checklist[action.localId.uuid];
+    if (checklist_counts[action.localId.uuid]) {
+      checklist_counts[getDeckId(action.deck).uuid] = checklist_counts[action.localId.uuid];
+      delete checklist_counts[action.localId.uuid];
     }
     return {
       ...state,
-      checklist,
+      checklist_counts,
     };
   }
   return state;

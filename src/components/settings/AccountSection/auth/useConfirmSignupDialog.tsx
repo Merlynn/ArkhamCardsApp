@@ -9,8 +9,8 @@ import { useMyProfile } from '@data/remote/hooks';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
 import LoadingSpinner from '@components/core/LoadingSpinner';
 import NewDialog from '@components/core/NewDialog';
-import { useUpdateHandle } from '@data/remote/api';
 import DeckButton from '@components/deck/controls/DeckButton';
+import { useUpdateHandleMutation } from '@generated/graphql/apollo-schema';
 
 export default function useConfirmSignupDialog(): [React.ReactNode, () => void] {
   const { user } = useContext(ArkhamCardsAuthContext);
@@ -20,21 +20,26 @@ export default function useConfirmSignupDialog(): [React.ReactNode, () => void] 
   const [liveValue, setLiveValue] = useState('');
   const [error, setError] = useState<string | undefined>(undefined);
   const textInputRef = useRef<TextInput>(null);
-  const updateHandle = useUpdateHandle();
+  const [updateHandle] = useUpdateHandleMutation();
   const doSubmit = useCallback(async(submitValue: string) => {
     setSubmitting(true);
-    const error = await updateHandle(submitValue.trim());
-    if (error) {
-      setError(error);
+    try {
+      const result = await updateHandle({ variables: { handle: submitValue.trim() } });
+      if (result.errors?.length) {
+        setError(result.errors[0].message);
+      }
       setSubmitting(false);
+      refreshMyProfile();
+    } catch (e) {
+      setError(e.message);
+      setSubmitting(false);
+      refreshMyProfile();
     }
-    setSubmitting(false);
-    refreshMyProfile();
   }, [updateHandle, setError, setSubmitting, refreshMyProfile]);
   const submitButtonPressed = useCallback(() => {
     doSubmit(liveValue);
   }, [doSubmit, liveValue]);
-  const setVisibleRef = useRef<(visible: boolean) => void>();
+  const setVisibleRef = useRef<(visible: boolean) => void>(null);
   const closeDialog = useCallback(() => {
     if (setVisibleRef.current) {
       setVisibleRef.current(false);

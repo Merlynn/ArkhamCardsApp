@@ -70,6 +70,10 @@ interface HeaderItem {
 }
 type Item = SortItem | HeaderItem;
 
+function keyExtractor(item: Item) {
+  return item.type === 'sort' ? item.sort : item.title;
+}
+
 export function useSortDialog(
   saveSorts: (sort: SortType[]) => void,
   savedSorts: SortType[],
@@ -96,8 +100,12 @@ export function useSortDialog(
     if (mythosMode || find(selectedSorts, s => s === SORT_BY_ENCOUNTER_SET)) {
       sorts.push(SORT_BY_ENCOUNTER_SET);
     }
-    const chosenSorts: SortItem[] = map(selectedSorts, sort => { return { type: 'sort', sort }; });
-    const otherSorts: SortItem[] = map(filter(sorts, s => !find(selectedSorts, s2 => s2 === s)),  sort => { return { type: 'sort', sort }; });
+    const chosenSorts: SortItem[] = map(selectedSorts, sort => {
+      return { type: 'sort', sort };
+    });
+    const otherSorts: SortItem[] = map(filter(sorts, s => !find(selectedSorts, s2 => s2 === s)), sort => {
+      return { type: 'sort', sort };
+    });
     const availableHeader: HeaderItem = { type: 'header', title: t`Other` };
     return [
       ...chosenSorts,
@@ -122,19 +130,16 @@ export function useSortDialog(
       );
     }
     const index = getIndex() || 0;
-    const content = (
-      <NewDialog.LineItem
-        iconName="menu"
-        text={sortToCopy(item.sort)}
-        last={index === items.length - 1 || items[index + 1]?.type === 'header'}
-      />
-    );
     return (
       <Pressable
         key={item.sort}
         onPressIn={drag}
       >
-        {content}
+        <NewDialog.LineItem
+          iconName="menu"
+          text={sortToCopy(item.sort)}
+          last={index === items.length - 1 || items[index + 1]?.type === 'header'}
+        />
       </Pressable>
     );
   }, [items]);
@@ -150,7 +155,7 @@ export function useSortDialog(
   const onCancel = useCallback(() => {
     sortChanged(savedSorts);
   }, [sortChanged, savedSorts]);
-  const { dialog, showDialog} = useDialog({
+  const { dialog, showDialog } = useDialog({
     title: t`Sort by`,
     allowDismiss: true,
     alignment: 'bottom',
@@ -169,7 +174,7 @@ export function useSortDialog(
           data={items}
           onChanged={onChanged}
           renderItem={renderItem}
-          keyExtractor={(item) => item.type == 'sort' ? item.sort : item.title}
+          keyExtractor={keyExtractor}
         />
       </View>
     ),

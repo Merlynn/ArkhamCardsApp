@@ -1,32 +1,82 @@
-import { Entity, Index, Column, PrimaryColumn, JoinColumn, OneToOne } from 'typeorm/browser';
+import {
+  Entity,
+  Index,
+  Column,
+  PrimaryColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm/browser';
 import { Platform } from 'react-native';
-import { head, forEach, flatMap, filter, find, keys, map, min, omit, sortBy, indexOf, sumBy } from 'lodash';
-import { removeDiacriticalMarks } from 'remove-diacritical-marks'
+import {
+  head,
+  forEach,
+  flatMap,
+  filter,
+  find,
+  keys,
+  min,
+  omit,
+  sortBy,
+  indexOf,
+  sumBy,
+  uniq,
+} from 'lodash';
+import { removeDiacriticalMarks } from 'remove-diacritical-marks';
 import { remove as removeAccents } from 'remove-accents';
 import { c, t } from 'ttag';
 
-import { Pack, SortType, SORT_BY_COST, SORT_BY_CYCLE, SORT_BY_ENCOUNTER_SET, SORT_BY_FACTION, SORT_BY_FACTION_PACK,
-  SORT_BY_FACTION_XP, SORT_BY_PACK, SORT_BY_TITLE, SORT_BY_TYPE, TraumaAndCardData, SORT_BY_XP, SORT_BY_CARD_ID,
-  SORT_BY_SLOT, ExtendedSortType, SORT_BY_TYPE_SLOT,
+import {
+  Pack,
+  SortType,
+  SORT_BY_COST,
+  SORT_BY_CYCLE,
+  SORT_BY_ENCOUNTER_SET,
+  SORT_BY_FACTION,
+  SORT_BY_FACTION_PACK,
+  SORT_BY_FACTION_XP,
+  SORT_BY_PACK,
+  SORT_BY_TITLE,
+  SORT_BY_TYPE,
+  TraumaAndCardData,
+  SORT_BY_XP,
+  SORT_BY_CARD_ID,
+  SORT_BY_SLOT,
+  ExtendedSortType,
+  SORT_BY_TYPE_SLOT,
 } from '@actions/types';
-import { BASIC_SKILLS, RANDOM_BASIC_WEAKNESS, type FactionCodeType, type TypeCodeType, SkillCodeType,
-  BODY_OF_A_YITHIAN, specialReprintPlayerPacks, specialReprintCampaignPacks, specialPacks,
+import {
+  BASIC_SKILLS,
+  RANDOM_BASIC_WEAKNESS,
+  type FactionCodeType,
+  type TypeCodeType,
+  SkillCodeType,
+  BODY_OF_A_YITHIAN,
+  specialReprintPlayerPacks,
+  specialReprintCampaignPacks,
+  specialPacks,
+  specialReprintCardPacks,
 } from '@app_constants';
 import DeckRequirement from './DeckRequirement';
 import DeckOption from './DeckOption';
 import { QuerySort } from '../sqlite/types';
-import { CoreCardTextFragment, Gender_Enum, SingleCardFragment } from '@generated/graphql/apollo-schema';
-import CustomizationOption, { CustomizationChoice } from './CustomizationOption';
+import {
+  CoreCardTextFragment,
+  Gender_Enum,
+  SingleCardFragment,
+} from '@generated/graphql/apollo-schema';
+import CustomizationOption, {
+  CustomizationChoice,
+} from './CustomizationOption';
 import { processAdvancedChoice } from '@lib/parseDeck';
 import CardTextFields from './CardTextFields';
 import CardReprintInfo from './CardReprintInfo';
 
 const SERPENTS_OF_YIG = '04014';
-const USES_REGEX = /.*Uses\s*\([0-9]+(\s\[per_investigator\])?\s(.+)\)\..*/
+const USES_REGEX = /.*Uses\s*\([0-9]+(\s\[per_investigator\])?\s(.+)\)\..*/;
 const BONDED_REGEX = /.*Bonded\s*\((.+?)\)\..*/;
 const SEAL_REGEX = /.*Seal \(.+\)\..*/;
 const SEARCH_REGEX = /["“”‹›«»〞〝〟„＂❝❞‘’❛❜‛',‚❮❯\(\)\-\.…¡!?¿]/g;
-const RUSSIAN_E_REGEX = /ё/g
+const RUSSIAN_E_REGEX = /ё/g;
 
 export const enum CardStatusType {
   PREVIEW = 'p',
@@ -37,20 +87,23 @@ export function searchNormalize(text: string, lang: string) {
   if (!text) {
     return '';
   }
-  const r = text.toLocaleLowerCase(lang).replace(SEARCH_REGEX, '').replace(RUSSIAN_E_REGEX,'е');
+  const r = text
+    .toLocaleLowerCase(lang)
+    .replace(SEARCH_REGEX, '')
+    .replace(RUSSIAN_E_REGEX, 'е');
   try {
     if (Platform.OS === 'ios') {
       return removeDiacriticalMarks(r);
-    } else {
-      return removeAccents(r);
     }
+    return removeAccents(r);
+
   } catch (e) {
     console.log(e);
     return r;
   }
 }
 
-export const CARD_NUM_COLUMNS = 138;
+export const CARD_NUM_COLUMNS = 140;
 function arkham_num(value: number | null | undefined) {
   if (value === null || value === undefined) {
     return '-';
@@ -102,30 +155,30 @@ export interface TranslationData {
     };
   };
   cardTypeNames: {
-    [type_code: string]: string
+    [type_code: string]: string;
   };
   subTypeNames: {
-    [type_code: string]: string
+    [type_code: string]: string;
   };
   factionNames: {
-    [faction_code: string]: string
+    [faction_code: string]: string;
   };
 }
 
 const HEADER_SELECT = {
-  [SORT_BY_TYPE_SLOT]: '(c.sort_by_type * 1000 + c.sort_by_slot - CASE WHEN c.permanent THEN 1 ELSE 0 END) as headerId, c.sort_by_type_header as headerTitle, c.slot as headerSlot, c.permanent as headerPermanent',
-  [SORT_BY_FACTION]: 'c.sort_by_faction as headerId, c.sort_by_faction_header as headerTitle',
-  [SORT_BY_FACTION_PACK]: '(c.sort_by_faction * 1000 + c.sort_by_pack) as headerId, c.sort_by_faction_header as headerTitle, c.pack_name as headerPackName',
-  [SORT_BY_FACTION_XP]: 'c.sort_by_faction * 1000 + COALESCE(c.xp, -1) + 1 as headerId, c.sort_by_faction_header as headerTitle, c.xp as headerXp',
-  [SORT_BY_COST]: 'c.cost as headerId, c.cost as headerTitle',
-  [SORT_BY_PACK]: 'c.sort_by_pack as headerId, c.pack_name as headerTitle',
-  [SORT_BY_ENCOUNTER_SET]: 'c.encounter_code as headerId, c.sort_by_encounter_set_header as headerTitle',
-  [SORT_BY_TITLE]: '"0" as headerId',
-  [SORT_BY_TYPE]: 'c.sort_by_type as headerId, c.sort_by_type_header as headerTitle',
-  [SORT_BY_CYCLE]: 'c.sort_by_cycle as headerId, c.cycle_name as headerTitle',
-  [SORT_BY_XP]: 'c.xp as headerId, c.xp as headerTitle',
-  [SORT_BY_CARD_ID]: 'c.sort_by_cycle as headerId, c.cycle_name as headerTitle',
-  [SORT_BY_SLOT]: 'c.sort_by_slot as headerId, c.slot as headerTitle',
+  [SORT_BY_TYPE_SLOT]: `(c.sort_by_type * 10000 + c.sort_by_slot - CASE WHEN c.permanent THEN 1 ELSE 0 END) as headerId, c.sort_by_type_header as headerTitle, c.slot as headerSlot, c.permanent as headerPermanent`,
+  [SORT_BY_FACTION]: `c.sort_by_faction as headerId, c.sort_by_faction_header as headerTitle`,
+  [SORT_BY_FACTION_PACK]: `(c.sort_by_faction * 10000 + c.sort_by_pack) as headerId, c.sort_by_faction_header as headerTitle, CASE WHEN c.cycle_code = 'investigator' THEN c.cycle_name ELSE c.pack_name END as headerPackName`,
+  [SORT_BY_FACTION_XP]: `c.sort_by_faction * 10000 + COALESCE(c.xp, -1) + 1 as headerId, c.sort_by_faction_header as headerTitle, c.xp as headerXp`,
+  [SORT_BY_COST]: `c.cost as headerId, c.cost as headerTitle`,
+  [SORT_BY_PACK]: `c.sort_by_pack as headerId, CASE WHEN c.cycle_code = 'investigator' THEN c.cycle_name ELSE c.pack_name END as headerTitle`,
+  [SORT_BY_ENCOUNTER_SET]: `c.encounter_code as headerId, c.sort_by_encounter_set_header as headerTitle`,
+  [SORT_BY_TITLE]: `'0' as headerId`,
+  [SORT_BY_TYPE]: `c.sort_by_type as headerId, c.sort_by_type_header as headerTitle`,
+  [SORT_BY_CYCLE]: `c.sort_by_cycle as headerId, c.cycle_name as headerTitle`,
+  [SORT_BY_XP]: `c.xp as headerId, c.xp as headerTitle`,
+  [SORT_BY_CARD_ID]: `c.sort_by_cycle as headerId, c.cycle_name as headerTitle`,
+  [SORT_BY_SLOT]: `c.sort_by_slot as headerId, c.slot as headerTitle`,
 };
 
 export class PartialCard {
@@ -151,7 +204,7 @@ export class PartialCard {
     reprint_pack_codes?: string[],
     renderSubName?: string,
     spoiler?: boolean,
-    encounter_code?: string,
+    encounter_code?: string
   ) {
     this.id = id;
     this.code = code;
@@ -170,7 +223,7 @@ export class PartialCard {
       return SORT_BY_TYPE;
     }
     if (sorts.length >= 2) {
-      if (sorts[0] == SORT_BY_FACTION) {
+      if (sorts[0] === SORT_BY_FACTION) {
         if (sorts[1] === SORT_BY_PACK) {
           return SORT_BY_FACTION_PACK;
         }
@@ -201,22 +254,35 @@ export class PartialCard {
     return parts.join(', ');
   }
 
-  public static fromRaw(raw: any, sort?: ExtendedSortType): PartialCard | undefined {
-    if (raw.id !== null && raw.code !== null && raw.renderName !== null && raw.pack_code !== null) {
+  public static fromRaw(
+    raw: any,
+    sort?: ExtendedSortType
+  ): PartialCard | undefined {
+    if (
+      raw.id !== null &&
+      raw.code !== null &&
+      raw.renderName !== null &&
+      raw.pack_code !== null
+    ) {
       let header = raw.headerTitle;
       switch (sort) {
         case SORT_BY_TYPE_SLOT:
           if (raw.headerPermanent) {
             header = `${raw.headerTitle}: ${t`Permanent`}`;
           } else {
-            header = raw.headerSlot ? `${raw.headerTitle}: ${raw.headerSlot}` : raw.headerTitle;
+            header = raw.headerSlot
+              ? `${raw.headerTitle}: ${raw.headerSlot}`
+              : raw.headerTitle;
           }
           break;
         case SORT_BY_FACTION_PACK:
           header = `${raw.headerTitle} - ${raw.headerPackName}`;
           break;
         case SORT_BY_FACTION_XP:
-          header = typeof raw.headerXp === 'number' ? `${raw.headerTitle} (${raw.headerXp})` : raw.headerTitle;
+          header =
+            typeof raw.headerXp === 'number'
+              ? `${raw.headerTitle} (${raw.headerXp})`
+              : raw.headerTitle;
           break;
         case SORT_BY_TITLE:
           header = t`All Cards`;
@@ -232,20 +298,23 @@ export class PartialCard {
           break;
         }
         case SORT_BY_SLOT:
-          header = raw.headerTitle === null ? c('slots').t`None` : raw.headerTitle;
+          header =
+            raw.headerTitle === null ? c('slots').t`None` : raw.headerTitle;
           break;
       }
       return new PartialCard(
         raw.id,
         raw.code,
         raw.renderName,
-        (raw.headerId === null || raw.headerId === undefined) ? 'null' : `${raw.headerId}`,
+        raw.headerId === null || raw.headerId === undefined
+          ? 'null'
+          : `${raw.headerId}`,
         header,
         raw.pack_code,
         raw.reprint_pack_codes ? raw.reprint_pack_codes.split(',') : undefined,
         raw.renderSubname,
         !!raw.spoiler,
-        raw.encounter_code,
+        raw.encounter_code
       );
     }
     return undefined;
@@ -253,21 +322,56 @@ export class PartialCard {
 }
 
 interface CardRestrictions {
-  restrictions_all_investigators: string[];
+  restrictions_all_investigators?: string[];
   restrictions_investigator?: string;
+  restrictions_faction?: string[];
+  restrictions_trait?: string[];
 }
 
 @Entity('card')
 @Index('code_taboo', ['code', 'taboo_set_id'], { unique: true })
 @Index('player_cards', ['browse_visible'])
-@Index('sort_type', ['browse_visible', 'taboo_set_id', 'sort_by_type', 'renderName', 'xp'])
-@Index('sort_faction', ['browse_visible', 'taboo_set_id', 'sort_by_faction', 'renderName', 'xp'])
-@Index('sort_cost', ['browse_visible', 'taboo_set_id', 'cost', 'renderName', 'xp'])
-@Index('sort_pack', ['browse_visible', 'taboo_set_id', 'sort_by_pack', 'position'])
-@Index('sort_pack_encounter', ['browse_visible', 'taboo_set_id', 'sort_by_pack', 'encounter_code', 'encounter_position'])
+@Index('sort_type', [
+  'browse_visible',
+  'taboo_set_id',
+  'sort_by_type',
+  'renderName',
+  'xp',
+])
+@Index('sort_faction', [
+  'browse_visible',
+  'taboo_set_id',
+  'sort_by_faction',
+  'renderName',
+  'xp',
+])
+@Index('sort_cost', [
+  'browse_visible',
+  'taboo_set_id',
+  'cost',
+  'renderName',
+  'xp',
+])
+@Index('sort_pack', [
+  'browse_visible',
+  'taboo_set_id',
+  'sort_by_pack',
+  'position',
+])
+@Index('sort_pack_encounter', [
+  'browse_visible',
+  'taboo_set_id',
+  'sort_by_pack',
+  'encounter_code',
+  'encounter_position',
+])
 @Index('sort_name_xp', ['browse_visible', 'taboo_set_id', 'renderName', 'xp'])
 @Index('sort_cycle_xp', ['browse_visible', 'taboo_set_id', 'sort_by_cycle'])
-@Index('encounter_query_index', ['browse_visible', 'taboo_set_id', 'encounter_code'])
+@Index('encounter_query_index', [
+  'browse_visible',
+  'taboo_set_id',
+  'encounter_code',
+])
 @Index('type_code', ['type_code'])
 export default class Card {
   @PrimaryColumn('text')
@@ -427,6 +531,8 @@ export default class Card {
   @Column('text', { nullable: true })
   public text?: string;
 
+  private _textAlreadyCustomized?: boolean;
+
   @Column('text', { nullable: true })
   public flavor?: string;
 
@@ -551,6 +657,10 @@ export default class Card {
   public restrictions_all_investigators?: string[];
   @Column('text', { nullable: true })
   public restrictions_investigator?: string;
+  @Column('text', { nullable: true })
+  public restrictions_trait?: string;
+  @Column('text', { nullable: true })
+  public restrictions_faction?: string;
 
   @Column('simple-json', { nullable: true })
   public deck_requirements?: DeckRequirement;
@@ -661,14 +771,19 @@ export default class Card {
 
   public clone(): Card {
     const card = new Card();
-    forEach(Object.keys(this), key => {
+    forEach(Object.keys(this), (key) => {
       // @ts-ignore ts7053
       card[key] = this[key];
     });
     return card;
   }
 
-  public customizationChoice(index: number, xp: number, choice: string | undefined, cards: CardsMap | undefined): CustomizationChoice | undefined {
+  public customizationChoice(
+    index: number,
+    xp: number,
+    choice: string | undefined,
+    cards: CardsMap | undefined
+  ): CustomizationChoice | undefined {
     if (!this.customization_options) {
       return undefined;
     }
@@ -676,13 +791,18 @@ export default class Card {
     if (!option) {
       return undefined;
     }
-    return processAdvancedChoice({
+    return processAdvancedChoice(
+      {
+        option,
+        xp_spent: xp,
+        xp_locked: 0,
+        unlocked: option.xp === xp,
+        editable: true,
+      },
+      choice,
       option,
-      xp_spent: xp,
-      xp_locked: 0,
-      unlocked: option.xp === xp,
-      editable: true,
-    }, choice, option, cards);
+      cards
+    );
   }
 
   public withCustomizations(
@@ -693,13 +813,23 @@ export default class Card {
     if (!this.customization_options) {
       return this;
     }
-    if (!customizations || !find(customizations, c => c.xp_spent || c.unlocked)) {
+    if (
+      !customizations ||
+      !find(customizations, (c) => c.xp_spent || c.unlocked)
+    ) {
+      return this;
+    }
+    if (this._textAlreadyCustomized) {
       return this;
     }
     const card = this.clone();
-    const xp_spent = sumBy(customizations, c => c.xp_spent) + (extraTicks || 0);
+    const xp_spent =
+      sumBy(customizations, (c) => c.xp_spent) + (extraTicks || 0);
     card.xp = Math.floor((xp_spent + 1) / 2.0);
-    const unlocked = sortBy(filter(customizations, c => c.unlocked), c => c.option.index);
+    const unlocked = sortBy(
+      filter(customizations, (c) => c.unlocked),
+      (c) => c.option.index
+    );
     const lines = (card.text || '').split('\n');
 
     const text_edits: string[] = [];
@@ -725,27 +855,33 @@ export default class Card {
         card.real_traits = option.real_traits;
       }
       if (option.tags?.length) {
-        card.tags = [
-          ...(card.tags || []),
-          ...option.tags,
-        ];
+        card.tags = [...(card.tags || []), ...option.tags];
       }
       let text_edit = option.text_edit || '';
       if (option.text_change && option.choice) {
         switch (change.type) {
           case 'choose_trait': {
-            const traits = (change.choice.map(x => `[[${x}]]`).join(listSeperator) || '');
-            text_edit = traits ? text_edit.replace('_____', `<u>${traits}</u>`) : text_edit;
+            const traits =
+              change.choice.map((x) => `[[${x}]]`).join(listSeperator) || '';
+            text_edit = traits
+              ? text_edit.replace('_____', `<u>${traits}</u>`)
+              : text_edit;
             break;
           }
           case 'choose_card': {
-            const cardNames = change.cards.map(card => card.name).join(listSeperator)
-            text_edit = cardNames ? `${text_edit} <u>${cardNames}</u>` : text_edit;
+            const cardNames = change.cards
+              .map((card) => card.name)
+              .join(listSeperator);
+            text_edit = cardNames
+              ? `${text_edit} <u>${cardNames}</u>`
+              : text_edit;
             break;
           }
           case 'choose_skill': {
             const skill = change.choice;
-            text_edit = skill ? text_edit.replace('_____', `[${skill}]`) : text_edit;
+            text_edit = skill
+              ? text_edit.replace('_____', `[${skill}]`)
+              : text_edit;
             break;
           }
         }
@@ -771,15 +907,30 @@ export default class Card {
         }
       }
       if (option.choice) {
-        switch(change.type) {
+        switch (change.type) {
+          case 'choose_trait': {
+            change.choice.forEach((trait) => {
+              const lower = trait.toLowerCase().trim();
+              const translated = c('trait').t`Firearm`.toLowerCase();
+              if (lower === 'firearm' || lower === translated) {
+                card.tags = uniq([
+                  ...(card.tags || []),
+                  'fa',
+                ]);
+              }
+            })
+          }
           case 'remove_slot': {
             if (card.real_slot) {
-              card.real_slot = flatMap(card.real_slot.split('.'), (slot, index) => {
-                if (index === change.choice) {
-                  return [];
+              card.real_slot = flatMap(
+                card.real_slot.split('.'),
+                (slot, index) => {
+                  if (index === change.choice) {
+                    return [];
+                  }
+                  return slot.trim();
                 }
-                return slot.trim();
-              }).join('. ');
+              ).join('. ');
             }
             if (card.slot) {
               card.slot = flatMap(card.slot.split('.'), (slot, index) => {
@@ -796,7 +947,11 @@ export default class Card {
     const final_lines: string[] = [];
     forEach(unlocked, ({ option }, idx) => {
       const text_edit = text_edits[idx];
-      if (option.text_change === 'insert' && option.position === -1 && text_edit) {
+      if (
+        option.text_change === 'insert' &&
+        option.position === -1 &&
+        text_edit
+      ) {
         final_lines.push(text_edit);
       }
     });
@@ -805,12 +960,17 @@ export default class Card {
       final_lines.push(line);
       forEach(unlocked, ({ option }, unlockedIdx) => {
         const text_edit = text_edits[unlockedIdx];
-        if (option.text_change === 'insert' && option.position === idx && text_edit) {
+        if (
+          option.text_change === 'insert' &&
+          option.position === idx &&
+          text_edit
+        ) {
           final_lines.push(text_edit);
         }
       });
     });
     card.text = final_lines.join('\n');
+    card._textAlreadyCustomized = true;
     return card;
   }
 
@@ -819,9 +979,11 @@ export default class Card {
   }
 
   public custom(): boolean {
-    return this.status === CardStatusType.CUSTOM ||
+    return (
+      this.status === CardStatusType.CUSTOM ||
       this.status === CardStatusType.PREVIEW ||
-      this.code.startsWith('z');
+      this.code.startsWith('z')
+    );
   }
 
   public enemyFight(): string {
@@ -836,12 +998,21 @@ export default class Card {
 
   public matchesOption(option: DeckOption): boolean {
     if (option.type_code) {
-      if (!find(option.type_code, type_code => this.type_code === type_code)) {
+      if (
+        !find(option.type_code, (type_code) => this.type_code === type_code)
+      ) {
         return false;
       }
     }
     if (option.trait) {
-      if (!find(option.trait, trait => !!this.real_traits && this.real_traits.toLowerCase().indexOf(trait.toLowerCase()) !== -1)) {
+      if (
+        !find(
+          option.trait,
+          (trait) =>
+            !!this.real_traits &&
+            this.real_traits.toLowerCase().indexOf(trait.toLowerCase()) !== -1
+        )
+      ) {
         return false;
       }
     }
@@ -850,29 +1021,46 @@ export default class Card {
 
   public imageUri(): string | undefined {
     if (this.imageurl) {
+      if (this.imageurl.startsWith('https://img.arkhamcards.com')) {
+        return this.imageurl.replace(
+          'img.arkhamcards.com',
+          'img2.arkhamcards.com'
+        );
+      }
       return this.imageurl;
     }
     if (!this.imagesrc) {
       return undefined;
     }
-    const baseUri = this.custom() ? 'https://img.arkhamcards.com' : 'https://arkhamdb.com';
+    const baseUri = this.custom()
+      ? 'https://img2.arkhamcards.com'
+      : 'https://arkhamdb.com';
     const uri = `${baseUri}${this.imagesrc}`;
     return uri;
   }
   public backImageUri(): string | undefined {
     if (this.backimageurl) {
+      if (this.backimageurl.startsWith('https://img.arkhamcards.com')) {
+        return this.backimageurl.replace(
+          'img.arkhamcards.com',
+          'img2.arkhamcards.com'
+        );
+      }
       return this.backimageurl;
     }
     if (!this.backimagesrc) {
       return undefined;
     }
-    const baseUri = this.custom() ? 'https://img.arkhamcards.com' : 'https://arkhamdb.com';
+    const baseUri = this.custom()
+      ? 'https://img2.arkhamcards.com'
+      : 'https://arkhamdb.com';
     return `${baseUri}${this.backimagesrc}`;
   }
 
   isBasicWeakness(): boolean {
-    return this.type_code !== 'scenario' &&
-      this.subtype_code === 'basicweakness';
+    return (
+      this.type_code !== 'scenario' && this.subtype_code === 'basicweakness'
+    );
   }
 
   factionCode(): FactionCodeType {
@@ -891,16 +1079,22 @@ export default class Card {
     if (!traumaData) {
       return this.health || 0;
     }
-    const isYithian = !!(traumaData.storyAssets && find(traumaData.storyAssets, code => code === BODY_OF_A_YITHIAN));
-    return isYithian ? 7 : (this.health || 0);
+    const isYithian = !!(
+      traumaData.storyAssets &&
+      find(traumaData.storyAssets, (code) => code === BODY_OF_A_YITHIAN)
+    );
+    return isYithian ? 7 : this.health || 0;
   }
 
   getSanity(traumaData: TraumaAndCardData | undefined) {
     if (!traumaData) {
       return this.sanity || 0;
     }
-    const isYithian = !!(traumaData.storyAssets && find(traumaData.storyAssets, code => code === BODY_OF_A_YITHIAN));
-    return isYithian ? 7 : (this.sanity || 0);
+    const isYithian = !!(
+      traumaData.storyAssets &&
+      find(traumaData.storyAssets, (code) => code === BODY_OF_A_YITHIAN)
+    );
+    return isYithian ? 7 : this.sanity || 0;
   }
 
   killed(traumaData: TraumaAndCardData | undefined) {
@@ -928,13 +1122,17 @@ export default class Card {
   }
 
   hasTrauma(traumaData: TraumaAndCardData | undefined) {
-    return this.eliminated(traumaData) || (traumaData && (
-      (traumaData.physical || 0) > 0 ||
-      (traumaData.mental || 0) > 0
-    ));
+    return (
+      this.eliminated(traumaData) ||
+      (traumaData &&
+        ((traumaData.physical || 0) > 0 || (traumaData.mental || 0) > 0))
+    );
   }
 
-  traumaString(listSeperator: string, traumaData: TraumaAndCardData | undefined) {
+  traumaString(
+    listSeperator: string,
+    traumaData: TraumaAndCardData | undefined
+  ) {
     if (!traumaData) {
       return t`None`;
     }
@@ -961,18 +1159,10 @@ export default class Card {
     if (this.type_code !== 'asset' && this.type_code !== 'event') {
       return null;
     }
-    if (
-      this.code === '02010' ||
-      this.code === '03238' ||
-      this.cost === -2
-    ) {
+    if (this.code === '02010' || this.code === '03238' || this.cost === -2) {
       return 'X';
     }
-    if (this.permanent ||
-      this.double_sided ||
-      linked ||
-      this.cost === null
-    ) {
+    if (this.permanent || this.double_sided || linked || this.cost === null) {
       return '-';
     }
     return `${this.cost}`;
@@ -988,11 +1178,16 @@ export default class Card {
 
   skillCount(skill: SkillCodeType): number {
     switch (skill) {
-      case 'willpower': return this.skill_willpower || 0;
-      case 'intellect': return this.skill_intellect || 0;
-      case 'combat': return this.skill_combat || 0;
-      case 'agility': return this.skill_agility || 0;
-      case 'wild': return this.skill_wild || 0;
+      case 'willpower':
+        return this.skill_willpower || 0;
+      case 'intellect':
+        return this.skill_intellect || 0;
+      case 'combat':
+        return this.skill_combat || 0;
+      case 'agility':
+        return this.skill_agility || 0;
+      case 'wild':
+        return this.skill_wild || 0;
       default: {
         /* eslint-disable @typescript-eslint/no-unused-vars */
         const _exhaustiveCheck: never = skill;
@@ -1003,21 +1198,26 @@ export default class Card {
 
   investigatorSelectOptions(): DeckOption[] {
     if (this.type_code === 'investigator' && this.deck_options) {
-      return filter(this.deck_options, option => {
-        return !!(option.faction_select && option.faction_select.length > 0) ||
+      return filter(this.deck_options, (option) => {
+        return (
+          !!(option.faction_select && option.faction_select.length > 0) ||
           !!(option.deck_size_select && option.deck_size_select.length > 0) ||
-          !!(option.option_select && option.option_select.length > 0);
+          !!(option.option_select && option.option_select.length > 0)
+        );
       });
     }
     return [];
   }
 
-  collectionQuantity(packInCollection: { [pack_code: string]: boolean | undefined }, ignore_collection: boolean): number {
+  collectionQuantity(
+    packInCollection: { [pack_code: string]: boolean | undefined },
+    ignore_collection: boolean
+  ): number {
     if (this.encounter_code || this.subtype_code) {
       return this.quantity || 0;
     }
 
-    let quantity = (this.quantity || 0);
+    let quantity = this.quantity || 0;
     if (this.pack_code === 'core') {
       if (packInCollection.no_core) {
         quantity = 0;
@@ -1031,27 +1231,36 @@ export default class Card {
       quantity = 0;
     }
     if (this.reprint_info) {
-      forEach(this.reprint_info, reprint => {
+      forEach(this.reprint_info, (reprint) => {
         if (reprint.pack_code && !!packInCollection[reprint.pack_code]) {
           quantity += Math.max(reprint.quantity || 0, this.deck_limit || 0);
         }
       });
     } else {
-      forEach(this.reprint_pack_codes, pack => {
+      forEach(this.reprint_pack_codes, (pack) => {
         if (!!packInCollection[pack]) {
           quantity += Math.max(this.quantity || 0, this.deck_limit || 0);
         }
       });
     }
 
-    const alternatePack = (this.encounter_code) ? specialReprintCampaignPacks[this.pack_code] : specialReprintPlayerPacks[this.pack_code];
+    const alternatePack = this.encounter_code
+      ? specialReprintCampaignPacks[this.pack_code]
+      : specialReprintPlayerPacks[this.pack_code];
     if (alternatePack && packInCollection[alternatePack]) {
+      quantity += this.quantity ?? 0;
+    }
+    const alternateCodePack = specialReprintCardPacks[this.code];
+    if (alternateCodePack && packInCollection[alternateCodePack]) {
       quantity += this.quantity ?? 0;
     }
     return quantity;
   }
 
-  collectionDeckLimit(packInCollection: { [pack_code: string]: boolean | undefined }, ignore_collection: boolean): number {
+  collectionDeckLimit(
+    packInCollection: { [pack_code: string]: boolean | undefined },
+    ignore_collection: boolean
+  ): number {
     if (ignore_collection) {
       return this.deck_limit || 0;
     }
@@ -1059,7 +1268,10 @@ export default class Card {
       return this.deck_limit || 0;
     }
     const reprintPacks = this.reprint_pack_codes || REPRINT_CARDS[this.code];
-    if (reprintPacks && find(reprintPacks, pack => !!packInCollection[pack])) {
+    if (
+      reprintPacks &&
+      find(reprintPacks, (pack) => !!packInCollection[pack])
+    ) {
       return this.deck_limit || 0;
     }
     return Math.min(this.quantity || 0, this.deck_limit || 0);
@@ -1069,16 +1281,23 @@ export default class Card {
     investigator?: {
       [key: string]: string;
     };
-  }): {
-    restrictions_all_investigators: string[];
-    restrictions_investigator?: string;
-  } | undefined {
+    faction?: string[];
+    trait?: string[];
+  }): CardRestrictions | undefined {
     if (json && json.investigator && keys(json.investigator).length) {
       const investigators = keys(json.investigator);
       const mainInvestigator = min(investigators);
       return {
         restrictions_all_investigators: investigators,
         restrictions_investigator: mainInvestigator,
+        restrictions_faction: json.faction ?? undefined,
+        restrictions_trait: json.trait ?? undefined,
+      };
+    }
+    if (json?.faction || json?.trait) {
+      return {
+        restrictions_faction: json.faction ?? undefined,
+        restrictions_trait: json.trait ?? undefined,
       };
     }
     return undefined;
@@ -1097,16 +1316,17 @@ export default class Card {
         if (idx1 < idx2) {
           forEach(factions, (f3, idx3) => {
             if (idx1 < idx2 && idx2 < idx3) {
-              triples.push(`${f1} / ${f2} / ${f3}`)
+              triples.push(`${f1} / ${f2} / ${f3}`);
             }
           });
-          doubles.push(`${f1} / ${f2}`)
+          doubles.push(`${f1} / ${f2}`);
         }
       });
-    })
+    });
     return [
       ...factions,
       t`Neutral`,
+      t`Specialist`,
       ...doubles,
       ...triples,
       t`Basic Weakness`,
@@ -1117,7 +1337,7 @@ export default class Card {
   }
 
   static factionCodeToName(code: string, defaultName: string) {
-    switch(code) {
+    switch (code) {
       case 'guardian':
         return t`Guardian`;
       case 'rogue':
@@ -1135,11 +1355,15 @@ export default class Card {
     }
   }
 
-  static factionSortHeader(card: SingleCardFragment, translation: CardTextFields, restrictions?: CardRestrictions) {
+  static factionSortHeader(
+    card: SingleCardFragment,
+    translation: CardTextFields,
+    restrictions?: CardRestrictions
+  ) {
     if (card.spoiler) {
       return t`Mythos`;
     }
-    switch(card.subtype_code) {
+    switch (card.subtype_code) {
       case 'basicweakness':
         return t`Basic Weakness`;
       case 'weakness':
@@ -1153,17 +1377,40 @@ export default class Card {
         }
         if (card.faction2_code && translation.faction2_name) {
           const factions = Card.basicFactions();
-          const faction1 = Card.factionCodeToName(card.faction_code, translation.faction_name);
-          const faction2 = Card.factionCodeToName(card.faction2_code, translation.faction2_name);
+          const faction1 = Card.factionCodeToName(
+            card.faction_code,
+            translation.faction_name
+          );
+          const faction2 = Card.factionCodeToName(
+            card.faction2_code,
+            translation.faction2_name
+          );
           if (card.faction3_code && translation.faction3_name) {
-            const faction3 = Card.factionCodeToName(card.faction3_code, translation.faction3_name);
-            const [f1, f2, f3] = sortBy([faction1, faction2, faction3], x => indexOf(factions, x))
+            const faction3 = Card.factionCodeToName(
+              card.faction3_code,
+              translation.faction3_name
+            );
+            const [f1, f2, f3] = sortBy([faction1, faction2, faction3], (x) =>
+              indexOf(factions, x)
+            );
             return `${f1} / ${f2} / ${f3}`;
           }
-          const [f1, f2] = sortBy([faction1, faction2], x => indexOf(factions, x));
+          const [f1, f2] = sortBy([faction1, faction2], (x) =>
+            indexOf(factions, x)
+          );
           return `${f1} / ${f2}`;
         }
-        return Card.factionCodeToName(card.faction_code, translation.faction_name);
+        if (
+          card.faction_code === 'neutral' &&
+          restrictions?.restrictions_trait?.length
+        ) {
+          return t`Specialist`;
+        }
+
+        return Card.factionCodeToName(
+          card.faction_code,
+          translation.faction_name
+        );
       }
     }
   }
@@ -1197,7 +1444,7 @@ export default class Card {
   }
 
   static slotPosition(
-    card: SingleCardFragment & { linked_card?: SingleCardFragment | null },
+    card: SingleCardFragment & { linked_card?: SingleCardFragment | null }
   ): number {
     if (card.hidden && card.linked_card) {
       return Card.slotPosition(card.linked_card);
@@ -1206,7 +1453,7 @@ export default class Card {
       return 99;
     }
     if (card.real_slot) {
-      switch(card.real_slot) {
+      switch (card.real_slot) {
         case 'Hand':
           return 1;
         case 'Hand x2':
@@ -1249,7 +1496,7 @@ export default class Card {
     if (card.hidden && card.linked_card) {
       return Card.typeSortHeader(card.linked_card, restrictions);
     }
-    switch(card.subtype_code) {
+    switch (card.subtype_code) {
       case 'basicweakness':
         return t`Basic Weakness`;
       case 'weakness':
@@ -1264,11 +1511,15 @@ export default class Card {
         if (card.spoiler || card.encounter_code) {
           return t`Story`;
         }
-        switch(card.type_code) {
-          case 'asset': return t`Asset`;
-          case 'event': return t`Event`;
-          case 'skill': return t`Skill`;
-          case 'investigator': return t`Investigator`;
+        switch (card.type_code) {
+          case 'asset':
+            return t`Asset`;
+          case 'event':
+            return t`Event`;
+          case 'skill':
+            return t`Skill`;
+          case 'investigator':
+            return t`Investigator`;
           default:
             return t`Scenario`;
         }
@@ -1277,24 +1528,35 @@ export default class Card {
 
   private static slotText(real_slot: string) {
     switch (real_slot.toLowerCase()) {
-      case 'hand': return t`Hand`;
-      case 'arcane': return t`Arcane`;
-      case 'accessory': return t`Accessory`;
-      case 'body': return t`Body`;
-      case 'ally': return t`Ally`;
-      case 'tarot': return t`Tarot`;
-      case 'hand x2': return t`Hand x2`;
-      case 'arcane x2': return t`Arcane x2`;
-      default: return undefined;
+      case 'hand':
+        return t`Hand`;
+      case 'arcane':
+        return t`Arcane`;
+      case 'accessory':
+        return t`Accessory`;
+      case 'body':
+        return t`Body`;
+      case 'ally':
+        return t`Ally`;
+      case 'tarot':
+        return t`Tarot`;
+      case 'hand x2':
+        return t`Hand x2`;
+      case 'arcane x2':
+        return t`Arcane x2`;
+      default:
+        return undefined;
     }
   }
 
   private static gqlTextFields(
     card: SingleCardFragment & {
       translations: CoreCardTextFragment[];
-      linked_card?: null | (SingleCardFragment & {
-        translations: CoreCardTextFragment[];
-      });
+      linked_card?:
+        | null
+        | (SingleCardFragment & {
+            translations: CoreCardTextFragment[];
+          });
     },
     data: TranslationData
   ): CardTextFields {
@@ -1304,8 +1566,12 @@ export default class Card {
       pack_name: data.packs[card.pack_code]?.name || card.real_pack_name,
       type_name: data.cardTypeNames[card.type_code],
       faction_name: data.factionNames[card.faction_code],
-      faction2_name: card.faction2_code ? data.factionNames[card.faction2_code] : undefined,
-      faction3_name: card.faction3_code ? data.factionNames[card.faction3_code] : undefined,
+      faction2_name: card.faction2_code
+        ? data.factionNames[card.faction2_code]
+        : undefined,
+      faction3_name: card.faction3_code
+        ? data.factionNames[card.faction3_code]
+        : undefined,
 
       flavor: (t ? t.flavor : card.real_flavor) || undefined,
       slot: (t ? t.slot : card.real_slot) || undefined,
@@ -1315,45 +1581,66 @@ export default class Card {
       back_flavor: (t ? t.back_flavor : card.real_back_flavor) || undefined,
       back_name: (t ? t.back_name : card.real_back_name) || undefined,
       back_text: (t ? t.back_text : card.real_back_text) || undefined,
-      customization_text: (t ? t.customization_text : card.real_customization_text) || undefined,
-      customization_change: (t ? t.customization_change : card.real_customization_change) || undefined,
-      taboo_text_change: (t ? t.taboo_text_change : card.real_taboo_text_change) || undefined,
-      taboo_original_text: (t ? t.taboo_original_text : card.real_taboo_original_text) || undefined,
-      taboo_original_back_text: (t ? t.taboo_original_back_text : card.real_taboo_original_back_text) || undefined,
-      encounter_name: card.encounter_code ? (data.encounterSets[card.encounter_code] || card.real_encounter_set_name || undefined) : undefined,
-      subtype_name: card.subtype_code ? data.subTypeNames[card.subtype_code] : undefined,
+      customization_text:
+        (t ? t.customization_text : card.real_customization_text) || undefined,
+      customization_change:
+        (t ? t.customization_change : card.real_customization_change) ||
+        undefined,
+      taboo_text_change:
+        (t ? t.taboo_text_change : card.real_taboo_text_change) || undefined,
+      taboo_original_text:
+        (t ? t.taboo_original_text : card.real_taboo_original_text) ||
+        undefined,
+      taboo_original_back_text:
+        (t ? t.taboo_original_back_text : card.real_taboo_original_back_text) ||
+        undefined,
+      encounter_name: card.encounter_code
+        ? data.encounterSets[card.encounter_code] ||
+          card.real_encounter_set_name ||
+          undefined
+        : undefined,
+      subtype_name: card.subtype_code
+        ? data.subTypeNames[card.subtype_code]
+        : undefined,
     };
   }
 
   static fromGraphQl(
     card: SingleCardFragment & {
       translations: CoreCardTextFragment[];
-      linked_card?: null | (SingleCardFragment & {
-        translations: CoreCardTextFragment[];
-      });
+      linked_card?:
+        | null
+        | (SingleCardFragment & {
+            translations: CoreCardTextFragment[];
+          });
     },
     data: TranslationData
   ): Card {
     const translation = Card.gqlTextFields(card, data);
-    const deck_requirements = card.deck_requirements ?
-      DeckRequirement.parse(card.deck_requirements) :
-      null;
+    const deck_requirements = card.deck_requirements
+      ? DeckRequirement.parse(card.deck_requirements)
+      : null;
 
-    const side_deck_requirements = card.side_deck_requirements ?
-      DeckRequirement.parse(card.side_deck_requirements) :
-      null;
+    const side_deck_requirements = card.side_deck_requirements
+      ? DeckRequirement.parse(card.side_deck_requirements)
+      : null;
 
     if (card.code === '03004') {
-      card.deck_options = [{"faction":["mystic","neutral"],"level":{"min":0,"max":5}},{"tag": ["uc"],"level":{"min":0,"max":4}},{"uses":["charges","charge"],"level":{"min":0,"max":4}},{"trait":["occult"],"level":{"min":0,"max":0}}]
+      card.deck_options = [
+        { faction: ['mystic', 'neutral'], level: { min: 0, max: 5 } },
+        { tag: ['uc'], level: { min: 0, max: 4 } },
+        { uses: ['charges', 'charge'], level: { min: 0, max: 4 } },
+        { trait: ['occult'], level: { min: 0, max: 0 } },
+      ];
     }
-    const deck_options = card.deck_options ?
-      DeckOption.parseList(card.deck_options) :
-      [];
+    const deck_options = card.deck_options
+      ? DeckOption.parseList(card.deck_options)
+      : [];
 
     const wild = card.skill_wild || 0;
     const eskills: any = {};
     if (card.type_code !== 'investigator' && wild > 0) {
-      forEach(BASIC_SKILLS, skill => {
+      forEach(BASIC_SKILLS, (skill) => {
         const value = card[`skill_${skill}`] || 0;
         if (value > 0) {
           eskills[`eskill_${skill}`] = value + wild;
@@ -1372,9 +1659,9 @@ export default class Card {
     } else if (card.type_code === 'scenario') {
       renderSubname = t`Scenario`;
     }
-    const linked_card = card.linked_card ?
-      Card.fromGraphQl(card.linked_card, data) :
-      null;
+    const linked_card = card.linked_card
+      ? Card.fromGraphQl(card.linked_card, data)
+      : null;
     if (linked_card) {
       linked_card.back_linked = true;
       if (card.hidden && !linked_card.hidden) {
@@ -1388,38 +1675,34 @@ export default class Card {
         }
       }
     }
-    const customization_options = CustomizationOption.fromGql(card, translation);
-    const removable_slot = !!find(customization_options, option => option.choice === 'remove_slot');
-    const real_traits = find(customization_options, t => !!t.real_traits)?.real_traits || card.real_traits;
-    const real_traits_normalized = real_traits ? map(
-      filter(
-        map(real_traits.split('.'), trait => trait.toLowerCase().trim()),
-        trait => trait),
-      trait => `#${trait}#`).join(',') : null;
-    const traits_normalized = translation.traits ? map(
-      filter(
-        map(translation.traits.split('.'), trait => trait.toLowerCase().trim()),
-        trait => trait),
-      trait => `#${trait}#`).join(',') : null;
-    const real_slots_normalized = card.real_slot ? map(
-      filter(
-        map(card.real_slot.split('.'), s => s.toLowerCase().trim()),
-        s => !!s
-      ),
-      slot => `#${slot}#`
-    ).join(',') : null;
-    const slots_normalized = translation.slot ? map(
-      filter(
-        map(translation.slot.split('.'), s => s.toLowerCase().trim()),
-        s => !!s
-      ),
-      s => `#${s}#`).join(',') : null;
+    const customization_options = CustomizationOption.fromGql(
+      card,
+      translation
+    );
+    const removable_slot = !!find(
+      customization_options,
+      (option) => option.choice === 'remove_slot'
+    );
+    const real_traits =
+      find(customization_options, (t) => !!t.real_traits)?.real_traits ||
+      card.real_traits;
 
+    const normalize_array = (array: string[] | undefined): string | null =>
+      array
+        ?.map((t) => t.toLowerCase().trim())
+        .filter((t) => !!t)
+        .map((t) => `#${t}#`)
+        .join(',') ?? null;
+    const real_traits_normalized = normalize_array(real_traits?.split('.'));
+    const traits_normalized = normalize_array(translation.traits?.split('.'));
+    const real_slots_normalized = normalize_array(card.real_slot?.split('.'));
+    const slots_normalized = normalize_array(translation.slot?.split('.'));
 
     const restrictions = Card.parseRestrictions(card.restrictions);
-    const uses_match = card.code === '08062' ?
-      ['foo', 'bar', 'charges'] :
-      (card.real_text && card.real_text.match(USES_REGEX));
+    const uses_match =
+      card.code === '08062'
+        ? ['foo', 'bar', 'charges']
+        : card.real_text && card.real_text.match(USES_REGEX);
     const usesRaw = uses_match ? uses_match[2].toLowerCase() : null;
     const uses = usesRaw === 'charge' ? 'charges' : usesRaw;
 
@@ -1429,31 +1712,56 @@ export default class Card {
     const seal_match = card.real_text && card.real_text.match(SEAL_REGEX);
     const seal = !!seal_match || card.code === SERPENTS_OF_YIG;
 
-    const heals_horror = !!find(card.tags, t => t === 'hh') ||
-      !!find(customization_options, option => !!find(option.tags, t => t === 'hh'));
-    const heals_damage = !!find(card.tags, t => t === 'hd') ||
-      !!find(customization_options, option => !!find(option.tags, t => t === 'hd'));
+    const heals_horror =
+      !!find(card.tags, (t) => t === 'hh') ||
+      !!find(
+        customization_options,
+        (option) => !!find(option.tags, (t) => t === 'hh')
+      );
+    const heals_damage =
+      !!find(card.tags, (t) => t === 'hd') ||
+      !!find(
+        customization_options,
+        (option) => !!find(option.tags, (t) => t === 'hd')
+      );
 
     const myriad = !!card.real_text && card.real_text.indexOf('Myriad.') !== -1;
-    const advanced = !!card.real_text && card.real_text.indexOf('Advanced.') !== -1;
+    const advanced =
+      !!card.real_text && card.real_text.indexOf('Advanced.') !== -1;
 
     const sort_by_type_header = Card.typeSortHeader(card, restrictions);
     const sort_by_type = Card.typeHeaderOrder().indexOf(sort_by_type_header);
-    const sort_by_faction_header = Card.factionSortHeader(card, translation, restrictions);
-    const sort_by_faction = Card.factionHeaderOrder().indexOf(sort_by_faction_header);
+    const sort_by_faction_header = Card.factionSortHeader(
+      card,
+      translation,
+      restrictions
+    );
+    const sort_by_faction = Card.factionHeaderOrder().indexOf(
+      sort_by_faction_header
+    );
     const pack = data.packs[card.pack_code] || null;
-    const sort_by_pack = pack ? (pack.cycle_position * 100 + pack.position) : -1;
+    const sort_by_pack = pack
+      ? pack.cycle_position * 200 +
+        (pack.cycle_code === 'investigator' ? 0 : pack.position)
+      : -1;
     const sort_by_cycle = pack?.cycle_position || 0;
-    const sort_by_encounter_set_header = translation.encounter_name ||
+    const sort_by_encounter_set_header =
+      translation.encounter_name ||
       (linked_card && linked_card.encounter_name) ||
       t`N/A`;
     const sort_by_slot = Card.slotPosition(card);
     const spoiler = !!(card.spoiler || (linked_card && linked_card.spoiler));
-    const enemy_horror = card.type_code === 'enemy' ? (card.enemy_horror || 0) : null;
-    const enemy_damage = card.type_code === 'enemy' ? (card.enemy_damage || 0) : null;
-    const firstName = card.type_code === 'investigator' && translation.name.indexOf(' ') !== -1 ?
-      translation.name.substring(0, translation.name.indexOf(' ')).replace(/"/g, '') :
-      translation.name;
+    const enemy_horror =
+      card.type_code === 'enemy' ? card.enemy_horror || 0 : null;
+    const enemy_damage =
+      card.type_code === 'enemy' ? card.enemy_damage || 0 : null;
+    const firstName =
+      card.type_code === 'investigator' && translation.name.indexOf(' ') !== -1
+        ? translation.name
+          .substring(0, translation.name.indexOf(' '))
+          .replace(/"/g, '')
+        : translation.name;
+    const permanent = !!card.permanent;
 
     const altArtInvestigator = card.alt_art_investigator;
     let status: CardStatusType | undefined = undefined;
@@ -1462,16 +1770,45 @@ export default class Card {
     } else if (card.preview) {
       status = CardStatusType.PREVIEW;
     }
-    const s_search_name = searchNormalize(filter([renderName, renderSubname], x => !!x).join(' '), data.lang);
-    const s_search_name_back = searchNormalize(filter([name, translation.subname, translation.back_name], x => !!x).join(' '), data.lang);
-    const s_search_game = searchNormalize(filter([translation.text, translation.traits], x => !!x).join(' '), data.lang);
-    const s_search_game_back = ((translation.back_text && searchNormalize(translation.back_text, data.lang)) || '');
-    const s_search_flavor = ((translation.flavor && searchNormalize(translation.flavor, data.lang)) || '');
-    const s_search_flavor_back = ((translation.back_flavor && searchNormalize(translation.back_flavor, data.lang)) || '');
+    const s_search_name = searchNormalize(
+      filter([renderName, renderSubname], (x) => !!x).join(' '),
+      data.lang
+    );
+    const s_search_name_back = searchNormalize(
+      filter(
+        [name, translation.subname, translation.back_name],
+        (x) => !!x
+      ).join(' '),
+      data.lang
+    );
+    const s_search_game = searchNormalize(
+      filter([translation.text, translation.traits], (x) => !!x).join(' '),
+      data.lang
+    );
+    const s_search_game_back =
+      (translation.back_text &&
+        searchNormalize(translation.back_text, data.lang)) ||
+      '';
+    const s_search_flavor =
+      (translation.flavor && searchNormalize(translation.flavor, data.lang)) ||
+      '';
+    const s_search_flavor_back =
+      (translation.back_flavor &&
+        searchNormalize(translation.back_flavor, data.lang)) ||
+      '';
 
-    const s_search_real_name = searchNormalize(filter([card.real_name, card.real_subname], x => !!x).join(' '), 'en');
-    const s_search_real_name_back = searchNormalize(filter([card.real_name, card.real_subname], x => !!x).join(' '), 'en');
-    const s_search_real_game = searchNormalize(filter([card.real_text, real_traits], x => !!x).join(' '), 'en');
+    const s_search_real_name = searchNormalize(
+      filter([card.real_name, card.real_subname], (x) => !!x).join(' '),
+      'en'
+    );
+    const s_search_real_name_back = searchNormalize(
+      filter([card.real_name, card.real_subname], (x) => !!x).join(' '),
+      'en'
+    );
+    const s_search_real_game = searchNormalize(
+      filter([card.real_text, real_traits], (x) => !!x).join(' '),
+      'en'
+    );
     const result = {
       ...omit(card, [
         'customization_options',
@@ -1483,6 +1820,7 @@ export default class Card {
         'taboo_xp',
         'official',
         'preview',
+        'permanent',
         'real_pack_name',
         'real_flavor',
         'real_customization_text',
@@ -1495,6 +1833,7 @@ export default class Card {
       ...eskills,
       id: card.id,
       extra_xp: card.taboo_xp,
+      permanent,
       s_search_name,
       s_search_name_back,
       s_search_game,
@@ -1522,8 +1861,13 @@ export default class Card {
       bonded_name,
       cycle_name: pack.cycle_name,
       cycle_code: pack.cycle_code,
-      has_restrictions: !!restrictions && !!restrictions.restrictions_investigator,
-      ...restrictions,
+      has_restrictions:
+        !!restrictions && !!restrictions.restrictions_investigator,
+      restrictions_investigator: restrictions?.restrictions_investigator,
+      restrictions_all_investigators:
+        restrictions?.restrictions_all_investigators,
+      restrictions_trait: normalize_array(restrictions?.restrictions_trait),
+      restrictions_faction: normalize_array(restrictions?.restrictions_faction),
       seal,
       status,
       myriad,
@@ -1544,16 +1888,27 @@ export default class Card {
       sort_by_slot,
     };
     result.browse_visible = 0;
-    if (result.code.startsWith('z') || result.status === CardStatusType.PREVIEW || result.status === CardStatusType.CUSTOM) {
+    if (
+      result.code.startsWith('z') ||
+      result.status === CardStatusType.PREVIEW ||
+      result.status === CardStatusType.CUSTOM
+    ) {
       result.browse_visible += 16;
     }
     if (result.code === RANDOM_BASIC_WEAKNESS) {
-     result.deck_limit = 5;
-     result.quantity = 5;
+      result.deck_limit = 5;
+      result.quantity = 5;
     }
-    if (result.code === RANDOM_BASIC_WEAKNESS || result.code === BODY_OF_A_YITHIAN) {
+    if (
+      result.code === RANDOM_BASIC_WEAKNESS ||
+      result.code === BODY_OF_A_YITHIAN
+    ) {
       result.browse_visible += 3;
-    } else if ((!result.altArtInvestigator && !result.back_linked && !result.hidden)) {
+    } else if (
+      !result.altArtInvestigator &&
+      !result.back_linked &&
+      !result.hidden
+    ) {
       if (result.encounter_code) {
         // It's an encounter card.
         result.browse_visible += 2;
@@ -1568,8 +1923,10 @@ export default class Card {
     if (result.duplicate_of_code) {
       result.browse_visible += 8;
     }
-    result.mythos_card = !!result.encounter_code || !!result.linked_card?.encounter_code;
-    result.spoiler = result.spoiler || (result.linked_card && result.linked_card.spoiler);
+    result.mythos_card =
+      !!result.encounter_code || !!result.linked_card?.encounter_code;
+    result.spoiler =
+      result.spoiler || (result.linked_card && result.linked_card.spoiler);
     return result;
   }
 
@@ -1577,12 +1934,10 @@ export default class Card {
     const result: QuerySort[] = [];
     let sortByName = true;
     let sortByXp = true;
-    forEach(sorts, sort => {
-      switch(sort) {
+    forEach(sorts, (sort) => {
+      switch (sort) {
         case SORT_BY_TYPE:
-          result.push(
-            { s: 'c.sort_by_type', direction: 'ASC' },
-          );
+          result.push({ s: 'c.sort_by_type', direction: 'ASC' });
           break;
         case SORT_BY_FACTION:
           result.push({ s: 'c.sort_by_faction', direction: 'ASC' });
@@ -1595,7 +1950,10 @@ export default class Card {
           break;
         case SORT_BY_TITLE:
           sortByName = false;
-          result.push({ s: sortIgnoreQuotes ? 'c.s_search_name' : 'c.renderName', direction: 'ASC' });
+          result.push({
+            s: sortIgnoreQuotes ? 'c.s_search_name' : 'c.renderName',
+            direction: 'ASC',
+          });
           break;
         case SORT_BY_XP:
           sortByXp = false;
@@ -1609,7 +1967,7 @@ export default class Card {
           break;
         case SORT_BY_SLOT:
           result.push({ s: 'c.sort_by_slot', direction: 'ASC' });
-          result.push({ s: 'c.permanent', direction: 'DESC', });
+          result.push({ s: 'c.permanent', direction: 'DESC' });
           break;
         case SORT_BY_ENCOUNTER_SET:
           sortByName = false;
@@ -1626,7 +1984,10 @@ export default class Card {
       }
     });
     if (sortByName) {
-      result.push({ s: sortIgnoreQuotes ? 'c.s_search_name' : 'c.renderName', direction: 'ASC' });
+      result.push({
+        s: sortIgnoreQuotes ? 'c.s_search_name' : 'c.renderName',
+        direction: 'ASC',
+      });
     }
     if (sortByXp) {
       result.push({ s: 'c.xp', direction: 'ASC' });
@@ -1635,42 +1996,56 @@ export default class Card {
   }
 }
 
+export type InvestigatorChoice = {
+  main: Card;
+  front: Card;
+  back: Card;
+};
+
 export function cardInCollection(
   card: Card | PartialCard,
-  packInCollection: { [pack_code: string]: boolean | undefined },
+  packInCollection: { [pack_code: string]: boolean | undefined }
 ): boolean {
   if (packInCollection[card.pack_code]) {
     return true;
   }
-  const alternatePack = (card.encounter_code) ? specialReprintCampaignPacks[card.pack_code] : specialReprintPlayerPacks[card.pack_code];
+  const alternatePack = card.encounter_code
+    ? specialReprintCampaignPacks[card.pack_code]
+    : specialReprintPlayerPacks[card.pack_code];
   if (alternatePack && packInCollection[alternatePack]) {
+    return true;
+  }
+  const alternateCardPack = specialReprintCardPacks[card.code];
+  if (alternateCardPack && packInCollection[alternateCardPack]) {
     return true;
   }
   const reprintPacks = card.reprint_pack_codes || REPRINT_CARDS[card.code];
   if (!reprintPacks) {
     return false;
   }
-  return !!find(reprintPacks, pack => !!packInCollection[pack]);
+  return !!find(reprintPacks, (pack) => !!packInCollection[pack]);
 }
 
 export function packInCollection(
-  {
-    pack,
-    encounter,
-  }: { pack: string; encounter: boolean },
+  { pack, encounter }: { pack: string; encounter: boolean },
   inCollection: {
-    [pack_code: string]: boolean | undefined,
+    [pack_code: string]: boolean | undefined;
   }
 ) {
   if (inCollection[pack]) {
     return true;
   }
-  const alternatePack = (encounter) ? specialReprintCampaignPacks[pack] : specialReprintPlayerPacks[pack];
+  const alternatePack = encounter
+    ? specialReprintCampaignPacks[pack]
+    : specialReprintPlayerPacks[pack];
   if (alternatePack && inCollection[alternatePack]) {
     return true;
   }
-  const specialPackMatch = find(specialPacks, specialPack => {
-    if (inCollection[specialPack.code] && find(specialPack.packs, p => p === pack)) {
+  const specialPackMatch = find(specialPacks, (specialPack) => {
+    if (
+      inCollection[specialPack.code] &&
+      find(specialPack.packs, (p) => p === pack)
+    ) {
       return encounter === !specialPack.player;
     }
     return false;

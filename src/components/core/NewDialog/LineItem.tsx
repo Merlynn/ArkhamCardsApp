@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, ReactNode } from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import AppIcon from '@icons/AppIcon';
 import StyleContext from '@styles/StyleContext';
@@ -16,9 +16,10 @@ interface Props {
   disabled?: boolean;
   description?: string;
   last: boolean;
+  showDisabledIcons?: boolean;
 }
 const ARKHAM_ICONS = new Set(['weakness', 'wild']);
-export default function LineItem({ iconName, iconNode, disabled, text, description, rightNode, last, indicatorNode }: Props) {
+export default function LineItem({ iconName, iconNode, disabled, text, description, rightNode, last, indicatorNode, showDisabledIcons }: Props) {
   const { borderStyle, colors, typography } = useContext(StyleContext);
   const icon = useMemo(() => {
     if (iconNode) {
@@ -38,7 +39,7 @@ export default function LineItem({ iconName, iconNode, disabled, text, descripti
         <View style={styles.leadRow}>
           { !!icon && (
             <View style={[styles.icon, space.marginRightS]}>
-              { !disabled && icon }
+              { (!disabled || !!showDisabledIcons) && icon }
             </View>
           ) }
           { description ? (
@@ -94,17 +95,5 @@ const styles = StyleSheet.create({
   icon: {
     minWidth: 32,
     minHeight: 32,
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 3,
-  },
-  circleFill: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
   },
 });
