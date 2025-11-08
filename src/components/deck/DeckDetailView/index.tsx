@@ -42,6 +42,7 @@ import { CUSTOM_INVESTIGATOR } from '@app_constants';
 import AppIcon from '@icons/AppIcon';
 import LoadingSpinner from '@components/core/LoadingSpinner';
 import HeaderButton from '@components/core/HeaderButton';
+import HeaderTitle from '@components/core/HeaderTitle';
 import DeckButton from '@components/deck/controls/DeckButton';
 import DeckProblemBanner from '@components/deck/DeckProblemBanner';
 import ArkhamCardsAuthContext from '@lib/ArkhamCardsAuthContext';
@@ -330,14 +331,15 @@ function DeckDetailView({
   const [alertDialog, showAlert] = useAlertDialog();
 
   // Handle back button/gesture with usePreventRemove hook
-  usePreventRemove(true, ({ data }) => {
-    // Only intercept back/pop actions, not forward navigation
+  // Only prevent when there are pending edits AND not yet confirmed to avoid visual glitches on edge swipe
+  usePreventRemove(hasPendingEdits && !confirmedRef.current, ({ data }) => {
+    // Only intercept back/pop actions when we have pending edits
     if (data.action.type === 'POP' || data.action.type === 'GO_BACK') {
       if (!handleBackPress()) {
-        // handleBackPress returned false, allow navigation
+        // handleBackPress returned false (confirmed or no pending edits), allow navigation
         navigation.dispatch(data.action);
       }
-      // handleBackPress returned true (intercepted), do nothing
+      // handleBackPress returned true (showing dialog), don't dispatch the action
     } else {
       // Allow other navigation actions
       navigation.dispatch(data.action);
@@ -347,6 +349,36 @@ function DeckDetailView({
   useBackButton(handleBackPress);
   const hasInvestigator = !!parsedDeck?.investigator;
   const factionColor = useMemo(() => colors.faction[parsedDeck?.faction ?? 'neutral'].background, [parsedDeck, colors.faction]);
+
+  // Set initial header buttons immediately with route params to prevent button flash
+  useEffect(() => {
+    if (!hasInvestigator) {
+      const textColor = '#FFFFFF';
+      navigation.setOptions({
+        headerLeft: modal && Platform.OS === 'ios' ? () => (
+          <TouchableOpacity onPress={handleBackPress}>
+            <Text style={{ color: textColor, fontSize: 16 }}>{t`Done`}</Text>
+          </TouchableOpacity>
+        ) : modal && Platform.OS === 'android' ? () => (
+          <HeaderButton
+            iconName="arrow_back"
+            onPress={handleBackPress}
+            color={textColor}
+            accessibilityLabel={t`Back`}
+          />
+        ) : undefined,
+        headerRight: () => (
+          <HeaderButton
+            iconName="menu"
+            onPress={toggleMenuOpen}
+            color={textColor}
+            accessibilityLabel={t`Menu`}
+          />
+        ),
+      });
+    }
+  }, [hasInvestigator, modal, navigation, handleBackPress, toggleMenuOpen]);
+
   useEffect(() => {
     if (hasInvestigator) {
       const textColors = {
@@ -368,7 +400,7 @@ function DeckDetailView({
       const backgroundColor = backgroundColors[mode];
       const statusBarStyle = statusBarStyles[mode];
       const titles = {
-        view: title,
+        view: parsedDeck.investigator.front.name,
         upgrade: t`Upgrading deck`,
         edit: t`Editing deck`,
       };
@@ -388,6 +420,13 @@ function DeckDetailView({
 
       navigation.setOptions({
         title: titles[mode],
+        headerTitle: mode === 'view' ? () => (
+          <HeaderTitle
+            title={parsedDeck.investigator.front.name || title}
+            subtitle={name || subtitle}
+            color={textColor}
+          />
+        ) : undefined,
         headerStyle: {
           backgroundColor,
         },
@@ -420,7 +459,7 @@ function DeckDetailView({
         ),
       });
     }
-  }, [modal, hasInvestigator, darkMode, navigation, mode, colors, factionColor, name, subtitle, title, handleBackPress, toggleMenuOpen]);
+  }, [modal, hasInvestigator, darkMode, navigation, mode, colors, factionColor, name, subtitle, title, handleBackPress, toggleMenuOpen, parsedDeck]);
   const [uploadLocalDeckDialog, uploadLocalDeck] = useUploadLocalDeckDialog(deckActions, deck, parsedDeck);
   useEffect(() => {
     if (!deck) {
@@ -1043,44 +1082,45 @@ function DeckDetailView({
   ]);
 
   const fabIcon = useMemo(() => {
-    return <AppIcon name="plus-button" color={colors.L30} size={32} />;
-  }, [colors]);
+    const iconColor = (mode !== 'view' || fabOpen) ? colors.L30 : '#FFFFFF';
+    return <AppIcon name="plus-button" color={iconColor} size={32} />;
+  }, [mode, fabOpen, colors]);
 
   const items = useMemo(() => [{
     text: t`Draw simulator`,
-    icon: <AppIcon name="draw" color="#FFF" size={34} />,
+    icon: <AppIcon name="draw" color={colors.L30} size={34} />,
     name: 'draw_simulator',
     position: 1,
   },
   {
     text: t`Charts`,
     name: 'charts',
-    icon: <AppIcon name="chart" color="#FFF" size={34} />,
+    icon: <AppIcon name="chart" color={colors.L30} size={34} />,
     position: 2,
   },
   ...(editable && mode === 'view' ? [{
     text: t`Upgrade with XP`,
     name: 'upgrade',
-    icon: <AppIcon name="upgrade"color="#FFF" size={32} />,
+    icon: <AppIcon name="upgrade"color={colors.L30} size={32} />,
     position: 3,
   }] : []),
   ...(editable && !!SHOW_DRAFT_CARDS && !deck?.previousDeckId ? [{
     position: 4,
     text: t`Draft cards`,
     name: 'draft',
-    icon: <AppIcon name="draft" color="#FFF" size={32} />,
+    icon: <AppIcon name="draft" color={colors.L30} size={32} />,
   }] : []),
   ...(editable ? [{
     position: 5,
     text: t`Add cards`,
     name: 'add_cards',
-    icon: <AppIcon name="addcard" color="#FFF" size={32} />,
+    icon: <AppIcon name="addcard" color={colors.L30} size={32} />,
   }] : []),
   ...(editable && mode === 'view' ? [{
     position: 5,
     text: t`Edit`,
     name: 'edit',
-    icon: <AppIcon name="edit" color="#FFF" size={32} />,
+    icon: <AppIcon name="edit" color={colors.L30} size={32} />,
   }] : [])].map((item, idx) => ({
     ...item,
     position: idx + 1,
@@ -1293,7 +1333,46 @@ function DeckDetailView({
   );
 }
 
-export default withLoginState(DeckDetailView);
+const DeckDetailViewWithLogin = withLoginState(DeckDetailView);
+
+DeckDetailViewWithLogin.options = ({ route }: { route: RouteProp<RootStackParamList, 'Deck'> }) => {
+  const { title, subtitle, headerBackgroundColor, modal } = route.params;
+  const textColor = '#FFFFFF';
+
+  const baseOptions = {
+    ...(headerBackgroundColor ? {
+      headerStyle: {
+        backgroundColor: headerBackgroundColor,
+      },
+      headerTintColor: textColor,
+      headerTitleStyle: {
+        color: textColor,
+      },
+      statusBarStyle: 'light' as const,
+    } : {}),
+  };
+
+  if (!title || !subtitle) {
+    return {
+      title: t`Deck`,
+      ...baseOptions,
+    };
+  }
+
+  return {
+    title: title,
+    headerTitle: () => (
+      <HeaderTitle
+        title={title}
+        subtitle={subtitle}
+        color={textColor}
+      />
+    ),
+    ...baseOptions,
+  };
+};
+
+export default DeckDetailViewWithLogin;
 
 const styles = StyleSheet.create({
   flex: {

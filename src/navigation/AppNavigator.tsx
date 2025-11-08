@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState, useContext } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator, BottomTabScreenProps, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -887,7 +887,7 @@ function RootStackNavigator() {
       <RootStack.Screen
         name="Deck"
         component={DeckDetailView}
-        options={({ route }) => getDeckScreenOptionsWithBackground(route.params.headerBackgroundColor, t`Deck`)}
+        options={DeckDetailView.options}
       />
       <RootStack.Screen
         name="Deck.New"

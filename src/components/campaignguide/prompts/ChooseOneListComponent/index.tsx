@@ -295,8 +295,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginRight: s,
+    justifyContent: 'flex-start',
   },
   row: {
     flexDirection: 'row',
@@ -304,6 +303,7 @@ const styles = StyleSheet.create({
   padding: {
     paddingTop: xs,
     paddingBottom: xs,
+    paddingRight: s,
     flexDirection: 'row',
     flex: 1,
   },

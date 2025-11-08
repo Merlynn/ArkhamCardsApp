@@ -332,6 +332,9 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'rtr':
       case 'red_tide_rising':
         return this.standaloneIcon('red_tide_rising', size, color);
+      case 'enc':
+      case 'enthralling_encore':
+        return this.standaloneIcon('enthralling_encore', size, color);
       case 'parallel':
       case 'otr':
       case 'on_the_road_again':
@@ -1015,9 +1018,6 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'return_to_horror_in_high_gear':
       case 'zreturn_to_horror_in_high_gear':
         return this.innsmouthIcon('return_to_horror_in_high_gear', size, color);
-      case 'return_to_horror_in_high_gear':
-      case 'zreturn_to_horror_in_high_gear':
-        return this.innsmouthIcon('return_to_horror_in_high_gear', size, color);
       case 'return_to_a_light_in_the_fog':
       case 'zreturn_to_a_light_in_the_fog':
         return this.innsmouthIcon('return_to_a_light_in_the_fog', size, color);
@@ -1186,7 +1186,11 @@ export default class EncounterIcon extends React.PureComponent<Props> {
       case 'zcx_savage_woods':
       case 'zcx_destiny_and_prophecy':
       case 'zcx_circus_ex_mortis':
-        return this.circusExMortisIcon(encounter_code,size, color);
+        return this.circusExMortisIcon(encounter_code, size, color);
+      case 'zgoo':
+        return this.standaloneIcon('onigawa', size, color);
+      case 'zdh':
+        return this.standaloneIcon('darkham', size, color);
       case 'rcore':
       default:
         return this.coreIcon('core', size, color);
