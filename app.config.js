@@ -76,10 +76,6 @@ module.exports = {
       appleTeamId: '54773FU58P',
       supportsTablet: true,
       infoPlist: {
-        UIBackgroundModes: [
-          'audio',
-          'audio',
-        ],
         UIViewControllerBasedStatusBarAppearance: true,
         ITSAppUsesNonExemptEncryption: false,
       },
@@ -96,7 +92,7 @@ module.exports = {
         'android.permission.RECORD_AUDIO',
         'android.permission.MODIFY_AUDIO_SETTINGS',
       ],
-      versionCode: 4195517,
+      versionCode: 4195518,
     },
     plugins: [
       [
