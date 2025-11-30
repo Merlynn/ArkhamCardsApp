@@ -2456,16 +2456,6 @@ msgstr "Par défaut (${ systemLanguage })"
 msgid "Download language cards"
 msgstr "Télécharger les traductions des cartes"
 
-#, javascript-format
-msgid ""
-"Would you like to download updated cards from ArkhamDB to match your phone's preferred language (${ lang })?\n"
-"\n"
-"You can override your language preference for this app in Settings."
-msgstr ""
-"Voulez-vous télécharger les modifications de cartes depuis ArkhamDB pour correspondre à la langue de votre téléphone (${ lang })?\n"
-"\n"
-"Vous pouvez modifier les préférences de langue pour cette application dans les Paramètres."
-
 msgid "Not now"
 msgstr "Pas maintenant"
 
@@ -5864,10 +5854,6 @@ msgstr "Afficher les paquets originaux"
 msgid "Non-Unique"
 msgstr "Non-Unique"
 
-#, javascript-format
-msgid "Experience cost: ${ basicXpCost } for decks that include ${ investigator.name }, ${ challengeDiscountCost } for each other player"
-msgstr "Coût en points d’expérience: ${ basicXpCost } pour les decks incluant ${ investigator.name }, ${ challengeDiscountCost } pour chaque autre joueur"
-
 msgid "Aether"
 msgstr "Éther"
 
@@ -6308,6 +6294,29 @@ msgid "Edit Name"
 msgstr ""
 
 msgid "Scenario results"
+msgstr ""
+
+msgid "Location Setup"
+msgstr ""
+
+#, javascript-format
+msgid "Fan-Made Challenge Scenario by ${ scenario.custom.creator }"
+msgstr "Scénario Défi Fan-Made créé par ${ scenario.custom.creator }"
+
+#, javascript-format
+msgid "Experience cost: ${ xpCost } for decks that include ${ investigator.name }, ${ challengeDiscountCost } for each other player"
+msgstr "Coût en points d’expérience: ${ xpCost } pour les decks incluant ${ investigator.name }, ${ challengeDiscountCost } pour chaque autre joueur"
+
+msgid "You must have at least 6 cards from each faction."
+msgstr ""
+
+#, javascript-format
+msgid ""
+"Would you like to download updated cards from ArkhamDB to match your phone's preferred language (${ lang })?\n"
+"\n"
+"You can override your language preference for this app in Settings.\n"
+"\n"
+"This will use about 25mb of storage."
 msgstr ""
 
 msgctxt "investigator"

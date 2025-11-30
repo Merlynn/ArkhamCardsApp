@@ -38,7 +38,7 @@ module.exports = {
   expo: {
     name: 'ArkhamCards',
     slug: 'arkhamcards',
-    version: '6.0.0',
+    version: '6.0.3',
     jsEngine: 'hermes',
     orientation: 'portrait',
     userInterfaceStyle: 'automatic',
@@ -70,6 +70,8 @@ module.exports = {
       'assets/*.jpeg',
       'assets/*.svg',
       'assets/*.json',
+      'assets/generated/*.db',
+      'assets/generated/*.txt',
     ],
     ios: {
       bundleIdentifier: 'com.arkhamcards.ArkhamCards',
@@ -92,9 +94,10 @@ module.exports = {
         'android.permission.RECORD_AUDIO',
         'android.permission.MODIFY_AUDIO_SETTINGS',
       ],
-      versionCode: 4195518,
+      versionCode: 4195535,
     },
     plugins: [
+      './plugins/withRNScreensFragmentFactory.js',
       [
         'react-native-edge-to-edge',
         {
@@ -112,22 +115,18 @@ module.exports = {
           ],
         },
       ],
-      [
-        '@sentry/react-native/expo',
-        {
-          url: 'https://sentry.io/',
-          project: 'react-native',
-          organization: 'arkham-cards',
-        },
-      ],
       '@react-native-firebase/app',
       '@react-native-firebase/auth',
+      '@react-native-firebase/crashlytics',
       [
         'expo-build-properties',
         {
           ios: {
             useFrameworks: 'static',
             deploymentTarget: '15.1',
+            podfileProperties: {
+              RNFirebaseAnalyticsWithoutAdIdSupport: true,
+            },
           },
           android: {
             compileSdkVersion: 35,

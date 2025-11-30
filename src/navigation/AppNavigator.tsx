@@ -8,6 +8,7 @@ import { t } from 'ttag';
 import Toast, { BaseToast, ErrorToast, ToastConfig } from 'react-native-toast-message';
 
 import AppIcon from '@icons/AppIcon';
+import analytics from '@react-native-firebase/analytics';
 
 // Screen Components - Tab root screens
 import BrowseCardsView from '@components/cardlist/BrowseCardsView';
@@ -112,8 +113,9 @@ import HeaderTitle from '@components/core/HeaderTitle';
 
 // App-level imports
 import MyProvider from '@app/MyProvider';
-import * as Sentry from '@sentry/react-native';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { maybeSaveAutomaticBackup } from '@app/autoBackup';
+import { useLocalizedString } from '@lib/i18n/useLocalizedString';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState, getThemeOverride } from '@reducers';
@@ -132,7 +134,6 @@ import {
   TabParamList,
   BasicStackParamList,
 } from './types';
-import type { Integration } from '@sentry/core';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const CardsStack = createNativeStackNavigator<CardsStackParamList>();
@@ -145,6 +146,7 @@ function useNavigatorTheme(includeBackTitle = true): {
   colors: ThemeColors;
   screenOptions: NativeStackNavigationOptions;
  } {
+  const backTitle = useLocalizedString(() => t`Back`);
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const darkMode = !themeOverride ? Appearance.getColorScheme() === 'dark' : themeOverride === 'dark';
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
@@ -162,7 +164,7 @@ function useNavigatorTheme(includeBackTitle = true): {
         backgroundColor: colors.L30,
       },
       statusBarStyle: darkMode ? 'light' : 'dark',
-      ...(includeBackTitle ? { headerBackTitle: t`Back` } : {}),
+      ...(includeBackTitle ? { headerBackTitle: backTitle } : {}),
     },
   };
 }
@@ -194,7 +196,7 @@ function useAppInitialization(navigationRef: React.RefObject<NavigationContainer
 
     async function checkCrashAndInitialize() {
       try {
-        const previousCrash = await Sentry.crashedLastRun();
+        const previousCrash = await crashlytics().didCrashOnPreviousExecution();
         if (previousCrash && !__DEV__ && mounted) {
           setSafeModeActive(true);
           // Navigate to safe mode
@@ -642,6 +644,7 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
 
 function CardsStackNavigator() {
   const { screenOptions } = useNavigatorTheme();
+  const playerCardsTitle = useLocalizedString(() => t`Player Cards`);
 
   return (
     <CardsStack.Navigator screenOptions={screenOptions}>
@@ -649,7 +652,7 @@ function CardsStackNavigator() {
         name="BrowseCards"
         component={BrowseCardsView}
         options={{
-          title: t`Player Cards`,
+          title: playerCardsTitle,
         }}
       />
       {renderCommonScreens(CardsStack)}
@@ -658,6 +661,8 @@ function CardsStackNavigator() {
 }
 
 function DecksStackNavigator() {
+  const backTitle = useLocalizedString(() => t`Back`);
+  const decksTitle = useLocalizedString(() => t`Decks`);
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const darkMode = !themeOverride ? Appearance.getColorScheme() === 'dark' : themeOverride === 'dark';
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
@@ -674,7 +679,7 @@ function DecksStackNavigator() {
         headerStyle: {
           backgroundColor: colors.background,
         },
-        headerBackTitle: t`Back`,
+        headerBackTitle: backTitle,
         statusBarStyle: darkMode ? 'light' : 'dark',
       }}
     >
@@ -682,7 +687,7 @@ function DecksStackNavigator() {
         name="MyDecks"
         component={MyDecksView}
         options={{
-          title: t`Decks`,
+          title: decksTitle,
         }}
       />
       {renderCommonScreens(DecksStack)}
@@ -691,6 +696,8 @@ function DecksStackNavigator() {
 }
 
 function CampaignsStackNavigator() {
+  const backTitle = useLocalizedString(() => t`Back`);
+  const campaignsTitle = useLocalizedString(() => t`Campaigns`);
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const darkMode = !themeOverride ? Appearance.getColorScheme() === 'dark' : themeOverride === 'dark';
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
@@ -707,7 +714,7 @@ function CampaignsStackNavigator() {
         headerStyle: {
           backgroundColor: colors.L30,
         },
-        headerBackTitle: t`Back`,
+        headerBackTitle: backTitle,
         statusBarStyle: darkMode ? 'light' : 'dark',
       }}
     >
@@ -715,7 +722,7 @@ function CampaignsStackNavigator() {
         name="MyCampaigns"
         component={MyCampaignsView}
         options={{
-          title: t`Campaigns`,
+          title: campaignsTitle,
         }}
       />
       {renderCommonScreens(CampaignsStack)}
@@ -724,6 +731,7 @@ function CampaignsStackNavigator() {
 }
 
 function SettingsStackNavigator() {
+  const settingsTitle = useLocalizedString(() => t`Settings`);
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const darkMode = !themeOverride ? Appearance.getColorScheme() === 'dark' : themeOverride === 'dark';
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
@@ -747,7 +755,7 @@ function SettingsStackNavigator() {
         name="Settings"
         component={SettingsView}
         options={{
-          title: t`Settings`,
+          title: settingsTitle,
         }}
       />
       {renderCommonScreens(SettingsStack)}
@@ -756,6 +764,10 @@ function SettingsStackNavigator() {
 }
 
 function TabNavigatorInner() {
+  const cardsLabel = useLocalizedString(() => t`Cards`);
+  const decksLabel = useLocalizedString(() => t`Decks`);
+  const campaignsLabel = useLocalizedString(() => t`Campaigns`);
+  const settingsLabel = useLocalizedString(() => t`Settings`);
   const dispatch = useDispatch();
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const system = !themeOverride;
@@ -824,41 +836,42 @@ function TabNavigatorInner() {
       <Tab.Screen
         name="CardsTab"
         component={CardsStackNavigator}
-        options={{ tabBarLabel: t`Cards` }}
+        options={{ tabBarLabel: cardsLabel }}
       />
       <Tab.Screen
         name="DecksTab"
         component={DecksStackNavigator}
-        options={{ tabBarLabel: t`Decks` }}
+        options={{ tabBarLabel: decksLabel }}
       />
       <Tab.Screen
         name="CampaignsTab"
         component={CampaignsStackNavigator}
-        options={{ tabBarLabel: t`Campaigns` }}
+        options={{ tabBarLabel: campaignsLabel }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStackNavigator}
-        options={{ tabBarLabel: t`Settings` }}
+        options={{ tabBarLabel: settingsLabel }}
       />
     </Tab.Navigator>
   );
 }
 
-export default function AppNavigator({ store, navigationIntegration }: {
+export default function AppNavigator({ store }: {
   store: { redux: AppState; persistor: Persistor; apollo: ApolloClient<unknown>; anonApollo: ApolloClient<unknown> };
-  navigationIntegration?: Integration & { registerNavigationContainer: (ref: unknown) => void };
 }) {
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
 
   return (
     <MyProvider store={store}>
-      <AppNavigatorInner navigationRef={navigationRef} navigationIntegration={navigationIntegration} />
+      <AppNavigatorInner navigationRef={navigationRef} />
     </MyProvider>
   );
 }
 
 function RootStackNavigator() {
+  const backTitle = useLocalizedString(() => t`Back`);
+  const newDeckTitle = useLocalizedString(() => t`New Deck`);
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const darkMode = !themeOverride ? Appearance.getColorScheme() === 'dark' : themeOverride === 'dark';
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
@@ -875,7 +888,7 @@ function RootStackNavigator() {
         headerStyle: {
           backgroundColor: colors.L30,
         },
-        headerBackTitle: t`Back`,
+        headerBackTitle: backTitle,
         statusBarStyle: darkMode ? 'light' : 'dark',
       }}
     >
@@ -893,7 +906,7 @@ function RootStackNavigator() {
         name="Deck.New"
         component={NewDeckView}
         options={{
-          title: t`New Deck`,
+          title: newDeckTitle,
         }}
       />
       <RootStack.Screen
@@ -990,9 +1003,8 @@ function RootStackNavigator() {
   );
 }
 
-function AppNavigatorInner({ navigationRef, navigationIntegration }: {
+function AppNavigatorInner({ navigationRef }: {
   navigationRef: React.RefObject<NavigationContainerRef<RootStackParamList> | null>;
-  navigationIntegration?: Integration & { registerNavigationContainer: (ref: unknown) => void };
 }) {
   const themeOverride = useSelector((state: AppState) => getThemeOverride(state));
   const system = !themeOverride;
@@ -1000,6 +1012,7 @@ function AppNavigatorInner({ navigationRef, navigationIntegration }: {
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
   const toastConfig = useToastConfig();
   useAppInitialization(navigationRef);
+  const routeNameRef = useRef<string | undefined>();
 
   const linking = {
     prefixes: ['arkhamcards://', 'dissonantvoices://'],
@@ -1019,51 +1032,76 @@ function AppNavigatorInner({ navigationRef, navigationIntegration }: {
     },
   };
 
-  const onReady = useCallback(() => {
-    navigationIntegration?.registerNavigationContainer(navigationRef);
-  }, [navigationIntegration, navigationRef]);
-
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
-      <NavigationContainer
-        ref={navigationRef}
-        linking={linking}
-        onReady={onReady}
-        theme={{
-          dark: darkMode,
-          colors: {
-            primary: colors.D30,
-            background: colors.background,
-            card: colors.L30,
-            text: colors.darkText,
-            border: colors.divider,
-            notification: colors.D30,
-          },
-          fonts: {
-            regular: {
-              fontFamily: 'Alegreya-Regular',
-              fontWeight: 'normal',
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={() => {
+            const currentRoute = navigationRef.current?.getCurrentRoute();
+            if (currentRoute?.name) {
+              routeNameRef.current = currentRoute.name;
+            }
+          }}
+          onStateChange={async (state) => {
+            if (state) {
+              const previousRouteName = routeNameRef.current;
+              const currentRoute = navigationRef.current?.getCurrentRoute();
+              const currentRouteName = currentRoute?.name;
+
+              if (currentRouteName) {
+                // Log to Crashlytics
+                crashlytics().log(`Navigation: ${currentRouteName}`);
+                crashlytics().setAttribute('current_screen', currentRouteName);
+
+                // Log to Firebase Analytics
+                if (previousRouteName !== currentRouteName) {
+                  await analytics().logScreenView({
+                    screen_name: currentRouteName,
+                    screen_class: currentRouteName,
+                  });
+                }
+
+                // Save the current route name for next comparison
+                routeNameRef.current = currentRouteName;
+              }
+            }
+          }}
+          linking={linking}
+          theme={{
+            dark: darkMode,
+            colors: {
+              primary: colors.D30,
+              background: colors.background,
+              card: colors.L30,
+              text: colors.darkText,
+              border: colors.divider,
+              notification: colors.D30,
             },
-            medium: {
-              fontFamily: 'Alegreya-Medium',
-              fontWeight: 'normal',
+            fonts: {
+              regular: {
+                fontFamily: 'Alegreya-Regular',
+                fontWeight: 'normal',
+              },
+              medium: {
+                fontFamily: 'Alegreya-Medium',
+                fontWeight: 'normal',
+              },
+              bold: {
+                fontFamily: 'Alegreya-Medium',
+                fontWeight: 'normal',
+              },
+              heavy: {
+                fontFamily: 'Alegreya-Medium',
+                fontWeight: 'normal',
+              },
             },
-            bold: {
-              fontFamily: 'Alegreya-Medium',
-              fontWeight: 'normal',
-            },
-            heavy: {
-              fontFamily: 'Alegreya-Medium',
-              fontWeight: 'normal',
-            },
-          },
-        }}
-      >
-        <SafeAreaProvider>
+          }}
+        >
           <RootStackNavigator />
-        </SafeAreaProvider>
-      </NavigationContainer>
-      <Toast config={toastConfig} />
-    </GestureHandlerRootView>
+        </NavigationContainer>
+        <Toast config={toastConfig} />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

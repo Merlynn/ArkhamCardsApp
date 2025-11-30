@@ -320,6 +320,10 @@
     "name": "끝없는 밤"
   },
   {
+    "id": "enthralling_encore",
+    "name": "매혹적인 앙코르"
+  },
+  {
     "id": "eoe_epilogue",
     "name": "후일담"
   },

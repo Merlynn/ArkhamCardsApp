@@ -12,7 +12,7 @@ import {
 import { find, last } from 'lodash';
 
 import { t } from 'ttag';
-import KeepAwake from 'react-native-keep-awake';
+import { useKeepAwake } from 'expo-keep-awake';
 
 import COLORS from '@styles/colors';
 import CampaignGuideContext from './CampaignGuideContext';
@@ -20,7 +20,7 @@ import StepsComponent from './StepsComponent';
 import StyleContext from '@styles/StyleContext';
 import NarrationWrapper, { NarrationTrack } from '@components/campaignguide/NarrationWrapper';
 import ScenarioStep from '@data/scenario/ScenarioStep';
-import ScenarioGuideContext from './ScenarioGuideContext';
+import ScenarioGuideContext, { useScenarioUndo } from './ScenarioGuideContext';
 import { ProcessedScenario } from '@data/scenario';
 import ScenarioStateHelper from '@data/scenario/ScenarioStateHelper';
 import { showGuideCampaignLog } from '@components/campaign/nav';
@@ -165,12 +165,7 @@ export default function ScenarioComponent({ showLinkedScenario, standalone, foot
     );
   }, [navigation, processedCampaign, processedScenario, campaignId, scenarioId, standalone]);
 
-  const undoPressed = useCallback(() => {
-    campaignState.undo(scenarioId);
-    if (processedScenario.closeOnUndo) {
-      navigation.goBack();
-    }
-  }, [navigation, scenarioId, processedScenario.closeOnUndo, campaignState]);
+  const undoPressed = useScenarioUndo();
 
   useLayoutEffect(() => {
     const rightButtons = [
@@ -271,7 +266,7 @@ export default function ScenarioComponent({ showLinkedScenario, standalone, foot
     // Check FAB visibility when content size changes
     setTimeout(() => checkFABVisibility(), 0);
   }, [setScrollViewHeight, checkFABVisibility]);
-
+  useKeepAwake();
   return (
     <KeyboardAvoidingView
       style={[styles.keyboardView, backgroundStyle]}
@@ -279,7 +274,6 @@ export default function ScenarioComponent({ showLinkedScenario, standalone, foot
       enabled
       keyboardVerticalOffset={100}
     >
-      <KeepAwake />
       <NarrationWrapper>
         <View style={{ position: 'relative' }}>
           <ScrollView

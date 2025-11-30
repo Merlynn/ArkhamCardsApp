@@ -989,6 +989,10 @@ export default class Card {
     );
   }
 
+  public formattedCost(): string | undefined {
+    return this.cost !== undefined ? arkham_num(this.cost) : undefined;
+  }
+
   public enemyFight(): string {
     return arkham_num(this.enemy_fight);
   }
@@ -1473,18 +1477,20 @@ export default class Card {
           return 7;
         case 'Tarot':
           return 8;
-        case 'Body. Arcane':
+        case 'Head':
           return 9;
-        case 'Body. Hand x2':
+        case 'Body. Arcane':
           return 10;
-        case 'Hand. Arcane':
+        case 'Body. Hand x2':
           return 11;
-        case 'Hand x2. Arcane':
+        case 'Hand. Arcane':
           return 12;
-        case 'Ally. Arcane':
+        case 'Hand x2. Arcane':
           return 13;
-        case 'Arcane. Accessory':
+        case 'Ally. Arcane':
           return 14;
+        case 'Arcane. Accessory':
+          return 15;
         default:
           return 16;
       }
@@ -1543,6 +1549,8 @@ export default class Card {
         return t`Ally`;
       case 'tarot':
         return t`Tarot`;
+      case 'head':
+        return t`Head`;
       case 'hand x2':
         return t`Hand x2`;
       case 'arcane x2':
