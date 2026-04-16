@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { find, last } from 'lodash';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { t } from 'ttag';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -140,7 +141,9 @@ export default function ScenarioComponent({ showLinkedScenario, standalone, foot
   const { processedScenario, processedCampaign, scenarioState } = useContext(ScenarioGuideContext);
   const { backgroundStyle, width } = useContext(StyleContext);
   const { lang } = useContext(LanguageContext);
+  const { bottom } = useSafeAreaInsets();
   const scenarioId = processedScenario.id.encodedScenarioId;
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     if (standalone && processedScenario.type !== 'started' && processedScenario.type !== 'completed') {
       campaignState.startScenario(scenarioId);
@@ -294,9 +297,10 @@ export default function ScenarioComponent({ showLinkedScenario, standalone, foot
               steps={processedScenario.steps}
               switchCampaignScenario={switchCampaignScenario}
             />
-            { !!footer ? footer : <View style={{ height: 100 }} /> }
+            { !!footer ? footer : <View style={{ height: 200 }} /> }
+            <View style={{ height: insets.bottom }} />
           </ScrollView>
-          <View style={{ position: 'absolute', bottom: m, right: m }}>
+          <View style={{ position: 'absolute', bottom: m + bottom, right: m }}>
             <Animated.View
               style={animatedFabStyle}
               pointerEvents={showFAB ? 'auto' : 'none'}

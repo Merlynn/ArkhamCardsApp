@@ -14,7 +14,7 @@ import CardUpgradeOption from './CardUpgradeOption';
 import CardDetailComponent from '@components/card/CardDetailView/CardDetailComponent';
 import { incIgnoreDeckSlot, decIgnoreDeckSlot, incDeckSlot, decDeckSlot, setDeckXpAdjustment } from '@components/deck/actions';
 import DeckValidation from '@lib/DeckValidation';
-import Card, { CardsMap, InvestigatorChoice, cardInCollection } from '@data/types/Card';
+import Card, { CardsMap, InvestigatorChoice } from '@data/types/Card';
 import space, { m } from '@styles/space';
 import DeckNavFooter, { FOOTER_HEIGHT } from '@components/deck/DeckNavFooter';
 import { getPacksInCollection } from '@reducers';
@@ -32,6 +32,7 @@ import { parseMetaSlots } from '@lib/parseDeck';
 import { useCardMap } from '@components/card/useCardList';
 import { useDeck } from '@data/hooks';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { cardInCollection } from '@data/types/cardHelpers';
 
 export interface CardUpgradeDialogProps {
   id: DeckId;
@@ -139,8 +140,9 @@ export default function CardUpgradeDialog() {
     );
   }, [dedupedCardsByName, deckCards, investigator, deckEdits, slots, mode]);
   const onIncrementIgnore = useCallback((code: string) => {
-    dispatch(incIgnoreDeckSlot(id, code));
-  }, [dispatch, id]);
+    const card = cards[code];
+    dispatch(incIgnoreDeckSlot(id, code, card?.deck_limit));
+  }, [dispatch, id, cards]);
 
   const onDecrementIgnore = useCallback((code: string) => {
     dispatch(decIgnoreDeckSlot(id, code));

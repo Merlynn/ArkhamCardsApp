@@ -31,6 +31,8 @@ import { DeckOverlapComponentForCampaign } from './DeckOverlapComponent';
 import useParsedDeckComponent from '../useParsedDeckComponent';
 import { useAppDispatch } from '@app/store';
 import { MANDY_CODE } from '@data/deck/specialMetaSlots';
+import { ListCard } from '@data/types/ListCard';
+import { useParallelInvestigator } from '@components/core/hooks';
 
 interface Props {
   suggestArkhamDbLogin: boolean;
@@ -57,7 +59,7 @@ interface Props {
   showEditSide?: () => void;
   showEditExtra?: () => void;
   showXpAdjustmentDialog: () => void;
-  showCardUpgradeDialog: (card: Card, mode: 'extra' | undefined) => void;
+  showCardUpgradeDialog: (card: ListCard, mode: 'extra' | undefined) => void;
   showDraftCards?: () => void;
   showDraftExtraCards?: () => void;
   tabooSet?: TabooSet;
@@ -137,9 +139,13 @@ export default function DeckViewTab(props: Props) {
   }, [dispatch, deckId, deck.investigator_code, deckEditsRef]);
   const setParallel = useCallback((front: string, back: string) => {
     if (deckEditsRef.current) {
+      // Normalize: if front/back matches investigator_code, set to undefined
+      const normalizedFront = front === deck.investigator_code ? undefined : front;
+      const normalizedBack = back === deck.investigator_code ? undefined : back;
+
       dispatch(updateDeckMeta(deckId, deck.investigator_code, deckEditsRef.current, [
-        { key: 'alternate_front', value: front },
-        { key: 'alternate_back', value: back },
+        { key: 'alternate_front', value: normalizedFront },
+        { key: 'alternate_back', value: normalizedBack },
       ]));
     }
   }, [dispatch, deckEditsRef, deckId, deck.investigator_code]);
@@ -162,6 +168,7 @@ export default function DeckViewTab(props: Props) {
       />
     );
   }, [xpLabel, xpDetailLabel, showXpAdjustmentDialog, editable]);
+  const [parallelInvestigators] = useParallelInvestigator(deck.investigator_code, deck.taboo_id);
   const investigatorOptions = useMemo(() => {
     if (!deckEdits?.meta || !investigator) {
       return null;
@@ -183,11 +190,13 @@ export default function DeckViewTab(props: Props) {
           setParallel={setParallel}
           firstElement={hasXpButton && !!changes && !!xpLabel ? renderXpButton : undefined}
           hasPreviousDeck={!!deck.previousDeckId}
+          parallelInvestigators={parallelInvestigators}
+          isArkhamDbDeck={!deck.local}
         />
       </View>
     );
   }, [
-    investigator, deck, tabooSetId, tabooSet, showTaboo, tabooOpen, editable, deckEdits?.meta, parsedDeck?.changes,
+    investigator, parallelInvestigators, deck, tabooSetId, tabooSet, showTaboo, tabooOpen, editable, deckEdits?.meta, parsedDeck?.changes,
     hideTabooPicker, setMeta, setParallel, setTabooSet, renderXpButton, xpLabel,
   ]);
 

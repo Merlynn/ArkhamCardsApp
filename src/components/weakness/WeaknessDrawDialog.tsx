@@ -15,8 +15,9 @@ import { useFlag, useSettingValue, useSlots, useWeaknessCards } from '@component
 import ToggleFilter from '@components/core/ToggleFilter';
 import StyleContext from '@styles/StyleContext';
 import BasicButton from '@components/core/BasicButton';
-import Card, { cardInCollection } from '@data/types/Card';
-import COLORS from '@styles/colors';
+import Card from '@data/types/Card';
+import { cardInCollection } from '@data/types/cardHelpers';
+import HeaderButton from '@components/core/HeaderButton';
 
 export interface DrawWeaknessProps {
   investigator: Card | undefined;
@@ -30,6 +31,7 @@ export default function WeaknessDrawDialog() {
   const navigation = useNavigation();
   const { investigator, saveWeakness, slots: originalSlots, alwaysReplaceRandomBasicWeakness } = route.params;
   const { borderStyle, colors } = useContext(StyleContext);
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   useLayoutEffect(() => {
     const backgroundColor = colors.faction[investigator ? investigator.factionCode() : 'neutral'].background;
@@ -37,9 +39,15 @@ export default function WeaknessDrawDialog() {
       headerStyle: {
         backgroundColor,
       },
-      headerTintColor: COLORS.white,
+      headerLeft: () => (
+        <HeaderButton
+          iconName="dismiss"
+          accessibilityLabel={t`Close`}
+          onPress={goBack}
+        />
+      ),
     });
-  }, [navigation, colors, investigator]);
+  }, [navigation, goBack, colors, investigator]);
   const [replaceRandomBasicWeakness, toggleReplaceRandomBasicWeakness] = useFlag(true);
   const [slots, updateSlots] = useSlots(originalSlots);
   const [saving, setSaving] = useState(false);

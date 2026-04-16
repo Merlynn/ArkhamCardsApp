@@ -1,5 +1,141 @@
 [
   {
+    "campaignId": "boa",
+    "sections": [
+      {
+        "section": "campaign_notes",
+        "entries": [
+          {
+            "id": "abigail_harbinger",
+            "text": "Abigail Foreman ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "cornelia_harbinger",
+            "text": "Cornelia Akely ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "david_harbinger",
+            "text": "David Renfield ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "defeated_elokoss_and_the_brethren_of_ash",
+            "text": "Die Ermittler haben Elokoss und die Bruderschaft der Asche besiegt."
+          },
+          {
+            "id": "defeated_their_masked_pursuer",
+            "text": "Die Ermittler konnten ihren maskierten Verfolger besiegen."
+          },
+          {
+            "id": "discovered_the_cults_whereabouts",
+            "text": "Die Ermittler haben den Aufenthaltsort des Kults herausgefunden."
+          },
+          {
+            "id": "earl_harbinger",
+            "text": "Sgt. Earl Monroe ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "elokoss_was_reborn",
+            "text": "Elokoss wurde wiedergeboren."
+          },
+          {
+            "id": "failed_in_their_search",
+            "text": "Die Ermittler sind bei ihrer Suche gescheitert."
+          },
+          {
+            "id": "flooded_the_ritual",
+            "text": "Die Ermittler haben das Beschwörungsritual der Bruderschaft der Asche geflutet."
+          },
+          {
+            "id": "killed_the_servant_of_flame",
+            "text": "Die Ermittler haben den Diener der Flamme getötet."
+          },
+          {
+            "id": "margaret_harbinger",
+            "text": "Margaret Liu ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "miskatonic_university_burned",
+            "text": "Die Miskatonic Universität ist niedergebrannt."
+          },
+          {
+            "id": "naomi_harbinger",
+            "text": "Naomi O'Bannion ist der Vorbote von Elokoss."
+          },
+          {
+            "id": "saved_miskatonic_university",
+            "text": "Die Ermittler haben die Miskatonic Universität gerettet."
+          },
+          {
+            "id": "scoured_arkham_for_answers",
+            "text": "Die Ermittler haben Arkham auf der Suche nach Antworten durchkämmt."
+          },
+          {
+            "id": "stirred_up_trouble",
+            "text": "Die Ermittler haben für Unruhe gesorgt."
+          },
+          {
+            "id": "stopped_elokoss_glorious_rebirth",
+            "text": "Die Ermittler konnten Elokoss’ glorreiche Wiedergeburt aufhalten."
+          },
+          {
+            "id": "the_servant_of_flame_escaped",
+            "text": "Der Diener der Flamme ist entkommen."
+          }
+        ]
+      },
+      {
+        "section": "hidden",
+        "entries": [
+          {
+            "id": "enemy_is_harbinger",
+            "text": "dummy"
+          },
+          {
+            "id": "killed_servant_of_flame",
+            "text": "dummy"
+          },
+          {
+            "id": "queen_of_ash_phi",
+            "text": "dummy"
+          },
+          {
+            "id": "servant_of_flame_beaneath_act",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_1",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_2",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_3",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_4",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_5",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_6",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_phi",
+            "text": "dummy"
+          }
+        ]
+      }
+    ],
+    "supplies": []
+  },
+  {
     "campaignId": "core",
     "sections": [
       {
@@ -4761,19 +4897,19 @@
           },
           {
             "id": "zlf_ignis_destroy_humanity",
-            "text": "Ignis will bring about the destruction of humanity."
+            "text": "Ignis wird die Zerstörung der Menschheit herbeiführen."
           },
           {
             "id": "zlf_ignis_spirit_has_been_crushed",
-            "text": "Ignis’ spirit has been crushed."
+            "text": "Ignis’ Geist wurde gebrochen."
           },
           {
             "id": "zlf_italy_has_ceased_to_exist",
-            "text": "Italy has ceased to exist."
+            "text": "Italien hat aufgehört zu existieren."
           },
           {
             "id": "zlf_slain_the_eldrich_god",
-            "text": "you have slain the eldrich god of fire."
+            "text": "Du hast den Großen Alten des Feuers besiegt."
           }
         ]
       },

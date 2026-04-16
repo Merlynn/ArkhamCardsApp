@@ -14,6 +14,7 @@ import { where } from '@data/sqlite/query';
 import COLORS from '@styles/colors';
 import { ArkhamNavigation } from '@navigation/types';
 import { FactionCodeType } from '@app_constants';
+import { ListCard } from '@data/types/ListCard';
 
 // Unified deck screen options helper
 export function getDeckScreenOptions(
@@ -45,6 +46,9 @@ export function getDeckScreenOptions(
     },
     headerTintColor: textColor,
     headerTitleStyle: {
+      fontFamily: 'Alegreya-Medium',
+      fontSize: 20,
+      fontWeight: '500',
       color: textColor,
     },
     statusBarStyle: initialMode === 'upgrade' ? 'dark' : 'light',
@@ -91,6 +95,9 @@ export function getDeckScreenOptionsFromFaction(
     },
     headerTintColor: textColor,
     headerTitleStyle: {
+      fontFamily: 'Alegreya-Medium',
+      fontSize: 20,
+      fontWeight: '500',
       color: textColor,
     },
     statusBarStyle: initialMode === 'upgrade' ? 'dark' : 'light',
@@ -133,7 +140,7 @@ type ShowCardOptions = {
 export function showCard(
   navigation: ArkhamNavigation,
   code: string,
-  card: Card,
+  card: ListCard,
   colors: ThemeColors,
   options: ShowCardOptions
 ) {
@@ -184,6 +191,7 @@ export function showCardSwipe(
   navigation: ArkhamNavigation,
   colors: ThemeColors,
   codes: string[],
+  { controls, index, initialCards, showSpoilers, tabooSetId, deckId, investigator, editable, initialCustomizations, customizationsEditable } : {
   controls: undefined | 'side' | 'extra' | 'checklist' | ('side' | 'deck' | 'extra' | 'ignore' | 'bonded' | 'attachment' | 'special' | 'checklist')[],
   index: number,
   initialCards?: Card[],
@@ -194,19 +202,18 @@ export function showCardSwipe(
   editable?: boolean,
   initialCustomizations?: Customizations,
   customizationsEditable?: boolean
-) {
+}) {
   navigation.navigate('Card.Swipe', {
     cardCodes: codes,
-    initialCards,
     initialIndex: index,
     showAllSpoilers: !!showSpoilers,
     tabooSetId,
     deckId,
-    whiteNav: !!investigator,
     faction: investigator?.factionCode(),
     controls: controls === 'side' || controls === 'extra' || controls === 'checklist' ? map(range(0, codes.length), () => controls) : controls,
     editable,
     initialCustomizations,
+    initialCards,
     customizationsEditable: editable || customizationsEditable,
     headerBackgroundColor: investigator ? colors.faction[investigator.factionCode()].background : undefined,
   });
@@ -229,13 +236,12 @@ export function useOptionDialog(
   return usePickerDialog({ title, items, onValueChange: onSelect, selectedValue });
 }
 
-export function showCardImage(
-  navigation: ArkhamNavigation,
-  card: Card,
-) {
+export function showCardImage(navigation: ArkhamNavigation, card: Card, colors: ThemeColors) {
+  const faction = card.factionCode();
   navigation.navigate('Card.Image', {
     id: card.code,
     cardName: card.name,
+    headerBackgroundColor: faction ? colors.faction[faction].background : undefined,
   });
 }
 

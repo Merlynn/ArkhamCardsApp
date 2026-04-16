@@ -57,7 +57,7 @@
   },
   {
     "id": "an_offer_you_cant_refuse",
-    "name": "An Offer You Can't Refuse"
+    "name": "Un'Offerta Che Non Potete Rifiutare"
   },
   {
     "id": "an_unknown_benefactor",
@@ -169,7 +169,7 @@
   },
   {
     "id": "by_the_book",
-    "name": "Da Manuale"
+    "name": "Come da Manuale"
   },
   {
     "id": "carnevale_of_horrors",
@@ -205,11 +205,11 @@
   },
   {
     "id": "core",
-    "name": "Ai Confini della Terra"
+    "name": "La Confraternita delle Ceneri"
   },
   {
     "id": "court_of_the_ancients",
-    "name": "Court of the Ancients"
+    "name": "La Corte degli Antichi"
   },
   {
     "id": "cp_epilogue",
@@ -337,7 +337,7 @@
   },
   {
     "id": "expedition_to_ryleh",
-    "name": "Expedition to R'lyeh"
+    "name": "La Spedizione Verso R'lyeh"
   },
   {
     "id": "extracurricular_activity",
@@ -401,7 +401,7 @@
   },
   {
     "id": "fragment_of_carcosa",
-    "name": "Frammento di Carcosa"
+    "name": "Un Frammento di Carcosa"
   },
   {
     "id": "friends_in_low_places",
@@ -509,7 +509,7 @@
   },
   {
     "id": "istanbul",
-    "name": "Ombre Dolorose"
+    "name": "Affari Oscuri"
   },
   {
     "id": "jennys_choice",
@@ -525,7 +525,7 @@
   },
   {
     "id": "kuala_lampur",
-    "name": "Ombre Sanguigne"
+    "name": "Ombre Dolorose"
   },
   {
     "id": "lagos",
@@ -557,7 +557,7 @@
   },
   {
     "id": "lost_quantum",
-    "name": "Quantum Perso"
+    "name": "Il Regno Quantistico Perduto"
   },
   {
     "id": "lucid_nightmare",
@@ -617,11 +617,11 @@
   },
   {
     "id": "obsidian_canyons",
-    "name": "Obsidian Canyons"
+    "name": "Le Gole di Ossidiana"
   },
   {
     "id": "one_last_job",
-    "name": "One Last Job"
+    "name": "Un Ultimo Lavoro"
   },
   {
     "id": "oz_epilogue",
@@ -672,6 +672,10 @@
     "name": "Flusso Piroclastico"
   },
   {
+    "id": "queen_of_ash",
+    "name": "La Regina delle Ceneri"
+  },
+  {
     "id": "quito",
     "name": "Stratagemmi e Rivendicazioni"
   },
@@ -701,7 +705,7 @@
   },
   {
     "id": "return_to_arkham",
-    "name": "Return to Arkham"
+    "name": "Ritorno ad Arkham"
   },
   {
     "id": "return_to_at_deaths_doorstep",
@@ -765,7 +769,7 @@
   },
   {
     "id": "return_to_in_too_deep",
-    "name": "Ritorno a... Con l’Acqua alla Gola"
+    "name": "Ritorno a... Con l'Acqua alla Gola"
   },
   {
     "id": "return_to_into_the_maelstrom",
@@ -905,7 +909,7 @@
   },
   {
     "id": "sepulchre_of_the_sleeper",
-    "name": "Sepulchre of the Sleeper"
+    "name": "Il Sepolcro del Dormiente"
   },
   {
     "id": "shanghai",
@@ -920,12 +924,20 @@
     "name": "Rivalità tra Fratelli"
   },
   {
+    "id": "smoke_and_mirrors",
+    "name": "Fumo negli Occhi"
+  },
+  {
     "id": "something_big",
     "name": "Qualcosa di Grosso"
   },
   {
+    "id": "spreading_flames",
+    "name": "Fiamme Dilaganti"
+  },
+  {
     "id": "starfall",
-    "name": "Caduta di Stelle"
+    "name": "La Caduta delle Stelle"
   },
   {
     "id": "stockholm",
@@ -1001,7 +1013,7 @@
   },
   {
     "id": "the_apiary",
-    "name": "The Apiary"
+    "name": "L'Alveare"
   },
   {
     "id": "the_attack",
@@ -1013,7 +1025,7 @@
   },
   {
     "id": "the_awakening",
-    "name": "The Awakening"
+    "name": "Il Risveglio"
   },
   {
     "id": "the_black_cat",
@@ -1057,19 +1069,19 @@
   },
   {
     "id": "the_doom_of_arkham",
-    "name": "The Doom of Arkham"
+    "name": "Il Destino di Arkham"
   },
   {
     "id": "the_doom_of_arkham_part_1",
-    "name": "The Doom of Arkham: Part I"
+    "name": "Il Destino di Arkham Parte I"
   },
   {
     "id": "the_doom_of_arkham_part_2",
-    "name": "The Doom of Arkham: Part II"
+    "name": "Il Destino di Arkham Parte II"
   },
   {
     "id": "the_drowned_quarter",
-    "name": "The Drowned Quarter"
+    "name": "Il Quartiere Sommerso"
   },
   {
     "id": "the_duchess",
@@ -1105,7 +1117,7 @@
   },
   {
     "id": "the_grand_vault",
-    "name": "The Grand Vault"
+    "name": "La Grande Cripta"
   },
   {
     "id": "the_great_ones",
@@ -1225,7 +1237,7 @@
   },
   {
     "id": "the_tatterdemalion",
-    "name": "Lo Straccione"
+    "name": "La Tatterdemalion"
   },
   {
     "id": "the_thing_in_the_depths",
@@ -1253,7 +1265,7 @@
   },
   {
     "id": "the_western_wall",
-    "name": "The Western Wall"
+    "name": "La Parete Occidentale"
   },
   {
     "id": "the_white_queen",
@@ -1361,7 +1373,7 @@
   },
   {
     "id": "when_the_world_screamed",
-    "name": "When the World Screamed"
+    "name": "Quando la Terra Urlò"
   },
   {
     "id": "where_doom_awaits",

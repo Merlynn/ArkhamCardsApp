@@ -296,7 +296,7 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
         name="SearchFilters"
         component={CardFilterView}
         options={{
-          title: t`Filters`,
+          title: t`Filter`,
         }}
       />
       <Stack.Screen
@@ -324,7 +324,8 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
         name="SearchFilters.Packs"
         component={PackFilterView}
         options={{
-          title: t`Pack Filters`,
+          title: t`Select Packs`,
+          headerBackTitle: t`Back`,
         }}
       />
       <Stack.Screen
@@ -379,6 +380,7 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
       <Stack.Screen
         name="Campaign.AddResult"
         component={AddScenarioResultView}
+        options={AddScenarioResultView.options}
       />
       <Stack.Screen
         name="Campaign.Access"
@@ -492,10 +494,12 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
       <Stack.Screen
         name="Guide.Campaign"
         component={CampaignGuideView}
+        options={CampaignGuideView.options}
       />
       <Stack.Screen
         name="Guide.LinkedCampaign"
         component={LinkedCampaignGuideView}
+        options={LinkedCampaignGuideView.options}
       />
       <Stack.Screen
         name="Guide.Scenario"
@@ -505,6 +509,7 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
       <Stack.Screen
         name="Guide.Standalone"
         component={StandaloneGuideView}
+        options={StandaloneGuideView.options}
       />
       <Stack.Screen
         name="Guide.DrawChaosBag"
@@ -532,7 +537,7 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
       <Stack.Screen
         name="My.Collection"
         component={CollectionEditView}
-        options={{ title: t`Edit Collection` }}
+        options={CollectionEditView.options}
       />
       <Stack.Screen
         name="My.Spoilers"
@@ -619,16 +624,12 @@ function renderCommonScreens<ParamList extends BasicStackParamList>(
       <Stack.Screen
         name="Settings.MergeBackup"
         component={MergeBackupView}
-        options={{
-          title: t`Merge Backup`,
-        }}
+        options={MergeBackupView.options}
       />
       <Stack.Screen
         name="Settings.ReleaseNotes"
         component={ReleaseNotesView}
-        options={{
-          title: t`Recent updates`,
-        }}
+        options={ReleaseNotesView.options}
       />
 
       {/* Social screens */}
@@ -972,7 +973,6 @@ function RootStackNavigator() {
         component={WeaknessDrawDialog}
         options={{
           title: t`Draw Weaknesses`,
-          presentation: 'fullScreenModal',
         }}
       />
       <RootStack.Screen
@@ -1012,7 +1012,7 @@ function AppNavigatorInner({ navigationRef }: {
   const colors = darkMode ? DARK_THEME : LIGHT_THEME;
   const toastConfig = useToastConfig();
   useAppInitialization(navigationRef);
-  const routeNameRef = useRef<string | undefined>();
+  const routeNameRef = useRef<string | undefined>(undefined);
 
   const linking = {
     prefixes: ['arkhamcards://', 'dissonantvoices://'],
@@ -1043,7 +1043,7 @@ function AppNavigatorInner({ navigationRef }: {
               routeNameRef.current = currentRoute.name;
             }
           }}
-          onStateChange={async (state) => {
+          onStateChange={async(state) => {
             if (state) {
               const previousRouteName = routeNameRef.current;
               const currentRoute = navigationRef.current?.getCurrentRoute();

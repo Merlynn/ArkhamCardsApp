@@ -19,7 +19,8 @@ import {
 } from 'typeorm/browser';
 import * as QuickSQLite from '@op-engineering/op-sqlite';
 
-import Card, { CardsMap, PartialCard } from '../types/Card';
+import Card, { CardsMap } from '../types/Card';
+import { ListCardImpl } from '../types/ListCard';
 import EncounterSet from '../types/EncounterSet';
 import FaqEntry from '../types/FaqEntry';
 import TabooSet from '../types/TabooSet';
@@ -27,21 +28,9 @@ import Rule from '../types/Rule';
 import InvestigatorSet from '../types/InvestigatorSet';
 import { QuerySort } from './types';
 import { tabooSetQuery, where } from './query';
+import { AddReprintOfCode1744329600000 } from './migrations/1744329600000-AddReprintOfCode';
 import syncPlayerCards, { PlayerCardState } from './syncPlayerCards';
 import { SORT_BY_ENCOUNTER_SET, SORT_BY_XP, SortType } from '@actions/types';
-import { HealsDamageMigration1657382994910 } from './migration/HealsDamageMigration';
-import { CustomizeMigration1657651357621 } from './migration/CustomizationMigration';
-import { RemovableSlot1658075280573 } from './migration/RemovableSlot';
-import { AlternateRequiredCodeMigration1660064759967 } from './migration/AlternateRequiredCodeMigration';
-import { CardStatusMigration1662999387731 } from './migration/CardStatusMigration';
-import { GenderMigration1663271269593 } from './migration/GenderMigration';
-import { CardTagsMigraiton1663617607335 } from './migration/CardTagsMigration';
-import { ImageMigration1665529094145 } from './migration/ImageMigration';
-import { ReprintQuantityMigration1671202311300 } from './migration/ReprintQuantityMigration';
-import { TabooTextMigration1693598075386 } from './migration/TabooTextMigration';
-import { SideDeckMigration1698073688677 } from './migration/SideDeckMigration';
-import { SpecialtyCardsMigration1726180741370 } from './migration/SpecialtyCardsMigration';
-import { InvestigatorSetMigration1764345197527 } from './migration/InvestigatorSetMigration';
 
 const enhanceQueryResult = (result: QuickSQLite.QueryResult) => {
   if (!result.rows) {
@@ -144,19 +133,7 @@ async function createDatabaseConnection(recreate: boolean) {
     driver: typeORMDriver,
     // maxQueryExecutionTime: 4000,
     migrations: [
-      HealsDamageMigration1657382994910,
-      CustomizeMigration1657651357621,
-      RemovableSlot1658075280573,
-      AlternateRequiredCodeMigration1660064759967,
-      CardStatusMigration1662999387731,
-      GenderMigration1663271269593,
-      CardTagsMigraiton1663617607335,
-      ImageMigration1665529094145,
-      ReprintQuantityMigration1671202311300,
-      TabooTextMigration1693598075386,
-      SideDeckMigration1698073688677,
-      SpecialtyCardsMigration1726180741370,
-      InvestigatorSetMigration1764345197527,
+      AddReprintOfCode1744329600000,
     ],
     entities: [Card, EncounterSet, FaqEntry, TabooSet, Rule, InvestigatorSet],
   });
@@ -166,7 +143,7 @@ async function createDatabaseConnection(recreate: boolean) {
 }
 
 export default class Database {
-  static SCHEMA_VERSION: number = 51;
+  static SCHEMA_VERSION: number = 53;
   connectionP: Promise<Connection>;
 
   playerState?: PlayerCardState;
@@ -372,17 +349,38 @@ export default class Database {
     );
   }
 
-  async getPartialCards(
+  async getInvestigatorSet(code: string): Promise<InvestigatorSet | undefined> {
+    const investigatorSets = await this.investigatorSets();
+    return investigatorSets.findOne({ where: { code } });
+  }
+
+  async getInvestigatorSets(codes: string[]): Promise<InvestigatorSet[]> {
+    if (codes.length === 0) {
+      return [];
+    }
+    const investigatorSets = await this.investigatorSets();
+    return investigatorSets
+      .createQueryBuilder('i')
+      .where('i.code IN (:...codes)', { codes })
+      .getMany();
+  }
+
+  async getAllInvestigatorSets(): Promise<InvestigatorSet[]> {
+    const investigatorSets = await this.investigatorSets();
+    return investigatorSets.find();
+  }
+
+  async getListCards(
     sortIgnoreQuotes: boolean,
     query?: Brackets,
     tabooSetId?: number,
     sorts?: SortType[]
-  ): Promise<PartialCard[]> {
+  ): Promise<ListCardImpl[]> {
     const cards = await this.cards();
-    const primarySort = PartialCard.headerSort(sorts);
+    const primarySort = ListCardImpl.headerSort(sorts);
     let cardsQuery = cards
       .createQueryBuilder('c')
-      .select(PartialCard.selectStatement(sorts))
+      .select(ListCardImpl.selectStatement(true, sorts))
       .leftJoin('c.linked_card', 'linked_card');
     cardsQuery = cardsQuery.where(tabooSetQuery(tabooSetId));
     if (query) {
@@ -407,12 +405,12 @@ export default class Database {
       forEach(sortQuery, ({ s, direction }) => {
         orderBy[s] = direction;
       });
-      cardsQuery.orderBy(orderBy);
+      cardsQuery = cardsQuery.orderBy(orderBy);
     }
     const result = await cardsQuery.getRawMany();
     return flatMap(
       result,
-      (raw) => PartialCard.fromRaw(raw, primarySort) || []
+      (raw) => ListCardImpl.fromRaw(raw, primarySort) || []
     );
   }
 
@@ -432,6 +430,10 @@ export default class Database {
       .leftJoinAndSelect('c.linked_card', 'linked_card')
       .where(where(`c.id IN (:...cardIds)`, { cardIds: ids }))
       .getMany();
+  }
+
+  async getCardsByCodes(codes: string[], tabooSetId?: number): Promise<Card[]> {
+    return this.getCards(where(`c.code IN (:...codes)`, { codes }), tabooSetId);
   }
 
   async getCard(

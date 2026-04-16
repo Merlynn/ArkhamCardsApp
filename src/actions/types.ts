@@ -13,6 +13,7 @@ import {
   Chaos_Bag_Tarot_Mode_Enum,
 } from '@generated/graphql/apollo-schema';
 import { CustomizationChoice } from '@data/types/CustomizationOption';
+import { ListCard } from '@data/types/ListCard';
 
 export const SORT_BY_TYPE = 'type';
 export const SORT_BY_TYPE_SLOT = 'type_slot';
@@ -43,7 +44,7 @@ export type AttachableDefinition = {
   requiredCards?: Slots;
   targetSize: number;
   traits?: string[];
-  filter?: (card: Card) => boolean;
+  filter?: (card: ListCard) => boolean;
 };
 
 export type StartingTabType =
@@ -335,6 +336,7 @@ export interface Pack {
   known: number;
   total: number;
   url?: string;
+  reprint?: boolean;
 }
 
 export interface Trauma {
@@ -473,6 +475,7 @@ export const DIFFICULTIES: CampaignDifficulty[] = [
 
 export const CUSTOM = 'custom';
 export const CORE = 'core';
+export const BOA = 'boa';
 export const RTNOTZ = 'rtnotz';
 export const DWL = 'dwl';
 export const RTDWL = 'rtdwl';
@@ -506,6 +509,7 @@ export const HEART_OF_DARKNESS = 'zhod';
 export type CampaignCycleCode =
   | typeof CUSTOM
   | typeof CORE
+  | typeof BOA
   | typeof RTNOTZ
   | typeof DWL
   | typeof RTDWL
@@ -537,6 +541,7 @@ export type CampaignCycleCode =
   | typeof RTTIC;
 
 export const ALL_CAMPAIGNS: CampaignCycleCode[] = [
+  BOA,
   CORE,
   RTNOTZ,
   DWL,
@@ -570,6 +575,7 @@ export const CUSTOM_CAMPAIGNS: CampaignCycleCode[] = [
 ];
 
 export const GUIDED_CAMPAIGNS = new Set([
+  BOA,
   CORE,
   DWL,
   PTC,
@@ -652,6 +658,9 @@ interface BaseCampaign {
   showInterludes?: boolean;
   deckIds?: DeckId[];
   nonDeckInvestigators?: string[];
+  investigatorPrintings?: {
+    [investigatorCode: string]: string | undefined;
+  };
   guided?: boolean;
   guideVersion?: number;
   adjustedInvestigatorData?: InvestigatorData;
@@ -1133,7 +1142,7 @@ export interface NewCampaignAction {
   difficulty?: CampaignDifficulty;
   cycleCode: CampaignCycleCode;
   deckIds: DeckId[];
-  investigatorIds: string[];
+  investigators: { code: string; printing: string | undefined }[];
   chaosBag: ChaosBag;
   weaknessSet: WeaknessSet;
   campaignLog: CustomCampaignLog;
@@ -1153,7 +1162,7 @@ export interface NewStandaloneCampaignAction {
   name: string;
   standaloneId: StandaloneId;
   deckIds: DeckId[];
-  investigatorIds: string[];
+  investigators: { code: string; printing: string | undefined }[];
   weaknessSet: WeaknessSet;
 }
 export const NEW_LINKED_CAMPAIGN = 'NEW_LINKED_CAMPAIGN';
@@ -1243,6 +1252,7 @@ export interface CampaignAddInvestigatorAction {
   type: typeof CAMPAIGN_ADD_INVESTIGATOR;
   id: CampaignId;
   investigator: string;
+  printing: string | undefined;
   deckId?: DeckId;
   now: Date;
 }

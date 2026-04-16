@@ -1,7 +1,7 @@
 import { Reducer, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { BackHandler, Keyboard, Platform } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import { forEach, findIndex, flatMap, debounce, find, uniq, keys } from 'lodash';
+import { forEach, flatMap, debounce, find, uniq, keys } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { CampaignCycleCode, DeckId, MiscLocalSetting, MiscRemoteSetting, MiscSetting, Slots, SortType } from '@actions/types';
@@ -550,70 +550,75 @@ export function useTabooSetId(tabooSetOverride?: number): number {
 export function usePlayerCards(
   codes: string[],
   store: boolean,
-  tabooSetOverride?: number,
+  tabooSetOverride?: number
 ): [CardsMap | undefined, boolean, boolean] {
   const tabooSetId = useTabooSetId(tabooSetOverride);
   const [cards, setCards] = useState<CardsMap>();
   const [loading, setLoading] = useState(true);
+  const [cardsMissing, setCardsMissing] = useState(false);
   const { getPlayerCards, getExistingCards } = useContext(PlayerCardContext);
   const previousTabooSetId = useRef<number | undefined>(tabooSetId);
   const currentCards = useRef<CardsMap>(cards ?? {});
+  const previousCodes = useRef<string[]>([]);
+
   useEffect(() => {
     if (cards) {
       currentCards.current = cards;
     }
   }, [cards]);
+
   useEffect(() => {
-    const knownCards: CardsMap = store ? getExistingCards(tabooSetId) : {};
-    if (findIndex(codes, code => !knownCards[code]) === -1) {
-      const cards: CardsMap = {};
-      forEach(codes, code => {
-        cards[code] = knownCards[code];
-      });
-      setCards(cards);
+    if (!codes.length) {
+      setCards({});
       setLoading(false);
+      setCardsMissing(false);
       return;
     }
 
-    const existingCards: CardsMap = {};
-    let codesToFetch: string[] = [];
-    if (previousTabooSetId.current === tabooSetId) {
-      forEach(codes, code => {
-        if (currentCards.current[code]) {
-          existingCards[code] = currentCards.current[code];
-        } else {
-          codesToFetch.push(code);
-        }
-      })
-    } else {
-      codesToFetch = codes;
-    }
-    if (!codesToFetch.length) {
-      setCards(existingCards);
+    // Check if all codes are already available in the provider's cache
+    const existingCards = getExistingCards(tabooSetId);
+    const allCodesAvailable = codes.every(code => existingCards[code]);
+    const tabooSetChanged = previousTabooSetId.current !== tabooSetId;
+
+    if (allCodesAvailable && !tabooSetChanged) {
+      // All cards are already loaded in the provider cache and taboo set hasn't changed
+      // Check if we need to update the state or if the cards are the same
+      const needsUpdate = !currentCards.current || codes.some(code => currentCards.current[code] !== existingCards[code]);
+
+      if (needsUpdate) {
+        // Use the existing cards from the cache
+        const result: CardsMap = {};
+        codes.forEach(code => {
+          result[code] = existingCards[code];
+        });
+        previousTabooSetId.current = tabooSetId;
+        previousCodes.current = codes;
+        setCards(result);
+      } else {
+        previousCodes.current = codes;
+      }
+      setLoading(false);
+      setCardsMissing(false);
       return;
     }
+
+    // We need to actually fetch cards
     let canceled = false;
     setLoading(true);
-    getPlayerCards(codesToFetch, tabooSetId, store).then(cards => {
+    setCardsMissing(true);
+    getPlayerCards(codes, tabooSetId, store).then(cards => {
       if (!canceled) {
         previousTabooSetId.current = tabooSetId;
-        setCards({
-          ...cards,
-          ...existingCards,
-        });
+        previousCodes.current = codes;
+        setCards(cards);
         setLoading(false);
+        setCardsMissing(false);
       }
     });
     return () => {
       canceled = true;
     };
-  }, [tabooSetId, codes, store, getExistingCards, getPlayerCards, setLoading]);
-  const cardsMissing = useMemo(() => {
-    if (codes.length === 0) {
-      return false;
-    }
-    return !cards || !!find(codes, code => !cards[code]);
-  }, [cards, codes]);
+  }, [tabooSetId, codes, store, getExistingCards, getPlayerCards]);
   return [cards, loading, cardsMissing];
 }
 
@@ -747,7 +752,79 @@ export function useAllInvestigators(
 }
 
 export function useParallelInvestigator(investigatorCode?: string, tabooSetOverride?: number): [Card[], boolean] {
-  const query = useMemo(() => investigatorCode ? where('c.alternate_of_code = :investigatorCode', { investigatorCode }) : undefined, [investigatorCode]);
+  const { db } = useContext(DatabaseContext);
+  const { storePlayerCards, investigatorSets } = useContext(PlayerCardContext);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let canceled = false;
+
+    async function fetchParallelInvestigators() {
+      if (!investigatorCode) {
+        setCards([]);
+        setLoading(false);
+        return;
+      }
+
+      // Wait for investigatorSets to load
+      if (!investigatorSets) {
+        setLoading(true);
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        // Find the investigator set from context
+        const investigatorSet = find(investigatorSets, s => s.code === investigatorCode);
+        if (canceled) {
+          return;
+        }
+
+        if (!investigatorSet || investigatorSet.alternate_codes.length <= 1) {
+          // No alternates found
+          setCards([]);
+          setLoading(false);
+          return;
+        }
+
+        const parallelCards = await db.getCardsByCodes(investigatorSet.alternate_codes, tabooSetOverride);
+
+        if (canceled) {
+          return;
+        }
+
+        // Filter to only include actual parallel investigators (not reprints)
+        const actualParallelCards = parallelCards.filter(card => card.cycle_code === 'parallel');
+
+        setCards(actualParallelCards);
+        setLoading(false);
+
+        if (actualParallelCards.length) {
+          storePlayerCards(actualParallelCards);
+        }
+      } catch (e) {
+        console.log('Error fetching parallel investigators:', e);
+        if (!canceled) {
+          setCards([]);
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchParallelInvestigators();
+
+    return () => {
+      canceled = true;
+    };
+  }, [db, investigatorCode, tabooSetOverride, storePlayerCards, investigatorSets]);
+
+  return [cards, loading];
+}
+
+export function useParallelInvestigators(codes?: string[], tabooSetOverride?: number): [Card[], boolean] {
+  const query = useMemo(() => codes ? where('c.alternate_of_code in (:...codes) AND c.cycle_code = :cycle', { codes, cycle: 'parallel' }) : undefined, [codes]);
   const [cards, loading] = useCardsFromQuery({ query, tabooSetOverride });
   const { storePlayerCards } = useContext(PlayerCardContext);
   useEffect(() => {
@@ -758,16 +835,48 @@ export function useParallelInvestigator(investigatorCode?: string, tabooSetOverr
   return [cards, loading];
 }
 
-export function useParallelInvestigators(codes?: string[], tabooSetOverride?: number): [Card[], boolean] {
-  const query = useMemo(() => codes ? where('c.alternate_of_code in (:...codes)', { codes }) : undefined, [codes]);
-  const [cards, loading] = useCardsFromQuery({ query, tabooSetOverride });
-  const { storePlayerCards } = useContext(PlayerCardContext);
+export function useInvestigatorSets(codes: string[]): [{ [code: string]: string[] }, boolean] {
+  const { db } = useContext(DatabaseContext);
+  const [investigatorSets, setInvestigatorSets] = useState<{ [code: string]: string[] }>({});
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (cards.length) {
-      storePlayerCards(cards);
+    if (codes.length === 0) {
+      setInvestigatorSets({});
+      setLoading(false);
+      return;
     }
-  }, [cards, storePlayerCards]);
-  return [cards, loading];
+
+    let canceled = false;
+
+    async function fetchInvestigatorSets() {
+      try {
+        const sets = await db.getInvestigatorSets(codes);
+        if (!canceled) {
+          const setsMap: { [code: string]: string[] } = {};
+          forEach(sets, set => {
+            setsMap[set.code] = set.alternate_codes;
+          });
+          setInvestigatorSets(setsMap);
+          setLoading(false);
+        }
+      } catch (e) {
+        console.log('Error fetching investigator sets:', e);
+        if (!canceled) {
+          setInvestigatorSets({});
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchInvestigatorSets();
+
+    return () => {
+      canceled = true;
+    };
+  }, [db, codes]);
+
+  return [investigatorSets, loading];
 }
 
 export function useRequiredCards(investigator?: InvestigatorChoice, tabooSetOverride?: number): [Card[], boolean] {

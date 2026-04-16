@@ -944,6 +944,13 @@ export default function OddsCalculatorComponent({
       <View>
         { map(items, (item, idx) => item.type === 'header' ? (
           <DeckBubbleHeader title={item.title} key={idx} />
+        ) : item.type === 'placeholder' ? (
+          <NewDialog.PickerItem
+            key={idx}
+            text={item.title}
+            selected={currentScenario === item.value}
+            last={idx === items.length - 1 || items[idx + 1].type === 'header'}
+          />
         ) : (
           <NewDialog.PickerItem
             key={idx}
@@ -997,10 +1004,10 @@ export default function OddsCalculatorComponent({
     const tablet = find(stv, x => x.token === 'tablet');
     const elder_thing = find(stv, x => x.token === 'elder_thing');
     const initialValues = {
-      skull: (skull?.type === 'counter' && (skull.counter.initial_value || skull.counter.min)) || 0,
-      cultist: (cultist?.type === 'counter' && (cultist.counter.initial_value || cultist.counter.min)) || 0,
-      tablet: (tablet?.type === 'counter' && (tablet.counter.initial_value || tablet.counter.min)) || 0,
-      elder_thing: (elder_thing?.type === 'counter' && (elder_thing.counter.initial_value || elder_thing.counter.min)) || 0,
+      skull: (skull?.type === 'counter' && (skull.counter.initial_value ?? skull.counter.min)) || 0,
+      cultist: (cultist?.type === 'counter' && (cultist.counter.initial_value ?? cultist.counter.min)) || 0,
+      tablet: (tablet?.type === 'counter' && (tablet.counter.initial_value ?? tablet.counter.min)) || 0,
+      elder_thing: (elder_thing?.type === 'counter' && (elder_thing.counter.initial_value ?? elder_thing.counter.min)) || 0,
       elder_sign: 1,
     }
     return [
@@ -1017,7 +1024,7 @@ export default function OddsCalculatorComponent({
           return {
             token: tokenValue.token,
             value: {
-              modifier: ((xValue[tokenValue.token] || (tokenValue.counter.min || 0)) + (tokenValue.counter.adjustment || 0)) * (tokenValue.counter.scale || 1) * (tokenValue.token === 'elder_sign' ? 1 : -1),
+              modifier: ((xValue[tokenValue.token] ?? (tokenValue.counter.min ?? 0)) + (tokenValue.counter.adjustment ?? 0)) * (tokenValue.counter.scale ?? 1) * (tokenValue.token === 'elder_sign' ? 1 : -1),
             },
           };
         }

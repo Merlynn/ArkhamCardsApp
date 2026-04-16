@@ -17,7 +17,7 @@ import ArkhamLoadingSpinner from '@components/core/ArkhamLoadingSpinner';
 import { useFlag, useSettingValue } from '@components/core/hooks';
 import { DeckMeta, CardId, ParsedDeck, SplitCards, EditDeckState, Customizations, Slots, AttachableDefinition } from '@actions/types';
 import { TypeCodeType, RANDOM_BASIC_WEAKNESS, getAttachableCards } from '@app_constants';
-import Card, { CardsMap, InvestigatorChoice, cardInCollection } from '@data/types/Card';
+import Card, { CardsMap, InvestigatorChoice } from '@data/types/Card';
 import DeckValidation from '@lib/DeckValidation';
 import { CardSectionHeaderData } from '@components/core/CardSectionHeader';
 import { getPacksInCollection, getShowCustomContent } from '@reducers';
@@ -30,6 +30,8 @@ import { PARALLEL_JIM_CODE } from '@data/deck/specialMetaSlots';
 import { useDeckAttachmentSlots } from './DeckEditContext';
 import { useNavigation } from '@react-navigation/native';
 import StyleContext from '@styles/StyleContext';
+import { ListCard } from '@data/types/ListCard';
+import { cardInCollection } from '@data/types/cardHelpers';
 
 interface CollectionSettings {
   inCollection: { [pack_code: string]: boolean };
@@ -391,7 +393,7 @@ interface Props {
   showEditSide?: () => void;
   showEditExtra?: () => void;
   showDrawWeakness?: (replaceRandomBasicWeakness?: boolean) => void;
-  showCardUpgradeDialog?: (card: Card, mode: 'extra' | undefined) => void;
+  showCardUpgradeDialog?: (card: ListCard, mode: 'extra' | undefined) => void;
   deckEditsRef?: RefObject<EditDeckState | undefined>;
 
   requiredCards?: CardId[];
@@ -823,15 +825,17 @@ export default function useParsedDeckComponent({
       navigation,
       colors,
       map(visibleCards, card => card.code),
-      controls,
-      index,
-      visibleCards,
-      false,
-      tabooSetId,
-      deckId,
-      investigator?.front,
-      editable,
-      customizations,
+      {
+        controls,
+        index,
+        initialCards: visibleCards,
+        showSpoilers: false,
+        tabooSetId,
+        deckId,
+        investigator: investigator?.front,
+        editable,
+        initialCustomizations: customizations,
+      },
     );
   }, [customizations, colors, data, editable, navigation, deckId, investigator, tabooSetId, singleCardView, cards]);
   const { listSeperator } = useContext(LanguageContext);

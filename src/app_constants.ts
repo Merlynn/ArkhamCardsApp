@@ -7,7 +7,7 @@ import {
 } from '@data/scenario/types';
 import { AttachableDefinition, Pack } from '@actions/types';
 import { JOE_DIAMOND_CODE } from '@data/deck/specialCards';
-import Card from '@data/types/Card';
+import { ListCard } from '@data/types/ListCard';
 
 export type TypeCodeType =
   | 'asset'
@@ -170,9 +170,11 @@ export function isSpecialToken(token: ChaosTokenType) {
   }
 }
 
-export const POOL_CURRENT_PACKS = ['tskp', 'fhvp', 'tdcp'];
+export const POOL_CURRENT_PACKS = [];
 export const POOL_INVESTIGATOR_CYCLE = 'cycle:investigator';
+export const POOL_INVESTIGATOR_CH2_CYCLE = 'cycle:investigator_ch2';
 export const POOL_INVESTIGATOR_PACKS = ['nat','har','win','jac','ste'];
+export const POOL_INVESTIGATOR_CH2_PACKS = ['and','car','mar','mig','tom'];
 
 export const CHAOS_TOKENS: ChaosTokenType[] = [
   '+1',
@@ -398,7 +400,7 @@ export function getAttachableCards(): { [code: string]: AttachableDefinition } {
       requiredCards: {
         [UNSOLVED_CASE_CODE]: 1,
       },
-      filter: (card: Card) => card.type_code === 'event',
+      filter: (card: ListCard) => card.type_code === 'event',
     },
     [STICK_TO_THE_PLAN_CODE]: {
       code: STICK_TO_THE_PLAN_CODE,
@@ -408,7 +410,7 @@ export function getAttachableCards(): { [code: string]: AttachableDefinition } {
       buttonLabel: t`Stick to the Plan`,
       icon: 'package',
       targetSize: 3,
-      filter: (card: Card) => card.type_code === 'event',
+      filter: (card: ListCard) => card.type_code === 'event',
     },
     [UNDERWORLD_MARKET_CODE]: {
       code: UNDERWORLD_MARKET_CODE,
@@ -425,7 +427,7 @@ export function getAttachableCards(): { [code: string]: AttachableDefinition } {
       buttonLabel: t`Branded spell`,
       icon: 'stamp',
       targetSize: 1,
-      filter: (card: Card) => card.type_code === 'asset' && !card.restrictions_investigator,
+      filter: (card: ListCard) => card.type_code === 'asset' && !card.hasInvestigatorRestrictions(),
     },
   };
 }
@@ -641,7 +643,7 @@ export function getCardPoolSections(): {
     {
       type: 'core',
       section: t`Core set`,
-      packs: ['core', 'rcore'],
+      packs: ['core', 'rcore', 'core_2026'],
     },
     {
       type: 'limited',
@@ -664,11 +666,8 @@ export function getCardPoolSections(): {
       section: t`Starter decks`,
       custom: true,
       packs: [
-        'nat',
-        'har',
-        'win',
-        'jac',
-        'ste',
+        ...POOL_INVESTIGATOR_CH2_PACKS,
+        ...POOL_INVESTIGATOR_PACKS,
       ],
     },
     {
@@ -682,7 +681,7 @@ export function getCardPoolSections(): {
     },
   ];
 }
-export const specialPacks: ReprintPack[] = [
+export const SPECIAL_PACKS: ReprintPack[] = [
   {
     code: 'dwlp',
     packs: ['dwl', 'tmm', 'tece', 'bota', 'uau', 'wda', 'litas'],
@@ -779,7 +778,7 @@ export const specialReprintCampaignPacks: {
 export const specialReprintCardPacks: {
   [card_code: string]: string | undefined;
 } = {};
-forEach(specialPacks, (pack) => {
+forEach(SPECIAL_PACKS, (pack) => {
   forEach(pack.packs, (p) => {
     if (pack.player) {
       specialReprintPlayerPacks[p] = pack.code;
@@ -792,8 +791,8 @@ forEach(specialPacks, (pack) => {
   });
 });
 
-export const specialPacksSet: Set<string> = new Set(
-  specialPacks.map((p) => p.code)
+export const SPECIAL_PACK_SET: Set<string> = new Set(
+  SPECIAL_PACKS.map((p) => p.code)
 );
 
 export function getSpecialPackNames(): { [code: string]: string } {
@@ -833,24 +832,29 @@ export function reprintPackToPack(pack: ReprintPack): Pack {
  * - Otherwise returns the pack code as-is
  */
 export function expandPackCode(packCode: string): string[] {
-  if (packCode === POOL_INVESTIGATOR_CYCLE) {
-    return POOL_INVESTIGATOR_PACKS;
-  }
-  const specialPack = specialPacks.find(sp => sp.code === packCode);
-  if (specialPack) {
-    const packs = [...specialPack.packs];
-    // Include Return To packs for card pool
-    const returnToPack = getReturnToPack(packCode);
-    if (returnToPack) {
-      packs.push(returnToPack);
+  switch (packCode) {
+    case POOL_INVESTIGATOR_CYCLE:
+      return POOL_INVESTIGATOR_PACKS;
+    case POOL_INVESTIGATOR_CH2_CYCLE:
+      return POOL_INVESTIGATOR_CH2_PACKS;
+    default: {
+      const specialPack = SPECIAL_PACKS.find(sp => sp.code === packCode);
+      if (specialPack) {
+        const packs = [...specialPack.packs];
+        // Include Return To packs for card pool
+        const returnToPack = getReturnToPack(packCode);
+        if (returnToPack) {
+          packs.push(returnToPack);
+        }
+        return packs;
+      }
+      // Include Return To pack for core set
+      if (packCode === 'core' || packCode === 'rcore') {
+        return [packCode, 'rtnotz'];
+      }
+      return [packCode];
     }
-    return packs;
   }
-  // Include Return To pack for core set
-  if (packCode === 'core' || packCode === 'rcore') {
-    return [packCode, 'rtnotz'];
-  }
-  return [packCode];
 }
 
 /**
@@ -881,8 +885,10 @@ export function cycleName(position: string): string {
     case '9': return t`The Scarlet Keys`;
     case '10': return t`The Feast of Hemlock Vale`;
     case '11': return t`The Drowned City`;
+    case '12': return t`Core (2026)`;
     case '50': return t`Return to...`;
     case '60': return t`Investigator Starter Decks`;
+    case '61': return t`Investigator Decks`;
     case '70': return t`Standalone`;
     case '80': return t`Books`;
     case '90': return t`Parallel`;

@@ -1,7 +1,9 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+type MaterialIconsIconName = React.ComponentProps<typeof MaterialIcons>['name'];
 
 import Ripple from '@lib/react-native-material-ripple';
 import StyleContext from '@styles/StyleContext';
@@ -85,6 +87,7 @@ interface Props {
   bigEncounterIcon?: boolean;
   rightNode?: React.ReactNode;
   textComponent?: React.ReactNode;
+  adjustsFontSizeToFit?: boolean;
 }
 
 const ICON_SIZE: { [icon: string]: number | undefined } = {
@@ -124,6 +127,9 @@ const ICON_STYLE: { [icon: string]: ViewStyle | undefined } = {
 };
 
 const MATERIAL_ICONS = new Set(['email', 'login', 'backup', 'headset']);
+const isMaterialIcon = (icon: string): icon is MaterialIconsIconName => {
+  return MATERIAL_ICONS.has(icon);
+}
 const APP_ICONS = new Set(['xp']);
 const ARKHAM_ICONS = new Set(['per_investigator', 'faq', 'elder_sign', 'weakness']);
 const ENCOUNTER_ICONS = new Set(['tdea', 'tdeb']);
@@ -146,6 +152,7 @@ export default function DeckButton({
   noShadow,
   rightNode,
   textComponent,
+  adjustsFontSizeToFit,
 }: Props) {
   const { colors, fontScale, typography, shadow } = useContext(StyleContext);
   const backgroundColors = {
@@ -214,7 +221,7 @@ export default function DeckButton({
       return null;
     }
     const size = (thin ? ICON_SIZE_THIN[icon] : undefined) || ICON_SIZE[icon] || 28;
-    if (MATERIAL_ICONS.has(icon)) {
+    if (isMaterialIcon(icon)) {
       return <MaterialIcons name={icon} size={size} color={theIconColor} />;
     }
     if (APP_ICONS.has(icon)) {
@@ -281,7 +288,7 @@ export default function DeckButton({
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                adjustsFontSizeToFit
+                adjustsFontSizeToFit={adjustsFontSizeToFit}
                 style={[
                   { textAlignVertical: 'center' },
                   detail ? typography.large : typography.cardName,
@@ -292,7 +299,11 @@ export default function DeckButton({
               </Text>
             </View>
             { !!detail && (
-              <Text style={[typography.smallButtonLabel, { marginTop: 1, color: detailTextColor[color] }]} numberOfLines={2}>
+              <Text
+                style={[typography.smallButtonLabel, { marginTop: 1, color: detailTextColor[color] }]}
+                numberOfLines={2}
+                adjustsFontSizeToFit={adjustsFontSizeToFit}
+              >
                 { detail }
               </Text>
             ) }

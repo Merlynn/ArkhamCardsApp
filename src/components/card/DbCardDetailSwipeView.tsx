@@ -40,17 +40,17 @@ import { getSystemLanguage } from '@lib/i18n';
 import { useAttachableCards } from '@components/deck/useParsedDeckComponent';
 import RoundedFactionBlock from '@components/core/RoundedFactionBlock';
 import RoundedFactionHeader from '@components/core/RoundedFactionHeader';
-import space, { s } from '@styles/space';
+import space, { m, s } from '@styles/space';
 import CardSearchResult from '@components/cardlist/CardSearchResult';
 import { DeckEditContext, ParsedDeckContextProvider, useAllCardCustomizations, useCardCustomizations, useDeckAttachmentSlots } from '@components/deck/DeckEditContext';
 import { getDeckScreenOptions } from '@components/nav/helper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface CardDetailSwipeProps {
   cardCodes: string[];
   controls?: ('deck' | 'side' | 'extra' | 'special' | 'ignore' | 'bonded' | 'checklist' | 'attachment')[];
   initialCards?: Card[];
   initialIndex: number;
-  whiteNav: boolean;
   showAllSpoilers?: boolean;
   tabooSetId?: number;
   deckId?: DeckId;
@@ -62,17 +62,6 @@ export interface CardDetailSwipeProps {
 }
 
 type Props = CardDetailSwipeProps;
-
-const options = (passProps: CardDetailSwipeProps) => {
-  return {
-    topBar: {
-      backButton: {
-        title: t`Back`,
-        color: passProps.whiteNav ? 'white' : COLORS.M,
-      },
-    },
-  };
-};
 
 function AttachmentSection({ card, attachment, attachmentCards, width }: { width: number; card: Card, attachment: AttachableDefinition; attachmentCards: Card[] }) {
   const { typography } = useContext(StyleContext);
@@ -168,6 +157,7 @@ function ScrollableCard(props: {
   attachment?: AttachableDefinition;
   attachmentCards: Card[];
 }) {
+  const insets = useSafeAreaInsets();
   const {
     customizationsEditable, card, tabooSetId,
     width, height, customizations, deckCount,
@@ -193,7 +183,7 @@ function ScrollableCard(props: {
       overScrollMode="never"
       showsVerticalScrollIndicator={false}
       bounces={false}
-      contentContainerStyle={backgroundStyle}
+      contentContainerStyle={[backgroundStyle, { paddingBottom: insets.bottom + m }]}
     >
       <CardDetailComponent
         card={customizedCard}
@@ -274,10 +264,10 @@ function DbCardDetailSwipeViewComponent(props: Props & { parsedDeck: ParsedDeckR
     return card && card.withCustomizations(listSeperator, customizations[currentCode]);
   }, [listSeperator, customizations, currentCode, cards]);
   useEffect(() => {
-    const nearbyCards = slice(cardCodes, Math.max(index - 10, 0), Math.min(index + 10, cardCodes.length - 1));
+    const nearbyCards = slice(cardCodes, Math.max(index - 10, 0), Math.min(index + 10, cardCodes.length));
     if (find(nearbyCards, code => !cards[code])) {
       const codes = filter(
-        slice(cardCodes, Math.max(index - 20, 0), Math.min(index + 30, cardCodes.length - 1)),
+        slice(cardCodes, Math.max(index - 20, 0), Math.min(index + 30, cardCodes.length)),
         code => !cards[code]
       );
       db.getCards(where(`c.code IN (:...codes)`, { codes }), tabooSetId)
@@ -322,7 +312,7 @@ function DbCardDetailSwipeViewComponent(props: Props & { parsedDeck: ParsedDeckR
   }, [navigation]);
   useEffect(() => {
     if (currentCard) {
-      const buttonColor = props.whiteNav ? 'white' : COLORS.M;
+      const buttonColor = props.headerBackgroundColor ? 'white' : COLORS.M;
       const rightButtons = rightButtonsForCard(currentCard, buttonColor);
       navigation.setOptions({
         headerRight: () => (
@@ -340,7 +330,7 @@ function DbCardDetailSwipeViewComponent(props: Props & { parsedDeck: ParsedDeckR
         ),
       });
     }
-  }, [currentCard, navigation, props.whiteNav, handleButtonPress]);
+  }, [currentCard, navigation, props.headerBackgroundColor, handleButtonPress]);
 
   const showCardSpoiler = useCallback((card: Card) => {
     return !!(showAllSpoilers || showSpoilers[card.pack_code] || spoilers[card.code]);
@@ -471,10 +461,7 @@ function DeckCardControls({
   return null;
 }
 
-DbCardDetailSwipeView.options = options;
-
 export default DbCardDetailSwipeView;
-
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -3463,15 +3463,6 @@ msgstr "Symbole dla daltonistów"
 msgid "Uploading"
 msgstr "Wysyłanie"
 
-msgid "Upload campaigns"
-msgstr "Wyślij kampanię"
-
-msgid "Campaigns can be uploaded to your Arkham Cards account."
-msgstr "Kampanie można przesyłać na konto Arkham Cards."
-
-msgid "Uploaded campaigns will be synced between devices."
-msgstr "Przesłane kampanie będą synchronizowane między urządzeniami."
-
 msgid "Note campaign achievements"
 msgstr "Zanotuj osiągnięcia kampanii"
 
@@ -3606,9 +3597,6 @@ msgstr "Dodaj znajomych"
 
 msgid "Access"
 msgstr "Dostęp"
-
-msgid "Later"
-msgstr "Później"
 
 msgid "Searching cards..."
 msgstr "Szukanie kart..."
@@ -5130,7 +5118,7 @@ msgid "Delete your account"
 msgstr "Usuń swoje konto"
 
 msgid "Loading account details..."
-msgstr "Ładowanie dane konta..."
+msgstr "Ładowanie danych konta..."
 
 msgid "Are you sure that you want to <b>permanently</b> delete your account? This <b>cannot be undone</b>."
 msgstr "Czy na pewno chcesz <b>trwale</b> usunąć swoje konto? Ta operacja <b>nie może być cofnięta</b>."
@@ -5404,10 +5392,6 @@ msgstr "Ta karta nie została jeszcze wydana i nie może być obecnie używana w
 msgid "Recomputing deck changes..."
 msgstr "Przeliczanie zmian talii..."
 
-#, javascript-format
-msgid "Cost: ${ card.cost }"
-msgstr "Koszt: ${ card.cost }"
-
 msgid "Grants access to previewed player cards"
 msgstr "Daje dostęp do przedpremierowych kart graczy"
 
@@ -5536,7 +5520,7 @@ msgid "If you wish to add a side-story to this campaign, you may travel to this 
 msgstr "Jeśli chcesz włączyć historię poboczną do tej kampanii, możesz udać się do tej lokalizacji i wydać dodatkowy czas równy normalnemu kosztowi doświadczenia za rozegranie tej historii pobocznej."
 
 msgid "Use expedited ticket"
-msgstr ""
+msgstr "Użyj opłaconego biletu"
 
 #, javascript-format
 msgid "Time cost: ${ xpCost }"
@@ -6232,7 +6216,7 @@ msgid "View or edit"
 msgstr "Przejrzyj / edytuj"
 
 msgid "View"
-msgstr ""
+msgstr "Przejrzyj"
 
 msgid "Review chaos bag"
 msgstr "Przejrzyj worek chaosu"
@@ -6280,10 +6264,6 @@ msgid "Use a completely custom card pool"
 msgstr "Używaj całkowicie dowolnej puli kart"
 
 #, javascript-format
-msgid "Limited: ${ selectedPacks.size } packs selected"
-msgstr "Ograniczona: wybrano ${ selectedPacks.size } zestaw(y)"
-
-#, javascript-format
 msgid "Custom: ${ selectedPacks.size } packs selected"
 msgstr "Własna: wybrano ${ selectedPacks.size } zestaw(y)"
 
@@ -6311,9 +6291,6 @@ msgstr "Ograniczona: Zaznaczono zbyt dużo zestawów"
 msgid "Limited:"
 msgstr "Ograniczona:"
 
-msgid "Current:"
-msgstr "Aktualna:"
-
 msgid "Cycles (select 3)"
 msgstr "Zestawy (zaznacz 3)"
 
@@ -6327,9 +6304,6 @@ msgid "Card"
 msgstr ""
 
 msgid "Edit Scenario Result"
-msgstr ""
-
-msgid "Merge Backup"
 msgstr ""
 
 msgid "Safe Mode"
@@ -6369,12 +6343,13 @@ msgstr ""
 msgid "Fan-Made Challenge Scenario by ${ scenario.custom.creator }"
 msgstr ""
 
+#. fallback for playerCard only
 #, javascript-format
 msgid "Experience cost: ${ xpCost } for decks that include ${ investigator.name }, ${ challengeDiscountCost } for each other player"
 msgstr "Koszt doświadczenia: ${ xpCost } dla talii zawierających ${ investigator.name }, ${ challengeDiscountCost } dla pozostałych graczy"
 
 msgid "You must have at least 6 cards from each faction."
-msgstr ""
+msgstr "Musisz mieć co najmniej 6 kart z każdej klasy."
 
 #, javascript-format
 msgid ""
@@ -6384,14 +6359,77 @@ msgid ""
 "\n"
 "This will use about 25mb of storage."
 msgstr ""
+"Czy chciałbyś ściągnąć najnowsze karty z ArkhamDB w preferowanym języku twojego telefonu (${ lang })?\n"
+"\n"
+"Możesz nadpisać ustawienia językowe tej aplikacji w Ustawieniach.\n"
+"\n"
+"Ta operacja zajmie około 25MB."
+
+msgid "Head"
+msgstr ""
+
+#, javascript-format
+msgid "Cost: ${ _card.cost }"
+msgstr "Koszt: ${ _card.cost }"
+
+msgid "Select version"
+msgstr "Wybierz wersję"
+
+msgid "Alternate version"
+msgstr "Alternatywna wersja"
+
+#. Remove "Investigator Expansion" from pack name
+msgid "Investigator Expansion"
+msgstr "Rozszerzenie badaczy"
+
+msgid "Alternate versions"
+msgstr "Alternatywne wersje"
+
+msgid "View on arkham.build"
+msgstr ""
+
+msgid "Brethren of Ash"
+msgstr ""
+
+msgid "Spreading Flames"
+msgstr ""
+
+msgid "Smoke and Mirrors"
+msgstr ""
+
+msgid "Queen of Ash"
+msgstr ""
+
+msgid "Core (2026)"
+msgstr ""
+
+msgid "Investigator Decks"
+msgstr ""
+
+msgid "Tap to view"
+msgstr ""
+
+msgid "Investigator decks"
+msgstr ""
+
+msgid "Recent releases"
+msgstr ""
+
+msgid "None released yet"
+msgstr ""
+
+msgid "Chapter 1"
+msgstr ""
+
+msgid "Chapter 2"
+msgstr ""
+
+msgid "This draft uses the deck's selected card pool."
+msgstr ""
 
 msgctxt "investigator"
 msgid "Custom"
 msgstr "Własny"
-
-msgctxt "slots"
-msgid "None"
-msgstr "Brak"
 
 msgctxt "trait"
 msgid "???"
@@ -8056,6 +8094,10 @@ msgstr ""
 msgctxt "trait"
 msgid "Tandem"
 msgstr ""
+
+msgctxt "slots"
+msgid "None"
+msgstr "Brak"
 
 #, javascript-format
 msgctxt "masculine"

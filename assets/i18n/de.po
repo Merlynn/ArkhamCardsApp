@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 "x-generator: Poedit 3.0.1\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.9\n"
 
 msgid "Guardian"
 msgstr "Wächter"
@@ -787,19 +787,19 @@ msgstr "Chaosbeutel"
 msgid "Adjust Weakness Set"
 msgstr "Schwächeset anpassen"
 
-#. eslint-disable prefer-template 
+#. eslint-disable prefer-template
 msgid "This deck contains several basic weaknesses"
 msgstr "Dieses Deck enthält mehrere Grundschwächen"
 
-#. eslint-disable prefer-template 
+#. eslint-disable prefer-template
 msgid "This deck contains a basic weakness"
 msgstr "Dieses Deck enthält eine Grundschwäche"
 
-#. eslint-disable prefer-template 
+#. eslint-disable prefer-template
 msgid "Do you want to remove them from the campaign’s Basic Weakness set?"
 msgstr "Willst du sie aus dem Grundschwächenset der Kampagne entfernen?"
 
-#. eslint-disable prefer-template 
+#. eslint-disable prefer-template
 msgid "Do you want to remove it from the campaign’s Basic Weakness set?"
 msgstr "Willst du es aus dem Grundschwächenset der Kampagne entfernen?"
 
@@ -1001,7 +1001,7 @@ msgid "Save Local Changes"
 msgstr "Lokale Änderungen speichern"
 
 msgid "Please save any local edits to this deck before sharing to ArkhamDB"
-msgstr "Bitte speichere alle lokalen Änderungen am Deck vor der Synchronisation mit der ArkhamDB."
+msgstr "Bitte alle lokalen Änderungen am Deck vor der Synchronisation mit ArkhamDB speichern."
 
 msgid "Unsupported Operation"
 msgstr "Nicht unterstützte Aktion"
@@ -1013,7 +1013,7 @@ msgid "Special Cards"
 msgstr "Sonderkarten"
 
 msgid "View on ArkhamDB"
-msgstr "Auf ArkhamDB anzeigen"
+msgstr "ArkhamDB"
 
 msgid "Save deck changes?"
 msgstr "Deck-Änderungen speichern?"
@@ -1766,7 +1766,7 @@ msgstr[1] "Es werden alle Karten aus den Begegnungssets ${ encounterSetString } 
 #, javascript-format
 msgid "${ startText } This set is indicated by the following icon:"
 msgid_plural "${ startText } These sets are indicated by the following icons:"
-msgstr[0] "${ startText } Dieses Set ist an folgenden Symbolen zu erkennen:"
+msgstr[0] "${ startText } Dieses Set ist am folgenden Symbol zu erkennen:"
 msgstr[1] "${ startText } Diese Sets sind an folgenden Symbolen zu erkennen:"
 
 msgid "Choose Investigators"
@@ -3428,15 +3428,6 @@ msgstr "Farbenblindenfreundliche Symbole"
 msgid "Uploading"
 msgstr "Hochladen"
 
-msgid "Upload campaigns"
-msgstr "Kampagnen hochladen"
-
-msgid "Campaigns can be uploaded to your Arkham Cards account."
-msgstr "Kampagnen können zu deinem Arkham-Cards-Konto hochgeladen werden."
-
-msgid "Uploaded campaigns will be synced between devices."
-msgstr "Hochgeladene Kampagnen werden zwischen Geräten synchronisiert."
-
 msgid "Note campaign achievements"
 msgstr "Kampagnenerfolge notieren"
 
@@ -3571,9 +3562,6 @@ msgstr "Freunde hinzufügen"
 msgid "Access"
 msgstr "Zugriff"
 
-msgid "Later"
-msgstr "Später"
-
 msgid "Searching cards..."
 msgstr "Suche nach Karten..."
 
@@ -3653,7 +3641,7 @@ msgid "Dark Matter"
 msgstr "Dunkle Materie"
 
 msgid "Impending Doom"
-msgstr "Bevorstehendes Verderben"
+msgstr "Drohendes Unheil"
 
 msgid "Memories"
 msgstr "Erinnerungen"
@@ -4782,7 +4770,7 @@ msgid "Other investigator cards"
 msgstr "Andere Ermittlerkarten"
 
 msgid "Ultimatum of Chaos"
-msgstr ""
+msgstr "Ultimatum des Chaos"
 
 msgid "Generate deck"
 msgstr "Deck erzeugen"
@@ -5355,10 +5343,6 @@ msgstr "Diese Karte wurde noch nicht veröffentlicht und kann somit nicht in Ark
 msgid "Recomputing deck changes..."
 msgstr "Deckänderungen werden neu berechnet..."
 
-#, javascript-format
-msgid "Cost: ${ card.cost }"
-msgstr "Kosten: ${ card.cost }"
-
 msgid "Grants access to previewed player cards"
 msgstr "Gewährt Zugriff auf nicht-offizielle Karten"
 
@@ -5443,10 +5427,10 @@ msgid "Bearer"
 msgstr "Träger"
 
 msgid "You cannot have more than 5 Seeker and/or Survivor cards"
-msgstr "Du kannst nicht mehr als 5 Sucher und/oder Überlebende Karten haben."
+msgstr "Du kannst nicht mehr als 5 Sucher- und/oder Überlebende-Karten haben."
 
 msgid "You cannot have more than 5 Mystic and/or Survivor cards"
-msgstr "Du kannst nicht mehr als 5 Mystiker und/oder Überlebende Karten haben."
+msgstr "Du kannst nicht mehr als 5 Mystiker- und/oder Überlebende-Karten haben."
 
 msgid "Fan-made Investigators"
 msgstr "Fan-made Ermittler"
@@ -6210,10 +6194,6 @@ msgid "Use a completely custom card pool"
 msgstr "Verwende einen benutzerdefinierten Kartenpool"
 
 #, javascript-format
-msgid "Limited: ${ selectedPacks.size } packs selected"
-msgstr "Limitiert: ${ selectedPacks.size } Erweiterungen ausgewählt"
-
-#, javascript-format
 msgid "Custom: ${ selectedPacks.size } packs selected"
 msgstr "Benutzerdefiniert: ${ selectedPacks.size } Erweiterungen ausgewählt"
 
@@ -6241,9 +6221,6 @@ msgstr "Limitiert: Zu viele Erweiterungen ausgewählt"
 msgid "Limited:"
 msgstr "Limitiert:"
 
-msgid "Current:"
-msgstr "Aktuell:"
-
 msgid "Cycles (select 3)"
 msgstr "Zyklen (wähle 3)"
 
@@ -6258,9 +6235,6 @@ msgstr "Karte"
 
 msgid "Edit Scenario Result"
 msgstr "Szenario Ergebnis ändern"
-
-msgid "Merge Backup"
-msgstr "Backup zusammenführen"
 
 msgid "Safe Mode"
 msgstr "Sicherer Modus"
@@ -6299,6 +6273,7 @@ msgstr "Platzierung der Orte"
 msgid "Fan-Made Challenge Scenario by ${ scenario.custom.creator }"
 msgstr "Fan-Made Herausforderungsszenario von ${ scenario.custom.creator }"
 
+#. fallback for playerCard only
 #, javascript-format
 msgid "Experience cost: ${ xpCost } for decks that include ${ investigator.name }, ${ challengeDiscountCost } for each other player"
 msgstr "Erfahrungspunkt Kosten: ${ xpCost } für Decks, die ${ investigator.name } beinhalten, ${ challengeDiscountCost } für jede andere Spieler:in"
@@ -6320,13 +6295,71 @@ msgstr ""
 "\n"
 "Das wird etwa 25 MB Speicherplatz verwenden."
 
+msgid "Head"
+msgstr "Kopf"
+
+#, javascript-format
+msgid "Cost: ${ _card.cost }"
+msgstr "Kosten: ${ _card.cost }"
+
+msgid "Select version"
+msgstr "Version auswählen"
+
+msgid "Alternate version"
+msgstr "Alternative Version"
+
+#. Remove "Investigator Expansion" from pack name
+msgid "Investigator Expansion"
+msgstr "Ermittler-Erweiterung"
+
+msgid "Alternate versions"
+msgstr "Alternative Versionen"
+
+msgid "View on arkham.build"
+msgstr "arkham.build"
+
+msgid "Brethren of Ash"
+msgstr "Bruderschaft der Asche"
+
+msgid "Spreading Flames"
+msgstr "Auflodernde Flammen"
+
+msgid "Smoke and Mirrors"
+msgstr "Rauchschleier"
+
+msgid "Queen of Ash"
+msgstr "Königin der Asche"
+
+msgid "Core (2026)"
+msgstr "Grundspiel (2026)"
+
+msgid "Investigator Decks"
+msgstr "Ermittlerdecks"
+
+msgid "Tap to view"
+msgstr "Zum Anzeigen antippen"
+
+msgid "Investigator decks"
+msgstr "Ermittlerdecks"
+
+msgid "Recent releases"
+msgstr "Zuletzt veröffentlicht"
+
+msgid "None released yet"
+msgstr "Bisher keine veröffentlicht"
+
+msgid "Chapter 1"
+msgstr "Kapitel 1"
+
+msgid "Chapter 2"
+msgstr "Kapitel 2"
+
+msgid "This draft uses the deck's selected card pool."
+msgstr "Dieser Draft nutzt den gewählten Kartenpool des Decks."
+
 msgctxt "investigator"
 msgid "Custom"
 msgstr "Benutzerdefiniert"
-
-msgctxt "slots"
-msgid "None"
-msgstr "Keine"
 
 msgctxt "trait"
 msgid "???"
@@ -7650,7 +7683,7 @@ msgstr "Auferstanden"
 
 msgctxt "trait"
 msgid "Row"
-msgstr ""
+msgstr "Reihe"
 
 msgctxt "trait"
 msgid "Royalty"
@@ -7958,7 +7991,7 @@ msgstr "Haltung"
 
 msgctxt "trait"
 msgid "Prosthesis"
-msgstr ""
+msgstr "Prothese"
 
 msgctxt "trait"
 msgid "R'lyeh"
@@ -7991,6 +8024,10 @@ msgstr "Symbiont"
 msgctxt "trait"
 msgid "Tandem"
 msgstr "Tandem"
+
+msgctxt "slots"
+msgid "None"
+msgstr "Keine"
 
 #, javascript-format
 msgctxt "masculine"

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState, useReducer, useLayoutEffect } from 'react';
-import { dropWhile, filter, forEach, map, reverse, throttle, uniq } from 'lodash';
+import { dropWhile, filter, forEach, map, reverse, throttle, uniqBy } from 'lodash';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -95,10 +95,15 @@ function NewCampaignView() {
   const [difficulty, setDifficulty] = useState<CampaignDifficulty>(CampaignDifficulty.STANDARD);
   const [selectedDecks, setSelectedDecks] = useState<LatestDeckT[]>([]);
   const [investigatorIds, updateInvestigatorIds] = useReducer(
-    (state: string[], { type, investigator }: { type: 'add' | 'remove'; investigator: string }) => {
-      switch (type) {
-        case 'add': return uniq([...state, investigator]);
-        case 'remove': return filter(state, x => x !== investigator);
+    (
+      state: { code: string; printing: string | undefined }[],
+      args:
+        { type: 'add'; investigator: string; printing: string | undefined } |
+        { type: 'remove'; investigator: string }
+    ) => {
+      switch (args.type) {
+        case 'add': return uniqBy([{ code: args.investigator, printing: args.printing }, ...state], x => x.code);
+        case 'remove': return filter(state, x => x.code !== args.investigator);
       }
     },
     []
@@ -174,24 +179,24 @@ function NewCampaignView() {
 
   const checkNewDeckForWeakness = useMaybeShowWeaknessPrompt(checkDeckForWeaknessPrompt);
   const investigatorAdded = useCallback((card: Card) => {
-    updateInvestigatorIds({ type: 'add', investigator: card.code });
+    updateInvestigatorIds({ type: 'add', investigator: card.canonicalInvestigatorId, printing: card.printingInvestigatorId });
   }, [updateInvestigatorIds]);
 
   const investigatorRemoved = useCallback((card: Card) => {
-    updateInvestigatorIds({ type: 'remove', investigator: card.code });
+    updateInvestigatorIds({ type: 'remove', investigator: card.canonicalInvestigatorId });
   }, [updateInvestigatorIds]);
 
   const includeParallel = campaignChoice?.selection.type === 'campaign' && campaignChoice.selection.code === OZ;
   const getDeckInvestigator = useCallback((deck: Deck) => {
     return includeParallel ? deck.meta?.alternate_front ?? deck.investigator_code : deck.investigator_code
   }, [includeParallel]);
-  const deckAdded = useCallback(async(deck: Deck) => {
+  const deckAdded = useCallback(async(deck: Deck, card: Card) => {
     setSelectedDecks([...selectedDecks, new LatestDeckRedux(deck, undefined, undefined)]);
     const investigatorId = getDeckInvestigator(deck);
-    updateInvestigatorIds({ type: 'add', investigator: investigatorId });
+    updateInvestigatorIds({ type: 'add', investigator: card.canonicalInvestigatorId, printing: investigatorId ?? card.printingInvestigatorId });
     setInvestigatorToDeck({
       ...investigatorToDeck,
-      [investigatorId]: getDeckId(deck),
+      [card.canonicalInvestigatorId]: getDeckId(deck),
     });
     checkNewDeckForWeakness(deck);
   }, [
@@ -248,7 +253,7 @@ function NewCampaignView() {
       const selection = campaignChoice.selection;
       const state = navigation.getState();
       const routes = dropWhile(
-        reverse([...state?.routes ?? []]),
+        reverse([...(state?.routes ?? [])]),
         r => r.name === 'Campaign.New'
       ).reverse();
       if (selection.type === 'campaign') {
@@ -275,6 +280,7 @@ function NewCampaignView() {
                     campaignIdA,
                     campaignIdB,
                     upload: uploadCampaign,
+                    title: name || placeholderName,
                   },
                 },
               ],
@@ -306,6 +312,7 @@ function NewCampaignView() {
                   params: {
                     campaignId,
                     upload: uploadCampaign,
+                    title: name || placeholderName,
                   },
                 },
               ],
@@ -335,6 +342,7 @@ function NewCampaignView() {
                   scenarioId: selection.id.scenarioId,
                   standalone: true,
                   upload: uploadCampaign,
+                  title: name || placeholderName,
                 },
               },
             ],
@@ -500,7 +508,7 @@ function NewCampaignView() {
         onDeckSelect: deckAdded,
         onInvestigatorSelect: investigatorAdded,
         selectedDecks,
-        selectedInvestigatorIds: investigatorIds,
+        selectedInvestigatorIds: investigatorIds.map(i => i.code),
         includeParallel,
       };
       navigation.navigate('Dialog.DeckSelector', passProps);
@@ -643,16 +651,6 @@ function NewCampaignView() {
     </View>
   );
 }
-
-NewCampaignView.options = () => {
-  return {
-    topBar: {
-      title: {
-        text: t`New Campaign`,
-      },
-    },
-  };
-};
 
 export default NewCampaignView;
 

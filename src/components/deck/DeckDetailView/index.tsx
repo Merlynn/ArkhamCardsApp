@@ -59,6 +59,9 @@ import useTagPile from '@components/deck/useTagPile';
 import { PARALLEL_JIM_CODE } from '@data/deck/specialMetaSlots';
 import { parseMetaSlots } from '@lib/parseDeck';
 import { ParsedDeckContextProvider } from '../DeckEditContext';
+import { ListCard } from '@data/types/ListCard';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { withCachedCards } from '@data/sqlite/withCachedCards';
 
 export interface DeckDetailProps {
   id: DeckId;
@@ -431,6 +434,9 @@ function DeckDetailView({
           backgroundColor,
         },
         headerTitleStyle: {
+          fontFamily: 'Alegreya-Medium',
+          fontSize: 20,
+          fontWeight: '500',
           color: textColor,
         },
         headerTintColor: textColor,
@@ -755,7 +761,7 @@ function DeckDetailView({
     return null;
   }, [deck, hasPendingEdits, editable, parsedDeck, deckEdits, campaign, onEditPressed, onUpgradePressed]);
 
-  const showCardUpgradeDialog = useCallback((card: Card, mode: 'extra' | undefined) => {
+  const showCardUpgradeDialog = useCallback((card: ListCard, mode: 'extra' | undefined) => {
     if (!parsedDeck) {
       return;
     }
@@ -819,6 +825,12 @@ function DeckDetailView({
       Linking.openURL(`${arkhamDbDomain}/deck/view/${deck.id}`);
     }
   }, [deck, arkhamDbDomain]);
+
+  const viewArkhamBuild = useCallback(() => {
+    if (deck && !deck.local) {
+      Linking.openURL(`https://arkham.build/deck/view/${deck.id}`);
+    }
+  }, [deck]);
 
   const deleteDeckPressed = useCallback(() => {
     if (!deck) {
@@ -892,10 +904,15 @@ function DeckDetailView({
   }, [setMenuOpen, copyDeckId]);
 
   const copyDeckUrl = useCopyAction(`${arkhamDbDomain}/deck/view/${deckId.id}`, t`Link to deck copied!`);
+  const copyArkhamBuildUrl = useCopyAction(`https://arkham.build/deck/view/${deckId.id}`, t`Link to deck copied!`);
   const onCopyUrl = useCallback(() => {
     setMenuOpen(false);
     copyDeckUrl();
   }, [copyDeckUrl, setMenuOpen]);
+  const onCopyArkhamBuild = useCallback(() => {
+    setMenuOpen(false);
+    copyArkhamBuildUrl();
+  }, [copyArkhamBuildUrl, setMenuOpen]);
 
   const [tagsDialog, tagString, showTagsDialog] = useTagsDialog(
     deckT,
@@ -1063,9 +1080,18 @@ function DeckDetailView({
             description={t`Open in browser`}
             onPress={viewDeck}
             onLongPress={onCopyUrl}
-            last={!editable}
           />
         ) }
+        { !deck.local && (
+          <MenuButton
+            icon="world"
+            title={t`View on arkham.build`}
+            description={t`Open in browser`}
+            onPress={viewArkhamBuild}
+            onLongPress={onCopyArkhamBuild}
+            last={!editable}
+          />
+        )}
         { editable && (
           <MenuButton
             icon="trash"
@@ -1081,7 +1107,7 @@ function DeckDetailView({
     showUpgradeHistoryPressed, toggleCopyDialog, deleteDeckPressed, viewDeck, uploadToArkhamDB, showDescription,
     onUpgradePressed, showCardChartsPressed, showDrawSimulatorPressed, showEditNameDialog, showXpAdjustmentDialog, showTabooPicker,
     onEditSpecialPressed, onChecklistPressed, onDraftCards, onCopyDeckId, onCopyUrl, tagString,
-    onShowTagsDialog,
+    onShowTagsDialog, onCopyArkhamBuild, viewArkhamBuild,
   ]);
 
   const fabIcon = useMemo(() => {
@@ -1256,7 +1282,7 @@ function DeckDetailView({
           menuPosition="right"
         >
           <View>
-            <View style={[styles.container, backgroundStyle] }>
+            <View style={[styles.container, backgroundStyle, { paddingBottom: insets.bottom }] }>
               <DeckViewTab
                 campaignId={campaignId}
                 fromCampaign={fromCampaign}
@@ -1336,19 +1362,22 @@ function DeckDetailView({
   );
 }
 
-const DeckDetailViewWithLogin = withLoginState(DeckDetailView);
+const DeckDetailViewWithLogin = withLoginState(withCachedCards<LoginStateProps>(DeckDetailView));
 
-export const DeckDetailViewOptions = ({ route }: { route: RouteProp<RootStackParamList, 'Deck'> }) => {
+export const DeckDetailViewOptions = ({ route }: { route: RouteProp<RootStackParamList, 'Deck'> }): NativeStackNavigationOptions => {
   const { title, subtitle, headerBackgroundColor } = route.params;
   const textColor = '#FFFFFF';
 
-  const baseOptions = {
+  const baseOptions: NativeStackNavigationOptions = {
     ...(headerBackgroundColor ? {
       headerStyle: {
         backgroundColor: headerBackgroundColor,
       },
       headerTintColor: textColor,
       headerTitleStyle: {
+        fontFamily: 'Alegreya-Medium',
+        fontSize: 20,
+        fontWeight: '500',
         color: textColor,
       },
       statusBarStyle: 'light' as const,

@@ -1,5 +1,141 @@
 [
   {
+    "campaignId": "boa",
+    "sections": [
+      {
+        "section": "campaign_notes",
+        "entries": [
+          {
+            "id": "abigail_harbinger",
+            "text": "Abigail Foreman è l'araldo di Elokoss."
+          },
+          {
+            "id": "cornelia_harbinger",
+            "text": "Cornelia Akely è l'araldo di Elokoss."
+          },
+          {
+            "id": "david_harbinger",
+            "text": "David Renfield è l'araldo di Elokoss."
+          },
+          {
+            "id": "defeated_elokoss_and_the_brethren_of_ash",
+            "text": "gli investigatori hanno sconfitto Elokoss e la Confraternita della Cenere."
+          },
+          {
+            "id": "defeated_their_masked_pursuer",
+            "text": "Gli investigatori hanno sconfitto il loro inseguitore mascherato."
+          },
+          {
+            "id": "discovered_the_cults_whereabouts",
+            "text": "gli investigatori hanno scoperto il nascondiglio del culto."
+          },
+          {
+            "id": "earl_harbinger",
+            "text": "Sgt. Earl Monroe è l'araldo di Elokoss."
+          },
+          {
+            "id": "elokoss_was_reborn",
+            "text": "Elokoss è rinata"
+          },
+          {
+            "id": "failed_in_their_search",
+            "text": "gli investigatori hanno fallito nella loro ricerca."
+          },
+          {
+            "id": "flooded_the_ritual",
+            "text": "gli investigatori hanno allagato il rituale di evocazione della Confraternita della Cenere."
+          },
+          {
+            "id": "killed_the_servant_of_flame",
+            "text": "gli investigatori hanno ucciso il Servitore della Fiamma."
+          },
+          {
+            "id": "margaret_harbinger",
+            "text": "Margaret Liu è l'araldo di Elokoss."
+          },
+          {
+            "id": "miskatonic_university_burned",
+            "text": "La Miskatonic University è bruciata."
+          },
+          {
+            "id": "naomi_harbinger",
+            "text": "Naomi O'Bannion è l'araldo di Elokoss."
+          },
+          {
+            "id": "saved_miskatonic_university",
+            "text": "Gli investigatori hanno salvato la Miskatonic University."
+          },
+          {
+            "id": "scoured_arkham_for_answers",
+            "text": "gli investigatori hanno setacciato Arkham in cerca di risposte."
+          },
+          {
+            "id": "stirred_up_trouble",
+            "text": "gli investigatori hanno seminato il caos."
+          },
+          {
+            "id": "stopped_elokoss_glorious_rebirth",
+            "text": "gli investigatori hanno fermato la gloriosa rinascita di Elokoss."
+          },
+          {
+            "id": "the_servant_of_flame_escaped",
+            "text": "il Servitore della Fiamma è fuggito."
+          }
+        ]
+      },
+      {
+        "section": "hidden",
+        "entries": [
+          {
+            "id": "enemy_is_harbinger",
+            "text": "dummy"
+          },
+          {
+            "id": "killed_servant_of_flame",
+            "text": "dummy"
+          },
+          {
+            "id": "queen_of_ash_phi",
+            "text": "dummy"
+          },
+          {
+            "id": "servant_of_flame_beaneath_act",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_1",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_2",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_3",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_4",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_5",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_6",
+            "text": "dummy"
+          },
+          {
+            "id": "smoke_and_mirrors_phi",
+            "text": "dummy"
+          }
+        ]
+      }
+    ],
+    "supplies": []
+  },
+  {
     "campaignId": "core",
     "sections": [
       {
@@ -5457,35 +5593,35 @@
         "entries": [
           {
             "id": "do_no_harm",
-            "text": "Task Progress - Do No Harm:"
+            "text": "Progressi - Non Nuocere:"
           },
           {
             "id": "dreams_of_destruction",
-            "text": "Task Progress - Dreams of Destruction:"
+            "text": "Progressi - Sogni di Distruzione:"
           },
           {
             "id": "good_money",
-            "text": "Task Progress - Good Money:"
+            "text": "Progressi - Fior di Quattrini:"
           },
           {
             "id": "no_place_like_home",
-            "text": "Task Progress - No Place Like Home:"
+            "text": "Progressi - Nessun Posto Come Casa:"
           },
           {
             "id": "plumb_the_depths",
-            "text": "Task Progress - Plumb the Depths:"
+            "text": "Progressi - Esaminare a Fondo:"
           },
           {
             "id": "prove_your_worth",
-            "text": "Task Progress - Prove Your Worth:"
+            "text": "Progressi - Dimostrazione di Valore:"
           },
           {
             "id": "toe_the_line",
-            "text": "Task Progress - Toe the Line:"
+            "text": "Progressi - Rigare Dritto:"
           },
           {
             "id": "walk_in_faith",
-            "text": "Task Progress - Walk in Faith:"
+            "text": "Progressi - Cammino della Fede:"
           }
         ]
       },
@@ -5494,27 +5630,27 @@
         "entries": [
           {
             "id": "barrier_node",
-            "text": "Barrier Node"
+            "text": "Fulcro della Barriera"
           },
           {
             "id": "clah_horror",
-            "text": "Horror in Clay"
+            "text": "Orrore di Argilla"
           },
           {
             "id": "grisly_mask",
-            "text": "Grisly Mask"
+            "text": "Maschera Orripilante"
           },
           {
             "id": "obsidian_claw",
-            "text": "Obsidian Claw"
+            "text": "Artiglio di Ossidiana"
           },
           {
             "id": "shard",
-            "text": "Shard of Y'ch'lecht"
+            "text": "Frammento di Y'ch'lecht"
           },
           {
             "id": "tidal_tablet",
-            "text": "Tidal Tablet"
+            "text": "Tavoletta delle Maree"
           }
         ]
       },
@@ -5522,136 +5658,136 @@
         "section": "campaign_notes",
         "entries": [
           {
-            "id": "no_place_like_home_succeed",
-            "masculine_text": "#name# found his true home.",
-            "feminine_text": "#name# found her true home.",
-            "nonbinary_text": "#name# found their true home."
-          },
-          {
-            "id": "toe_the_line_succeed",
-            "masculine_text": "#name# found new work.",
-            "feminine_text": "#name# found new work.",
-            "nonbinary_text": "#name# found new work."
+            "id": "dreams_of_destruction_succeed",
+            "masculine_text": "#name# comprende il futuro.",
+            "feminine_text": "#name# comprende il futuro.",
+            "nonbinary_text": "#name# comprende il futuro."
           },
           {
             "id": "walk_in_faith_succeed",
-            "masculine_text": "#name# is strong in their faith.",
-            "feminine_text": "#name# is strong in their faith.",
-            "nonbinary_text": "#name# is strong in their faith."
-          },
-          {
-            "id": "plumb_the_depths_succeed",
-            "masculine_text": "#name# learned the secret truth.",
-            "feminine_text": "#name# learned the secret truth.",
-            "nonbinary_text": "#name# learned the secret truth."
-          },
-          {
-            "id": "good_money_succeed",
-            "masculine_text": "#name# made bank.",
-            "feminine_text": "#name# made bank.",
-            "nonbinary_text": "#name# made bank."
+            "masculine_text": "#name# crede saldamente nella sua fede.",
+            "feminine_text": "#name# crede saldamente nella sua fede.",
+            "nonbinary_text": "#name# crede saldamente nella sua fede."
           },
           {
             "id": "prove_your_worth_succeed",
-            "masculine_text": "#name# pulled their weight.",
-            "feminine_text": "#name# pulled their weight.",
-            "nonbinary_text": "#name# pulled their weight."
+            "masculine_text": "#name# ha fatto la sua parte.",
+            "feminine_text": "#name# ha fatto la sua parte.",
+            "nonbinary_text": "#name# ha fatto la sua parte."
           },
           {
             "id": "do_no_harm_succeed",
-            "masculine_text": "#name# swore an oath to protect others.",
-            "feminine_text": "#name# swore an oath to protect others.",
-            "nonbinary_text": "#name# swore an oath to protect others."
+            "masculine_text": "#name# ha giurato di proteggere il prossimo.",
+            "feminine_text": "#name# ha giurato di proteggere il prossimo.",
+            "nonbinary_text": "#name# ha giurato di proteggere il prossimo."
           },
           {
-            "id": "dreams_of_destruction_succeed",
-            "masculine_text": "#name# understands the future.",
-            "feminine_text": "#name# understands the future.",
-            "nonbinary_text": "#name# understands the future."
+            "id": "good_money_succeed",
+            "masculine_text": "#name# ha incassato.",
+            "feminine_text": "#name# ha incassato.",
+            "nonbinary_text": "#name# ha incassato."
+          },
+          {
+            "id": "plumb_the_depths_succeed",
+            "masculine_text": "#name# ha scoperto la verità nascosta.",
+            "feminine_text": "#name# ha scoperto la verità nascosta.",
+            "nonbinary_text": "#name# ha scoperto la verità nascosta."
+          },
+          {
+            "id": "no_place_like_home_succeed",
+            "masculine_text": "#name# ha trovato la sua vera casa.",
+            "feminine_text": "#name# ha trovato la sua vera casa.",
+            "nonbinary_text": "#name# ha trovato la sua vera casa."
+          },
+          {
+            "id": "toe_the_line_succeed",
+            "masculine_text": "#name# ha trovato un nuovo lavoro.",
+            "feminine_text": "#name# ha trovato un nuovo lavoro.",
+            "nonbinary_text": "#name# ha trovato un nuovo lavoro."
           },
           {
             "id": "cthulhu_annihilated_the_city_of_arkham",
-            "text": "Cthulhu annihilated the city of Arkham."
+            "text": "Cthulhu ha annientato la città di Arkham."
           },
           {
             "id": "cthulhu_was_banished",
-            "text": "Cthulhu was banished."
+            "text": "avete esiliato Cthulhu."
           },
           {
             "id": "cthulhu_was_banished_but_arkham_was_destroyed",
-            "text": "Cthulhu was banished, but Arkham was destroyed."
+            "text": "avete esiliato Cthulhu, ma Arkham è stata distrutta."
           },
           {
             "id": "cthulhu_was_driven_away",
-            "text": "Cthulhu was driven away."
+            "text": "avete scacciato Cthulhu."
           },
           {
             "id": "did_not_confront_the_nightmare",
-            "text": "the investigators did not confront the nightmare."
+            "text": "non avete affrontato l'incubo."
           },
           {
             "id": "discovered_an_alien_language",
-            "text": "the investigators discovered an alien language."
+            "text": "gli investigatori hanno scoperto un linguaggio alieno."
           },
           {
             "id": "expedition_abandoned_pilgrim",
-            "text": "the expedition left the pilgrim behind."
+            "text": "la spedizione ha abbandonato il pellegrino."
           },
           {
             "id": "expedition_headed_east",
-            "text": "the expedition headed east."
+            "text": "la spedizione si è diretta a est."
           },
           {
             "id": "expedition_headed_west",
-            "text": "the expedition headed west."
+            "text": "la spedizione si è diretta a ovest."
           },
           {
             "id": "expedition_helped_pilgrim",
-            "text": "the expedition helped the pilgrim."
+            "text": "la spedizione ha soccorso il pellegrino."
           },
           {
             "id": "exterminated_the_alien_parasites",
-            "text": "the investigators exterminated the alien parasites."
+            "text": "avete sterminato i parassiti alieni."
           },
           {
             "id": "halted_cthulhus_awakening",
-            "text": "the investigators halted Cthulhu's awakening."
+            "text": "avete impedito il risveglio di Cthulhu."
           },
           {
             "id": "pilgrims_were_devoured",
-            "text": "the pilgrims were devoured."
+            "text": "i pellegrini sono stati divorati."
           },
           {
             "id": "pilgrims_were_saved",
-            "text": "the pilgrims were saved."
+            "text": "i pellegrini sono in salvo."
           },
           {
             "id": "ruby_lost_the_bet",
-            "text": "Ruby lost the bet."
+            "text": "Ruby ha perso la scommessa."
           },
           {
             "id": "ruby_won_the_bet",
-            "text": "Ruby won the bet."
+            "text": "Ruby ha vinto la scommessa."
           },
           {
             "id": "stood_together",
-            "text": "the investigators stood together."
+            "text": "siete rimasti uniti."
           },
           {
             "id": "the_creature_was_defeated",
-            "text": "the creature was defeated."
+            "text": "la creatura è stata sconfitta."
           },
           {
             "id": "the_inner_sanctum_was_unsealed",
-            "text": "the inner sanctum was unsealed."
+            "text": "avete sbloccato il sancta sanctorum."
           },
           {
             "id": "the_power_was_diverted",
-            "text": "the power was diverted."
+            "text": "avete deviato l'alimentazione."
           },
           {
             "id": "your_allies_have_a_plan",
-            "text": "your allies have a plan."
+            "text": "i vostri alleati hanno un piano."
           }
         ]
       },
@@ -5660,11 +5796,11 @@
         "entries": [
           {
             "id": "downtown",
-            "text": "Downtown"
+            "text": "Centro Cittadino"
           },
           {
             "id": "easttown",
-            "text": "Easttown"
+            "text": "East Town"
           },
           {
             "id": "miskatonic_university",
@@ -5676,7 +5812,7 @@
           },
           {
             "id": "rivertown",
-            "text": "Rivertown"
+            "text": "River Town"
           },
           {
             "id": "southside",
@@ -5684,7 +5820,7 @@
           },
           {
             "id": "st_marys_hospital",
-            "text": "St. Mary's Hospital"
+            "text": "Ospedale St. Mary"
           }
         ]
       },
@@ -5693,11 +5829,11 @@
         "entries": [
           {
             "id": "tdc_rune_a",
-            "text": "Depths"
+            "text": "Abitatori del Profondo"
           },
           {
             "id": "tdc_rune_s",
-            "text": "Machine"
+            "text": "Macchina"
           }
         ]
       },
@@ -5705,16 +5841,16 @@
         "section": "hidden",
         "entries": [
           {
-            "id": "tdc_good_money_no_upkeep",
-            "masculine_text": "#name# cannot gain resources during the upkeep phase.",
-            "feminine_text": "#name# cannot gain resources during the upkeep phase.",
-            "nonbinary_text": "#name# cannot gain resources during the upkeep phase."
+            "id": "tdc_good_money_extra_resources",
+            "masculine_text": "#name# inizia con 3 risorse aggiuntive.",
+            "feminine_text": "#name# inizia con 3 risorse aggiuntive.",
+            "nonbinary_text": "#name# inizia con 3 risorse aggiuntive."
           },
           {
-            "id": "tdc_good_money_extra_resources",
-            "masculine_text": "#name# starts with 3 additional resources.",
-            "feminine_text": "#name# starts with 3 additional resources.",
-            "nonbinary_text": "#name# starts with 3 additional resources."
+            "id": "tdc_good_money_no_upkeep",
+            "masculine_text": "#name# non può ottenere risorse durante la Fase di Gestione.",
+            "feminine_text": "#name# non può ottenere risorse durante la Fase di Gestione.",
+            "nonbinary_text": "#name# non può ottenere risorse durante la Fase di Gestione."
           },
           {
             "id": "kept_barrier_node",
@@ -5799,31 +5935,31 @@
         "entries": [
           {
             "id": "court_of_the_ancients",
-            "text": "Court of the Ancients"
+            "text": "La Corte degli Antichi"
           },
           {
             "id": "obsidian_canyons",
-            "text": "Obsidian Canyons"
+            "text": "Le Gole di Ossidiana"
           },
           {
             "id": "sepulchre_of_the_sleeper",
-            "text": "Sepulchre of the Sleeper"
+            "text": "Il Sepolcro del Dormiente"
           },
           {
             "id": "the_apiary",
-            "text": "The Apiary"
+            "text": "L'Alveare"
           },
           {
             "id": "the_drowned_quarter",
-            "text": "The Drowned Quarter"
+            "text": "Il Quartiere Sommerso"
           },
           {
             "id": "the_grand_vault",
-            "text": "The Grand Vault"
+            "text": "La Grande Cripta"
           },
           {
             "id": "the_western_wall",
-            "text": "The Western Wall"
+            "text": "La Parete Occidentale"
           }
         ]
       }

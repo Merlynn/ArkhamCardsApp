@@ -18,6 +18,7 @@ import DeckNavFooter, { FOOTER_HEIGHT } from './DeckNavFooter';
 import LoadingSpinner from '@components/core/LoadingSpinner';
 import Card from '@data/types/Card';
 import { useDraftableCards } from './useChaosDeckGenerator';
+import { useCardPoolViewDialog } from './controls/DeckCardPoolButton';
 import { AppState, getDraftPacks } from '@reducers';
 import { useCounter, useEffectUpdate, useLatestDeckCards, usePressCallback, useSettingValue } from '@components/core/hooks';
 import { getDraftCards } from '@lib/randomDeck';
@@ -35,6 +36,7 @@ import { useAlertDialog } from './dialogs';
 import LanguageContext from '@lib/i18n/LanguageContext';
 import SimpleFab from '@components/core/SimpleFab';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ListCard } from '@data/types/ListCard';
 
 export interface DeckDraftProps {
   id: DeckId;
@@ -93,11 +95,11 @@ function FadingCardSearchResult({ item, card, onCardPress, onDraft, draftHistory
   item: GridItem;
   card: Card;
   draftHistory: SharedValue<DraftHistory>;
-  onCardPress: (card: Card) => void;
-  onDraft: (card: Card, item: GridItem) => void;
+  onCardPress: (card: ListCard) => void;
+  onDraft: (card: ListCard, item: GridItem) => void;
 }) {
   const { borderStyle } = useContext(StyleContext);
-  const actualOnDraft = useCallback((card: Card) => {
+  const actualOnDraft = useCallback((card: ListCard) => {
     onDraft(card, item);
   }, [onDraft, item]);
   const opacity = useSharedValue(1);
@@ -189,7 +191,23 @@ export default function DeckDraftView() {
   }, [id, dispatch, setLocalDraftCards, draftCycle, mode]);
 
   const [handSize, incHandSize, decHandSize] = useCounter(initialDraftSize, { min: 2, max: 10, hapticFeedback: true }, updateDraftSize);
-  const [in_collection, ignore_collection] = useSelector(getDraftPacks);
+  const [draftInCollection, draftIgnoreCollection] = useSelector(getDraftPacks);
+  const cardPoolPacks = meta?.card_pool;
+  const hasCardPool = !!cardPoolPacks && cardPoolPacks.length > 0;
+  const cardPoolInCollection = useMemo(() => {
+    if (!cardPoolPacks) {
+      return undefined;
+    }
+    const result: { [pack: string]: boolean } = {};
+    cardPoolPacks.split(',').forEach(pack => {
+      result[pack] = true;
+    });
+    return result;
+  }, [cardPoolPacks]);
+  const in_collection = (hasCardPool && cardPoolInCollection) ? cardPoolInCollection : draftInCollection;
+  const ignore_collection = hasCardPool ? false : draftIgnoreCollection;
+  const cardPoolSelectedPacks = useMemo(() => cardPoolPacks ? cardPoolPacks.split(',') : [], [cardPoolPacks]);
+  const [cardPoolViewDialog, showCardPoolViewDialog] = useCardPoolViewDialog(cardPoolSelectedPacks);
   const [editingPack, setEditingPacks] = useState(false);
 
   const [investigator, allPossibleCodes, cards] = useDraftableCards({
@@ -280,7 +298,7 @@ export default function DeckDraftView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [in_collection, ignore_collection])
 
-  const onDraft = useCallback((card: Card, item?: GridItem) => {
+  const onDraft = useCallback((card: ListCard, item?: GridItem) => {
     ReactNativeHapticFeedback.trigger('impactMedium');
     if (item && item.draftCycle !== undefined) {
       draftHistory.value = {
@@ -303,7 +321,7 @@ export default function DeckDraftView() {
   const controlForCard = useCallback((item: GridItem, card: Card, cardWidth: number) => {
     return <DraftButton item={item} card={card} cardWidth={cardWidth} onDraft={onDraft} />
   }, [onDraft]);
-  const onCardPress = useCallback((card: Card) => {
+  const onCardPress = useCallback((card: ListCard) => {
     showCard(navigation, card.code, card, colors, { showSpoilers: true });
   }, [navigation, colors]);
 
@@ -353,7 +371,13 @@ export default function DeckDraftView() {
           />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <DeckButton onPress={showPackChooser} title={t`Choose packs`} icon="deck" shrink />
+          <DeckButton
+            onPress={hasCardPool ? showCardPoolViewDialog : showPackChooser}
+            title={hasCardPool ? t`Card pool` : t`Choose packs`}
+            icon="deck"
+            shrink
+            detail={hasCardPool ? t`Tap to view` : undefined}
+          />
         </View>
       </View>
       { !allPossibleCodes ? <LoadingSpinner large /> : (
@@ -411,6 +435,7 @@ export default function DeckDraftView() {
         onPress={draftCards ? onRedrawDraftCards : onDraftNewCards}
       />
       { alertDialog }
+      { cardPoolViewDialog }
     </View>
   );
 }

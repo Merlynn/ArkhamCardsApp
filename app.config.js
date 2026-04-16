@@ -38,9 +38,9 @@ module.exports = {
   expo: {
     name: 'ArkhamCards',
     slug: 'arkhamcards',
-    version: '6.0.3',
+    version: '6.1.4',
     jsEngine: 'hermes',
-    orientation: 'portrait',
+    orientation: 'default',
     userInterfaceStyle: 'automatic',
     scheme: 'arkhamcards',
     icon: './assets/app-icon.png',
@@ -78,8 +78,14 @@ module.exports = {
       appleTeamId: '54773FU58P',
       supportsTablet: true,
       infoPlist: {
+        CFBundleAllowMixedLocalizations: true,
         UIViewControllerBasedStatusBarAppearance: true,
         ITSAppUsesNonExemptEncryption: false,
+        UIBackgroundModes: ['audio'],
+      },
+      entitlements: {
+        'com.apple.developer.applesignin': ['Default'],
+        'com.apple.developer.associated-domains': ['webcredentials:arkhamcards.com'],
       },
       googleServicesFile: './GoogleService-Info.plist',
     },
@@ -94,7 +100,10 @@ module.exports = {
         'android.permission.RECORD_AUDIO',
         'android.permission.MODIFY_AUDIO_SETTINGS',
       ],
-      versionCode: 4195535,
+      versionCode: 4195572,
+    },
+    locales: {
+      'ko': './assets/i18n-app/ko.metadata.json',
     },
     plugins: [
       './plugins/withRNScreensFragmentFactory.js',
@@ -179,6 +188,7 @@ module.exports = {
             './assets/circusexmortis.ttf',
             './assets/Conkordia.ttf',
             './assets/coreset.ttf',
+            './assets/core_2026.ttf',
             './assets/cost.ttf',
             './assets/cyclopean.ttf',
             './assets/dark_matter.ttf',

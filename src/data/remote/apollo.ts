@@ -752,6 +752,20 @@ export const handleUploadNewCampaign: MutationUpdaterFn<UploadNewCampaignMutatio
       campaign_by_pk: data.update_campaign_by_pk,
     },
   });
+
+  // Write campaign_guide data to cache
+  if (data.update_campaign_by_pk.campaign_guide) {
+    cache.writeQuery<GetCampaignGuideQuery>({
+      query: GetCampaignGuideDocument,
+      variables: {
+        campaign_id: campaignId,
+      },
+      data: {
+        __typename: 'query_root',
+        campaign_guide: [data.update_campaign_by_pk.campaign_guide],
+      },
+    });
+  }
   if (!data.update_campaign_by_pk.linked_campaign) {
     const cacheData = cache.readQuery<GetMyCampaignsQuery>({
       query: GetMyCampaignsDocument,
@@ -938,7 +952,7 @@ const handleAddCampaignInvestigator: MutationUpdaterFn<AddCampaignInvestigatorMu
   if (!data?.insert_campaign_investigator_one) {
     return;
   }
-  const { campaign_id, investigator } = data.insert_campaign_investigator_one;
+  const { campaign_id, investigator, printing } = data.insert_campaign_investigator_one;
   updateFullCampaign(
     cache,
     campaign_id,
@@ -951,6 +965,7 @@ const handleAddCampaignInvestigator: MutationUpdaterFn<AddCampaignInvestigatorMu
             __typename: 'campaign_investigator',
             id: `${campaign_id}-${investigator}`,
             investigator,
+            printing,
           },
         ],
       };
@@ -995,7 +1010,7 @@ const handleUpdateInvestigatorTrauma: MutationUpdaterFn<UpdateInvestigatorTrauma
         return {
           ...existingCacheData,
           investigator_data: [
-            ...existingCacheData.investigator_data || [],
+            ...(existingCacheData.investigator_data || []),
             mini_investigator_data,
           ],
         };
@@ -1026,7 +1041,7 @@ function updateFullInvestigatorData(cache: ApolloCache<unknown>, campaignId: num
         return {
           ...existingCacheData,
           investigator_data: [
-            ...existingCacheData.investigator_data || [],
+            ...(existingCacheData.investigator_data || []),
             update(),
           ],
         };
@@ -1137,7 +1152,6 @@ function updateChaosBag(
     returnPartialData: true,
   }, true);
   if (!chaosBag || !chaosBag.chaos_bag_result_by_pk) {
-    console.log(`Couldn't find chaos bag for ${campaignId}`);
     return;
   }
   cache.writeQuery<GetChaosBagResultsQuery>({
@@ -1228,7 +1242,7 @@ const handleChaosBagDrawToken: MutationUpdaterFn<ChaosBagDrawTokenMutation> = (c
       ...chaosBag,
       drawn,
       totalDrawn,
-      history,
+      ...(history !== undefined ? { history } : {}),
     };
   });
 };
@@ -1243,7 +1257,7 @@ const handleUpdateChaosBagDrawToken: MutationUpdaterFn<UpdateChaosBagDrawTokenMu
       ...chaosBag,
       drawn,
       totalDrawn,
-      history,
+      ...(history !== undefined ? { history } : {}),
     };
   });
 };
@@ -1361,7 +1375,7 @@ const handleChaosBagSetDifficulty: MutationUpdaterFn<ChaosBagSetDifficultyMutati
   updateChaosBag(cache, id, (chaosBag) => {
     return {
       ...chaosBag,
-      difficulty: difficulty || null,
+      ...(difficulty !== undefined ? { difficulty: difficulty || null } : {}),
     };
   });
 };

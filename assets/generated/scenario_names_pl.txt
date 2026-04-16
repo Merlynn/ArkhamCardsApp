@@ -205,11 +205,11 @@
   },
   {
     "id": "core",
-    "name": "Na krawędzi ziemi"
+    "name": "Bracia popiołu"
   },
   {
     "id": "court_of_the_ancients",
-    "name": "Court of the Ancients"
+    "name": "Dziedziniec Starożytnych"
   },
   {
     "id": "cp_epilogue",
@@ -617,11 +617,11 @@
   },
   {
     "id": "obsidian_canyons",
-    "name": "Obsidian Canyons"
+    "name": "Obsydianowe kaniony"
   },
   {
     "id": "one_last_job",
-    "name": "One Last Job"
+    "name": "Ostatnie zlecenie"
   },
   {
     "id": "oz_epilogue",
@@ -670,6 +670,10 @@
   {
     "id": "pyroclastic_flow",
     "name": "Pyroclastic Flow"
+  },
+  {
+    "id": "queen_of_ash",
+    "name": "Królowa popiołu"
   },
   {
     "id": "quito",
@@ -905,7 +909,7 @@
   },
   {
     "id": "sepulchre_of_the_sleeper",
-    "name": "Sepulchre of the Sleeper"
+    "name": "Grobowiec Śniącego"
   },
   {
     "id": "shanghai",
@@ -920,8 +924,16 @@
     "name": "Sibling Rivalry"
   },
   {
+    "id": "smoke_and_mirrors",
+    "name": "Dym i lustra"
+  },
+  {
     "id": "something_big",
     "name": "Something Big"
+  },
+  {
+    "id": "spreading_flames",
+    "name": "Pełzające płomienie"
   },
   {
     "id": "starfall",
@@ -1001,7 +1013,7 @@
   },
   {
     "id": "the_apiary",
-    "name": "The Apiary"
+    "name": "Pasieka"
   },
   {
     "id": "the_attack",
@@ -1069,7 +1081,7 @@
   },
   {
     "id": "the_drowned_quarter",
-    "name": "The Drowned Quarter"
+    "name": "Zatopiona dzielnica"
   },
   {
     "id": "the_duchess",
@@ -1105,7 +1117,7 @@
   },
   {
     "id": "the_grand_vault",
-    "name": "The Grand Vault"
+    "name": "Wielka krypta"
   },
   {
     "id": "the_great_ones",
@@ -1253,7 +1265,7 @@
   },
   {
     "id": "the_western_wall",
-    "name": "The Western Wall"
+    "name": "Zachodni mur"
   },
   {
     "id": "the_white_queen",
